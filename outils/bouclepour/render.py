@@ -1,4 +1,4 @@
-"""Rendu de « La boucle Pour — le sac et l'ascenseur ».
+"""Rendu de « La boucle Pour — de la variable à la boucle ».
 
     python3 render.py --plan                      # chronologie prévisionnelle
     python3 render.py --images /tmp/f --instants 20,90,180

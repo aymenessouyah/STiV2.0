@@ -67,7 +67,7 @@ def main():
                        r"\g<1>" + temps + r"\g<2>", s)
             s = re.sub(r"(Vidéo de la boucle Pour \()\d+:\d{2}(\))",
                        r"\g<1>" + temps + r"\g<2>", s)
-            s = re.sub(r'(titre: "La boucle Pour — le sac et l\'ascenseur",\n\s+dureeTexte: ")\d+:\d{2}(")',
+            s = re.sub(r'(titre: "La boucle Pour —[^"]*",\n\s+dureeTexte: ")\d+:\d{2}(")',
                        r"\g<1>" + temps + r"\g<2>", s)
             if s != avant:
                 open(chemin, "w", encoding="utf-8").write(s)
