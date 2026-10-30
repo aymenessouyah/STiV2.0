@@ -1,9 +1,9 @@
 {
-  "version": "v551-sti-atelier-v384",
-  "generatedAt": "2026-10-30T13:45:53Z",
+  "version": "v552-sti-atelier-v385",
+  "generatedAt": "2026-10-30T13:58:49Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 740,
-  "totalBytes": 942194064,
+  "totalBytes": 942194308,
   "files": [
     {
       "path": "404.html",
@@ -1267,8 +1267,8 @@
     },
     {
       "path": "cours/annexe-fleuriste-html5.html",
-      "bytes": 36639,
-      "gitSha": "1e782af4e5f193c5b940bad182cac4471aeb12f1"
+      "bytes": 36722,
+      "gitSha": "188ce51447f8ec0d73acf51a9505248b74512221"
     },
     {
       "path": "cours/courscss3.html",
@@ -1277,8 +1277,8 @@
     },
     {
       "path": "cours/courshtml5.html",
-      "bytes": 201487,
-      "gitSha": "864e667a0c7fcc68d9817bf14db2fc8ba30295f2"
+      "bytes": 201502,
+      "gitSha": "e96e1e7cbe272b87dc9964490da6fe5c5352f111"
     },
     {
       "path": "cours/coursphp.html",
@@ -1317,8 +1317,8 @@
     },
     {
       "path": "cours/php.html",
-      "bytes": 204121,
-      "gitSha": "cfa0b1511ad02a47b072e916327e44a2ee69335d"
+      "bytes": 204136,
+      "gitSha": "f253e991b57faa55aba1c1fd0177fef0de380e76"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -2737,8 +2737,8 @@
     },
     {
       "path": "exercices/html-css/tp-evenements-liens/index.html",
-      "bytes": 47275,
-      "gitSha": "777d29b49229adb0a3d236152a150a2a9481bec5"
+      "bytes": 47290,
+      "gitSha": "53088418b4c32ea407ad44edc45bd68498e7db4d"
     },
     {
       "path": "exercices/html-css/tp-formulaire-tableau-autre/drapeau.png",
@@ -2817,8 +2817,8 @@
     },
     {
       "path": "exercices/javascript/TP Train/index.html",
-      "bytes": 12615,
-      "gitSha": "f5840067d087f74b77417f586bee1dd9d18ed9fb"
+      "bytes": 12618,
+      "gitSha": "9ff995fc03901e2561b0e5d8ce57dd6320d8ef27"
     },
     {
       "path": "exercices/javascript/TP Train/logo.png",
@@ -3117,8 +3117,8 @@
     },
     {
       "path": "livre-smart.html",
-      "bytes": 7631,
-      "gitSha": "0ff1687a96f1cc45b6034030142b0330af655064"
+      "bytes": 7646,
+      "gitSha": "ddf34f0e0e38dfc590d57aa019da66ace212b17b"
     },
     {
       "path": "ma-fiche-revision.html",
@@ -3632,8 +3632,8 @@
     },
     {
       "path": "quiz/php.html",
-      "bytes": 330186,
-      "gitSha": "ecf762dd23fbcba1a8266477c01fa6b67f9ded38"
+      "bytes": 330262,
+      "gitSha": "2f6fd2d6c012491713b02c1578f3e4b986108f27"
     },
     {
       "path": "quiz/pp.html",
@@ -3702,8 +3702,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 98354,
-      "gitSha": "1c26cfb4759eab2d2cbe89547a12d212ebd936c2"
+      "bytes": 98376,
+      "gitSha": "4b321c175866d948468d48bba410979cbb18665a"
     }
   ]
 }

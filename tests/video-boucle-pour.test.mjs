@@ -580,7 +580,7 @@ test('la capsule est dans le paquet hors-ligne complet', () => {
   assert.ok(complet.includes(`"./${VIDEO}"`), 'MP4 hors-ligne');
   assert.ok(complet.includes(`"./${VTT}"`), 'VTT hors-ligne');
   assert.ok(!delta.includes(`BouclePour-${VERSION_MEDIA}.mp4`), 'les médias restent hors du delta léger');
-  assert.match(sw, /var UPDATE_ID = "v551-suivi-video-20261030";/);
+  assert.match(sw, /var UPDATE_ID = "v552-audit-plateforme-20261030";/);
   assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "boucles-et-effets-v550"/);
   assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "console-variables-v548"/);
 });
@@ -594,7 +594,7 @@ test('la fabrique de la capsule reste dans le dépôt', () => {
   assert.match(integrer, /def bloc_chapitres\(/, 'les chapitres sont recalculés');
   assert.match(integrer, /def ecrire_chapitres\(/, 'et réécrits dans protection.js');
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  assert.match(manifeste.version, /^v551/, 'manifeste du lot');
+  assert.match(manifeste.version, /^v552/, 'manifeste du lot');
   assert.ok(manifeste.files.some((f) => f.path === VIDEO), 'MP4 dans le manifeste');
   assert.ok(manifeste.files.some((f) => f.path === VTT), 'VTT dans le manifeste');
 });
