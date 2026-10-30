@@ -43,8 +43,11 @@ from __future__ import annotations
 
 # L'ordre de lecture ; il sert aussi à numéroter les chapitres.
 ORDRE = [
-    "ouverture", "introduction", "probleme", "repetition",
+    "ouverture", "introduction", "probleme",
+    "immeuble", "ascenseur", "scalaire",
+    "repetition",
     "q1", "q2", "q3",
+    "engendrer",
     "pour_algo", "pour_js", "pour_trace", "rappel1",
     "chercher_quoi", "chercher_q", "repet_algo", "repet_js",
     "repet_trouve", "repet_absent", "rappel2",
@@ -102,6 +105,56 @@ SECTIONS = {
             ]),
         ],
     },
+    "immeuble": {
+        "titre": "L'immeuble a un nom : T",
+        "segments": [
+            ("immeuble", [
+                "Regardons cet immeuble de plus près, parce que c'est lui qui va tout expliquer.",
+                "Il contient plusieurs éléments — ici quatre nombres — et son contenu peut changer :",
+                " demain, ce sera peut-être huit, quinze, trois et six.",
+                "Comme le contenu est variable, je ne peux pas nommer l'immeuble par son contenu.",
+                "Alors je lui donne un nom, un seul : T.",
+                "L'immeuble s'appelle T, et chacun de ses étages contient un nombre.",
+                "Deux immeubles différents peuvent porter le même nom T :",
+                " ce qui compte, c'est ce qu'il y a dedans au moment où je regarde.",
+            ]),
+        ],
+    },
+    "ascenseur": {
+        "titre": "L'ascenseur, et les crochets",
+        "segments": [
+            ("ascenseur", [
+                "Maintenant, comment est-ce que je monte à un étage ?",
+                "À pied, ce serait long, et surtout je ne saurais pas où je suis.",
+                "Alors je prends l'ascenseur.",
+                "L'ascenseur, c'est la cabine carrée : les crochets.",
+                "Les crochets, c'est la cabine ; et le nombre écrit entre les crochets,",
+                " c'est l'étage où elle s'arrête.",
+                "Quand j'écris T crochet zéro, je raconte exactement ceci :",
+                " je suis dans l'immeuble T, j'ai pris l'ascenseur, il s'arrête à l'étage zéro.",
+                "Et je ne peux voir le contenu de cet étage que lorsque les portes s'ouvrent.",
+                "Portes fermées, je n'ai rien ; portes ouvertes, j'ai la valeur.",
+                "Voilà pourquoi on écrit T crochet i : je suis dans T, l'ascenseur s'arrête",
+                " à l'étage i, et les portes s'ouvrent sur T crochet i.",
+            ]),
+        ],
+    },
+    "scalaire": {
+        "titre": "L'ascenseur compte tout seul",
+        "segments": [
+            ("scalaire", [
+                "Une dernière chose sur cet ascenseur : il a un compteur automatique.",
+                "Je lui indique l'étage un ; il sait déjà que le suivant, c'est deux.",
+                "Je n'ai pas besoin de lui expliquer l'ordre : il le connaît.",
+                "On dit alors que l'ascenseur est d'un type scalaire.",
+                "Un type scalaire, c'est tout type qui possède un successeur et un prédécesseur :",
+                " l'entier, par exemple, ou le caractère.",
+                "Trois a pour successeur quatre, et pour prédécesseur deux.",
+                "C'est ce qui me permettra d'écrire i plus un :",
+                " l'ascenseur saura tout seul que, après un, on trouve deux.",
+            ]),
+        ],
+    },
     "repetition": {
         "titre": "Quatre fois le même geste",
         "segments": [
@@ -155,17 +208,39 @@ SECTIONS = {
             ]),
         ],
     },
+    "engendrer": {
+        "titre": "Du brouillon à la boucle : engendrer",
+        "segments": [
+            ("engendrer", [
+                "Alors je rassemble tout ce que j'ai au brouillon.",
+                "J'ai quatre lignes, et dans ces quatre lignes une seule chose change :",
+                " le chiffre écrit entre les crochets.",
+                "Je peux donc les écrire d'un coup, en laissant un trou à la place du chiffre :",
+                " S égal S plus T crochet quelque chose.",
+                "Ce quelque chose, c'est justement ce que la boucle va remplacer.",
+                "Le point de départ, le point d'arrivée, et le passage d'un étage au suivant :",
+                " c'est le compteur qui s'en occupe.",
+                "J'écris donc une seule fois S égal S plus T crochet quelque chose,",
+                " et la boucle Pour l'engendre : elle le fabrique quatre fois,",
+                " avec les quatre bons étages.",
+                "C'est le mot à retenir : j'engendre les quatre lignes à partir d'une seule.",
+            ]),
+        ],
+    },
     "pour_algo": {
         "titre": "La boucle Pour — algorithme",
         "segments": [
             ("pour_algo", [
-                "La boucle Pour, en algorithme.",
+                "La boucle Pour, maintenant, en algorithme.",
                 "J'écris : Pour compteur, de zéro à trois, faire.",
                 "S égal S plus T crochet compteur. Fin Pour.",
                 "Décomposons. Le compteur démarre à la position initiale, zéro.",
-                "Il s'arrête à la position finale, trois.",
-                "Et entre les deux, faire le bloc.",
-                "Le bloc, c'est la seule ligne que j'ai écrite quatre fois tout à l'heure.",
+                "Il s'arrête à la position finale, trois — le dernier étage de l'immeuble,",
+                " c'est-à-dire la hauteur moins un.",
+                "Et entre les deux : faire le bloc.",
+                "Le bloc, c'est la ligne engendrée, S égal S plus T crochet compteur :",
+                " le trou a été rempli par le compteur.",
+                "Une seule ligne écrite, et les quatre étages visités.",
             ]),
         ],
     },
@@ -173,11 +248,21 @@ SECTIONS = {
         "titre": "La boucle Pour — JavaScript",
         "segments": [
             ("pour_js", [
-                "Maintenant, la même boucle, en JavaScript.",
-                "En bas, à droite : for, entre parenthèses, let i égal zéro,"
-                " point-virgule, i plus petit ou égal à trois, point-virgule, i plus plus.",
+                "Une fois la boucle Pour comprise au brouillon et en algorithme,",
+                " je passe à la même boucle, en JavaScript.",
+                "En bas, à droite : for, entre parenthèses, let i égal zéro, point-virgule,"
+                " i plus petit que T point length, point-virgule, i plus plus.",
+                "Trois morceaux entre les parenthèses, et chacun a son rôle.",
+                "i égal zéro : c'est la condition de départ —"
+                " l'ascenseur démarre au rez-de-chaussée.",
+                "i plus petit que T point length : c'est la condition de continuité.",
+                "T point length, c'est la hauteur de l'immeuble : quatre étages.",
+                "Tant que i reste plus petit que quatre, je continue.",
+                "Et i plus plus : c'est l'avancement du pas.",
+                "i plus plus, c'est exactement i égal i plus un : l'ascenseur monte d'un étage,",
+                " et il sait tout seul que, après un, on trouve deux.",
                 "Entre accolades : S égal S plus T crochet i.",
-                "C'est la traduction, mot pour mot, de l'algorithme. Le compteur, c'est i.",
+                "C'est la traduction, mot pour mot, de l'algorithme : le compteur, c'est i.",
             ]),
         ],
     },
@@ -185,12 +270,15 @@ SECTIONS = {
         "titre": "La boucle Pour — les quatre tours",
         "segments": [
             ("pour_trace", [
-                "Exécutons.",
-                "Premier tour : i vaut zéro, j'ajoute quatre, S vaut quatre.",
-                "Deuxième tour : i vaut un, j'ajoute sept, onze.",
+                "Exécutons, étage par étage.",
+                "Premier tour : i vaut zéro, l'ascenseur ouvre sur quatre,"
+                " j'ajoute quatre, S vaut quatre.",
+                "Deuxième tour : i vaut un, l'ascenseur ouvre sur sept, j'ajoute sept, onze.",
                 "Troisième : i vaut deux, j'ajoute deux, treize.",
                 "Quatrième : i vaut trois, j'ajoute neuf, vingt-deux.",
-                "Quatre tours, et la boucle s'arrête : i vaut quatre, la condition est fausse.",
+                "Quatre tours, et les quatre étages sont visités.",
+                "Ensuite i passe à quatre, et quatre n'est pas plus petit que quatre :",
+                " la condition de continuité est fausse, la boucle s'arrête.",
             ]),
         ],
     },

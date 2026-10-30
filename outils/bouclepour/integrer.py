@@ -31,7 +31,7 @@ RACINE = os.path.normpath(os.path.join(ICI, "..", ".."))
 FF = os.path.normpath(os.path.join(RACINE, "node_modules", "@ffmpeg-installer", "linux-x64", "ffmpeg"))
 
 SLUG = "BouclePour"
-VERSION_MEDIA = "v544"          # à changer à chaque refonte : l'URL est la version
+VERSION_MEDIA = "v546"          # à changer à chaque refonte : l'URL est la version
 NOM_MP4 = f"{SLUG}-{VERSION_MEDIA}.mp4"
 NOM_VTT = f"{SLUG}-fr-{VERSION_MEDIA}.vtt"
 SOURCE_MP4 = os.path.join(ICI, "sortie_bouclepour.mp4")

@@ -1,5 +1,5 @@
 /* v544 — capsule « Les boucles — Pour, Répéter…jusqu'à, Tant que » (JavaScript).
-   Contrôle la vidéo livrée, ses sous-titres français, les vingt-neuf étapes du
+   Contrôle la vidéo livrée, ses sous-titres français, les trente-trois étapes du
    récit (décor · brouillon · schéma de décision · tableau des trois boucles)
    avec l'algorithme et le JavaScript dans deux cadres séparés, l'intégration
    dans le site (carte vidéo, catalogue, lecteur partagé, chapitres) et le
@@ -16,15 +16,18 @@ const existe = (chemin) => existsSync(join(root, chemin));
 
 /* Le nom des médias porte la version : c'est elle qui force le nouveau
    téléchargement, le service worker servant les vidéos depuis son cache. */
-const VERSION_MEDIA = 'v544';
+const VERSION_MEDIA = 'v546';
 const VIDEO = `assets/videos/BouclePour-${VERSION_MEDIA}.mp4`;
 const VTT = `assets/subtitles/BouclePour-fr-${VERSION_MEDIA}.vtt`;
 const ID = 'boucle-pour';
 const TITRE = "Les boucles — Pour, Répéter…jusqu'à, Tant que";
 
-/** Les vingt-neuf sections de la capsule, dans l'ordre de la voix off. */
+/** Les trente-trois sections de la capsule, dans l'ordre de la voix off. */
 const ORDRE = [
-  'ouverture', 'introduction', 'probleme', 'repetition', 'q1', 'q2', 'q3',
+  'ouverture', 'introduction', 'probleme',
+  'immeuble', 'ascenseur', 'scalaire',
+  'repetition', 'q1', 'q2', 'q3',
+  'engendrer',
   'pour_algo', 'pour_js', 'pour_trace', 'rappel1',
   'chercher_quoi', 'chercher_q', 'repet_algo', 'repet_js',
   'repet_trouve', 'repet_absent', 'rappel2',
@@ -80,9 +83,9 @@ test('la capsule est livrée à côté des autres vidéos du site', () => {
   assert.match(entete, /isom|mp42|avc1/, 'marque MP4');
 });
 
-test('la vidéo dure environ dix minutes et ses sous-titres la couvrent', () => {
+test('la vidéo dure environ quatorze minutes et ses sous-titres la couvrent', () => {
   const duree = dureeMp4(VIDEO);
-  assert.ok(duree > 600 && duree < 680, `durée inattendue : ${duree.toFixed(1)} s`);
+  assert.ok(duree > 800 && duree < 900, `durée inattendue : ${duree.toFixed(1)} s`);
   const vtt = lire(VTT);
   assert.ok(vtt.startsWith('WEBVTT'), 'entête WEBVTT');
   const entrees = entreesVtt(vtt);
@@ -191,6 +194,84 @@ test('les noms ne changent pas d\'une partie à l\'autre', () => {
   assert.match(scenes, /N\.numero\(cle\)/, 'le numéro d\'étape aussi');
   assert.match(scenes, /assert list\(SCENES\) == N\.ORDRE/,
     'les scènes et les sections sont dans le même ordre');
+});
+
+test('le tableau est expliqué : l\'immeuble T, l\'ascenseur, les crochets', () => {
+  const vtt = textePlat();
+
+  /* 1. l'immeuble a un contenu variable, donc un nom */
+  assert.ok(vtt.includes("il contient plusieurs éléments"), 'des éléments');
+  assert.ok(vtt.includes("son contenu peut changer"), 'un contenu variable');
+  assert.ok(vtt.includes("je ne peux pas nommer l'immeuble par son contenu"),
+    'pourquoi le contenu ne donne pas le nom');
+  assert.ok(vtt.includes("alors je lui donne un nom, un seul : t"), 'le nom : T');
+  assert.ok(vtt.includes("deux immeubles différents peuvent porter le même nom t"),
+    'T est un nom de variable, pas un contenu');
+
+  /* 2. l'ascenseur, c'est la cabine : les crochets */
+  assert.ok(vtt.includes("l'ascenseur, c'est la cabine carrée : les crochets"),
+    'les crochets sont la cabine');
+  assert.ok(vtt.includes("le nombre écrit entre les crochets"),
+    "l'indice est l'étage où elle s'arrête");
+  assert.ok(vtt.includes("t crochet zéro"), 'T[0] raconté');
+  assert.ok(vtt.includes("je suis dans l'immeuble t"), "l'immeuble d'abord");
+  assert.ok(vtt.includes("j'ai pris l'ascenseur"), "puis l'ascenseur");
+  assert.ok(vtt.includes("il s'arrête à l'étage zéro"), "puis l'étage");
+  assert.ok(vtt.includes("que lorsque les portes s'ouvrent"),
+    'on ne voit la valeur que portes ouvertes');
+
+  /* 3. le compteur de l'ascenseur : un type scalaire */
+  assert.ok(vtt.includes('scalaire'), 'le mot est dit');
+  assert.ok(vtt.includes('successeur') && vtt.includes('prédécesseur'), 'la définition');
+  assert.ok(vtt.includes("après un, on trouve deux"), 'le successeur automatique');
+
+  /* l'écran le montre, pas seulement la voix */
+  const scenes = lire('outils/bouclepour/scenes.py');
+  for (const cle of ['def scene_immeuble(', 'def scene_ascenseur(', 'def scene_scalaire(']) {
+    assert.ok(scenes.includes(cle), cle);
+  }
+  const asc = scenes.slice(scenes.indexOf('def scene_ascenseur('),
+    scenes.indexOf('def scene_scalaire('));
+  assert.ok(asc.includes('"les crochets = la cabine"'), 'le crochet annoté');
+  assert.ok(asc.includes('"l\'indice = l\'étage"'), "l'indice annoté");
+  assert.match(asc, /_cabine_crochets\(/, 'la cabine dessinée');
+});
+
+test('la boucle Pour est engendrée, puis traduite en JavaScript', () => {
+  const vtt = textePlat();
+
+  /* le brouillon : quatre lignes, une seule chose qui change */
+  const eng = vtt.indexOf("j'ai quatre lignes");
+  assert.ok(eng > 0, 'les quatre lignes du brouillon');
+  assert.ok(vtt.includes('s égal s plus t crochet quelque chose'),
+    'la ligne au trou, T[quelque chose]');
+  assert.ok(vtt.includes('la boucle pour l\'engendre'), 'le mot engendrer');
+  assert.ok(vtt.includes('elle le fabrique quatre fois'), 'ce que la boucle fabrique');
+  assert.ok(eng < vtt.indexOf('la boucle pour, maintenant, en algorithme'),
+    'on engendre avant d’écrire la boucle');
+
+  /* l'algorithme vient après le brouillon, le JavaScript après l'algorithme */
+  assert.ok(vtt.indexOf('la boucle pour, maintenant, en algorithme')
+    < vtt.indexOf('je passe à la même boucle, en javascript'),
+    'algorithme puis JavaScript, jamais mélangés');
+
+  /* le for est expliqué morceau par morceau, avec i < T.length */
+  assert.ok(vtt.includes('i plus petit que t point length'), 'la continuité');
+  assert.ok(vtt.includes("c'est la condition de départ"), 'le départ');
+  assert.ok(vtt.includes("c'est l'avancement du pas"), 'le pas');
+  assert.ok(vtt.includes('i plus plus, c\'est exactement i égal i plus un'),
+    'i++ = i = i + 1');
+  assert.ok(vtt.includes("t point length, c'est la hauteur de l'immeuble"),
+    'T.length = la hauteur');
+
+  const scenes = lire('outils/bouclepour/scenes.py');
+  assert.ok(scenes.includes('"for (let i = 0; i < T.length; i++) {"'),
+    'le code écrit avec T.length');
+  assert.ok(!scenes.includes('i <= 3; i++'), 'plus de borne 3 en dur dans le JavaScript');
+  assert.match(scenes, /def scene_engendrer\(/, 'la scène du brouillon');
+  const trace = scenes.slice(scenes.indexOf('def scene_pour_trace('),
+    scenes.indexOf('def _scene_rappel('));
+  assert.ok(trace.includes('4 < 4 est faux'), 'la sortie expliquée par T.length');
 });
 
 test('le schéma de décision pose les trois questions, dans l\'ordre', () => {
@@ -316,10 +397,10 @@ test("l'URL des médias porte la version : sinon le téléphone garde l'ancienne
   assert.match(integrer, /NOM_MP4 = f"\{SLUG\}-\{VERSION_MEDIA\}\.mp4"/, 'le nom en dérive');
 });
 
-test('la fabrication compte vingt-neuf sections, de la voix aux scènes', () => {
+test('la fabrication compte trente-trois sections, de la voix aux scènes', () => {
   const narration = lire('outils/bouclepour/narration.py');
   const trouve = [...narration.matchAll(/"([a-z0-9_]+)": \{/g)].map((m) => m[1]);
-  assert.deepEqual(trouve, ORDRE, 'l\'ordre des vingt-neuf sections');
+  assert.deepEqual(trouve, ORDRE, 'l\'ordre des trente-trois sections');
 
   const scenes = lire('outils/bouclepour/scenes.py');
   assert.match(scenes, /TOTAL = len\(N\.ORDRE\)/, 'la capsule compte autant d\'étapes que de sections');
@@ -332,7 +413,7 @@ test('la fabrication compte vingt-neuf sections, de la voix aux scènes', () => 
   const calage = JSON.parse(lire('outils/bouclepour/calage.json'));
   assert.deepEqual(Object.keys(calage.debuts), ORDRE, 'calage de la voix');
   assert.deepEqual(Object.keys(calage.durees), ORDRE, 'durées de la voix');
-  assert.ok(calage.total > 600 && calage.total < 680, `total inattendu : ${calage.total}`);
+  assert.ok(calage.total > 800 && calage.total < 900, `total inattendu : ${calage.total}`);
   for (let i = 1; i < ORDRE.length; i += 1) {
     const precedente = calage.debuts[ORDRE[i - 1]] + calage.durees[ORDRE[i - 1]];
     assert.ok(calage.debuts[ORDRE[i]] > precedente, `section ${ORDRE[i]} après la précédente`);
@@ -367,11 +448,11 @@ test('la capsule se lance depuis la grille de l\'accueil', () => {
   /* un repère de chapitre par section, calé sur la voix off */
   const chapitres = protection.slice(protection.indexOf('STI_CHAPITRES_MEDIA["boucle-pour"]'),
     protection.indexOf('STI_CHAPITRES_MEDIA["validation-nom-prenom-js"]'));
-  assert.equal((chapitres.match(/\{ t:/g) || []).length, 29, 'vingt-neuf chapitres');
+  assert.equal((chapitres.match(/\{ t:/g) || []).length, 33, 'trente-trois chapitres');
   assert.ok(chapitres.includes('1 · Bienvenue — les boucles'), 'premier repère');
   assert.ok(chapitres.includes('2 · Ce qu\'est une boucle'), 'le repère de l\'introduction');
-  assert.ok(chapitres.includes('29 · À vous de jouer'), 'dernier repère');
-  assert.ok(chapitres.includes('27 · Les trois blocs côte à côte'), 'le bilan');
+  assert.ok(chapitres.includes('33 · À vous de jouer'), 'dernier repère');
+  assert.ok(chapitres.includes('31 · Les trois blocs côte à côte'), 'le bilan');
 
   /* la reprise de lecture sait à quelle matière et quel titre rattacher la capsule */
   assert.ok(lecteur.includes("'boucle-pour': ['javascript','Les boucles — Pour, Répéter…jusqu'à, Tant que']"),
@@ -395,7 +476,7 @@ test('la capsule se lance depuis la grille de l\'accueil', () => {
 
   /* le service worker sert la nouvelle version du lecteur */
   const sw = lire('sw.js');
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "boucles-v545"/);
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "boucles-v546"/);
   /* le lecteur commun n'a pas bougé depuis la v543 : il garde sa révision */
   assert.match(sw, /url: "\.\/assets\/js\/lecteur-commun\.js", revision: "boucles-v543"/);
 });
@@ -434,9 +515,9 @@ test('la capsule est dans le paquet hors-ligne complet', () => {
   assert.ok(complet.includes(`"./${VIDEO}"`), 'MP4 hors-ligne');
   assert.ok(complet.includes(`"./${VTT}"`), 'VTT hors-ligne');
   assert.ok(!delta.includes(`BouclePour-${VERSION_MEDIA}.mp4`), 'les médias restent hors du delta léger');
-  assert.match(sw, /var UPDATE_ID = "v545-boucles-media-20261030";/);
-  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "boucles-v545"/);
-  assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "boucles-v545"/);
+  assert.match(sw, /var UPDATE_ID = "v546-boucles-tableau-20261030";/);
+  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "boucles-v546"/);
+  assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "boucles-v546"/);
 });
 
 test('la fabrique de la capsule reste dans le dépôt', () => {
@@ -448,7 +529,7 @@ test('la fabrique de la capsule reste dans le dépôt', () => {
   assert.match(integrer, /def bloc_chapitres\(/, 'les chapitres sont recalculés');
   assert.match(integrer, /def ecrire_chapitres\(/, 'et réécrits dans protection.js');
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  assert.match(manifeste.version, /^v545/, 'manifeste du lot');
+  assert.match(manifeste.version, /^v546/, 'manifeste du lot');
   assert.ok(manifeste.files.some((f) => f.path === VIDEO), 'MP4 dans le manifeste');
   assert.ok(manifeste.files.some((f) => f.path === VTT), 'VTT dans le manifeste');
 });

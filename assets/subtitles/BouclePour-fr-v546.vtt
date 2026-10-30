@@ -1,0 +1,872 @@
+WEBVTT
+
+00:00:01.200 --> 00:00:03.212
+Bienvenue dans STI Version 2.0.
+
+00:00:03.212 --> 00:00:08.015
+Aujourd'hui, on va détailler encore une
+autre fois l'histoire des boucles.
+
+00:00:08.015 --> 00:00:12.818
+Une boucle, c'est une instruction qui fait
+répéter un bloc d'instructions.
+
+00:00:12.818 --> 00:00:16.712
+Et en JavaScript, il n'y a pas une
+boucle : il y en a trois.
+
+00:00:16.712 --> 00:00:20.931
+La boucle Pour, la boucle Répéter jusqu'à,
+et la boucle Tant que.
+
+00:00:20.931 --> 00:00:25.604
+Trois boucles, trois façons de répéter, et
+une seule question à se poser
+
+00:00:25.604 --> 00:00:27.032
+pour choisir la bonne.
+
+00:00:27.582 --> 00:00:30.431
+Prenons le temps de la définir, cette
+boucle.
+
+00:00:30.431 --> 00:00:35.052
+Imaginez que je doive additionner quatre
+nombres : j'écris quatre lignes.
+
+00:00:35.052 --> 00:00:39.421
+Quatre. Mais s'il y en avait cent ? Cent
+lignes, recopiées à la main,
+
+00:00:39.421 --> 00:00:41.700
+avec une faute au bout du troisième.
+
+00:00:41.700 --> 00:00:46.258
+Une boucle, c'est exactement l'inverse :
+j'écris le bloc une seule fois,
+
+00:00:46.258 --> 00:00:48.474
+et je dis au programme : répète-le.
+
+00:00:48.474 --> 00:00:52.462
+Le bloc ne change pas. Ce qui change,
+c'est le nombre de tours,
+
+00:00:52.462 --> 00:00:56.007
+et la condition qui décide de continuer ou
+de s'arrêter.
+
+00:00:56.007 --> 00:01:00.566
+Une boucle, c'est donc trois choses : un
+bloc, des tours, une condition.
+
+00:01:00.566 --> 00:01:05.187
+Et le schéma de décision, c'est ce qui me
+dit laquelle des trois choisir.
+
+00:01:05.737 --> 00:01:07.460
+Commençons par le décor.
+
+00:01:07.460 --> 00:01:11.624
+À gauche, l'immeuble : quatre étages, avec
+quatre nombres.
+
+00:01:11.624 --> 00:01:17.223
+Au rez-de-chaussée, quatre. Au premier,
+sept. Au deuxième, deux. Au troisième,
+
+00:01:17.223 --> 00:01:17.582
+neuf.
+
+00:01:17.582 --> 00:01:20.741
+Rangés dans cet ordre, c'est un tableau :
+T.
+
+00:01:20.741 --> 00:01:22.536
+Au milieu, mon brouillon.
+
+00:01:22.536 --> 00:01:28.063
+Et à droite, ce que j'écris vraiment :
+l'algorithme en haut, le JavaScript en
+
+00:01:28.063 --> 00:01:28.351
+bas.
+
+00:01:28.351 --> 00:01:33.448
+Ce que je veux, c'est la somme de ces
+quatre nombres, dans une case que
+
+00:01:33.448 --> 00:01:34.309
+j'appelle S.
+
+00:01:34.859 --> 00:01:39.790
+Regardons cet immeuble de plus près, parce
+que c'est lui qui va tout expliquer.
+
+00:01:39.790 --> 00:01:44.347
+Il contient plusieurs éléments — ici
+quatre nombres — et son contenu peut
+
+00:01:44.347 --> 00:01:44.908
+changer :
+
+00:01:44.908 --> 00:01:48.217
+demain, ce sera peut-être huit, quinze,
+trois et six.
+
+00:01:48.217 --> 00:01:53.210
+Comme le contenu est variable, je ne peux
+pas nommer l'immeuble par son contenu.
+
+00:01:53.210 --> 00:01:55.644
+Alors je lui donne un nom, un seul : T.
+
+00:01:55.644 --> 00:01:59.826
+L'immeuble s'appelle T, et chacun de ses
+étages contient un nombre.
+
+00:01:59.826 --> 00:02:03.322
+Deux immeubles différents peuvent porter
+le même nom T :
+
+00:02:03.322 --> 00:02:07.379
+ce qui compte, c'est ce qu'il y a dedans
+au moment où je regarde.
+
+00:02:07.929 --> 00:02:11.625
+Maintenant, comment est-ce que je monte à
+un étage ?
+
+00:02:11.625 --> 00:02:16.174
+À pied, ce serait long, et surtout je ne
+saurais pas où je suis.
+
+00:02:16.174 --> 00:02:18.164
+Alors je prends l'ascenseur.
+
+00:02:18.164 --> 00:02:21.789
+L'ascenseur, c'est la cabine carrée : les
+crochets.
+
+00:02:21.789 --> 00:02:26.764
+Les crochets, c'est la cabine ; et le
+nombre écrit entre les crochets,
+
+00:02:26.764 --> 00:02:28.968
+c'est l'étage où elle s'arrête.
+
+00:02:28.968 --> 00:02:33.090
+Quand j'écris T crochet zéro, je raconte
+exactement ceci :
+
+00:02:33.090 --> 00:02:38.563
+je suis dans l'immeuble T, j'ai pris
+l'ascenseur, il s'arrête à l'étage zéro.
+
+00:02:38.563 --> 00:02:43.965
+Et je ne peux voir le contenu de cet étage
+que lorsque les portes s'ouvrent.
+
+00:02:43.965 --> 00:02:48.442
+Portes fermées, je n'ai rien ; portes
+ouvertes, j'ai la valeur.
+
+00:02:48.442 --> 00:02:53.702
+Voilà pourquoi on écrit T crochet i : je
+suis dans T, l'ascenseur s'arrête
+
+00:02:53.702 --> 00:02:57.469
+à l'étage i, et les portes s'ouvrent sur T
+crochet i.
+
+00:02:58.018 --> 00:03:02.337
+Une dernière chose sur cet ascenseur : il
+a un compteur automatique.
+
+00:03:02.337 --> 00:03:06.656
+Je lui indique l'étage un ; il sait déjà
+que le suivant, c'est deux.
+
+00:03:06.656 --> 00:03:10.467
+Je n'ai pas besoin de lui expliquer
+l'ordre : il le connaît.
+
+00:03:10.467 --> 00:03:13.770
+On dit alors que l'ascenseur est d'un type
+scalaire.
+
+00:03:13.770 --> 00:03:18.851
+Un type scalaire, c'est tout type qui
+possède un successeur et un prédécesseur :
+
+00:03:18.851 --> 00:03:21.328
+l'entier, par exemple, ou le caractère.
+
+00:03:21.328 --> 00:03:25.012
+Trois a pour successeur quatre, et pour
+prédécesseur deux.
+
+00:03:25.012 --> 00:03:27.933
+C'est ce qui me permettra d'écrire i plus
+un :
+
+00:03:27.933 --> 00:03:31.617
+l'ascenseur saura tout seul que, après un,
+on trouve deux.
+
+00:03:32.168 --> 00:03:38.114
+Je prends mon brouillon, et je note : S
+égal S plus T crochet zéro, puis un, puis
+
+00:03:38.114 --> 00:03:39.362
+deux, puis trois.
+
+00:03:39.362 --> 00:03:43.620
+Quatre lignes. Et regardez : c'est
+toujours le même geste.
+
+00:03:43.620 --> 00:03:46.704
+Seul le chiffre entre les crochets change.
+
+00:03:46.704 --> 00:03:52.063
+Quand je vois ça, je ne recopie pas : je
+me dis qu'il y a une répétition.
+
+00:03:52.063 --> 00:03:56.688
+Et face à une répétition, je suis obligé
+de poser une question.
+
+00:03:57.238 --> 00:04:02.264
+Première question : est-ce que je connais
+le nombre de répétitions à l'avance ?
+
+00:04:02.264 --> 00:04:05.063
+Ici, oui : quatre étages, donc quatre
+tours.
+
+00:04:05.063 --> 00:04:10.153
+Si la réponse est non, je ne peux pas
+compter mes tours : je dois passer par une
+
+00:04:10.153 --> 00:04:13.588
+boucle conditionnelle, qui s'arrête sur
+une condition.
+
+00:04:13.588 --> 00:04:17.405
+Mais ici, je connais le nombre : je
+continue dans le schéma.
+
+00:04:17.954 --> 00:04:22.863
+Deuxième question : est-ce qu'il y a une
+condition d'arrêt, quelque chose qui peut
+
+00:04:22.863 --> 00:04:24.660
+me faire sortir avant la fin ?
+
+00:04:24.660 --> 00:04:29.270
+Pour la somme, non : je dois aller
+jusqu'au dernier étage, sinon ma somme est
+
+00:04:29.270 --> 00:04:29.689
+fausse.
+
+00:04:29.689 --> 00:04:34.419
+Nombre de tours connu, pas de condition
+d'arrêt : c'est exactement le cas de la
+
+00:04:34.419 --> 00:04:35.137
+boucle Pour.
+
+00:04:35.687 --> 00:04:39.228
+Et si, au contraire, il y avait une
+condition d'arrêt ?
+
+00:04:39.228 --> 00:04:43.927
+Alors je pose une troisième question :
+combien de fois, au moins, je vais
+
+00:04:43.927 --> 00:04:44.506
+répéter ?
+
+00:04:44.506 --> 00:04:47.983
+Si c'est au moins une fois, j'utilise
+répéter jusqu'à.
+
+00:04:47.983 --> 00:04:52.231
+S'il y a un risque de ne jamais répéter,
+c'est la boucle tant que.
+
+00:04:52.231 --> 00:04:55.772
+Voilà le schéma complet. Maintenant, les
+trois boucles.
+
+00:04:56.322 --> 00:04:59.547
+Alors je rassemble tout ce que j'ai au
+brouillon.
+
+00:04:59.547 --> 00:05:04.153
+J'ai quatre lignes, et dans ces quatre
+lignes une seule chose change :
+
+00:05:04.153 --> 00:05:06.522
+le chiffre écrit entre les crochets.
+
+00:05:06.522 --> 00:05:11.655
+Je peux donc les écrire d'un coup, en
+laissant un trou à la place du chiffre :
+
+00:05:11.655 --> 00:05:14.156
+S égal S plus T crochet quelque chose.
+
+00:05:14.156 --> 00:05:18.367
+Ce quelque chose, c'est justement ce que
+la boucle va remplacer.
+
+00:05:18.367 --> 00:05:23.435
+Le point de départ, le point d'arrivée, et
+le passage d'un étage au suivant :
+
+00:05:23.435 --> 00:05:25.672
+c'est le compteur qui s'en occupe.
+
+00:05:25.672 --> 00:05:30.015
+J'écris donc une seule fois S égal S plus
+T crochet quelque chose,
+
+00:05:30.015 --> 00:05:33.964
+et la boucle Pour l'engendre : elle le
+fabrique quatre fois,
+
+00:05:33.964 --> 00:05:35.806
+avec les quatre bons étages.
+
+00:05:35.806 --> 00:05:40.742
+C'est le mot à retenir : j'engendre les
+quatre lignes à partir d'une seule.
+
+00:05:41.292 --> 00:05:44.428
+La boucle Pour, maintenant, en algorithme.
+
+00:05:44.428 --> 00:05:48.012
+J'écris : Pour compteur, de zéro à trois,
+faire.
+
+00:05:48.012 --> 00:05:51.223
+S égal S plus T crochet compteur. Fin
+Pour.
+
+00:05:51.223 --> 00:05:55.852
+Décomposons. Le compteur démarre à la
+position initiale, zéro.
+
+00:05:55.852 --> 00:06:01.302
+Il s'arrête à la position finale, trois —
+le dernier étage de l'immeuble,
+
+00:06:01.302 --> 00:06:03.766
+c'est-à-dire la hauteur moins un.
+
+00:06:03.766 --> 00:06:06.305
+Et entre les deux : faire le bloc.
+
+00:06:06.305 --> 00:06:11.457
+Le bloc, c'est la ligne engendrée, S égal
+S plus T crochet compteur :
+
+00:06:11.457 --> 00:06:14.220
+le trou a été rempli par le compteur.
+
+00:06:14.220 --> 00:06:18.177
+Une seule ligne écrite, et les quatre
+étages visités.
+
+00:06:18.727 --> 00:06:23.236
+Une fois la boucle Pour comprise au
+brouillon et en algorithme,
+
+00:06:23.236 --> 00:06:26.171
+je passe à la même boucle, en JavaScript.
+
+00:06:26.171 --> 00:06:31.969
+En bas, à droite : for, entre parenthèses,
+let i égal zéro, point-virgule, i plus
+
+00:06:31.969 --> 00:06:35.763
+petit que T point length, point-virgule, i
+plus plus.
+
+00:06:35.763 --> 00:06:39.986
+Trois morceaux entre les parenthèses, et
+chacun a son rôle.
+
+00:06:39.986 --> 00:06:45.999
+i égal zéro : c'est la condition de départ
+— l'ascenseur démarre au rez-de-chaussée.
+
+00:06:45.999 --> 00:06:50.794
+i plus petit que T point length : c'est la
+condition de continuité.
+
+00:06:50.794 --> 00:06:55.304
+T point length, c'est la hauteur de
+l'immeuble : quatre étages.
+
+00:06:55.304 --> 00:06:59.026
+Tant que i reste plus petit que quatre, je
+continue.
+
+00:06:59.026 --> 00:07:02.104
+Et i plus plus : c'est l'avancement du
+pas.
+
+00:07:02.104 --> 00:07:07.687
+i plus plus, c'est exactement i égal i
+plus un : l'ascenseur monte d'un étage,
+
+00:07:07.687 --> 00:07:11.338
+et il sait tout seul que, après un, on
+trouve deux.
+
+00:07:11.338 --> 00:07:14.487
+Entre accolades : S égal S plus T crochet
+i.
+
+00:07:14.487 --> 00:07:19.784
+C'est la traduction, mot pour mot, de
+l'algorithme : le compteur, c'est i.
+
+00:07:20.334 --> 00:07:22.574
+Exécutons, étage par étage.
+
+00:07:22.574 --> 00:07:29.295
+Premier tour : i vaut zéro, l'ascenseur
+ouvre sur quatre, j'ajoute quatre, S vaut
+
+00:07:29.295 --> 00:07:29.876
+quatre.
+
+00:07:29.876 --> 00:07:36.099
+Deuxième tour : i vaut un, l'ascenseur
+ouvre sur sept, j'ajoute sept, onze.
+
+00:07:36.099 --> 00:07:39.998
+Troisième : i vaut deux, j'ajoute deux,
+treize.
+
+00:07:39.998 --> 00:07:44.313
+Quatrième : i vaut trois, j'ajoute neuf,
+vingt-deux.
+
+00:07:44.313 --> 00:07:48.296
+Quatre tours, et les quatre étages sont
+visités.
+
+00:07:48.296 --> 00:07:54.021
+Ensuite i passe à quatre, et quatre n'est
+pas plus petit que quatre :
+
+00:07:54.021 --> 00:07:58.833
+la condition de continuité est fausse, la
+boucle s'arrête.
+
+00:07:59.383 --> 00:08:01.726
+Rappel : trois boucles, un seul schéma.
+
+00:08:01.726 --> 00:08:05.692
+Pour : je connais le nombre de
+répétitions, et aucune condition ne
+
+00:08:05.692 --> 00:08:06.233
+m'arrête.
+
+00:08:06.233 --> 00:08:11.039
+Le compteur va de la position initiale à
+la position finale, et je fais le bloc.
+
+00:08:11.039 --> 00:08:15.245
+Retenez la question : est-ce que je
+connais le nombre de répétitions à
+
+00:08:15.245 --> 00:08:15.846
+l'avance ?
+
+00:08:16.396 --> 00:08:19.978
+Nouveau problème : je cherche une valeur X
+dans le tableau.
+
+00:08:19.978 --> 00:08:24.774
+Est-ce que je connais le nombre de tours à
+l'avance ? Non : ça dépend où est X.
+
+00:08:24.774 --> 00:08:27.992
+S'il est au premier étage, je m'arrête
+tout de suite.
+
+00:08:27.992 --> 00:08:30.724
+S'il est au dernier, je fais tout
+l'immeuble.
+
+00:08:30.724 --> 00:08:33.578
+Et s'il n'est pas là, je visite tout pour
+rien.
+
+00:08:33.578 --> 00:08:35.460
+Donc : nombre de tours inconnu.
+
+00:08:36.009 --> 00:08:40.152
+Mais il y a une condition d'arrêt : dès
+que je trouve X, je m'arrête.
+
+00:08:40.152 --> 00:08:44.715
+Alors je pose la troisième question :
+combien de fois, au moins, je répète ?
+
+00:08:44.715 --> 00:08:49.158
+Au moins une fois : je dois tester au
+moins une case, sinon je ne peux pas
+
+00:08:49.158 --> 00:08:49.579
+savoir.
+
+00:08:49.579 --> 00:08:52.100
+Au moins une fois, donc : répéter jusqu'à.
+
+00:08:52.100 --> 00:08:54.562
+Regardez le schéma : c'est cette branche.
+
+00:08:55.112 --> 00:08:59.041
+Algorithme. Je me place sur la première
+case : i égal zéro.
+
+00:08:59.041 --> 00:09:01.705
+Répéter : prendre la valeur T crochet i.
+
+00:09:01.705 --> 00:09:04.036
+Si c'est X, j'arrête : j'ai trouvé.
+
+00:09:04.036 --> 00:09:06.366
+Sinon, je passe à la case suivante.
+
+00:09:06.366 --> 00:09:09.563
+Jusqu'à : trouvé, ou i dépasse la dernière
+case.
+
+00:09:09.563 --> 00:09:14.757
+Deux façons de sortir : la valeur est
+trouvée, ou j'ai fini le tableau sans la
+
+00:09:14.757 --> 00:09:15.290
+trouver.
+
+00:09:15.840 --> 00:09:18.977
+En JavaScript : do, entre accolades, le
+corps.
+
+00:09:18.977 --> 00:09:23.954
+Puis while, entre parenthèses : trouvé est
+faux, et i inférieur à quatre.
+
+00:09:23.954 --> 00:09:28.114
+Le corps s'exécute avant le test : c'est
+ça, répéter jusqu'à.
+
+00:09:28.114 --> 00:09:31.592
+On entre toujours au moins une fois dans
+la boucle.
+
+00:09:31.592 --> 00:09:35.751
+Et si on ne l'a pas trouvée, on sort et on
+affiche : absente.
+
+00:09:36.301 --> 00:09:37.453
+Cherchons sept.
+
+00:09:37.453 --> 00:09:41.755
+Tour un : T crochet zéro vaut quatre. Ce
+n'est pas sept.
+
+00:09:41.755 --> 00:09:47.976
+Tour deux : T crochet un vaut sept. C'est
+sept : trouvé passe à vrai, et on sort.
+
+00:09:47.976 --> 00:09:49.589
+Deux tours seulement.
+
+00:09:49.589 --> 00:09:54.505
+La condition d'arrêt a fait son travail
+avant la fin du tableau.
+
+00:09:55.056 --> 00:09:57.703
+Cherchons cinq. Cinq n'est nulle part.
+
+00:09:57.703 --> 00:10:02.858
+Tour un : quatre. Tour deux : sept. Tour
+trois : deux. Tour quatre : neuf.
+
+00:10:02.858 --> 00:10:03.833
+Jamais trouvé.
+
+00:10:03.833 --> 00:10:07.804
+i vaut quatre : la deuxième condition est
+vraie, on sort.
+
+00:10:07.804 --> 00:10:10.242
+Et là, le résultat, c'est : absent.
+
+00:10:10.242 --> 00:10:16.024
+Attention : sans le test i plus petit que
+quatre, la boucle continuerait au-delà du
+
+00:10:16.024 --> 00:10:16.581
+tableau.
+
+00:10:17.131 --> 00:10:21.932
+Rappel. Répéter jusqu'à : le nombre de
+tours n'est pas connu, il y a une
+
+00:10:21.932 --> 00:10:25.266
+condition d'arrêt, et je répète au moins
+une fois.
+
+00:10:25.266 --> 00:10:27.266
+Le test se fait après le bloc.
+
+00:10:27.266 --> 00:10:31.667
+Dans le tableau : boucle avec condition,
+au moins un tour garanti.
+
+00:10:32.216 --> 00:10:37.667
+Dernier cas. J'ai une boîte de jetons, et
+je veux les mettre dans le sac, un par un,
+
+00:10:37.667 --> 00:10:38.965
+tant qu'il en reste.
+
+00:10:38.965 --> 00:10:44.221
+Est-ce que je connais le nombre de tours ?
+Non, il dépend du contenu de la boîte.
+
+00:10:44.221 --> 00:10:48.179
+Est-ce qu'il y a une condition d'arrêt ?
+Oui : la boîte vide.
+
+00:10:48.179 --> 00:10:53.175
+Et combien de fois au moins ? Là, ça peut
+être zéro : si la boîte est vide au
+
+00:10:53.175 --> 00:10:55.122
+départ, je ne fais aucun tour.
+
+00:10:55.673 --> 00:10:58.689
+Donc : tant que la boîte n'est pas vide,
+faire.
+
+00:10:58.689 --> 00:11:03.118
+Prendre un jeton. Le mettre dans le sac,
+et ajouter un au compteur n,
+
+00:11:03.118 --> 00:11:06.648
+le nombre de jetons qui sont dans le sac.
+Fin tant que.
+
+00:11:06.648 --> 00:11:10.691
+Le test est avant le bloc : si la boîte
+est vide dès le départ,
+
+00:11:10.691 --> 00:11:12.745
+on ne rentre pas dans la boucle.
+
+00:11:12.745 --> 00:11:17.687
+C'est exactement ce que je veux ici :
+aucun jeton à prendre, aucun tour, et n
+
+00:11:17.687 --> 00:11:18.521
+reste à zéro.
+
+00:11:19.071 --> 00:11:22.897
+En JavaScript : while, entre parenthèses,
+jetons supérieur à zéro.
+
+00:11:22.897 --> 00:11:26.838
+Entre accolades : jetons moins moins, pour
+en sortir un de la boîte,
+
+00:11:26.838 --> 00:11:30.026
+et n plus plus, pour en compter un de plus
+dans le sac.
+
+00:11:30.026 --> 00:11:32.518
+Tant que la condition est vraie, on
+répète.
+
+00:11:32.518 --> 00:11:34.373
+Dès qu'elle est fausse, on sort.
+
+00:11:34.923 --> 00:11:39.304
+Avec trois jetons : trois tours, la boîte
+se vide, le sac se remplit,
+
+00:11:39.304 --> 00:11:42.351
+n vaut trois, et on sort quand jetons vaut
+zéro.
+
+00:11:42.351 --> 00:11:45.907
+Avec zéro jeton : la condition est fausse
+tout de suite,
+
+00:11:45.907 --> 00:11:48.827
+zéro tour, et le sac reste vide : n vaut
+zéro.
+
+00:11:48.827 --> 00:11:53.271
+Comparez avec répéter jusqu'à : là, on
+serait entré au moins une fois,
+
+00:11:53.271 --> 00:11:56.065
+et on aurait pris un jeton qui n'existe
+pas.
+
+00:11:56.615 --> 00:12:00.871
+Rappel. Tant que : nombre de tours
+inconnu, condition d'arrêt,
+
+00:12:00.871 --> 00:12:02.449
+et risque de zéro tour.
+
+00:12:02.449 --> 00:12:04.508
+Le test se fait avant le bloc.
+
+00:12:04.508 --> 00:12:09.107
+C'est la boucle la plus prudente : elle
+peut ne rien faire du tout.
+
+00:12:09.657 --> 00:12:11.465
+Le tableau des trois boucles.
+
+00:12:11.465 --> 00:12:16.390
+Pour : nombre de tours connu, pas de
+condition d'arrêt, test avant, le compteur
+
+00:12:16.390 --> 00:12:19.383
+va de la position initiale à la position
+finale.
+
+00:12:19.383 --> 00:12:24.121
+Répéter jusqu'à : nombre inconnu,
+condition d'arrêt, test après, au moins un
+
+00:12:24.121 --> 00:12:24.433
+tour.
+
+00:12:24.433 --> 00:12:29.233
+Tant que : nombre inconnu, condition
+d'arrêt, test avant, zéro tour possible.
+
+00:12:29.233 --> 00:12:31.228
+Trois boucles, trois situations.
+
+00:12:31.779 --> 00:12:35.401
+Et pour choisir, une seule chose à faire :
+poser les questions,
+
+00:12:35.401 --> 00:12:36.148
+dans l'ordre.
+
+00:12:36.148 --> 00:12:38.908
+Est-ce que je connais le nombre de
+répétitions ?
+
+00:12:38.908 --> 00:12:40.748
+Oui, et rien ne m'arrête : Pour.
+
+00:12:40.748 --> 00:12:45.462
+Oui, mais une condition peut m'arrêter :
+répéter jusqu'à si au moins un tour, tant
+
+00:12:45.462 --> 00:12:46.037
+que sinon.
+
+00:12:46.037 --> 00:12:50.292
+Non : boucle conditionnelle, et je regarde
+si le premier tour est garanti.
+
+00:12:50.292 --> 00:12:50.924
+C'est tout.
+
+00:12:51.473 --> 00:12:55.872
+Une dernière chose : ne mélangez pas les
+deux écritures.
+
+00:12:55.872 --> 00:13:02.078
+À droite, en haut, l'algorithme : Pour,
+Répéter jusqu'à, Tant que, en français.
+
+00:13:02.078 --> 00:13:05.613
+En bas, le JavaScript : for, do while,
+while.
+
+00:13:05.613 --> 00:13:07.813
+Même logique, deux langages.
+
+00:13:07.813 --> 00:13:11.976
+On écrit l'algorithme d'abord, on le
+traduit ensuite.
+
+00:13:12.527 --> 00:13:14.843
+Voilà les trois blocs côte à côte.
+
+00:13:14.843 --> 00:13:19.272
+À gauche, Pour : je connais le nombre de
+tours, rien ne m'arrête,
+
+00:13:19.272 --> 00:13:23.359
+le compteur va de la position initiale à
+la position finale.
+
+00:13:23.359 --> 00:13:28.469
+Au milieu, Répéter jusqu'à : le nombre est
+inconnu, une condition m'arrête,
+
+00:13:28.469 --> 00:13:30.581
+et je répète au moins une fois.
+
+00:13:30.581 --> 00:13:35.145
+À droite, Tant que : le nombre est
+inconnu, une condition m'arrête,
+
+00:13:35.145 --> 00:13:37.598
+mais je peux ne pas répéter du tout.
+
+00:13:37.598 --> 00:13:41.958
+Trois boucles, trois situations, et le
+même schéma pour choisir.
+
+00:13:42.508 --> 00:13:46.931
+La méthode tient en trois questions, et
+elles se posent toujours dans cet ordre.
+
+00:13:46.931 --> 00:13:50.470
+Un : est-ce que je connais le nombre de
+répétitions à l'avance ?
+
+00:13:50.470 --> 00:13:53.787
+Deux : est-ce qu'une condition peut
+m'arrêter avant la fin ?
+
+00:13:53.787 --> 00:13:56.939
+Trois : combien de fois, au moins, est-ce
+que je répète ?
+
+00:13:56.939 --> 00:14:00.422
+Avec ces trois réponses, vous ne vous
+tromperez plus de boucle.
+
+00:14:00.972 --> 00:14:05.879
+Voilà. Trois boucles, un schéma, et cette
+question à se poser à chaque fois.
+
+00:14:05.879 --> 00:14:08.333
+À vous de jouer, dans STI Version 2.0.
+
+00:14:08.333 --> 00:14:10.399
+Série 6, les boucles. À bientôt.
