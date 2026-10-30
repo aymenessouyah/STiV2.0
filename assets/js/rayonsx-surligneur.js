@@ -1044,7 +1044,7 @@
       doc.addEventListener("mouseover", onXrayPointerMove, true);
       doc.addEventListener("touchstart", onXrayPointerMove, { passive: true, capture: true });
       doc.addEventListener("click", onXrayClick, true);
-      window.addEventListener("scroll", onXrayScrollResize, true);
+      window.addEventListener("scroll", onXrayScrollResize, { capture: true, passive: true });
       window.addEventListener("resize", onXrayScrollResize);
     } else {
       if (doc.body) {

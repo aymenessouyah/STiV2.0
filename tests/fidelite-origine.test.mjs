@@ -30,11 +30,13 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
      v532 : config.js charge la barre mobile modernisée (chargeur ?v=532) et peint
      son gabarit flottant ; empreinte réactualisée.
      v534 : sync-progressions.js n'affiche plus la pastille de synchro à vie : deux
-     secondes à chaque changement d'état ; empreinte réactualisée. */
+     secondes à chaque changement d'état ; empreinte réactualisée.
+     v553 : l'écouteur de défilement du visualViewport d'accès devient passif
+     (audit de fluidité) ; empreinte réactualisée. */
   const originaux = {
     'assets/js/config.js': '4936f1efc5fde33dc2432dd3a9aa4fc33df77f90b842fe2091a2a5ba2f872a7f',
     'assets/js/supabase-umd.js': '2eebfe06b1b5309985dc1526e8981ea3a18b71beeef83e7f38e04c303e142d6d',
-    'assets/js/acces.js': '60e52add1f7dd60a12ee1102f2f181719076e209e0d05211f5e6f58935d985a4',
+    'assets/js/acces.js': '29f49627eed1674e5b2590b496d0ffeac6e9ecf0c3f8cf3161da014135ddd3a5',
     'assets/js/sync-progressions.js': 'c6e36a6f0ebea5e481cfb1b16afb9c0cfefc595ed4de21a1becff5a096d327b6',
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
     'portail.html': 'f95c5b3422cfda3d5fa75a7b8e20fc41f2d63ab58f24468bd830d187cd722b68',
@@ -162,8 +164,10 @@ test('atelier Bac : les scripts historiques ne sont pas coupés par les ajouts',
 });
 
 test('commandes d’administration : scripts et fonctions de la barre PC inchangés', () => {
-  assert.equal(sha('assets/js/admin.js'), '70e1feb6717f88146ed39e4d9678051a750fd2e6760f643cc124fd10b140108e');
-  assert.equal(sha('assets/js/rayonsx-surligneur.js'), 'b338691b29dcb99cb62b8d4e266c8a3d29af56a2a8d88fb3124f1f96334bde73');
+  /* v553 : les deux écouteurs de défilement de l'administration et celui du
+     surligneur deviennent passifs (audit de fluidité) ; empreintes réactualisées. */
+  assert.equal(sha('assets/js/admin.js'), '98dc18fa9d18cfaf9281524de5afeda02c27e1cbc8ca6328de4f9c3dc1aa67bd');
+  assert.equal(sha('assets/js/rayonsx-surligneur.js'), '1b7fe2067629766ef4043fa3060199b71124d8486e36d92aaac0b45bd861847c');
   const protection = lire('assets/js/protection.js');
   const debut = protection.indexOf('  function estAppareilPC()');
   const fin = protection.indexOf('  function obtenirPauseQRVideoSTI()', debut);

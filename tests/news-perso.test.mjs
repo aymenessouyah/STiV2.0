@@ -226,12 +226,12 @@ test('v496 : le tableau de bord admin choisit la classe et saisit texte 1, texte
 
   /* Le bandeau du site est bien invalidé par le service worker. */
   const sw = lire('sw.js');
-  assert.match(sw, /var CACHE = "sti-atelier-v385"/);
-  assert.match(sw, /var UPDATE_ID = "v552-audit-plateforme-20261030"/);
+  assert.match(sw, /var CACHE = "sti-atelier-v386"/);
+  assert.match(sw, /var UPDATE_ID = "v553-defilement-passif-20261030"/);
   assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "ruban-vert-v517"/);
   assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "classe-nav-v536"/);
   assert.match(sw, /url: "\.\/admin\.html", revision: "vues-videos-v531"/);
-  assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "news-niveaux-v497"/);
+  assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "defilement-passif-v553"/);
   const shell = sw.split('var SHELL = [')[1].split('];')[0];
   assert.ok(shell.includes('"./assets/js/news-perso.js"'), 'le moteur du bandeau est dans le shell hors-ligne');
   assert.ok(!shell.includes('"./assets/js/cote-ticker.js"'), 'l’ancien moteur ne fait plus partie du shell');

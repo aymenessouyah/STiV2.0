@@ -331,7 +331,7 @@
       cacherPopSite();
     }, true);
     if (window.addEventListener) {
-      window.addEventListener("scroll", cacherPopSite, true);
+      window.addEventListener("scroll", cacherPopSite, { capture: true, passive: true });
       window.addEventListener("mousedown", cacherPopSite, true);
     }
   }
