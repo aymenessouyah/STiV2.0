@@ -1,0 +1,32 @@
+{
+  "durees": {
+    "ouverture": 53.96,
+    "octets": 99.16,
+    "longueur": 48.8,
+    "recherche": 70.2,
+    "extraction": 66.24,
+    "remplacer": 89.84,
+    "separer": 56.76,
+    "transtypage_nombres": 93.32,
+    "transtypage_autres": 114.84,
+    "dates": 119.12,
+    "verifier_date": 132.12,
+    "exercices": 98.24
+  },
+  "debuts": {
+    "ouverture": 1.2,
+    "octets": 55.71,
+    "longueur": 155.42,
+    "recherche": 204.77,
+    "extraction": 275.52,
+    "remplacer": 342.31,
+    "separer": 432.7,
+    "transtypage_nombres": 490.01,
+    "transtypage_autres": 583.88,
+    "dates": 699.27,
+    "verifier_date": 818.94,
+    "exercices": 951.61
+  },
+  "total": 1051.65,
+  "debit": 13.3
+}

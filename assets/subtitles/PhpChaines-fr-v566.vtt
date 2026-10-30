@@ -1,0 +1,906 @@
+WEBVTT
+
+00:00:01.200 --> 00:00:03.180
+Bienvenue dans STI Version 2.0.
+
+00:00:03.180 --> 00:00:08.480
+Aujourd'hui, une capsule de PHP en trois
+parties : les fonctions sur les chaînes de
+
+00:00:08.480 --> 00:00:09.182
+caractères,
+
+00:00:09.182 --> 00:00:13.461
+les opérateurs de transtypage, et les
+fonctions de date et d'heure.
+
+00:00:13.461 --> 00:00:18.697
+L'écran est coupé en deux : à gauche la
+fiche, à droite le code PHP — et ce que la
+
+00:00:18.697 --> 00:00:19.527
+page affiche.
+
+00:00:19.527 --> 00:00:24.636
+Pour les exercices, la coupure change de
+sens : l'énoncé à gauche, la correction
+
+00:00:24.636 --> 00:00:25.849
+détaillée à droite.
+
+00:00:25.849 --> 00:00:28.212
+Deux choses à retenir dès maintenant.
+
+00:00:28.212 --> 00:00:33.193
+Un : tous les exemples de la partie A
+utilisent la même chaîne, dollar ch égal
+
+00:00:33.193 --> 00:00:35.172
+Lycée Rafèha, entre guillemets.
+
+00:00:35.172 --> 00:00:40.281
+Deux : dans un fichier PHP enregistré en
+UTF-8, une lettre accentuée occupe deux
+
+00:00:40.281 --> 00:00:40.728
+octets.
+
+00:00:40.728 --> 00:00:45.198
+Le é et le è pèsent donc deux octets
+chacun, et cela change toutes les
+
+00:00:45.198 --> 00:00:45.837
+positions.
+
+00:00:45.837 --> 00:00:50.818
+Regardez le ruban d'octets en bas à
+gauche : quatorze cases numérotées de zéro
+
+00:00:50.818 --> 00:00:51.392
+à treize.
+
+00:00:51.392 --> 00:00:55.160
+C'est lui que nous allons suivre pendant
+toute la partie A.
+
+00:00:55.710 --> 00:00:57.762
+Commençons par le ruban.
+
+00:00:57.762 --> 00:01:04.771
+La chaîne compte douze caractères, mais
+quatorze octets, parce que le é et le è en
+
+00:01:04.771 --> 00:01:06.566
+occupent deux chacun.
+
+00:01:06.566 --> 00:01:13.148
+Les positions, celles que comptent les
+fonctions, sont numérotées à partir de
+
+00:01:13.148 --> 00:01:13.661
+zéro :
+
+00:01:13.661 --> 00:01:20.927
+zéro pour le L, un pour le y, deux pour le
+c, trois et quatre pour le é, cinq pour le
+
+00:01:20.927 --> 00:01:22.723
+e, six pour l'espace,
+
+00:01:22.723 --> 00:01:29.903
+sept pour le R, huit pour le a, neuf pour
+le f, dix et onze pour le è, douze pour le
+
+00:01:29.903 --> 00:01:31.613
+h, treize pour le a.
+
+00:01:31.613 --> 00:01:38.537
+Retenez bien ce sept : le R n'est pas à la
+position six, comme on compterait à la
+
+00:01:38.537 --> 00:01:41.101
+main, mais à la position sept,
+
+00:01:41.101 --> 00:01:43.922
+parce que le é a pris deux cases.
+
+00:01:43.922 --> 00:01:49.906
+Première fonction : ord. ord, de ch,
+retourne le code ASCII du premier
+
+00:01:49.906 --> 00:01:54.009
+caractère de la chaîne, et seulement du
+premier.
+
+00:01:54.009 --> 00:02:01.019
+ord de L donne 76. ord de R donne 82. ord
+de la chaîne entière donne encore 76, le
+
+00:02:01.019 --> 00:02:01.874
+code du L.
+
+00:02:01.874 --> 00:02:08.883
+Et ord du é donne 195 : ce n'est pas un
+code ASCII, c'est le premier octet du é en
+
+00:02:08.883 --> 00:02:09.396
+UTF-8.
+
+00:02:09.396 --> 00:02:14.782
+Seconde fonction : chr, l'inverse. chr de
+76 donne la lettre L.
+
+00:02:14.782 --> 00:02:20.081
+On peut donc écrire chr 82, chr 97, chr
+102, et obtenir R a f.
+
+00:02:20.081 --> 00:02:26.664
+Et l'exemple classique : le code du a
+minuscule vaut 97, celui du A majuscule
+
+00:02:26.664 --> 00:02:29.912
+65 ; la différence est de trente-deux.
+
+00:02:29.912 --> 00:02:34.870
+chr ne travaille que sur les codes de
+base, de zéro à 127.
+
+00:02:35.420 --> 00:02:41.603
+Troisième fonction : strlen. strlen de ch
+retourne la longueur de la chaîne, espaces
+
+00:02:41.603 --> 00:02:42.192
+compris.
+
+00:02:42.192 --> 00:02:44.326
+strlen de dollar ch donne 14.
+
+00:02:44.326 --> 00:02:49.479
+strlen de Lycée, seul, donne 6, alors que
+le mot n'a que cinq lettres.
+
+00:02:49.479 --> 00:02:52.791
+Pourquoi ? Parce que le é occupe deux
+octets.
+
+00:02:52.791 --> 00:02:58.385
+Et voilà la phrase à retenir : strlen
+compte les octets, pas les caractères.
+
+00:02:58.385 --> 00:03:02.875
+Lycée Rafèha contient douze caractères,
+mais quatorze octets.
+
+00:03:02.875 --> 00:03:08.542
+Comparez avec JavaScript : length donne
+12, strlen donne 14. Ce n'est pas une
+
+00:03:08.542 --> 00:03:10.750
+erreur, c'est une autre unité.
+
+00:03:10.750 --> 00:03:16.565
+Conséquence pratique : ne jamais utiliser
+strlen pour mesurer un texte affiché,
+
+00:03:16.565 --> 00:03:19.730
+seulement pour la place occupée en
+mémoire.
+
+00:03:19.730 --> 00:03:24.220
+Regardez le ruban : strlen compte les
+cases, pas les lettres.
+
+00:03:24.770 --> 00:03:28.899
+Quatrième fonction : strpos, la position
+d'une sous-chaîne.
+
+00:03:28.899 --> 00:03:34.569
+La syntaxe est strpos de ch, puis ch1 : la
+chaîne où l'on cherche d'abord, ce que
+
+00:03:34.569 --> 00:03:36.038
+l'on cherche ensuite.
+
+00:03:36.038 --> 00:03:38.278
+strpos de dollar ch, R, donne 7.
+
+00:03:38.278 --> 00:03:43.737
+strpos de dollar ch, a, donne 8 : c'est la
+première lettre a, celle de Rafèha.
+
+00:03:43.737 --> 00:03:49.057
+strpos de dollar ch, Raf, donne 7 aussi :
+c'est la position du début du mot.
+
+00:03:49.057 --> 00:03:53.886
+Et strpos de dollar ch, L, donne 0, parce
+que le L est au tout début.
+
+00:03:53.886 --> 00:03:59.065
+Voilà le piège de cette fonction. Si la
+sous-chaîne est absente, strpos ne
+
+00:03:59.065 --> 00:04:02.145
+retourne pas moins un : elle retourne
+false.
+
+00:04:02.145 --> 00:04:08.024
+Et comme la position zéro s'écrit avec un
+zéro, un test écrit avec deux signes égal,
+
+00:04:08.024 --> 00:04:12.433
+zéro égal false, serait vrai même quand la
+lettre est au début.
+
+00:04:12.433 --> 00:04:18.102
+La fiche le dit et le répète : il faut
+tester avec trois signes égal, strictement
+
+00:04:18.102 --> 00:04:19.012
+égal à false.
+
+00:04:19.012 --> 00:04:24.541
+On écrit : si strpos de dollar ch, z,
+trois signes égal false, alors afficher z
+
+00:04:24.541 --> 00:04:25.311
+est absent.
+
+00:04:25.311 --> 00:04:30.771
+Dernier point, et il découle du ruban :
+les positions sont comptées en octets.
+
+00:04:30.771 --> 00:04:34.970
+Le R est à la position 7, pas à la
+position 6, à cause du é.
+
+00:04:35.520 --> 00:04:40.861
+Cinquième fonction : substr, pour extraire
+un morceau de la chaîne.
+
+00:04:40.861 --> 00:04:47.158
+La syntaxe est substr de ch, la position
+de début, et, si besoin, une longueur.
+
+00:04:47.158 --> 00:04:51.701
+Si la longueur est omise, l'extraction va
+jusqu'à la fin.
+
+00:04:51.701 --> 00:04:56.564
+Quatre exemples. substr de dollar ch,
+zéro, six, donne Lycée.
+
+00:04:56.564 --> 00:05:00.948
+substr de dollar ch, sept, donne Rafèha,
+jusqu'au bout.
+
+00:05:00.948 --> 00:05:04.455
+substr de dollar ch, sept, trois, donne
+Raf.
+
+00:05:04.455 --> 00:05:07.962
+substr de dollar ch, zéro, trois, donne
+Lyc.
+
+00:05:07.962 --> 00:05:14.578
+Et voilà la différence avec JavaScript, à
+ne pas confondre : le troisième paramètre
+
+00:05:14.578 --> 00:05:17.926
+est une longueur, pas une position de fin.
+
+00:05:17.926 --> 00:05:24.144
+Lycée occupe six octets, des positions
+zéro à cinq : d'où substr de zéro, six.
+
+00:05:24.144 --> 00:05:28.209
+Attention aussi au découpage au milieu
+d'un accent.
+
+00:05:28.209 --> 00:05:34.905
+substr de dollar ch, zéro, quatre, affiche
+L y c, puis un caractère illisible : on a
+
+00:05:34.905 --> 00:05:36.419
+coupé le é en deux.
+
+00:05:36.419 --> 00:05:41.760
+Sur le ruban, c'est le trait qui tombe au
+milieu de la case quatre.
+
+00:05:42.310 --> 00:05:45.643
+Sixième fonction : str_replace, le
+remplacement.
+
+00:05:45.643 --> 00:05:50.989
+La syntaxe est str_replace de ch1, ch2,
+ch : on met ce qu'on cherche, puis ce
+
+00:05:50.989 --> 00:05:52.447
+qu'on met à la place,
+
+00:05:52.447 --> 00:05:54.738
+et la chaîne en dernier argument.
+
+00:05:54.738 --> 00:05:59.389
+str_replace de Lycée par École, dans
+dollar ch, donne École Rafèha.
+
+00:05:59.389 --> 00:06:04.666
+str_replace de a par A donne Lycée
+RAfèhA : les deux a ont été remplacés, en
+
+00:06:04.666 --> 00:06:05.846
+un seul parcours.
+
+00:06:05.846 --> 00:06:11.331
+str_replace de z par Z ne change rien, et
+la dernière ligne, echo de dollar ch,
+
+00:06:11.331 --> 00:06:13.483
+affiche toujours Lycée Rafèha :
+
+00:06:13.483 --> 00:06:19.315
+la chaîne d'origine n'est jamais modifiée,
+la fonction retourne une nouvelle valeur.
+
+00:06:19.315 --> 00:06:24.453
+Trois différences avec replace en
+JavaScript : toutes les occurrences sont
+
+00:06:24.453 --> 00:06:27.647
+remplacées, la chaîne est le dernier
+argument,
+
+00:06:27.647 --> 00:06:31.535
+et la recherche distingue les majuscules
+des minuscules.
+
+00:06:31.535 --> 00:06:36.256
+Septième et huitième fonctions :
+strtolower et strtoupper, la casse.
+
+00:06:36.256 --> 00:06:41.393
+strtolower de dollar ch donne lycée
+rafèha. strtoupper donne LYCéE RAFèHA.
+
+00:06:41.393 --> 00:06:46.878
+Regardez bien le é et le è : ils n'ont pas
+été convertis. Ces deux fonctions ne
+
+00:06:46.878 --> 00:06:49.864
+connaissent que les lettres non
+accentuées.
+
+00:06:49.864 --> 00:06:55.765
+Neuvième fonction : trim, qui supprime les
+espaces du début et de la fin, jamais ceux
+
+00:06:55.765 --> 00:06:56.459
+du milieu.
+
+00:06:56.459 --> 00:07:01.875
+Avec trois espaces avant et trois espaces
+après, strlen donne 20 ; après trim,
+
+00:07:01.875 --> 00:07:02.985
+strlen donne 14.
+
+00:07:02.985 --> 00:07:08.331
+trim sert à nettoyer une saisie, celle de
+dollar underscore POST ou de dollar
+
+00:07:08.331 --> 00:07:12.150
+underscore GET, avant de la tester ou de
+l'enregistrer.
+
+00:07:12.700 --> 00:07:18.391
+Voilà l'exercice type de la fiche :
+séparer Lycée et Rafèha dans la chaîne.
+
+00:07:18.391 --> 00:07:23.172
+On combine strpos, substr et la
+concaténation, en trois lignes.
+
+00:07:23.172 --> 00:07:29.166
+Un : on trouve la position du R. dollar
+pos égal strpos de dollar ch, R, ce qui
+
+00:07:29.166 --> 00:07:29.774
+donne 7.
+
+00:07:29.774 --> 00:07:35.541
+Deux : le nom, c'est substr de dollar ch à
+partir de la position 7 : Rafèha.
+
+00:07:35.541 --> 00:07:41.156
+Trois : le type, c'est substr de dollar
+ch, zéro, dollar pos moins un : on
+
+00:07:41.156 --> 00:07:45.026
+s'arrête juste avant l'espace, et on
+obtient Lycée.
+
+00:07:45.026 --> 00:07:51.400
+Puis on colle : echo de dollar type point
+barre oblique point dollar nom, et la page
+
+00:07:51.400 --> 00:07:53.449
+affiche Lycée barre Rafèha.
+
+00:07:53.449 --> 00:07:58.154
+Regardez ce point : c'est l'opérateur de
+concaténation en PHP.
+
+00:07:58.154 --> 00:08:02.631
+En JavaScript, on écrit un plus. En PHP,
+on écrit un point.
+
+00:08:02.631 --> 00:08:09.005
+Et la position 7 vient du ruban d'octets :
+elle est juste parce que le é occupe deux
+
+00:08:09.005 --> 00:08:09.460
+cases.
+
+00:08:10.010 --> 00:08:13.301
+Deuxième partie : les opérateurs de
+transtypage.
+
+00:08:13.301 --> 00:08:18.581
+Un transtypage, en anglais un cast,
+convertit une valeur vers un autre type :
+
+00:08:18.581 --> 00:08:23.998
+on écrit le type entre parenthèses devant
+la valeur, par exemple parenthèse int
+
+00:08:23.998 --> 00:08:25.369
+parenthèse dollar x.
+
+00:08:25.369 --> 00:08:28.180
+La variable d'origine n'est pas modifiée.
+
+00:08:28.180 --> 00:08:33.871
+Pourquoi c'est indispensable ? Parce que
+les valeurs de dollar underscore GET et de
+
+00:08:33.871 --> 00:08:37.231
+dollar underscore POST sont toujours des
+chaînes.
+
+00:08:37.231 --> 00:08:40.385
+Avant de calculer avec, il faut les
+convertir.
+
+00:08:40.385 --> 00:08:45.185
+Onzième rubrique : la conversion en
+entier, parenthèse int parenthèse.
+
+00:08:45.185 --> 00:08:50.602
+int de la chaîne 25 donne 25. int de 12
+virgule 9 donne 12 : la partie décimale
+
+00:08:50.602 --> 00:08:52.522
+est supprimée, sans arrondi.
+
+00:08:52.522 --> 00:08:55.607
+int de la chaîne 12 virgule 9 donne 12
+aussi.
+
+00:08:55.607 --> 00:09:00.064
+int de la chaîne 25 élèves donne 25 : PHP
+lit le nombre du début.
+
+00:09:00.064 --> 00:09:03.630
+int de Lycée Rafèha donne 0 : aucun nombre
+au début.
+
+00:09:03.630 --> 00:09:05.001
+int de true donne 1.
+
+00:09:05.001 --> 00:09:10.486
+Et la différence avec JavaScript : en PHP,
+une chaîne qui ne commence pas par un
+
+00:09:10.486 --> 00:09:12.612
+nombre devient simplement zéro.
+
+00:09:12.612 --> 00:09:17.206
+Pour arrondir au lieu de supprimer les
+décimales, on utilise round.
+
+00:09:17.206 --> 00:09:22.074
+Douzième rubrique : la conversion en réel,
+parenthèse float parenthèse.
+
+00:09:22.074 --> 00:09:27.560
+float de la chaîne 12 point 5 donne 12
+point 5. float de 12 point 5 points donne
+
+00:09:27.560 --> 00:09:28.314
+12 point 5.
+
+00:09:28.314 --> 00:09:32.908
+Mais attention : float de 12 virgule 5,
+avec une virgule, donne 12.
+
+00:09:32.908 --> 00:09:36.610
+Le séparateur décimal est le point, jamais
+la virgule.
+
+00:09:36.610 --> 00:09:41.959
+float de Lycée Rafèha donne 0, et float de
+3 donne 3 : un réel affiche 3, sans
+
+00:09:41.959 --> 00:09:43.330
+virgule ni décimale.
+
+00:09:43.880 --> 00:09:50.032
+Treizième rubrique : la conversion en
+chaîne, parenthèse string parenthèse.
+
+00:09:50.032 --> 00:09:55.856
+string de 2026 donne la chaîne 2026, et
+strlen de cette chaîne donne 4.
+
+00:09:55.856 --> 00:09:58.973
+string de 12 point 5 donne 12 point 5.
+
+00:09:58.973 --> 00:10:05.946
+string de true donne 1, et string de false
+donne une chaîne vide : rien ne s'affiche.
+
+00:10:05.946 --> 00:10:11.360
+À noter : le point de concaténation
+convertit déjà tout en chaîne.
+
+00:10:11.360 --> 00:10:17.758
+Année espace point 2026 donne Année 2026
+sans transtypage ; l'opérateur sert à
+
+00:10:17.758 --> 00:10:20.219
+forcer le type, explicitement.
+
+00:10:20.219 --> 00:10:26.945
+Quatorzième rubrique, la plus délicate :
+la conversion en booléen, parenthèse bool
+
+00:10:26.945 --> 00:10:27.847
+parenthèse.
+
+00:10:27.847 --> 00:10:33.999
+Sont fausses : la valeur zéro, zéro
+virgule zéro, la chaîne vide, la chaîne
+
+00:10:33.999 --> 00:10:36.460
+zéro, le tableau vide et null.
+
+00:10:36.460 --> 00:10:38.921
+Toute autre valeur donne vrai.
+
+00:10:38.921 --> 00:10:43.925
+bool de Lycée Rafèha donne 1, c'est vrai.
+bool de 12 donne 1.
+
+00:10:43.925 --> 00:10:50.241
+Et voici le piège : bool de la chaîne
+false, entre guillemets, donne 1 aussi.
+
+00:10:50.241 --> 00:10:56.803
+Parce qu'une chaîne non vide est toujours
+vraie, même quand elle contient le mot
+
+00:10:56.803 --> 00:10:57.296
+false.
+
+00:10:57.296 --> 00:11:03.694
+En revanche, bool de la chaîne vide ne
+donne rien, bool du zéro ne donne rien,
+
+00:11:03.694 --> 00:11:07.713
+et bool de la chaîne zéro ne donne rien
+non plus.
+
+00:11:07.713 --> 00:11:12.553
+C'est l'inverse de JavaScript, où la
+chaîne zéro est vraie.
+
+00:11:12.553 --> 00:11:18.869
+Dernière rubrique de la partie B : la
+conversion en tableau, parenthèse array
+
+00:11:18.869 --> 00:11:19.771
+parenthèse.
+
+00:11:19.771 --> 00:11:25.513
+Une valeur simple devient un tableau d'un
+seul élément, d'indice zéro.
+
+00:11:25.513 --> 00:11:30.927
+Avec dollar t égal array de dollar ch :
+count de dollar t donne 1,
+
+00:11:30.927 --> 00:11:34.537
+et dollar t crochet zéro donne Lycée
+Rafèha.
+
+00:11:34.537 --> 00:11:38.720
+Et count de array de null donne 0, un
+tableau vide.
+
+00:11:39.270 --> 00:11:43.623
+Troisième partie : les fonctions de date
+et d'heure.
+
+00:11:43.623 --> 00:11:50.236
+Toutes travaillent avec un timestamp : le
+nombre de secondes écoulées depuis le
+
+00:11:50.236 --> 00:11:52.747
+premier janvier 1970 à minuit.
+
+00:11:52.747 --> 00:11:59.695
+Regardez la frise en bas à gauche : elle
+part de 1970 et arrive à notre rentrée, le
+
+00:11:59.695 --> 00:12:01.202
+15 septembre 2026.
+
+00:12:01.202 --> 00:12:07.732
+Un timestamp, c'est une simple distance en
+secondes depuis ce point de départ.
+
+00:12:07.732 --> 00:12:10.829
+Seizième rubrique : la fonction date.
+
+00:12:10.829 --> 00:12:15.935
+La syntaxe est date de format, et, si
+besoin, d'un timestamp.
+
+00:12:15.935 --> 00:12:20.790
+Sans timestamp, date utilise la date et
+l'heure courantes.
+
+00:12:20.790 --> 00:12:27.571
+Le format s'écrit avec des lettres, et il
+faut les connaître par cœur. Les voici.
+
+00:12:27.571 --> 00:12:33.012
+La lettre d, c'est le jour du mois sur
+deux chiffres, de 01 à 31.
+
+00:12:33.012 --> 00:12:37.198
+La lettre j, le jour du mois sans zéro, de
+1 à 31.
+
+00:12:37.198 --> 00:12:44.146
+La lettre m, le mois sur deux chiffres, de
+01 à 12. La lettre n, le mois sans zéro.
+
+00:12:44.146 --> 00:12:50.926
+La lettre Y, l'année sur quatre chiffres.
+La lettre y, l'année sur deux chiffres.
+
+00:12:50.926 --> 00:12:57.288
+La lettre H, l'heure, de 00 à 23. La
+lettre i, les minutes. La lettre s, les
+
+00:12:57.288 --> 00:12:58.042
+secondes.
+
+00:12:58.042 --> 00:13:04.655
+La lettre D, le jour de la semaine en
+trois lettres, et la lettre l, le jour de
+
+00:13:04.655 --> 00:13:07.836
+la semaine en entier, mais en anglais.
+
+00:13:07.836 --> 00:13:14.784
+Avec le timestamp de la rentrée : date de
+d barre m barre Y donne 15 barre 09 barre
+
+00:13:14.784 --> 00:13:15.202
+2026.
+
+00:13:15.202 --> 00:13:20.309
+date de H deux points i donne 08:00. date
+de l donne Tuesday.
+
+00:13:20.309 --> 00:13:26.587
+Et date de Y seul donne l'année courante,
+deux mille vingt-six aujourd'hui.
+
+00:13:26.587 --> 00:13:32.112
+Les noms de jours et de mois sont en
+anglais : Tuesday, September.
+
+00:13:32.112 --> 00:13:38.390
+Pour écrire une barre ou un tiret, on les
+place directement dans le format.
+
+00:13:38.940 --> 00:13:46.145
+Dix-septième rubrique : time, l'heure
+actuelle en timestamp, un grand nombre qui
+
+00:13:46.145 --> 00:13:48.126
+change chaque seconde.
+
+00:13:48.126 --> 00:13:55.511
+date de d barre m barre Y, espace, H deux
+points i deux points s, avec time, donne
+
+00:13:55.511 --> 00:13:57.943
+la date et l'heure du jour.
+
+00:13:57.943 --> 00:14:04.968
+Et date de H deux points i, avec time plus
+3600, donne l'heure dans une heure.
+
+00:14:04.968 --> 00:14:12.353
+Ajouter des secondes à time, c'est décaler
+une date : 86400 secondes font un jour.
+
+00:14:12.353 --> 00:14:17.576
+Dix-huitième rubrique : checkdate, la
+validité d'une date.
+
+00:14:17.576 --> 00:14:23.700
+checkdate de mois, jour, année : trois
+arguments, et l'ordre compte.
+
+00:14:23.700 --> 00:14:30.995
+Le mois est le premier : checkdate de 9,
+15, 2026 pour le 15 septembre, l'inverse
+
+00:14:30.995 --> 00:14:33.157
+de l'écriture française.
+
+00:14:33.157 --> 00:14:40.272
+Elle tient compte du nombre de jours de
+chaque mois et des années bissextiles :
+
+00:14:40.272 --> 00:14:45.856
+15 septembre 2026 est valide, mais le 30
+février ne l'est pas,
+
+00:14:45.856 --> 00:14:52.610
+et le 29 février 2028 est valide alors que
+le 29 février 2026 ne l'est pas.
+
+00:14:52.610 --> 00:14:59.905
+Dix-neuvième rubrique : strtotime, une
+chaîne de caractères devient un timestamp.
+
+00:14:59.905 --> 00:15:05.579
+strtotime de la chaîne 2026 tiret 09 tiret
+15 donne 1789430400,
+
+00:15:05.579 --> 00:15:12.694
+et strtotime de 15 september 2026 donne
+exactement le même nombre : les noms de
+
+00:15:12.694 --> 00:15:14.585
+mois sont en anglais.
+
+00:15:14.585 --> 00:15:17.827
+Avec l'heure, on obtient 1789459200.
+
+00:15:17.827 --> 00:15:25.393
+Si la chaîne n'est pas une date reconnue,
+strtotime retourne false : c'est le cas de
+
+00:15:25.393 --> 00:15:27.464
+2026 tiret 13 tiret 45.
+
+00:15:27.464 --> 00:15:34.579
+Dernier exemple, celui de la fiche :
+vérifier puis afficher la date de rentrée.
+
+00:15:34.579 --> 00:15:41.243
+Jour 15, mois 9, année 2026 : on vérifie
+avec checkdate, on convertit avec
+
+00:15:41.243 --> 00:15:44.125
+strtotime, on affiche avec date.
+
+00:15:44.125 --> 00:15:51.060
+La page écrit : Rentrée au Lycée Rafèha,
+deux points, 15 barre 09 barre 2026.
+
+00:15:51.610 --> 00:15:57.025
+Trois exercices pour finir, comme en
+classe : l'énoncé à gauche, la correction
+
+00:15:57.025 --> 00:15:58.344
+détaillée à droite.
+
+00:15:58.344 --> 00:16:03.968
+Premier exercice. Que valent strlen de la
+chaîne Lycée Rafèha, et strpos de cette
+
+00:16:03.968 --> 00:16:04.732
+chaîne, R ?
+
+00:16:04.732 --> 00:16:10.078
+Réponse : 14 pour strlen, et 7 pour
+strpos, le é et le è occupant deux octets
+
+00:16:10.078 --> 00:16:10.564
+chacun.
+
+00:16:10.564 --> 00:16:16.118
+Deuxième exercice. Que vaut int de la
+chaîne 12 euros 50, et que vaut bool de la
+
+00:16:16.118 --> 00:16:17.020
+chaîne zéro ?
+
+00:16:17.020 --> 00:16:22.436
+Réponse : 12, car PHP lit le nombre du
+début ; et faux, car la chaîne zéro est
+
+00:16:22.436 --> 00:16:23.686
+une valeur fausse.
+
+00:16:23.686 --> 00:16:29.448
+Troisième exercice. Comment afficher le 15
+septembre 2026 au format jour barre mois
+
+00:16:29.448 --> 00:16:32.364
+barre année, après avoir vérifié la date ?
+
+00:16:32.364 --> 00:16:37.710
+Réponse : checkdate de 9, 15, 2026, le
+mois en premier ; puis strtotime, puis
+
+00:16:37.710 --> 00:16:39.515
+date de d barre m barre Y.
+
+00:16:39.515 --> 00:16:41.251
+À retenir, en six points.
+
+00:16:41.251 --> 00:16:46.388
+Un : les fonctions sur les chaînes ne
+modifient pas la variable d'origine.
+
+00:16:46.388 --> 00:16:52.151
+Deux : strlen, strpos et substr comptent
+en octets ; une lettre accentuée en occupe
+
+00:16:52.151 --> 00:16:52.498
+deux.
+
+00:16:52.498 --> 00:16:57.497
+Trois : strpos retourne false, et non
+moins un, quand la sous-chaîne est
+
+00:16:57.497 --> 00:17:00.413
+absente ; on teste avec trois signes égal.
+
+00:17:00.413 --> 00:17:05.967
+Quatre : str_replace remplace toutes les
+occurrences, contrairement à replace en
+
+00:17:05.967 --> 00:17:06.731
+JavaScript.
+
+00:17:06.731 --> 00:17:12.493
+Cinq : une chaîne non numérique donne zéro
+avec int et float ; bool donne faux pour
+
+00:17:12.493 --> 00:17:16.798
+zéro, la chaîne vide, la chaîne zéro, un
+tableau vide et null.
+
+00:17:16.798 --> 00:17:22.074
+Six : un timestamp est un nombre de
+secondes depuis le premier janvier 1970,
+
+00:17:22.074 --> 00:17:25.962
+et checkdate attend le mois, puis le jour,
+puis l'année.
+
+00:17:25.962 --> 00:17:29.850
+Bonne révision, et à bientôt dans une
+prochaine capsule.

@@ -319,6 +319,24 @@
       codeApercu: "d.getMonth() + 1 // 9"
     },
     {
+      /* v566 : capsule PHP « Chaînes, transtypage et date/heure » — ord et
+         chr, strlen, strpos (le piège de === false), substr, str_replace,
+         puis les transtypages et les fonctions de date. */
+      id: "php-chaines",
+      matiere: "php",
+      nomMatiere: "PHP",
+      badgeClasse: "badge-php",
+      couleur: "#a78bfa",
+      reserve4si: true,
+      titre: "PHP — Chaînes, transtypage et date/heure",
+      dureeTexte: "17:32",
+      srcPrincipal: "assets/videos/PhpChaines-v566.mp4",
+      srcSecours: "assets/videos/PhpChaines-v566.mp4",
+      sousTitres: "assets/subtitles/PhpChaines-fr-v566.vtt",
+      urlCours: "cours/php.html#videos",
+      codeApercu: "$ch = \"Lycée Rafèha\"; echo strlen($ch); // 14"
+    },
+    {
       /* v549 : capsule « PHP — les variables, la portée et les types ». */
       id: "php-variables",
       matiere: "php",
@@ -964,7 +982,7 @@
      et chaque carte de la grille reçoit un effet de survol différent. L'indice
      est tiré de l'identifiant : stable d'un chargement à l'autre, et deux cartes
      voisines ne retombent pas sur le même effet. */
-  var CAPSULES_VIDEO = { "boucle-pour": true, "console-variables": true, "php-variables": true, "fonctions-chaine": true, "date-js": true };
+  var CAPSULES_VIDEO = { "boucle-pour": true, "console-variables": true, "php-variables": true, "fonctions-chaine": true, "date-js": true, "php-chaines": true };
   function estCapsuleVideo(v) {
     var cle = String((v && v.id) || "");
     if (CAPSULES_VIDEO[cle]) return true;

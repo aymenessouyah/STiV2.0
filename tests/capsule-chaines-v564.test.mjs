@@ -233,11 +233,11 @@ test('la capsule est dans le paquet hors-ligne et versionnée', () => {
   const sw = lire('sw.js');
   assert.ok(sw.includes(`"./assets/videos/FonctionsChaine-v564.mp4"`));
   assert.ok(sw.includes(`"./assets/subtitles/FonctionsChaine-fr-v564.vtt"`));
-  assert.ok(sw.includes('revision: "date-js-v565"'), 'les pages touchées sont réinvalidées');
+  assert.ok(sw.includes('revision: "php-chaines-v566"'), 'les pages touchées sont réinvalidées');
   for (const page of ['./index.html', './cours/javascript.html', './assets/js/app.js',
     './assets/js/protection.js', './assets/js/lecteur-commun.js']) {
-    assert.ok(sw.includes(`{ url: "${page}", revision: "date-js-v565"`) ||
-      sw.includes(`{ url: "${page}", revision: "date-js-v565",`), 'révision de ' + page);
+    assert.ok(sw.includes(`{ url: "${page}", revision: "php-chaines-v566"`) ||
+      sw.includes(`{ url: "${page}", revision: "php-chaines-v566",`), 'révision de ' + page);
   }
 });
 
@@ -245,7 +245,7 @@ test('les totaux de l’accueil suivent le catalogue', () => {
   const liste = catalogue();
   const index = lire('index.html');
   const js = liste.filter((v) => (v.matieres || [v.matiere]).includes('javascript')).length;
-  assert.equal(liste.length, 25);
+  assert.equal(liste.length, 26);
   assert.equal(js, 8);
   assert.ok(index.includes(`data-video-filter="all">Toutes (${liste.length})</button>`));
   assert.ok(index.includes(`<span id="videosTotalNombre">${liste.length}</span>`));

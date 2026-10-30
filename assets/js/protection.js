@@ -1507,6 +1507,20 @@
         { t: 603.057, short: "9 · Exercice — que s'affiche-t-il ?", label: "10:03 · 9 · Exercice — que s'affiche-t-il ?" },
         { t: 692.800, short: "10 · Exercice — la fonction moyenne", label: "11:33 · 10 · Exercice — la fonction moyenne" }
       ];
+      STI_CHAPITRES_MEDIA["php-chaines"] = [
+        { t: 1.200, short: "1 · Bienvenue — chaînes, transtypage et dates en PHP", label: "0:01 · 1 · Bienvenue — chaînes, transtypage et dates en PHP" },
+        { t: 55.710, short: "2 · Les octets, et les codes ASCII : ord et chr", label: "0:56 · 2 · Les octets, et les codes ASCII : ord et chr" },
+        { t: 155.420, short: "3 · La longueur d'une chaîne : strlen", label: "2:35 · 3 · La longueur d'une chaîne : strlen" },
+        { t: 204.770, short: "4 · La recherche d'une sous-chaîne : strpos", label: "3:25 · 4 · La recherche d'une sous-chaîne : strpos" },
+        { t: 275.520, short: "5 · L'extraction d'une sous-chaîne : substr", label: "4:36 · 5 · L'extraction d'une sous-chaîne : substr" },
+        { t: 342.310, short: "6 · Remplacer, changer la casse, nettoyer les espaces", label: "5:42 · 6 · Remplacer, changer la casse, nettoyer les espaces" },
+        { t: 432.700, short: "7 · L'exemple complet : séparer le type et le nom", label: "7:13 · 7 · L'exemple complet : séparer le type et le nom" },
+        { t: 490.010, short: "8 · Le transtypage : (int) et (float)", label: "8:10 · 8 · Le transtypage : (int) et (float)" },
+        { t: 583.880, short: "9 · Le transtypage : (string), (bool) et (array)", label: "9:44 · 9 · Le transtypage : (string), (bool) et (array)" },
+        { t: 699.270, short: "10 · Le timestamp et la fonction date", label: "11:39 · 10 · Le timestamp et la fonction date" },
+        { t: 818.940, short: "11 · L'heure, la validité et la conversion d'une date", label: "13:39 · 11 · L'heure, la validité et la conversion d'une date" },
+        { t: 951.610, short: "12 · Exercices et ce qu'il faut retenir", label: "15:52 · 12 · Exercices et ce qu'il faut retenir" }
+      ];
       STI_CHAPITRES_MEDIA["validation-nom-prenom-js"] = [
         { t: 0, short: "Générique", label: "00:00 · Générique — Projet secrétariat du lycée" },
         { t: 6.00, short: "1. Besoin réel", label: "00:06 · 1. Besoin réel — Valider Nom & Prénom (2 à 5 mots)" },
@@ -2637,6 +2651,8 @@
         var estFonctionsChaine = (sSlug === "fonctions-chaine" || sSlug.indexOf("fonctions-chaine") !== -1 || sSlug.indexOf("FonctionsChaine") !== -1);
         /* v565 : capsule « L'objet Date — le jour, le mois, l'année ». */
         var estDateJs = (sSlug === "date-js" || sSlug.indexOf("date-js") !== -1 || sSlug.indexOf("DateJS") !== -1);
+        /* v566 : capsule « PHP — chaînes, transtypage et date/heure ». */
+        var estPhpChaines = (sSlug === "php-chaines" || sSlug.indexOf("php-chaines") !== -1 || sSlug.indexOf("PhpChaines") !== -1);
         var estCssDisplay = (!estJsValidation && !estTpTrain && (sSlug === "css3-display" || sSlug.indexOf("displayanim.mp4") !== -1));
         var estPhpSynthese = (!estJsValidation && !estTpTrain && (sSlug === "php-synthese" || sSlug.indexOf("php-synthese.mp4") !== -1));
         var estSqlInit = (!estTpTrain && sSlug === "sql-initiation" || sSlug.indexOf("sql-initiation") !== -1);
@@ -2657,7 +2673,7 @@
         var estCssDeco = (!estJsValidation && !estTpTrain && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && (sSlug === "css-animee" || sSlug.indexOf("css-animee") !== -1 || (!sSlug && estPageCssDeco)));
         var estCssPos = (!estJsValidation && !estTpTrain && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && (sSlug === "css-positionnement" || sSlug.indexOf("css-positionnement") !== -1 || (!sSlug && estPageCssPos)));
         var estGuichet = (!estJsValidation && !estTpTrain && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && (sSlug === "php-guichet" || sSlug.indexOf("php-guichet") !== -1 || sSlug === "guichet" || (!sSlug && estPageGuichet)));
-        if (!estTpEvenements && !estTpFormulaire && !estTpDisplay && !estTpTransitions && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && !estGuichet && !estCssDisplay && !estPhpSynthese && !estJsValidation && !estTpTrain && !estDefis37 && !estBouclePour && !estConsoleVariables && !estPhpVariables && !estFonctionsChaine && !estDateJs) {
+        if (!estTpEvenements && !estTpFormulaire && !estTpDisplay && !estTpTransitions && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && !estGuichet && !estCssDisplay && !estPhpSynthese && !estJsValidation && !estTpTrain && !estDefis37 && !estBouclePour && !estConsoleVariables && !estPhpVariables && !estFonctionsChaine && !estDateJs && !estPhpChaines) {
           return;
         }
         /* Couper immédiatement toute voix de l'animation interactive pour éviter que 2 voix ne parlent en même temps */
@@ -2689,7 +2705,7 @@
             fAnim.contentWindow.postMessage({ type: "STI_STOP_GUICHET" }, "*");
           }
         } catch (e) {}
-        var slugCible = estDateJs ? "date-js" : estFonctionsChaine ? "fonctions-chaine" : estBouclePour ? "boucle-pour" : estConsoleVariables ? "console-variables" : estPhpVariables ? "php-variables" : estDefis37 ? "defis37-tableau-aleas-media" : estTpTrain ? "tp-train-serie6" : estTpEvenements ? "tp-evenements-liens" : estTpFormulaire ? "tp-formulaire-tableau-autre" : estTpDisplay ? "tp-display-float-position" : estTpTransitions ? "tp-transitions-animations" : estJsValidation ? "validation-nom-prenom-js" : estCssDisplay ? "css3-display" : estPhpSynthese ? "php-synthese" : estSqlInit ? "sql-initiation" : (estExploreFloat ? "explore-tunisie-float" : (estExploreFlex ? "explore-tunisie-flex" : (estSqlSerie6 ? "sql-serie6" : (estSqlSerie5 ? "sql-serie5" : (estSqlSerie4 ? "sql-serie4" : (estSqlSerie3 ? "sql-serie3" : (estSqlSerie2 ? "sql-serie2" : (estSqlSerie1 ? "sql-serie1" : (estHtml5 ? "html5-cours" : (estCss3 ? "css3-cours" : (estJs ? "javascript-cours" : (estPhpC ? "php-cours" : (estSql ? "sql-cours" : (estCssDeco ? "css-animee" : (estCssPos ? "css-positionnement" : "php-guichet")))))))))))))));
+        var slugCible = estPhpChaines ? "php-chaines" : estDateJs ? "date-js" : estFonctionsChaine ? "fonctions-chaine" : estBouclePour ? "boucle-pour" : estConsoleVariables ? "console-variables" : estPhpVariables ? "php-variables" : estDefis37 ? "defis37-tableau-aleas-media" : estTpTrain ? "tp-train-serie6" : estTpEvenements ? "tp-evenements-liens" : estTpFormulaire ? "tp-formulaire-tableau-autre" : estTpDisplay ? "tp-display-float-position" : estTpTransitions ? "tp-transitions-animations" : estJsValidation ? "validation-nom-prenom-js" : estCssDisplay ? "css3-display" : estPhpSynthese ? "php-synthese" : estSqlInit ? "sql-initiation" : (estExploreFloat ? "explore-tunisie-float" : (estExploreFlex ? "explore-tunisie-flex" : (estSqlSerie6 ? "sql-serie6" : (estSqlSerie5 ? "sql-serie5" : (estSqlSerie4 ? "sql-serie4" : (estSqlSerie3 ? "sql-serie3" : (estSqlSerie2 ? "sql-serie2" : (estSqlSerie1 ? "sql-serie1" : (estHtml5 ? "html5-cours" : (estCss3 ? "css3-cours" : (estJs ? "javascript-cours" : (estPhpC ? "php-cours" : (estSql ? "sql-cours" : (estCssDeco ? "css-animee" : (estCssPos ? "css-positionnement" : "php-guichet")))))))))))))));
         try {
           if (
             window.top &&
@@ -2700,7 +2716,7 @@
             return;
           }
         } catch (e) {}
-        var url = estDateJs ? prefixeAssetsSTI() + "videos/DateJS-v565.mp4" : estFonctionsChaine ? prefixeAssetsSTI() + "videos/FonctionsChaine-v564.mp4" : estBouclePour ? prefixeAssetsSTI() + "videos/BouclePour-v547.mp4" : estConsoleVariables ? prefixeAssetsSTI() + "videos/ConsoleVariables-v548.mp4" : estPhpVariables ? prefixeAssetsSTI() + "videos/PhpVariables-v549.mp4" : estDefis37 ? prefixeAssetsSTI() + "videos/defis37-tableau-aleas-media.mp4" : estTpTrain ? prefixeAssetsSTI() + "videos/tp-train-serie6.mp4" : estTpEvenements ? prefixeAssetsSTI() + "videos/tp-evenements-liens-v2.mp4" : estTpFormulaire ? prefixeAssetsSTI() + "videos/tp-formulaire-tableau-autre.mp4" : estTpDisplay ? prefixeAssetsSTI() + "videos/tp-display-float-position.mp4" : estTpTransitions ? prefixeAssetsSTI() + "videos/tp-transitions-animations.mp4" : estJsValidation ? prefixeAssetsSTI() + "videos/validation-nom-prenom-js.mp4" : estCssDisplay ? prefixeAssetsSTI() + "videos/displayanim.mp4" : estPhpSynthese ? prefixeAssetsSTI() + "videos/php-synthese.mp4" : estSqlInit ? resoudreUrlVideoSqlInit() : (estExploreFloat ? resoudreUrlVideoExploreFloat() : (estExploreFlex ? resoudreUrlVideoExploreFlex() : (estSqlSerie6 ? resoudreUrlVideoSqlSerie6() : (estSqlSerie5 ? resoudreUrlVideoSqlSerie5() : (estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estSqlSerie3 ? resoudreUrlVideoSqlSerie3() : (estSqlSerie2 ? resoudreUrlVideoSqlSerie2() : (estSqlSerie1 ? resoudreUrlVideoSqlSerie1() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet())))))))))))))));
+        var url = estPhpChaines ? prefixeAssetsSTI() + "videos/PhpChaines-v566.mp4" : estDateJs ? prefixeAssetsSTI() + "videos/DateJS-v565.mp4" : estFonctionsChaine ? prefixeAssetsSTI() + "videos/FonctionsChaine-v564.mp4" : estBouclePour ? prefixeAssetsSTI() + "videos/BouclePour-v547.mp4" : estConsoleVariables ? prefixeAssetsSTI() + "videos/ConsoleVariables-v548.mp4" : estPhpVariables ? prefixeAssetsSTI() + "videos/PhpVariables-v549.mp4" : estDefis37 ? prefixeAssetsSTI() + "videos/defis37-tableau-aleas-media.mp4" : estTpTrain ? prefixeAssetsSTI() + "videos/tp-train-serie6.mp4" : estTpEvenements ? prefixeAssetsSTI() + "videos/tp-evenements-liens-v2.mp4" : estTpFormulaire ? prefixeAssetsSTI() + "videos/tp-formulaire-tableau-autre.mp4" : estTpDisplay ? prefixeAssetsSTI() + "videos/tp-display-float-position.mp4" : estTpTransitions ? prefixeAssetsSTI() + "videos/tp-transitions-animations.mp4" : estJsValidation ? prefixeAssetsSTI() + "videos/validation-nom-prenom-js.mp4" : estCssDisplay ? prefixeAssetsSTI() + "videos/displayanim.mp4" : estPhpSynthese ? prefixeAssetsSTI() + "videos/php-synthese.mp4" : estSqlInit ? resoudreUrlVideoSqlInit() : (estExploreFloat ? resoudreUrlVideoExploreFloat() : (estExploreFlex ? resoudreUrlVideoExploreFlex() : (estSqlSerie6 ? resoudreUrlVideoSqlSerie6() : (estSqlSerie5 ? resoudreUrlVideoSqlSerie5() : (estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estSqlSerie3 ? resoudreUrlVideoSqlSerie3() : (estSqlSerie2 ? resoudreUrlVideoSqlSerie2() : (estSqlSerie1 ? resoudreUrlVideoSqlSerie1() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet())))))))))))))));
         var css3Qualite = "auto";
         if (estCss3) {
           var prefCss3 = "";

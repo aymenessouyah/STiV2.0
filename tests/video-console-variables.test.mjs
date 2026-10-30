@@ -336,7 +336,7 @@ test('le catalogue du site compte la nouvelle capsule', () => {
   assert.ok(Math.abs(11 * 60 + 31 - reelle) <= 2, `durée annoncée 11:31 vs réelle ${reelle}`);
 
   /* v564 : 24 capsules au catalogue, dont 7 en JavaScript. */
-  assert.ok(index.includes('data-video-filter="all">Toutes (25)</button>'), 'pastille « Toutes »');
+  assert.ok(index.includes('data-video-filter="all">Toutes (26)</button>'), 'pastille « Toutes »');
   assert.ok(index.includes('data-video-filter="javascript">JS (8)</button>'), 'pastille JavaScript');
 
   const admin = lire('assets/js/admin-vues-videos.js');
