@@ -71,16 +71,16 @@ test('le module compile et s’exporte même hors du tableau de bord', () => {
   for (const nom of ['catalogue', 'analyser', 'pourcentageMedia', 'vuesDeLEntree', 'charger', 'rendre']) {
     assert.equal(typeof api[nom], 'function', nom);
   }
-  assert.equal(api.catalogue().length, 28, 'catalogue complet (22 capsules publiques + 6 médias de cours)');
+  assert.equal(api.catalogue().length, 29, 'catalogue complet (23 capsules publiques + 6 médias de cours)');
 });
 
 /* ───────────────────────── 2. le catalogue suit la vitrine de l’accueil ───────────────────────── */
 
-test('le catalogue du coin reprend les 22 capsules publiques de app.js, sans doublon', () => {
+test('le catalogue du coin reprend les 23 capsules publiques de app.js, sans doublon', () => {
   const app = lire('assets/js/app.js');
   const bloc = app.slice(app.indexOf('var CATALOGUE_VIDEOS = ['), app.indexOf('\n  ];', app.indexOf('var CATALOGUE_VIDEOS = [')));
   const idsVitrine = [...bloc.matchAll(/id:\s*"([^"]+)"/g)].map((m) => m[1]);
-  assert.equal(idsVitrine.length, 22, 'vingt-deux capsules sur l’accueil');
+  assert.equal(idsVitrine.length, 23, 'vingt-trois capsules sur l’accueil');
   const fenetre = chargerModule(lire(MODULE));
   const catalogue = fenetre.STI_VUES_VIDEOS.catalogue();
   const ids = catalogue.map((v) => v.id);
@@ -452,16 +452,19 @@ test('reconnexion-profil fusionne aussi les compteurs de vues', () => {
 
 test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »', () => {
   const sw = lire('sw.js');
-  assert.match(sw, /var UPDATE_ID = "v548-console-variables-20261030"/);
+  assert.match(sw, /var UPDATE_ID = "v549-php-variables-20261030"/);
   /* Le manifeste a suivi la v533 : il porte sa propre révision. */
   /* sync-progressions.js est reparti au lot v534 (pastille de synchro) : cinq fichiers restent. */
-  assert.equal((sw.match(new RegExp('revision: "' + REV + '"', 'g')) || []).length, 4, 'quatre fichiers du lot v531');
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "console-variables-v548"/, 'le lecteur repart au lot v545');
+  /* admin-vues-videos.js repart au lot v549 (capsule PHP au catalogue du coin). */
+  assert.equal((sw.match(new RegExp('revision: "' + REV + '"', 'g')) || []).length, 3, 'trois fichiers restent au lot v531');
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "php-variables-v549"/, 'le lecteur repart au lot v545');
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   for (const chemin of ['assets/js/reconnexion-profil.js',
-    'assets/js/reprendre.js', 'assets/js/admin-vues-videos.js', 'admin.html']) {
+    'assets/js/reprendre.js', 'admin.html']) {
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${REV}"`), chemin);
   }
+  assert.ok(delta.includes('url: "./assets/js/admin-vues-videos.js", revision: "php-variables-v549"'),
+    'le coin des vues repart au lot v549');
   assert.match(delta, /url: "\.\/assets\/js\/sync-progressions\.js", revision: "pastille-sync-v534"/);
   assert.match(delta, /url: "\.\/offline-complete-manifest\.json", revision: "classe-nav-v536"/);
   /* Budget du delta préservé : le module entre dans la liste, une annexe figée en sort. */
@@ -476,7 +479,7 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
 
 test('le manifeste hors ligne contient le nouveau module avec son empreinte', () => {
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  assert.equal(manifeste.version, 'v548-sti-atelier-v381');
+  assert.equal(manifeste.version, 'v549-sti-atelier-v382');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((n, f) => n + f.bytes, 0));
   const entree = manifeste.files.find((f) => f.path === MODULE);

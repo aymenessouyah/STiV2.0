@@ -102,7 +102,7 @@ test('hors ligne : révisions, médias et empreintes des ressources JavaScript',
     const actualises = ['assets/js/cours-javascript.js', 'assets/js/dialogues-compat.js', 'projets/fleurs/controle.js', 'projets/carte-bancaire/controle.js'];
     /* v521 : ces pages ont reçu leur meta description après le lot de fidélité v481. */
     const pagesMetaV521 = ['exercices/javascript/js-37-defis-tt.html', 'projets/fleurs/index.html', 'projets/fleurs/inscription.html', 'projets/formulaire-inscription/cvFleurs.html', 'projets/carte-bancaire/cb.html'];
-    const revision = path === 'assets/js/app.js' ? 'console-variables-v548' :
+    const revision = path === 'assets/js/app.js' ? 'php-variables-v549' :
       path === 'cours/javascript.html' ? 'console-variables-v548' :
       path === 'assets/css/cours-javascript.css' ? 'barre-mobile-v532' :
       path === 'assets/js/cours-javascript.js' ? 'progression-chapitres-v492' :
@@ -162,7 +162,7 @@ test('vidéo Validation Nom & Prénom : déplacée dans assets/videos et intégr
 
   const indexHtml = read('index.html');
   assert.match(indexHtml, /data-video-filter="javascript">JS [(]6[)]</);
-  assert.match(indexHtml, /🎥 3 vidéos &amp; 🔊 audio/);
+  assert.match(indexHtml, /🎥 4 vidéos &amp; 🔊 audio/);
   assert.match(indexHtml, /href="cours\/javascript\.html#videos">🎥 3 Vidéos</);
 
   const appJs = read('assets/js/app.js');

@@ -16,6 +16,7 @@
     'defis37-tableau-aleas-media': ['javascript','Les 37 Défis — Tableau, Aléas & Captchas, Média'],
     'boucle-pour': ['javascript','Les boucles — Pour, Répéter…jusqu’à, Tant que'],
     'console-variables': ['javascript','La console, les variables et les types'],
+    'php-variables': ['php','PHP — Les variables, la portée et les types'],
     'sql-cours': ['sql','Cours SQL'],
     'sql-initiation': ['sql','Construire une requête SQL'],
     'sql-serie4': ['sql','Série 4 SQL'],

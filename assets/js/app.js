@@ -283,6 +283,22 @@
       codeApercu: "const notes = [12, 15, 9]; console.log(notes[0]);"
     },
     {
+      /* v549 : capsule « PHP — les variables, la portée et les types ». */
+      id: "php-variables",
+      matiere: "php",
+      nomMatiere: "PHP",
+      badgeClasse: "badge-php",
+      couleur: "#a78bfa",
+      reserve4si: true,
+      titre: "PHP — Les variables, la portée et les types",
+      dureeTexte: "13:34",
+      srcPrincipal: "assets/videos/PhpVariables-v549.mp4",
+      srcSecours: "assets/videos/PhpVariables-v549.mp4",
+      sousTitres: "assets/subtitles/PhpVariables-fr-v549.vtt",
+      urlCours: "cours/php.html#videos",
+      codeApercu: "$notes = [12, 15, 9]; echo $notes[1];"
+    },
+    {
       id: "css-positionnement",
       matiere: "css3",
       nomMatiere: "CSS3",

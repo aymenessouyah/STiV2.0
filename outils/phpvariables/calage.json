@@ -1,0 +1,28 @@
+{
+  "durees": {
+    "ouverture": 33.216,
+    "declarer": 105.226,
+    "portee": 69.728,
+    "bloc_static": 62.52,
+    "hoisting": 47.055,
+    "types": 111.967,
+    "tableaux": 98.528,
+    "hors_programme": 69.217,
+    "exercice_1": 89.193,
+    "exercice_moyenne": 119.019
+  },
+  "debuts": {
+    "ouverture": 1.2,
+    "declarer": 34.966,
+    "portee": 140.743,
+    "bloc_static": 211.02,
+    "hoisting": 274.09,
+    "types": 321.695,
+    "tableaux": 434.213,
+    "hors_programme": 533.29,
+    "exercice_1": 603.057,
+    "exercice_moyenne": 692.8
+  },
+  "total": 813.619,
+  "debit": 13.91
+}

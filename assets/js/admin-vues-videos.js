@@ -53,6 +53,7 @@
     { id: "defis37-tableau-aleas-media", titre: "Les 37 Défis — Tableau & Média", matiere: "javascript", icone: "⚡" },
     { id: "boucle-pour", titre: "La boucle Pour — le sac", matiere: "javascript", icone: "🔁" },
     { id: "console-variables", titre: "La console, les variables et les types", matiere: "javascript", icone: "🖥️" },
+    { id: "php-variables", titre: "PHP — Variables, portée et types", matiere: "php", icone: "🐘" },
     { id: "tp-evenements-liens", titre: "TP — Événements & liens", matiere: "javascript", icone: "⚡" },
     { id: "tp-formulaire-tableau-autre", titre: "TP — Formulaire & tableau", matiere: "javascript", icone: "⚡" },
     { id: "tp-display-float-position", titre: "TP — display, float, position", matiere: "javascript", icone: "⚡" },
