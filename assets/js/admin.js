@@ -396,10 +396,19 @@
     } else if (pied) {
       pied.textContent = pied.textContent.replace(/^[🟢🔴]\s*/, icone + " ");
     }
-    var infoQuota = dernierQuotaInfo
-      ? " · Quota : " + dernierQuotaInfo.pctRestant + " restant (" + dernierQuotaInfo.strQteRestante + ") · " +
-        (dernierQuotaInfo.depuisRpc ? "taille mesurée en base" : "estimation locale, mesure en attente")
-      : "";
+    var infoQuota = "";
+    if (dernierQuotaInfo) {
+      var provenance = "estimation locale, mesure en attente";
+      if (dernierQuotaInfo.depuisRpc) {
+        provenance = "taille mesurée en base";
+        if (typeof dernierQuotaInfo.base === "number") {
+          provenance = "mesuré : base " + formaterOctets(dernierQuotaInfo.base) +
+            " + fichiers " + formaterOctets(dernierQuotaInfo.stockage || 0) +
+            (dernierQuotaInfo.stockage === null ? " (Storage non mesuré)" : "");
+        }
+      }
+      infoQuota = " · Quota : " + dernierQuotaInfo.pctRestant + " restant (" + dernierQuotaInfo.strQteRestante + ") · " + provenance;
+    }
     var titreEtat = icone + " " + libelle + " — " + detailEtatSupabase + infoQuota;
     [badge, pied].forEach(function (el) {
       if (el) el.title = titreEtat + " — Cliquer pour ouvrir l'Analyseur & Nettoyeur Intelligent";
@@ -431,7 +440,7 @@
     return Math.round(n) + " octets";
   }
 
-  function majAffichageQuotaSupabase(octetsUtilises, nbProfTotal, nbAccesTotal, depuisRpc) {
+  function majAffichageQuotaSupabase(octetsUtilises, nbProfTotal, nbAccesTotal, depuisRpc, detail) {
     var utilise = Math.max(64 * 1024, Math.min(QUOTA_SUPABASE_OCTETS, Number(octetsUtilises) || 0));
     var restant = Math.max(0, QUOTA_SUPABASE_OCTETS - utilise);
     var pctUtilise = (utilise / QUOTA_SUPABASE_OCTETS) * 100;
@@ -453,7 +462,10 @@
       strUtilise: strUtilise,
       nbProf: nbProfTotal || 0,
       nbAcces: nbAccesTotal || 0,
-      depuisRpc: Boolean(depuisRpc)
+      depuisRpc: Boolean(depuisRpc),
+      /* v558 : répartition de la mesure — base Postgres et fichiers du Storage. */
+      base: detail && typeof detail.base === "number" ? detail.base : null,
+      stockage: detail && typeof detail.stockage === "number" ? detail.stockage : null
     };
 
     try {
@@ -475,6 +487,35 @@
       else if (pctRestant < 30) elBadge.classList.add("alerte");
     }
     actualiserLibellesEtatSupabase();
+  }
+
+  /* v558 : le forfait Supabase additionne la base Postgres et les fichiers du
+     Storage. Deux RPC les mesurent séparément ; si la seconde manque (migration
+     non appliquée), on retombe proprement sur la seule base. */
+  function mesurerQuotaReel(nbP, nbA) {
+    if (!sb || typeof sb.rpc !== "function") return;
+    /* PostgREST renvoie un bigint : on accepte aussi une chaîne numérique. */
+    function octetsDe(reponse) {
+      var v = reponse && !reponse.error ? Number(reponse.data) : 0;
+      return isFinite(v) && v > 0 ? v : 0;
+    }
+    function appliquer(base, stockage, stockageMesure) {
+      var total = base + stockage;
+      if (!(total > 0)) return;
+      majAffichageQuotaSupabase(total, nbP, nbA, true, {
+        base: base,
+        stockage: stockageMesure === false ? null : stockage
+      });
+    }
+    sb.rpc("admin_taille_base").then(function (rBase) {
+      var base = octetsDe(rBase);
+      if (!(base > 0)) return;
+      sb.rpc("admin_taille_stockage").then(function (rStock) {
+        appliquer(base, octetsDe(rStock), true);
+      }).catch(function () {
+        appliquer(base, 0, false);
+      });
+    }).catch(function () {});
   }
 
   function calculerQuotaSupabase(tousProfils, tousLesAcces, countProfilsExact, countAccesExact) {
@@ -499,13 +540,7 @@
     /* Mesure exacte au maximum toutes les 10 minutes : jamais à chaque delta de 20 secondes. */
     if (navigator.onLine && sb && typeof sb.rpc === "function" && Date.now() - dernierRpcQuotaTs > 600000) {
       dernierRpcQuotaTs = Date.now();
-      sb.rpc("admin_taille_base").then(function (r) {
-        /* PostgREST renvoie un bigint : on accepte aussi une chaîne numérique. */
-        var octetsMesures = r && !r.error ? Number(r.data) : 0;
-        if (isFinite(octetsMesures) && octetsMesures > 0) {
-          majAffichageQuotaSupabase(octetsMesures, nbP, nbA, true);
-        }
-      }).catch(function () {});
+      mesurerQuotaReel(nbP, nbA);
     }
   }
 
@@ -513,7 +548,9 @@
     try {
       var q = JSON.parse(localStorage.getItem("sti-supabase-quota") || "null");
       if (q && typeof q.utilise === "number") {
-        majAffichageQuotaSupabase(q.utilise, q.nbProf || 0, q.nbAcces || 0, q.depuisRpc);
+        /* v558 : la répartition mesurée est conservée d'une visite à l'autre. */
+        majAffichageQuotaSupabase(q.utilise, q.nbProf || 0, q.nbAcces || 0, q.depuisRpc,
+          typeof q.base === "number" ? { base: q.base, stockage: q.stockage } : undefined);
       }
     } catch (e) {}
     var elBadge = document.getElementById("badge-supabase-quota");

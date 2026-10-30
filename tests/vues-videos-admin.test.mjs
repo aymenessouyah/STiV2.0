@@ -465,7 +465,7 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
     'assets/js/reprendre.js']) {
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${REV}"`), chemin);
   }
-  assert.ok(delta.includes('url: "./admin.html", revision: "taille-base-v557"'),
+  assert.ok(delta.includes('url: "./admin.html", revision: "taille-stockage-v558"'),
     'la page d’administration repart au lot v557');
   assert.ok(delta.includes('url: "./assets/js/admin-vues-videos.js", revision: "php-variables-v549"'),
     'le coin des vues repart au lot v549');
