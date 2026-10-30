@@ -47,7 +47,8 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
      v560 : la declaration d'encodage est remontee dans les 1024 premiers octets
      (exigence HTML), comme sur tout le site ; portail.html reflete ce
      deplacement, le contenu ne change pas.
-     v560 : admin.html charge admin.js en ?v=560-perf (bascule automatique des
+     v575 : admin.html charge admin.js en ?v=575-perf (badge de version du tableau de bord)
+     v560 : bascule automatique des
      photos base64) : seule cette référence change dans la page.
      v562 : une photo dont le fichier a disparu du bucket est remplacée par les
      initiales (écoute « error » déléguée) dans admin.js, acces.js et
@@ -59,7 +60,7 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
     'assets/js/sync-progressions.js': 'c6e36a6f0ebea5e481cfb1b16afb9c0cfefc595ed4de21a1becff5a096d327b6',
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
     'portail.html': 'cde7e9572be7ff369cc3a810c84f68a479b4f1bd8781d22e123b87dd12df37f7',
-    'admin.html': 'a080ca2d5beffbbb4c51215383042731f480f099a95c94cdafe4a29fc4496e5f',
+    'admin.html': 'e7c872d0e0cc3e948cfdca86613b5bdbc32c9dec1df42ade524a0119b7e30d29',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };

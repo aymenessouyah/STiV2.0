@@ -28,7 +28,7 @@ Les fiches sont regroupées dans une nouvelle famille « Fiches méthode », apr
 - 4SI : rappels sur les contrôles serveur et les limites de sécurité des exemples pédagogiques.
 
 ## Pagination finale
-- **3SI : 72 pages** = 1 couverture + 3 pages de sommaire + 53 fiches + 15 pages de tableaux ; 68 pages indexées.
+- **3SI : 81 pages** = 1 couverture + 3 pages de sommaire + 9 pages de cours + 53 fiches + 15 pages de tableaux ; 77 pages indexées.
 - **4SI : 100 pages** = 1 couverture + 4 pages de sommaire + 77 fiches + 18 pages de tableaux ; 95 pages indexées.
 - Le tableau des erreurs PHP reste page 67 et les explications page 68.
 - Signets regroupés par familles : 67 en 3SI et 93 en 4SI.

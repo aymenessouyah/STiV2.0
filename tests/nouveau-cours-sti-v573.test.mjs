@@ -70,8 +70,8 @@ test('le cours est relié au site : accueil, cours HTML5, plan du site et hors-l
   assert.ok(delta.includes('"./' + PAGE + '"'), 'mise à jour incrémentale');
   assert.ok(complet.includes('"./' + PAGE + '"'), 'paquet hors-ligne complet');
   assert.ok(sw.includes('"./assets/css/cours-sti.css"'), 'feuille de style du cours');
-  assert.match(sw, /url: "\.\/livre-smart\.html", revision: "sti-3si-v573"/);
-  assert.match(sw, /url: "\.\/assets\/data\/smart-book-3si-2026\.json", revision: "sti-3si-v573"/);
+  assert.match(sw, /url: "\.\/livre-smart\.html", revision: "livre-smart-v575"/);
+  assert.match(sw, /url: "\.\/assets\/data\/smart-book-3si-2026\.json", revision: "livre-smart-v575"/);
 
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
   assert.ok(manifeste.files.some((f) => f.path === PAGE), 'manifeste hors-ligne');
@@ -119,7 +119,7 @@ test('chaque page repérée du manuel ouvre une ancre qui existe vraiment', () =
 
 test('le lecteur du livre connaît la nouvelle pagination et les pages de cours', () => {
   const js = lire('assets/js/smart-book.js');
-  assert.match(js, /'3si-2026': \{[^}]*pages: 81[^}]*entries: 77[^}]*fiches: 53/s,
+  assert.match(js, /'3si-2026': \{[^}]*pages: 81[^}]*entries: 77[^}]*lessons: 53/s,
     'configuration du manuel 3ème SI');
   assert.ok(js.includes("item.kind === 'cours'"), 'les pages de cours sont étiquetées');
   assert.ok(js.includes("' · PAGE DU COURS'"), 'le catalogue nomme les pages de cours');

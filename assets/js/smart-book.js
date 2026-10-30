@@ -33,12 +33,15 @@
     }
   })();
   let publicBase = new URL('https://aymenessouyah.github.io/STiV2.0/');
+  /* v575 : même version que les feuilles et couvertures du livre, pour que le PDF
+     téléchargé et les images de couverture ne restent jamais sur l'édition précédente. */
+  let REVUE_LIVRE = '575';
   let books = {
     /* `entries` = nombre de pages repérées dans l'index (une par page utile) ;
        `fiches` = nombre de fiches numérotées ; `coursPages` = pages de cours
        (la partie « Systèmes, technologies et Internet » du manuel 3ème SI). */
-    '4si-2026': { title: '4ème SI — 2026', level: '4ème SI', data: 'assets/data/smart-book-2026.json', pdf: 'documents/livre/sti-smart-book-2026.pdf', pages: 100, entries: 95, fiches: 95, lessons: 77, coursPages: 0, recapPages: 18, boundary: 'Manuel de 4ème SI : SQL et PHP inclus.' },
-    '3si-2026': { title: '3ème SI — 2026', level: '3ème SI', data: 'assets/data/smart-book-3si-2026.json', pdf: 'documents/livre/sti-smart-book-3si-2026.pdf', pages: 81, entries: 77, fiches: 53, lessons: 53, coursPages: 9, recapPages: 15, boundary: 'Édition 2026 : la partie « Systèmes, technologies et Internet » (p. 5 à 13) précède HTML5. Sans PHP ; SQL limité à SELECT sur une table.' }
+    '4si-2026': { title: '4ème SI — 2026', level: '4ème SI', data: 'assets/data/smart-book-2026.json', pdf: 'documents/livre/sti-smart-book-2026.pdf', pages: 100, entries: 95, lessons: 77, coursPages: 0, recapPages: 18, boundary: 'Manuel de 4ème SI : SQL et PHP inclus.' },
+    '3si-2026': { title: '3ème SI — 2026', level: '3ème SI', data: 'assets/data/smart-book-3si-2026.json', pdf: 'documents/livre/sti-smart-book-3si-2026.pdf', pages: 81, entries: 77, lessons: 53, coursPages: 9, recapPages: 15, boundary: 'Édition 2026 : la partie « Systèmes, technologies et Internet » (p. 5 à 13) précède HTML5. Sans PHP ; SQL limité à SELECT sur une table.' }
   };
   let bookId = '4si-2026', items = [], cache = {}, ready = false;
   let stream = null, scanning = false, timer = null, generation = 0, loadGeneration = 0;
@@ -69,13 +72,15 @@
     let first = book.pages - book.entries + 1, numeros = 0;
     data.items.forEach(function (item, index) {
       if (item.page !== first + index) throw new Error('Pagination invalide.');
-      if (item.kind === 'fiche') {
+      /* Une fiche est repérée par `kind: "fiche"` — ou par son absence : dans le
+         manuel 4e SI, seuls les tableaux récapitulatifs portent un `kind`. */
+      if (item.kind === 'fiche' || !item.kind) {
         numeros++;
         if (item.fiche !== numeros) throw new Error('Numérotation des fiches invalide.');
       }
       localURL(item.url);
     });
-    if (numeros !== book.fiches) throw new Error('Index incompatible.');
+    if (numeros !== book.lessons) throw new Error('Index incompatible.');
     cache[id] = data;
     return data;
   }
@@ -96,7 +101,7 @@
   function normalize(text) { return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
   function renderCatalog() {
     let term = normalize($('search').value.trim());
-    let filtered = items.filter(function (item) { return normalize(item.titre + ' ' + item.page + ' ' + item.fiche).includes(term); });
+    let filtered = items.filter(function (item) { return normalize(item.titre + ' ' + item.page + ' ' + (item.fiche || '')).includes(term); });
     $('catalog-list').replaceChildren(); let fragment = document.createDocumentFragment();
     filtered.forEach(function (item) {
       let a = document.createElement('a'); a.className = 'catalog-item'; a.href = localURL(item.url);
@@ -127,7 +132,7 @@
         + (book.coursPages ? ' + ' + book.coursPages + ' pages de cours' : '')
         + ' + ' + book.recapPages + ' pages de tableaux';
       $('book-boundary').textContent = book.boundary;
-      $('download-book').href = book.pdf;
+      $('download-book').href = book.pdf + '?v=' + REVUE_LIVRE;
       $('preview-3si').setAttribute('aria-pressed', String(id === '3si-2026'));
       $('preview-4si').setAttribute('aria-pressed', String(id === '4si-2026'));
       ready = true; setControls(true); renderCatalog();
@@ -274,7 +279,10 @@
   document.addEventListener('visibilitychange', function () { if (document.hidden) stopCamera(); });
   async function init() {
     if ('BarcodeDetector' in window) { try { let formats = await window.BarcodeDetector.getSupportedFormats(); if (formats.includes('qr_code')) detector = new window.BarcodeDetector({ formats: ['qr_code'] }); } catch (_) {} }
-    let query = new URLSearchParams(location.search), id = query.get('livre') || '4si-2026', raw = query.get('page');
+    let query = new URLSearchParams(location.search), raw = query.get('page');
+    /* v575 : les liens historiques du type « ?niveau=3si » désignent aussi le bon manuel. */
+    let niveau = String(query.get('niveau') || '').toLowerCase();
+    let id = query.get('livre') || (niveau === '3si' ? '3si-2026' : niveau === '4si' ? '4si-2026' : '4si-2026');
     if (!Object.hasOwn(books, id)) id = '4si-2026';
     if (await loadBook(id)) {
       if (raw !== null) { $('page-number').value = raw; pageResult(Number(raw)); }

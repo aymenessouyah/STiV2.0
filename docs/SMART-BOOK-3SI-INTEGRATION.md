@@ -4,7 +4,7 @@
 
 **STI-Livres-Recapitulatifs-Integration.zip** remplace les paquets précédents. Il contient le scanner commun, les deux index, les deux nouveaux PDF, le manifeste et la mise à jour hors ligne, les tests et la documentation.
 
-- 3SI : 72 pages ; 53 fiches + 15 pages de tableaux ; 68 pages indexées.
+- 3SI : 81 pages ; 9 pages de cours + 53 fiches + 15 pages de tableaux ; 77 pages indexées.
 - 4SI : 100 pages ; 77 fiches + 18 pages de tableaux ; 95 pages indexées.
 
 Les pages du cours antérieur restent au même numéro ; les récapitulatifs sont ajoutés après les pages 54 et 76. Les titres PHP, certains liens de référence et les index ont également été corrigés dans les versions récentes.
@@ -42,7 +42,7 @@ Attendre la réussite de GitHub Pages. Le ZIP ne doit pas être ajouté au commi
 
 ## Contrôles après publication
 
-- Scanner : choisir 3SI, vérifier 72 pages, puis chercher les pages 52, 53, 54, 58 et 72.
+- Scanner : choisir 3SI, vérifier 81 pages, puis chercher les pages 5, 14, 53, 67 et 81.
 - Choisir 4SI, vérifier 100 pages, puis chercher les pages 67, 68, 77, 78, 79, 83, 97 et 100.
 - Télécharger les deux PDF, ouvrir le sommaire et cliquer les nouvelles rubriques de tableaux.
 - Scanner le QR d’une nouvelle page 3SI lorsque 4SI est sélectionné : le manuel doit changer automatiquement.

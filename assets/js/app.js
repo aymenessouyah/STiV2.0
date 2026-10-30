@@ -988,6 +988,21 @@
     if (CAPSULES_VIDEO[cle]) return true;
     return /^capsule/i.test(String((v && v.titre) || "")) || /capsule/i.test(String((v && v.codeApercu) || ""));
   }
+  /* v575 : la vitrine des vidéos se lit dans l'ordre du programme —
+     HTML5, CSS3, JavaScript, SQL, puis PHP. Le tri est stable : à l'intérieur
+     d'une matière, l'ordre du catalogue est conservé. */
+  var ORDRE_MATIERES_VIDEOS = ["html5", "css3", "javascript", "sql", "php"];
+  function trierVideosParMatiere(liste) {
+    return liste.map(function (v, position) { return { v: v, p: position }; })
+      .sort(function (a, b) {
+        var ra = ORDRE_MATIERES_VIDEOS.indexOf(a.v.matiere), rb = ORDRE_MATIERES_VIDEOS.indexOf(b.v.matiere);
+        if (ra < 0) ra = ORDRE_MATIERES_VIDEOS.length;
+        if (rb < 0) rb = ORDRE_MATIERES_VIDEOS.length;
+        return ra === rb ? a.p - b.p : ra - rb;
+      })
+      .map(function (x) { return x.v; });
+  }
+
   function effetVideo(v) {
     var s = String((v && v.id) || ""), h = 0;
     for (var i = 0; i < s.length; i += 1) h = (h * 31 + s.charCodeAt(i)) % 9973;
@@ -1025,11 +1040,11 @@
       btnF.textContent = libellesFiltres[cleF] + " (" + nbF + ")";
     });
 
-    var liste = CATALOGUE_VIDEOS.filter(function (v) {
+    var liste = trierVideosParMatiere(CATALOGUE_VIDEOS.filter(function (v) {
       if (v.reserve4si && !ok4) return false;
       if (filtreVideoActif !== "all" && !videoDeMatiere(v, filtreVideoActif)) return false;
       return true;
-    });
+    }));
 
     // Ne pas remplacer les boutons à chaque notification de session ou de
     // progression : ils restent les appelants du lecteur et gardent le focus.
