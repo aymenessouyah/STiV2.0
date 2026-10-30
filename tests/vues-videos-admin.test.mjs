@@ -474,7 +474,7 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
   /* Budget du delta préservé : le module entre dans la liste, une annexe figée en sort. */
   const urls = [...delta.matchAll(/url:\s*"([^"]+)"/g)].map((m) => m[1]);
   assert.equal(new Set(urls).size, urls.length, 'aucun doublon');
-  assert.ok(urls.length <= 262, 'delta léger (≤ 262 entrées)');
+  assert.ok(urls.length <= 264, 'delta léger (≤ 264 entrées)');
   assert.ok(!urls.includes('./documents/annexes/annexe-sql.pdf.html'), 'place libérée par une annexe figée');
   /* Préchargement hors ligne : le module doit y être pour que le coin marche sans réseau. */
   const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];

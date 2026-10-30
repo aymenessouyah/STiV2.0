@@ -1,0 +1,152 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   STI V2.0 — Cours « Systèmes, technologies et Internet » (3ème SI)
+   La partie du manuel qui précède HTML5 : systèmes d'exploitation, réseaux,
+   objets connectés. Ce fichier ne fait qu'ajouter l'accent de la matière et
+   quelques schémas ; le reste vient de cours.css et de theme.css.
+   Aucune couleur codée en dur : tout passe par les variables du thème.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Accent de la matière : l'or du « matériel », avant les couleurs du Web ── */
+.course-page--sti {
+  --course-accent: var(--accent-gold);
+  --course-accent-soft: var(--accent-gold-soft);
+  --course-accent-border: var(--accent-gold-border);
+}
+.course-page--sti .matiere-logo--hero { color: var(--accent-gold); }
+
+/* ── 2. Bandeau de la partie du manuel ── */
+.sti-partie-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px dashed var(--course-accent-border);
+  background: var(--course-accent-soft);
+  color: var(--text);
+  font-size: .88rem;
+}
+.sti-partie-banner strong { color: var(--course-accent); }
+.sti-partie-banner__pages {
+  margin-inline-start: auto;
+  font: 700 .76rem/1.4 var(--font-mono);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ── 3. Trois cartes de la vision globale (système · réseau · IoT) ── */
+.sti-triptyque {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+.sti-triptyque > div {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface-solid);
+}
+.sti-triptyque span[aria-hidden="true"] { font-size: 1.4rem; display: block; margin-bottom: 6px; }
+.sti-triptyque strong { display: block; margin-bottom: 4px; color: var(--text); }
+.sti-triptyque p { margin: 0; font-size: .88rem; }
+
+/* ── 4. Schéma en flux (utilisateur → système → matériel, capteur → réseau → plateforme) ── */
+.sti-flux {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--course-accent-border);
+  background: var(--bg-alt);
+}
+.sti-flux__etape {
+  flex: 1 1 130px;
+  min-width: 0;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface-solid);
+  text-align: center;
+  font-size: .84rem;
+  line-height: 1.45;
+}
+.sti-flux__etape b { display: block; color: var(--course-accent); font-size: .95rem; }
+.sti-flux__etape small { display: block; color: var(--text-muted); font-size: .76rem; margin-top: 2px; }
+.sti-flux__fleche {
+  align-self: center;
+  color: var(--course-accent);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* ── 5. Encadrés « à retenir », « attention », activité corrigée ── */
+.sti-note {
+  margin: 0;
+  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-5);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  border-inline-start: 4px solid var(--course-accent);
+  background: var(--surface-solid);
+  font-size: .9rem;
+  line-height: 1.7;
+}
+.sti-note--attention { border-inline-start-color: var(--danger, #f87171); }
+.sti-note > b:first-child { color: var(--course-accent); }
+.sti-note p { margin: 0; }
+.sti-note p + p { margin-top: 6px; }
+
+/* La correction d'une activité se déplie : l'élève cherche d'abord. */
+details.sti-correction {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-alt);
+  padding: var(--space-3) var(--space-4);
+}
+details.sti-correction > summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--text);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+details.sti-correction > summary::marker { color: var(--course-accent); }
+details.sti-correction[open] > summary { margin-bottom: var(--space-2); }
+details.sti-correction ol,
+details.sti-correction ul { margin: 0 0 0 1.1em; }
+
+/* ── 6. Questionnaire d'évaluation (imprimable) ── */
+.sti-evaluation ol { counter-reset: question; list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+.sti-evaluation ol > li {
+  counter-increment: question;
+  position: relative;
+  padding-inline-start: 2.4rem;
+  line-height: 1.7;
+}
+.sti-evaluation ol > li::before {
+  content: counter(question);
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 1.8rem;
+  block-size: 1.8rem;
+  border-radius: 50%;
+  background: var(--course-accent-soft);
+  border: 1px solid var(--course-accent-border);
+  color: var(--course-accent);
+  font: 800 .82rem/1 var(--font-mono);
+}
+.sti-evaluation h3 { margin-top: var(--space-4); }
+
+@media print {
+  .sti-evaluation ol > li::before { border-color: #000; color: #000; }
+  details.sti-correction { break-inside: avoid; }
+}

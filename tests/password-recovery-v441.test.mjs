@@ -5421,7 +5421,9 @@ test('v473 (structure & budgets performance) : 0 doublon dans UPDATE_FILES (-85,
   const uniqueUrls = new Set(urls);
   assert.equal(uniqueUrls.size, urls.length, `UPDATE_FILES ne doit contenir aucun doublon (${urls.length} entrées vs ${uniqueUrls.size} uniques)`);
   // Les pages historiques harmonisées doivent aussi invalider leur ancienne copie ; le noyau préchargé reste limité ci-dessous.
-  assert.ok(urls.length <= 262, `UPDATE_FILES doit rester compact (<= 262 entrées uniques, observé: ${urls.length})`);
+  /* v573 : le nouveau cours 3ème SI ajoute sa page et sa feuille de style au
+     lot de mise à jour (264 entrées) ; le budget reste serré, sans média. */
+  assert.ok(urls.length <= 264, `UPDATE_FILES doit rester compact (<= 264 entrées uniques, observé: ${urls.length})`);
 
   const mCore = swJs.match(/var NOYAU_RAPIDE_RECHARGEMENT = (\{[\s\S]*?\n\});/);
   assert.ok(mCore, 'NOYAU_RAPIDE_RECHARGEMENT doit encadrer les rechargements proactifs du SW');

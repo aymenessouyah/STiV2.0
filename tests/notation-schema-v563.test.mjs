@@ -150,20 +150,33 @@ test('chaque destination des deux livres existe, ancre comprise', () => {
 });
 
 test('les livres gardent leur pagination et leur nombre de fiches', () => {
-  /* Même contrôle que le lecteur (assets/js/smart-book.js) : pages - fiches + 1
-     est la première page indexée, et fiche/page avancent de un en un. */
-  for (const [fichier, pages, fiches] of [
-    ['assets/data/smart-book-3si-2026.json', 72, 68],
-    ['assets/data/smart-book-2026.json', 100, 95]
+  /* Même contrôle que le lecteur (assets/js/smart-book.js) : les pages
+     indexées se suivent de la première page utile à la dernière, et les fiches
+     numérotées avancent de un en un.
+
+     v573 : le manuel 3ème SI passe à l'édition 2026 — 81 pages, 9 pages de
+     cours (p. 5 à 13, partie « Systèmes, technologies et Internet »), 53 fiches
+     (p. 14 à 66) puis 15 pages de tableaux (p. 67 à 81). */
+  for (const [fichier, pages, entrees, fiches, numerotees] of [
+    ['assets/data/smart-book-3si-2026.json', 81, 77, 53, 53],
+    ['assets/data/smart-book-2026.json', 100, 95, 95, 77]
   ]) {
     const data = JSON.parse(lire(fichier));
     assert.equal(data.pages, pages, fichier);
     assert.equal(data.fiches, fiches, fichier);
-    assert.equal(data.items.length, fiches, fichier);
-    const premiere = pages - fiches + 1;
+    assert.equal(data.items.length, entrees, fichier);
+    if (data.entries !== undefined) assert.equal(data.entries, entrees, fichier);
+    const premiere = pages - entrees + 1;
+    let numero = 0;
     data.items.forEach((item, i) => {
-      assert.equal(item.fiche, i + 1, fichier + ' : fiche ' + (i + 1));
-      assert.equal(item.page, premiere + i, fichier + ' : page de la fiche ' + (i + 1));
+      assert.equal(item.page, premiere + i, fichier + ' : page ' + (premiere + i));
+      assert.ok(['cours', 'fiche', 'recap'].includes(item.kind || 'fiche'), fichier + ' : genre');
+      if (!item.kind) item.kind = 'fiche';  /* l'ancien index 4ème SI ne porte pas de genre : fiches */
+      if (item.kind === 'fiche') {
+        numero += 1;
+        assert.equal(item.fiche, numero, fichier + ' : fiche ' + numero);
+      }
     });
+    assert.equal(numero, numerotees, fichier + ' : toutes les fiches sont numérotées');
   }
 });

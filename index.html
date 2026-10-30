@@ -461,6 +461,7 @@
           </div>
           <div class="filter-chips" role="group" aria-label="Filtrer par catégorie">
             <button type="button" class="filter-chip is-active" data-filter="all">Tout voir</button>
+            <button type="button" class="filter-chip" data-filter="sti">Systèmes &amp; réseaux</button>
             <button type="button" class="filter-chip" data-filter="html5">HTML5</button>
             <button type="button" class="filter-chip" data-filter="css3">CSS3</button>
             <button type="button" class="filter-chip" data-filter="javascript">JavaScript</button>
@@ -482,6 +483,30 @@
 
         <!-- Grille des 5 Matières + Glossaire FR · EN · AR -->
         <div class="subjects-grid">
+          <!-- 0. Systèmes, technologies et Internet — 3ème SI, la partie du manuel qui précède HTML5 -->
+          <article class="subject-card" data-subject="sti" data-filter-item="sti">
+            <div class="subject-card__top">
+              <div class="subject-card__icon" aria-hidden="true" style="font-size:1.6rem">🖥️</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+                <span class="badge" style="background:var(--accent-gold-soft);border:1px solid var(--accent-gold-border);color:var(--accent-gold)">3e SI · Nouveau 2026</span>
+              </div>
+            </div>
+            <div>
+              <h3>Systèmes, technologies et Internet</h3>
+              <p style="font-size:.9rem;margin-top:6px">Systèmes d’exploitation, réseaux informatiques et objets connectés — la partie du manuel qui précède HTML5, avec activités corrigées et évaluation.</p>
+            </div>
+            <div class="subject-card__links">
+              <a class="subject-pill-link" href="cours/systemes-technologies-internet.html">📖 Cours</a>
+              <a class="subject-pill-link" href="cours/systemes-technologies-internet.html#ch1-roles">🧩 Chapitre 1</a>
+              <a class="subject-pill-link" href="cours/systemes-technologies-internet.html#ch2-definition">🌐 Chapitre 2</a>
+              <a class="subject-pill-link" href="cours/systemes-technologies-internet.html#ch3-definition">📡 Chapitre 3</a>
+            </div>
+            <div class="subject-card__footer">
+              <a class="btn btn-primary btn-sm" href="cours/systemes-technologies-internet.html">Ouvrir le cours ➜</a>
+              <a class="btn btn-ghost btn-sm" href="cours/systemes-technologies-internet.html#evaluation">Évaluation /10</a>
+            </div>
+          </article>
+
           <!-- 1. HTML5 -->
           <article class="subject-card" data-subject="html5" data-filter-item="html5">
             <div class="subject-card__top">

@@ -142,7 +142,7 @@ test('le cache hors-ligne embarque la vidéo sans téléchargement automatique',
   assert.match(delta, /url: "\.\/assets\/js\/protection\.js", revision: "php-chaines-v566"/);
   assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "etiquette-relief-v572"/);
   const nbDelta = delta.split('{ url:').length - 1;
-  assert.ok(nbDelta <= 262, `delta trop long : ${nbDelta}`);
+  assert.ok(nbDelta <= 264, `delta trop long : ${nbDelta}`);
 });
 
 test('le manifeste complet décrit la vidéo et ses sous-titres', () => {
