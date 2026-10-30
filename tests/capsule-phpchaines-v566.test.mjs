@@ -213,7 +213,7 @@ test('la capsule est dans le paquet hors-ligne et versionnée', () => {
   assert.ok(sw.includes(`"./assets/videos/PhpChaines-v566.mp4"`), 'MP4 hors-ligne');
   assert.ok(sw.includes(`"./assets/subtitles/PhpChaines-fr-v566.vtt"`), 'VTT hors-ligne');
   const REV_PAGES = new Set(['./index.html', './cours/javascript.html', './cours/php.html', './assets/js/app.js']);
-  const attendu = (page) => (REV_PAGES.has(page) ? 'etiquette-capsule-v571' : 'php-chaines-v566');
+  const attendu = (page) => (REV_PAGES.has(page) ? 'etiquette-relief-v572' : 'php-chaines-v566');
   for (const page of ['./index.html', './cours/php.html', './assets/js/app.js',
     './assets/js/protection.js', './assets/js/lecteur-commun.js',
     './assets/js/admin-vues-videos.js']) {

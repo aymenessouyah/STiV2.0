@@ -114,6 +114,21 @@ test('l’étiquette est une étiquette dorée, en haut à gauche, et ne cache p
   /* Contraste : brun sombre sur doré (≈ 7:1). */
   assert.match(bloc, /color:\s*#4a3208/);
 
+  /* v572 : le relief — épaisseur, lumière en haut, ombre en bas, reflet. */
+  assert.match(bloc, /drop-shadow\(0 1px 0/, 'une épaisseur de carton sous l’étiquette');
+  assert.match(css, /\.sti-etiquette-capsule::before \{[^}]*inset 0 2px 0 rgba\(255, 255, 255, \.62\)/s,
+    'arête éclairée en haut');
+  assert.match(css, /\.sti-etiquette-capsule::before \{[^}]*inset 0 -3px 5px rgba\(120, 78, 0, \.40\)/s,
+    'ombre sous le bord bas');
+  assert.match(css, /\.sti-etiquette-capsule::before \{[^}]*animation: sti-etiquette-brille-V572/s,
+    'le reflet qui passe');
+  assert.match(css, /@keyframes sti-etiquette-brille-V572/, 'la glissade du reflet');
+  /* Calme : le reflet ne repart qu'une fois par cycle de 7 s. */
+  const clefs = css.slice(css.indexOf('@keyframes sti-etiquette-brille-V572'));
+  assert.match(clefs, /0%, 58%/, 'une longue pause avant le reflet');
+  assert.match(css, /animation: sti-etiquette-brille-V572 7s ease-in-out infinite/,
+    'une glissade de sept secondes, sans à-coup');
+
   /* Le cordon est un SVG en ligne : la CSP des pages doit autoriser data:. */
   const index = lire('index.html');
   assert.match(index, /img-src 'self' data:/, 'data: autorisé pour le cordon');
@@ -258,9 +273,9 @@ test('la capsule est dans le paquet hors-ligne et versionnée', () => {
   const sw = lire('sw.js');
   assert.ok(sw.includes(`"./assets/videos/FonctionsChaine-v564.mp4"`));
   assert.ok(sw.includes(`"./assets/subtitles/FonctionsChaine-fr-v564.vtt"`));
-  assert.ok(sw.includes('revision: "etiquette-capsule-v571"'), 'les pages touchées sont réinvalidées');
+  assert.ok(sw.includes('revision: "etiquette-relief-v572"'), 'les pages touchées sont réinvalidées');
   const REV_PAGES = new Set(['./index.html', './cours/javascript.html', './cours/php.html', './assets/js/app.js']);
-  const attendu = (page) => (REV_PAGES.has(page) ? 'etiquette-capsule-v571' : 'php-chaines-v566');
+  const attendu = (page) => (REV_PAGES.has(page) ? 'etiquette-relief-v572' : 'php-chaines-v566');
   for (const page of ['./index.html', './cours/javascript.html', './assets/js/app.js',
     './assets/js/protection.js', './assets/js/lecteur-commun.js']) {
     assert.ok(sw.includes(`{ url: "${page}", revision: "${attendu(page)}"`) ||
