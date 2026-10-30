@@ -5,8 +5,8 @@ Trois colonnes, toujours les mêmes :
   * à gauche **le décor** — l'immeuble, l'ascenseur, le sac, la boîte de jetons ;
   * au milieu **le raisonnement** — le brouillon, le schéma de décision, le
     tableau des trois boucles ;
-  * à droite **deux cadres séparés** — l'**algorithme** en haut, le
-    **JavaScript** en bas. On écrit l'algorithme d'abord, on le traduit après.
+  * à droite **trois cadres séparés** — l'**algorithme**, le **JavaScript**, le
+    **PHP**. On écrit l'algorithme d'abord, puis on le traduit deux fois.
 
 Le titre de chapitre affiché en haut de chaque scène est **lu dans
 `narration.py`** (`SECTIONS[cle]["titre"]`) : le repère du menu chapitres, le
@@ -29,7 +29,8 @@ from theme import (
 )
 import dessin as G
 from dessin import (
-    LARGEUR, HAUTEUR, MARGE, PANEL_G, PANEL_M, PANEL_D, ALGO_BOX, JS_BOX, BANDE,
+    LARGEUR, HAUTEUR, MARGE, PANEL_G, PANEL_M, PANEL_D, ALGO_BOX, JS_BOX, PHP_BOX,
+    BANDE,
     sac, immeuble, personnage, jeton, cahier, cadre_code, boite_memoire,
     pile_lignes, boucle_schema, bandeau_etat, bulle, coche, panneau, entete,
     etape_pastille, papier_brouillon, crayon, crayon_centre,
@@ -93,6 +94,25 @@ JS_TQ = [
     "    n++;",
     "}",
 ]
+PHP_POUR = [
+    "$S = 0;",
+    "for ($i = 0; $i < count($T); $i++) {",
+    "    $S = $S + $T[$i];",
+    "}",
+]
+PHP_REP = [
+    "$i = 0; $trouve = false;",
+    "do {",
+    "    if ($T[$i] == $X) $trouve = true;",
+    "    $i++;",
+    "} while (!$trouve && $i < 4);",
+]
+PHP_TQ = [
+    "while ($jetons > 0) {",
+    "    $jetons--;",
+    "    $n++;",
+    "}",
+]
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -127,14 +147,14 @@ def _cadre_ecriture(d, box, numero, titre_, accent, actif, a=1.0):
     boite_arrondie(d, box, rayon=18, fond=couleur,
                    bord=melange(BORDURE, accent, (0.85 if actif else 0.18) * a),
                    largeur_bord=3 if actif else 2)
-    d.ellipse([x0 + 18, y0 + 16, x0 + 46, y0 + 44],
+    d.ellipse([x0 + 16, y0 + 12, x0 + 40, y0 + 36],
               fill=melange(FOND_PANNEAU_2, accent, 0.55 if actif else 0.18))
-    d.text((x0 + 32, y0 + 30), str(numero), font=police(16, True),
+    d.text((x0 + 28, y0 + 24), str(numero), font=police(14, True),
            fill=TEXTE if actif else TEXTE_3, anchor="mm")
-    d.text((x0 + 58, y0 + 24), titre_, font=police(19, True),
+    d.text((x0 + 50, y0 + 18), titre_, font=police(15, True),
            fill=melange(TEXTE_3, accent, 0.55) if actif else TEXTE_3, anchor="la")
     if actif:
-        d.text((x1 - 20, y0 + 26), "je l'écris", font=police(14, True),
+        d.text((x1 - 16, y0 + 20), "je l'écris", font=police(11, True),
                fill=melange(FOND, accent, 0.85), anchor="ra")
 
 
@@ -145,12 +165,13 @@ def _vide(d, box, texte_):
            fill=melange(FOND_PANNEAU, TEXTE_3, 0.60), anchor="mm")
 
 
-def _code(d, box, lignes, accent, actif, p, seuil=0.06, pas=0.11, taille=20):
+def _code(d, box, lignes, accent, actif, p, seuil=0.06, pas=0.11, taille=20,
+          interligne=9, marge_haut=54):
     """Écrit le code ligne à ligne, avec un curseur sur la ligne en cours."""
     if not lignes:
         return
     x0, y0, x1, y1 = box
-    y = y0 + 62
+    y = y0 + marge_haut
     for i, ligne in enumerate(lignes):
         k = _apparait(p, seuil + pas * i, 0.10)
         if k <= 0:
@@ -158,29 +179,36 @@ def _code(d, box, lignes, accent, actif, p, seuil=0.06, pas=0.11, taille=20):
         visible = ligne[: max(1, int(len(ligne) * k + 0.999))]
         couleur = melange(FOND, accent if actif else TEXTE_3, 0.95 if actif else 0.42)
         f = police(taille, True, mono=True)
-        d.text((x0 + 24, y), visible, font=f, fill=couleur, anchor="lm")
+        d.text((x0 + 20, y), visible, font=f, fill=couleur, anchor="lm")
         if k < 1:
             largeur = f.getlength(visible)
             d.rectangle([x0 + 26 + largeur, y - taille * 0.6,
                          x0 + 29 + largeur, y + taille * 0.6], fill=AMBRE)
-        y += taille + 12
+        y += taille + interligne
 
 
-def _ecritures(d, p, algo=None, js=None, algo_on=False, js_on=False,
-               seuil_algo=0.06, seuil_js=0.30,
+def _ecritures(d, p, algo=None, js=None, php=None,
+               algo_on=False, js_on=False, php_on=False,
+               seuil_algo=0.06, seuil_js=0.30, seuil_php=0.18,
                vide_algo="① l'algorithme viendra ici",
-               vide_js="② le JavaScript viendra après"):
-    """Les deux cadres de droite : ce qui est écrit, et ce qui viendra."""
+               vide_js="② le JavaScript viendra après",
+               vide_php="③ le PHP viendra en dernier"):
+    """Les trois cadres de droite : ce qui est écrit, et ce qui viendra."""
     _cadre_ecriture(d, ALGO_BOX, 1, "l'ALGORITHME", C_POUR, algo_on)
     _cadre_ecriture(d, JS_BOX, 2, "le JAVASCRIPT", VERT, js_on)
+    _cadre_ecriture(d, PHP_BOX, 3, "le PHP", BLEU, php_on)
     if algo:
-        _code(d, ALGO_BOX, algo, C_POUR, algo_on, p, seuil=seuil_algo, taille=18)
+        _code(d, ALGO_BOX, algo, C_POUR, algo_on, p, seuil=seuil_algo, taille=16)
     else:
         _vide(d, ALGO_BOX, vide_algo)
     if js:
-        _code(d, JS_BOX, js, VERT, js_on, p, seuil=seuil_js, taille=18)
+        _code(d, JS_BOX, js, VERT, js_on, p, seuil=seuil_js, taille=16)
     else:
         _vide(d, JS_BOX, vide_js)
+    if php:
+        _code(d, PHP_BOX, php, BLEU, php_on, p, seuil=seuil_php, taille=16)
+    else:
+        _vide(d, PHP_BOX, vide_php)
 
 
 def _etat(d, actif=None, info="", couleur=TEXTE_2):
@@ -355,7 +383,8 @@ def scene_probleme(d, p, t):
     _ligne(d, 7, "S = ?", 36, ORANGE, 0.78, p, gras=True)
 
     _ecritures(d, p, vide_algo="① l'algorithme, plus tard",
-               vide_js="② le JavaScript, plus tard")
+               vide_js="② le JavaScript, plus tard",
+               vide_php="③ le PHP, plus tard")
     _etat(d, None, "S = ?")
 
 
@@ -400,7 +429,8 @@ def scene_immeuble(d, p, t):
                anchor="lm")
 
     _ecritures(d, p, vide_algo="① l'algorithme, plus tard",
-               vide_js="② le JavaScript, plus tard")
+               vide_js="② le JavaScript, plus tard",
+               vide_php="③ le PHP, plus tard")
     _etat(d, None, "l'immeuble s'appelle T")
 
 
@@ -460,7 +490,8 @@ def scene_ascenseur(d, p, t):
         _cabine_crochets(d, 960, 812, "i", ouverture=1.0, echelle=0.86)
 
     _ecritures(d, p, vide_algo="① l'algorithme, plus tard",
-               vide_js="② le JavaScript, plus tard")
+               vide_js="② le JavaScript, plus tard",
+               vide_php="③ le PHP, plus tard")
     _etat(d, None, "T[i] : l'étage i, portes ouvertes")
 
 
@@ -494,7 +525,8 @@ def scene_scalaire(d, p, t):
                font=police(22, True), fill=melange(FOND, AMBRE, 1.0), anchor="lm")
 
     _ecritures(d, p, vide_algo="① l'algorithme, plus tard",
-               vide_js="② le JavaScript, plus tard")
+               vide_js="② le JavaScript, plus tard",
+               vide_php="③ le PHP, plus tard")
     _etat(d, None, "scalaire : successeur et prédécesseur")
 
 
@@ -676,6 +708,29 @@ def scene_pour_js(d, p, t):
     _etat(d, "pour", "traduction en JavaScript", VERT)
 
 
+def scene_pour_php(d, p, t):
+    _entete(d, "pour_php")
+    _panneaux(d, "l'immeuble", "le brouillon")
+    _immeuble_statique(d, actif=0, cabine=0.0, t=t)
+
+    papier_brouillon(d, PAPIER_BOX)
+    _ligne(d, 0, "même boucle, troisième langage", 21,
+           melange(ENCRE, TEXTE_3, 0.4), 0.04, p)
+    _ligne(d, 2, "ALGORITHME  →  JAVASCRIPT  →  PHP", 19, BLEU, 0.14, p, gras=True)
+    _ligne(d, 4, "compteur  →  i  →  $i", 23, BLEU, 0.32, p, gras=True)
+    _ligne(d, 5, "T[i]      →  $T[$i]", 23, BLEU, 0.42, p, gras=True)
+    _ligne(d, 6, "T.length  →  count($T)", 23, BLEU, 0.52, p, gras=True)
+    _ligne(d, 8, "en PHP, une variable porte $", 21, ENCRE, 0.66, p)
+    _ligne(d, 9, "le reste ne change pas", 21, VERT, 0.74, p, gras=True)
+    if p > 0.86:
+        d.text((X_CRAYON, _regle(11) - 10), "même logique, trois écritures",
+               font=police(20, True), fill=melange(FOND, BLEU, 1.0), anchor="lm")
+
+    _ecritures(d, p, ALGO_POUR, JS_POUR, PHP_POUR,
+               algo_on=False, js_on=False, php_on=True, seuil_php=0.14)
+    _etat(d, "pour", "PHP : for ($i = 0; …)", BLEU)
+
+
 def scene_pour_trace(d, p, t):
     _entete(d, "pour_trace")
     _panneaux(d, "l'immeuble", "le brouillon")
@@ -805,6 +860,25 @@ def scene_repet_js(d, p, t):
     _etat(d, "repeter", "do { … } while (…)", VERT)
 
 
+def scene_repet_php(d, p, t):
+    _entete(d, "repet_php")
+    _panneaux(d, "je cherche X", "le brouillon")
+    _recherche(d, i=0, trouve=None, t=t, x=7)
+
+    papier_brouillon(d, PAPIER_BOX)
+    _ligne(d, 0, "la recherche, en PHP", 23, BLEU, 0.04, p, gras=True)
+    _ligne(d, 2, "RÉPÉTER  →  do { … } while", 22, VIOLET, 0.16, p, gras=True)
+    _ligne(d, 4, "$i       l'indice, avec son $", 21, ENCRE, 0.34, p)
+    _ligne(d, 5, "$trouve  le drapeau", 21, ENCRE, 0.44, p)
+    _ligne(d, 7, "==   compare deux valeurs", 21, ENCRE, 0.60, p)
+    _ligne(d, 8, "===  n'existe pas en PHP", 21, ROUGE_STYLO, 0.68, p)
+    _ligne(d, 10, "la condition reste la même", 21, VERT, 0.82, p, gras=True)
+
+    _ecritures(d, p, ALGO_REP, JS_REP, PHP_REP,
+               algo_on=False, js_on=False, php_on=True, seuil_php=0.14)
+    _etat(d, "repeter", "PHP : do { … } while (…)", BLEU)
+
+
 def _trace_recherche(d, p, x, arrets, message, resultat):
     """Les lignes de la recherche : i, la valeur, et la décision."""
     _ligne(d, 0, f"X = {x}", 26, ROSE, 0.04, p, gras=True)
@@ -922,6 +996,25 @@ def scene_tantque_js(d, p, t):
     _etat(d, "tantque", "while (jetons > 0)", VERT)
 
 
+def scene_tantque_php(d, p, t):
+    _entete(d, "tantque_php")
+    _panneaux(d, "la boîte de jetons", "le brouillon")
+    _jetons(d, 3, 0, t=t)
+
+    papier_brouillon(d, PAPIER_BOX)
+    _ligne(d, 0, "TANT QUE, en PHP", 23, BLEU, 0.04, p, gras=True)
+    _ligne(d, 2, "while ($jetons > 0)", 24, BLEU, 0.16, p, gras=True)
+    _ligne(d, 4, "$jetons--  je sors un jeton", 21, ENCRE, 0.36, p)
+    _ligne(d, 5, "$n++       je le compte", 21, ENCRE, 0.46, p)
+    _ligne(d, 7, "même test AVANT le bloc", 21, VERT, 0.62, p, gras=True)
+    _ligne(d, 8, "donc zéro tour possible", 21, ENCRE, 0.70, p)
+    _ligne(d, 10, "trois langages, une seule logique", 20, BLEU, 0.84, p, gras=True)
+
+    _ecritures(d, p, ALGO_TQ, JS_TQ, PHP_TQ,
+               algo_on=False, js_on=False, php_on=True, seuil_php=0.14)
+    _etat(d, "tantque", "PHP : while ($jetons > 0)", BLEU)
+
+
 def scene_tantque_trace(d, p, t):
     _entete(d, "tantque_trace")
     _panneaux(d, "la boîte de jetons", "le brouillon")
@@ -957,7 +1050,7 @@ def scene_tableau3(d, p, t):
            fill=TEXTE, anchor="mm")
     d.text((1263, 800), "et un seul schéma pour choisir", font=police(19), fill=TEXTE_3,
            anchor="mm")
-    _etat(d, None, "trois boucles, trois situations")
+    _etat(d, None, "trois boucles, trois langages")
 
 
 def scene_choisir(d, p, t):
@@ -1008,69 +1101,93 @@ def scene_algo_js(d, p, t):
     _entete(d, "algo_js")
     panneau(d, PANEL_G, "les trois boucles", accent=melange(BORDURE, ORANGE, 0.30))
     _trois_blocs(d, None, 250)
-    panneau(d, PANEL_M, "les correspondances", accent=melange(BORDURE, AMBRE, 0.40))
+    panneau(d, PANEL_M, "trois langages", accent=melange(BORDURE, AMBRE, 0.40))
+
+    # l'en-tête du tableau : les trois colonnes de langage
+    k0 = _apparait(p, 0.10, 0.12)
+    if k0 > 0:
+        d.text((716, 268), "boucle", font=police(15, True),
+               fill=melange(FOND, TEXTE_3, k0), anchor="lm")
+        d.text((946, 268), "JavaScript", font=police(15, True),
+               fill=melange(FOND, VERT, k0), anchor="lm")
+        d.text((1150, 268), "PHP", font=police(15, True),
+               fill=melange(FOND, BLEU, k0), anchor="lm")
 
     lignes = [
-        ("POUR", "for", C_POUR, 280),
-        ("RÉPÉTER…JUSQU'À", "do … while", C_REP, 410),
-        ("TANT QUE", "while", C_TQ, 540),
+        ("POUR", "for (…)", "for (…)", C_POUR, 306),
+        ("RÉPÉTER…JUSQU'À", "do … while", "do … while", C_REP, 434),
+        ("TANT QUE", "while", "while", C_TQ, 562),
     ]
-    for i, (algo, js, couleur, y) in enumerate(lignes):
-        k = _apparait(p, 0.16 + 0.14 * i, 0.16)
+    for i, (algo, js, php, couleur, y) in enumerate(lignes):
+        k = _apparait(p, 0.16 + 0.10 * i, 0.14)
         if k <= 0:
             continue
-        boite_arrondie(d, [700, y, 1226, y + 84], rayon=14,
+        boite_arrondie(d, [700, y, 1226, y + 104], rayon=14,
                        fond=melange(FOND_PANNEAU_2, couleur, 0.10 * k),
                        bord=melange(BORDURE, couleur, 0.55 * k), largeur_bord=2)
-        d.text((734, y + 42), algo, font=police(19, True), fill=melange(FOND, couleur, k),
-               anchor="lm")
-        fleche(d, (960, y + 42), (1034, y + 42), couleur=melange(FOND, couleur, k),
-               progression=k, pointe=12)
-        d.text((1054, y + 42), js, font=police(19, True, mono=True),
+        d.text((716, y + 52), algo, font=police(15, True),
+               fill=melange(FOND, couleur, k), anchor="lm")
+        d.text((946, y + 40), js, font=police(15, True, mono=True),
                fill=melange(FOND, VERT, k), anchor="lm")
-    d.text((960, 668), "on écrit l'algorithme d'abord,", font=police(18), fill=TEXTE_2,
-           anchor="mm")
-    d.text((960, 704), "on le traduit ensuite", font=police(18), fill=TEXTE_2, anchor="mm")
-    d.text((960, 764), "deux cadres, jamais mélangés", font=police(17, True),
-           fill=AMBRE, anchor="mm")
+        d.text((1150, y + 40), php, font=police(15, True, mono=True),
+               fill=melange(FOND, BLEU, k), anchor="lm")
 
-    _cadre_ecriture(d, ALGO_BOX, 1, "l'ALGORITHME", C_POUR, True)
-    _cadre_ecriture(d, JS_BOX, 2, "le JAVASCRIPT", VERT, True)
-    _code(d, ALGO_BOX, ["POUR i DE 0 À 3 FAIRE", "RÉPÉTER … JUSQU'À", "TANT QUE jetons > 0 FAIRE"],
-          C_POUR, True, p, seuil=0.10, pas=0.14, taille=17)
-    _code(d, JS_BOX, ["for (let i = 0; i < T.length; i++)", "do { … } while (…)",
-                      "while (jetons > 0)"],
-          VERT, True, p, seuil=0.30, pas=0.14, taille=17)
-    _etat(d, None, "deux langages, une logique")
+    if p > 0.52:
+        k = _apparait(p, 0.52, 0.12)
+        d.text((960, 700), "un seul algorithme, deux traductions",
+               font=police(19, True), fill=melange(FOND, TEXTE, k), anchor="mm")
+    if p > 0.64:
+        k = _apparait(p, 0.64, 0.12)
+        d.text((960, 736), "le PHP ajoute seulement les $",
+               font=police(16), fill=melange(FOND, TEXTE_2, k), anchor="mm")
+    if p > 0.76:
+        k = _apparait(p, 0.76, 0.12)
+        d.text((960, 786), "trois cadres, jamais mélangés",
+               font=police(17, True), fill=melange(FOND, AMBRE, k), anchor="mm")
+
+    _ecritures(d, p,
+               ["POUR i DE 0 À 3 FAIRE", "RÉPÉTER … JUSQU'À",
+                "TANT QUE jetons > 0 FAIRE"],
+               ["for (let i = 0; i < T.length; i++)", "do { … } while (…)",
+                "while (jetons > 0)"],
+               ["for ($i = 0; $i < count($T); $i++)", "do { … } while (…)",
+                "while ($jetons > 0)"],
+               algo_on=True, js_on=True, php_on=True,
+               seuil_algo=0.10, seuil_js=0.24, seuil_php=0.38)
+    _etat(d, None, "trois langages, une logique")
 
 
 # ══════════════════════════════════════════════════════════════════════════
 # 27-29 · Le bilan, la méthode, le générique
 # ══════════════════════════════════════════════════════════════════════════
-def _colonne_fin(d, x0, x1, nom, couleur, regle, algo, js, p, i, bilan):
+def _colonne_fin(d, x0, x1, nom, couleur, regle, algo, js, php, p, i, bilan):
     """Une des trois colonnes du bilan : l'algorithme au-dessus, le code dessous."""
     boite_arrondie(d, [x0, 186, x1, 884], rayon=20, fond=FOND_PANNEAU,
                    bord=melange(BORDURE, couleur, 0.55), largeur_bord=2)
     d.text((x0 + 22, 202), nom, font=police(26, True), fill=couleur, anchor="la")
     d.text((x0 + 22, 240), regle, font=police(14), fill=TEXTE_2, anchor="la")
-    haut = [x0 + 14, 268, x1 - 14, 486]
-    bas = [x0 + 14, 498, x1 - 14, 700]
+    haut = [x0 + 14, 266, x1 - 14, 402]
+    milieu = [x0 + 14, 410, x1 - 14, 546]
+    bas = [x0 + 14, 554, x1 - 14, 690]
     _cadre_ecriture(d, haut, 1, "ALGORITHME", couleur, True, a=0.92)
-    _cadre_ecriture(d, bas, 2, "JAVASCRIPT", VERT, True, a=0.92)
-    _code(d, haut, algo, couleur, True, p, seuil=0.14 + 0.05 * i, pas=0.05, taille=15)
-    _code(d, bas, js, VERT, True, p, seuil=0.42 + 0.05 * i, pas=0.05, taille=15)
+    _cadre_ecriture(d, milieu, 2, "JAVASCRIPT", VERT, True, a=0.92)
+    _cadre_ecriture(d, bas, 3, "PHP", BLEU, True, a=0.92)
+    serre = dict(taille=13, interligne=5, marge_haut=46)
+    _code(d, haut, algo, couleur, True, p, seuil=0.14 + 0.05 * i, pas=0.05, **serre)
+    _code(d, milieu, js, VERT, True, p, seuil=0.38 + 0.05 * i, pas=0.05, **serre)
+    _code(d, bas, php, BLEU, True, p, seuil=0.56 + 0.05 * i, pas=0.05, **serre)
 
-    k = _apparait(p, 0.72 + 0.05 * i, 0.12)
+    k = _apparait(p, 0.74 + 0.05 * i, 0.12)
     if k > 0:
-        boite_arrondie(d, [x0 + 14, 714, x1 - 14, 866], rayon=14,
+        boite_arrondie(d, [x0 + 14, 704, x1 - 14, 866], rayon=14,
                        fond=melange(FOND_PANNEAU_2, couleur, 0.12 * k),
                        bord=melange(BORDURE, couleur, 0.55 * k), largeur_bord=2)
-        d.text(((x0 + x1) / 2, 736), "résultat", font=police(13, True),
+        d.text(((x0 + x1) / 2, 724), "résultat", font=police(13, True),
                fill=melange(FOND, TEXTE_3, k), anchor="mm")
         n = len(bilan)
-        pas = 112 / n
+        pas = 124 / n
         for j, (haut_txt, bas_txt) in enumerate(bilan):
-            centre = 752 + pas * (j + 0.5)
+            centre = 742 + pas * (j + 0.5)
             d.text(((x0 + x1) / 2, centre - 12), haut_txt,
                    font=police(20 if n == 1 else 18, True),
                    fill=melange(FOND, couleur, k), anchor="mm")
@@ -1082,17 +1199,17 @@ def _colonne_fin(d, x0, x1, nom, couleur, regle, algo, js, p, i, bilan):
 def scene_bilan(d, p, t):
     _entete(d, "bilan")
     _colonne_fin(d, 64, 650, "POUR", C_POUR, "tours connus, pas d'arrêt",
-                 ALGO_POUR, JS_POUR, p, 0,
+                 ALGO_POUR, JS_POUR, PHP_POUR, p, 0,
                  [("S = 22", "quatre tours, i vaut 4")])
     _colonne_fin(d, 666, 1252, "RÉPÉTER…JUSQU'À", C_REP, "au moins un tour",
-                 ALGO_REP, JS_REP, p, 1,
+                 ALGO_REP, JS_REP, PHP_REP, p, 1,
                  [("trouvé", "X = 7, arrêt au 2ᵉ tour"),
                   ("absent", "X = 5, i vaut 4")])
     _colonne_fin(d, 1268, 1854, "TANT QUE", C_TQ, "zéro tour possible",
-                 ALGO_TQ, JS_TQ, p, 2,
+                 ALGO_TQ, JS_TQ, PHP_TQ, p, 2,
                  [("3 tours", "n = 3, boîte vidée"),
                   ("0 tour", "boîte vide : n = 0")])
-    _etat(d, None, "trois boucles, trois situations")
+    _etat(d, None, "trois boucles, trois langages")
 
 
 def scene_conclusion(d, p, t):
@@ -1187,18 +1304,21 @@ SCENES = {
     "engendrer": scene_engendrer,
     "pour_algo": scene_pour_algo,
     "pour_js": scene_pour_js,
+    "pour_php": scene_pour_php,
     "pour_trace": scene_pour_trace,
     "rappel1": scene_rappel1,
     "chercher_quoi": scene_chercher_quoi,
     "chercher_q": scene_chercher_q,
     "repet_algo": scene_repet_algo,
     "repet_js": scene_repet_js,
+    "repet_php": scene_repet_php,
     "repet_trouve": scene_repet_trouve,
     "repet_absent": scene_repet_absent,
     "rappel2": scene_rappel2,
     "tantque_quoi": scene_tantque_quoi,
     "tantque_algo": scene_tantque_algo,
     "tantque_js": scene_tantque_js,
+    "tantque_php": scene_tantque_php,
     "tantque_trace": scene_tantque_trace,
     "rappel3": scene_rappel3,
     "tableau3": scene_tableau3,

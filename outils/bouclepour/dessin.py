@@ -34,8 +34,9 @@ MARGE = 64
 PANEL_G = (64, 186, 644, 884)            # l'histoire : l'immeuble et son ascenseur
 PANEL_M = (670, 186, 1250, 884)          # le brouillon : ce que je note à la main
 PANEL_D = (1276, 186, 1856, 884)         # l'algo · le code : ce que j'écris vraiment
-ALGO_BOX = (1276, 186, 1856, 566)        # l'algorithme, en haut
-JS_BOX = (1276, 576, 1856, 884)          # le JavaScript, en bas
+ALGO_BOX = (1276, 186, 1856, 412)        # ① l'algorithme, en haut
+JS_BOX = (1276, 422, 1856, 648)          # ② le JavaScript, au milieu
+PHP_BOX = (1276, 658, 1856, 884)         # ③ le PHP, en bas
 BANDE = (MARGE, 906, 1856, 1012)         # le fil rouge : les trois boucles
 
 # Le papier du brouillon et le stylo rouge

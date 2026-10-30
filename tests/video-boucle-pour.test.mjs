@@ -1,5 +1,5 @@
 /* v544 — capsule « Les boucles — Pour, Répéter…jusqu'à, Tant que » (JavaScript).
-   Contrôle la vidéo livrée, ses sous-titres français, les trente-trois étapes du
+   Contrôle la vidéo livrée, ses sous-titres français, les trente-six étapes du
    récit (décor · brouillon · schéma de décision · tableau des trois boucles)
    avec l'algorithme et le JavaScript dans deux cadres séparés, l'intégration
    dans le site (carte vidéo, catalogue, lecteur partagé, chapitres) et le
@@ -16,22 +16,23 @@ const existe = (chemin) => existsSync(join(root, chemin));
 
 /* Le nom des médias porte la version : c'est elle qui force le nouveau
    téléchargement, le service worker servant les vidéos depuis son cache. */
-const VERSION_MEDIA = 'v546';
+const VERSION_MEDIA = 'v547';
 const VIDEO = `assets/videos/BouclePour-${VERSION_MEDIA}.mp4`;
 const VTT = `assets/subtitles/BouclePour-fr-${VERSION_MEDIA}.vtt`;
 const ID = 'boucle-pour';
 const TITRE = "Les boucles — Pour, Répéter…jusqu'à, Tant que";
 
-/** Les trente-trois sections de la capsule, dans l'ordre de la voix off. */
+/** Les trente-six sections de la capsule, dans l'ordre de la voix off. */
 const ORDRE = [
   'ouverture', 'introduction', 'probleme',
   'immeuble', 'ascenseur', 'scalaire',
   'repetition', 'q1', 'q2', 'q3',
   'engendrer',
-  'pour_algo', 'pour_js', 'pour_trace', 'rappel1',
-  'chercher_quoi', 'chercher_q', 'repet_algo', 'repet_js',
+  'pour_algo', 'pour_js', 'pour_php', 'pour_trace', 'rappel1',
+  'chercher_quoi', 'chercher_q', 'repet_algo', 'repet_js', 'repet_php',
   'repet_trouve', 'repet_absent', 'rappel2',
-  'tantque_quoi', 'tantque_algo', 'tantque_js', 'tantque_trace', 'rappel3',
+  'tantque_quoi', 'tantque_algo', 'tantque_js', 'tantque_php',
+  'tantque_trace', 'rappel3',
   'tableau3', 'choisir', 'algo_js',
   'bilan', 'conclusion', 'generique',
 ];
@@ -83,9 +84,9 @@ test('la capsule est livrée à côté des autres vidéos du site', () => {
   assert.match(entete, /isom|mp42|avc1/, 'marque MP4');
 });
 
-test('la vidéo dure environ quatorze minutes et ses sous-titres la couvrent', () => {
+test('la vidéo dure environ seize minutes et ses sous-titres la couvrent', () => {
   const duree = dureeMp4(VIDEO);
-  assert.ok(duree > 800 && duree < 900, `durée inattendue : ${duree.toFixed(1)} s`);
+  assert.ok(duree > 900 && duree < 1000, `durée inattendue : ${duree.toFixed(1)} s`);
   const vtt = lire(VTT);
   assert.ok(vtt.startsWith('WEBVTT'), 'entête WEBVTT');
   const entrees = entreesVtt(vtt);
@@ -155,7 +156,7 @@ test("la capsule se referme : bilan, méthode, carte de fin et fondu", () => {
   /* la méthode, puis le générique : la carte de fin */
   assert.ok(vtt.indexOf('la méthode tient en trois questions') > bilan, 'la méthode après le bilan');
   assert.ok(vtt.includes('à vous de jouer, dans sti version 2.0'), 'la formule de fin');
-  assert.ok(vtt.trimEnd().endsWith('série 6, les boucles. à bientôt.'),
+  assert.ok(vtt.trimEnd().endsWith('la capsule des boucles. à bientôt.'),
     'la capsule se termine par une vraie sortie');
 
   /* l'image s'éteint : le rendu applique un fondu de sortie */
@@ -274,6 +275,66 @@ test('la boucle Pour est engendrée, puis traduite en JavaScript', () => {
   assert.ok(trace.includes('4 < 4 est faux'), 'la sortie expliquée par T.length');
 });
 
+test('la capsule traite les trois langages : JavaScript et PHP', () => {
+  const vtt = textePlat();
+
+  /* le PHP est annoncé, puis montré après chaque boucle */
+  for (const expression of ['trois langages, une seule logique',
+    'while, $jetons supérieur à zéro', 'chaque variable porte un dollar',
+    'count($t)', 'trois égales']) {
+    assert.ok(vtt.toLowerCase().includes(expression), expression);
+  }
+  /* le PHP arrive après le JavaScript de chaque boucle */
+  assert.ok(vtt.indexOf('je passe à la même boucle, en javascript')
+    < vtt.indexOf('et en php, cette boucle pour'), 'Pour : JavaScript puis PHP');
+  assert.ok(vtt.indexOf('do … while') < vtt.indexOf('la recherche, maintenant, en php'),
+    'Répéter : JavaScript puis PHP');
+  assert.ok(vtt.includes('trois langages, une seule logique'), 'la formule de synthèse');
+  assert.ok(vtt.includes("n'existent pas en php"), 'la différence == / ===');
+
+  const scenes = lire('outils/bouclepour/scenes.py');
+  for (const bloc of ['PHP_POUR = [', 'PHP_REP = [', 'PHP_TQ = [']) {
+    assert.ok(scenes.includes(bloc), bloc);
+  }
+  for (const scene of ['def scene_pour_php(', 'def scene_repet_php(', 'def scene_tantque_php(']) {
+    assert.ok(scenes.includes(scene), scene);
+  }
+  /* le PHP suit le JavaScript de chaque boucle, jamais avant */
+  const ordre = [...scenes.matchAll(/^    "([a-z0-9_]+)": scene_/gm)].map((m) => m[1]);
+  for (const [js, php] of [['pour_js', 'pour_php'], ['repet_js', 'repet_php'],
+    ['tantque_js', 'tantque_php']]) {
+    assert.ok(ordre.indexOf(php) === ordre.indexOf(js) + 1, `${php} suit ${js}`);
+  }
+  /* et le bilan montre les trois écritures dans chaque colonne */
+  const bilan = scenes.slice(scenes.indexOf('def scene_bilan('),
+    scenes.indexOf('def scene_conclusion('));
+  assert.equal((bilan.match(/_colonne_fin\(d, /g) || []).length, 3, 'trois colonnes');
+  assert.ok(bilan.includes('PHP_POUR') && bilan.includes('PHP_REP') && bilan.includes('PHP_TQ'),
+    'le PHP dans les trois colonnes');
+});
+
+test("le bandeau des chapitres suit la vidéo", () => {
+  const protection = lire('assets/js/protection.js');
+
+  /* une fonction dédiée, qui centre le repère actif sans défiler la page */
+  assert.match(protection, /function faireDefilerChapitreActifSTI\(barre, bouton\)/,
+    'la fonction de recentrage');
+  assert.match(protection, /barre\.scrollTo\(\{ left: cible/,
+    'le défilement se fait sur la barre, pas sur la page');
+  assert.match(protection, /prefers-reduced-motion/,
+    'le mouvement est doux, sauf si on le refuse');
+
+  /* elle est appelée quand le chapitre change, et au clic sur un repère */
+  const timeupdate = protection.slice(protection.indexOf('mVid.addEventListener("timeupdate"'),
+    protection.indexOf('function fermerModaleVideo'));
+  assert.match(timeupdate, /if \(idxAct !== mDernierChapitre\)/,
+    'on ne recentre qu’au changement de chapitre');
+  assert.match(timeupdate, /faireDefilerChapitreActifSTI\(mChapPills, pills\[idxAct\]\)/,
+    'le repère actif est recentré');
+  assert.match(protection, /faireDefilerChapitreActifSTI\(pillsChapEl, btnP\)/,
+    'un clic recentre aussi');
+});
+
 test('le schéma de décision pose les trois questions, dans l\'ordre', () => {
   const vtt = textePlat();
   const q1 = vtt.indexOf('est-ce que je connais le nombre de répétitions à l\'avance');
@@ -339,12 +400,15 @@ test('chaque étape rappelle le tableau des trois boucles et le schéma', () => 
 
 test("l'algorithme et le JavaScript ne sont jamais mélangés", () => {
   const vtt = textePlat();
-  assert.ok(vtt.includes('ne mélangez pas les deux écritures'),
+  assert.ok(vtt.includes('ne mélangez pas les écritures'),
     'la consigne est dite explicitement');
-  assert.ok(vtt.includes("à droite, en haut, l'algorithme"), "le cadre de l'algorithme");
-  assert.ok(vtt.includes('en bas, le javascript : for, do while, while'),
+  assert.ok(vtt.includes('à droite, de haut en bas : l\'algorithme'),
+    "le cadre de l'algorithme");
+  assert.ok(vtt.includes('le javascript, avec for, do while et while'),
     'le cadre du JavaScript');
-  assert.ok(vtt.includes('on écrit l\'algorithme d\'abord, on le traduit ensuite'),
+  assert.ok(vtt.includes('et le php, avec for, do while et while'),
+    'le cadre du PHP');
+  assert.ok(vtt.includes('on écrit l\'algorithme d\'abord, puis on le traduit, deux fois'),
     'l\'ordre de travail');
 
   const scenes = lire('outils/bouclepour/scenes.py');
@@ -397,10 +461,10 @@ test("l'URL des médias porte la version : sinon le téléphone garde l'ancienne
   assert.match(integrer, /NOM_MP4 = f"\{SLUG\}-\{VERSION_MEDIA\}\.mp4"/, 'le nom en dérive');
 });
 
-test('la fabrication compte trente-trois sections, de la voix aux scènes', () => {
+test('la fabrication compte trente-six sections, de la voix aux scènes', () => {
   const narration = lire('outils/bouclepour/narration.py');
   const trouve = [...narration.matchAll(/"([a-z0-9_]+)": \{/g)].map((m) => m[1]);
-  assert.deepEqual(trouve, ORDRE, 'l\'ordre des trente-trois sections');
+  assert.deepEqual(trouve, ORDRE, 'l\'ordre des trente-six sections');
 
   const scenes = lire('outils/bouclepour/scenes.py');
   assert.match(scenes, /TOTAL = len\(N\.ORDRE\)/, 'la capsule compte autant d\'étapes que de sections');
@@ -413,7 +477,7 @@ test('la fabrication compte trente-trois sections, de la voix aux scènes', () =
   const calage = JSON.parse(lire('outils/bouclepour/calage.json'));
   assert.deepEqual(Object.keys(calage.debuts), ORDRE, 'calage de la voix');
   assert.deepEqual(Object.keys(calage.durees), ORDRE, 'durées de la voix');
-  assert.ok(calage.total > 800 && calage.total < 900, `total inattendu : ${calage.total}`);
+  assert.ok(calage.total > 900 && calage.total < 1000, `total inattendu : ${calage.total}`);
   for (let i = 1; i < ORDRE.length; i += 1) {
     const precedente = calage.debuts[ORDRE[i - 1]] + calage.durees[ORDRE[i - 1]];
     assert.ok(calage.debuts[ORDRE[i]] > precedente, `section ${ORDRE[i]} après la précédente`);
@@ -448,11 +512,11 @@ test('la capsule se lance depuis la grille de l\'accueil', () => {
   /* un repère de chapitre par section, calé sur la voix off */
   const chapitres = protection.slice(protection.indexOf('STI_CHAPITRES_MEDIA["boucle-pour"]'),
     protection.indexOf('STI_CHAPITRES_MEDIA["validation-nom-prenom-js"]'));
-  assert.equal((chapitres.match(/\{ t:/g) || []).length, 33, 'trente-trois chapitres');
+  assert.equal((chapitres.match(/\{ t:/g) || []).length, 36, 'trente-six chapitres');
   assert.ok(chapitres.includes('1 · Bienvenue — les boucles'), 'premier repère');
   assert.ok(chapitres.includes('2 · Ce qu\'est une boucle'), 'le repère de l\'introduction');
-  assert.ok(chapitres.includes('33 · À vous de jouer'), 'dernier repère');
-  assert.ok(chapitres.includes('31 · Les trois blocs côte à côte'), 'le bilan');
+  assert.ok(chapitres.includes('36 · À vous de jouer'), 'dernier repère');
+  assert.ok(chapitres.includes('34 · Les trois blocs côte à côte'), 'le bilan');
 
   /* la reprise de lecture sait à quelle matière et quel titre rattacher la capsule */
   assert.ok(lecteur.includes("'boucle-pour': ['javascript','Les boucles — Pour, Répéter…jusqu'à, Tant que']"),
@@ -476,7 +540,7 @@ test('la capsule se lance depuis la grille de l\'accueil', () => {
 
   /* le service worker sert la nouvelle version du lecteur */
   const sw = lire('sw.js');
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "boucles-v546"/);
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "boucles-v547"/);
   /* le lecteur commun n'a pas bougé depuis la v543 : il garde sa révision */
   assert.match(sw, /url: "\.\/assets\/js\/lecteur-commun\.js", revision: "boucles-v543"/);
 });
@@ -487,7 +551,8 @@ test('la carte vidéo est dans l\'onglet Vidéos de JavaScript', () => {
   assert.ok(page.includes('id="tabJsBouclePourVideo"'), 'vidéo dédiée');
   assert.ok(page.includes(`src="../${VIDEO}"`), 'source MP4');
   assert.ok(page.includes(`src="../${VTT}"`), 'piste de sous-titres');
-  assert.match(page, /SÉRIE 6 · LES BOUCLES \(\d+:\d{2}\)/, 'badge de durée');
+  assert.match(page, /CAPSULE · LES BOUCLES \(\d+:\d{2}\)/, 'badge de durée');
+  assert.ok(!/SÉRIE 6 · LES BOUCLES/.test(page), "la capsule n'est pas une série");
   const videos = page.split('<section id="videos"')[1].split('</section>')[0];
   assert.ok(videos.indexOf(`data-video-id="${ID}"`) > videos.indexOf('tabJsDefis37Video'),
     'la capsule suit celle des 37 Défis');
@@ -515,9 +580,9 @@ test('la capsule est dans le paquet hors-ligne complet', () => {
   assert.ok(complet.includes(`"./${VIDEO}"`), 'MP4 hors-ligne');
   assert.ok(complet.includes(`"./${VTT}"`), 'VTT hors-ligne');
   assert.ok(!delta.includes(`BouclePour-${VERSION_MEDIA}.mp4`), 'les médias restent hors du delta léger');
-  assert.match(sw, /var UPDATE_ID = "v546-boucles-tableau-20261030";/);
-  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "boucles-v546"/);
-  assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "boucles-v546"/);
+  assert.match(sw, /var UPDATE_ID = "v547-boucles-php-20261030";/);
+  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "boucles-v547"/);
+  assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "boucles-v547"/);
 });
 
 test('la fabrique de la capsule reste dans le dépôt', () => {
@@ -529,7 +594,7 @@ test('la fabrique de la capsule reste dans le dépôt', () => {
   assert.match(integrer, /def bloc_chapitres\(/, 'les chapitres sont recalculés');
   assert.match(integrer, /def ecrire_chapitres\(/, 'et réécrits dans protection.js');
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  assert.match(manifeste.version, /^v546/, 'manifeste du lot');
+  assert.match(manifeste.version, /^v547/, 'manifeste du lot');
   assert.ok(manifeste.files.some((f) => f.path === VIDEO), 'MP4 dans le manifeste');
   assert.ok(manifeste.files.some((f) => f.path === VTT), 'VTT dans le manifeste');
 });

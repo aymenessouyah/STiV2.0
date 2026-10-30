@@ -31,7 +31,7 @@ RACINE = os.path.normpath(os.path.join(ICI, "..", ".."))
 FF = os.path.normpath(os.path.join(RACINE, "node_modules", "@ffmpeg-installer", "linux-x64", "ffmpeg"))
 
 SLUG = "BouclePour"
-VERSION_MEDIA = "v546"          # à changer à chaque refonte : l'URL est la version
+VERSION_MEDIA = "v547"          # à changer à chaque refonte : l'URL est la version
 NOM_MP4 = f"{SLUG}-{VERSION_MEDIA}.mp4"
 NOM_VTT = f"{SLUG}-fr-{VERSION_MEDIA}.vtt"
 SOURCE_MP4 = os.path.join(ICI, "sortie_bouclepour.mp4")
@@ -115,7 +115,7 @@ def main():
             chemin = os.path.join(RACINE, page)
             s = open(chemin, encoding="utf-8").read()
             avant = s
-            s = re.sub(r"(SÉRIE 6 · LES BOUCLES \()\d+:\d{2}(\))",
+            s = re.sub(r"(CAPSULE · LES BOUCLES \()\d+:\d{2}(\))",
                        r"\g<1>" + temps + r"\g<2>", s)
             s = re.sub(r'(titre: "Les boucles —[^"]*",\n\s+dureeTexte: ")\d+:\d{2}(")',
                        r"\g<1>" + temps + r"\g<2>", s)

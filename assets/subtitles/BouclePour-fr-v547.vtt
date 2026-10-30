@@ -435,438 +435,532 @@ i.
 C'est la traduction, mot pour mot, de
 l'algorithme : le compteur, c'est i.
 
-00:07:20.334 --> 00:07:22.574
+00:07:20.334 --> 00:07:24.693
+Et en PHP, cette boucle Pour ? Exactement
+la même.
+
+00:07:24.693 --> 00:07:30.098
+J'écris : for, entre parenthèses, $i égal
+zéro, point-virgule,
+
+00:07:30.098 --> 00:07:35.067
+$i plus petit que count($T),
+point-virgule, $i plus plus.
+
+00:07:35.067 --> 00:07:38.554
+Trois choses à retenir pour lire du PHP.
+
+00:07:38.554 --> 00:07:42.913
+Un : chaque variable porte un dollar — $i,
+$T, $S.
+
+00:07:42.913 --> 00:07:48.754
+Deux : la hauteur du tableau s'écrit
+count($T), pas T point length.
+
+00:07:48.754 --> 00:07:53.811
+Trois : les crochets restent les crochets
+— $T crochet $i.
+
+00:07:53.811 --> 00:07:59.390
+L'algorithme, le JavaScript et le PHP
+disent donc la même chose.
+
+00:07:59.940 --> 00:08:02.180
 Exécutons, étage par étage.
 
-00:07:22.574 --> 00:07:29.295
+00:08:02.180 --> 00:08:08.901
 Premier tour : i vaut zéro, l'ascenseur
 ouvre sur quatre, j'ajoute quatre, S vaut
 
-00:07:29.295 --> 00:07:29.876
+00:08:08.901 --> 00:08:09.482
 quatre.
 
-00:07:29.876 --> 00:07:36.099
+00:08:09.482 --> 00:08:15.705
 Deuxième tour : i vaut un, l'ascenseur
 ouvre sur sept, j'ajoute sept, onze.
 
-00:07:36.099 --> 00:07:39.998
+00:08:15.705 --> 00:08:19.604
 Troisième : i vaut deux, j'ajoute deux,
 treize.
 
-00:07:39.998 --> 00:07:44.313
+00:08:19.604 --> 00:08:23.919
 Quatrième : i vaut trois, j'ajoute neuf,
 vingt-deux.
 
-00:07:44.313 --> 00:07:48.296
+00:08:23.919 --> 00:08:27.902
 Quatre tours, et les quatre étages sont
 visités.
 
-00:07:48.296 --> 00:07:54.021
+00:08:27.902 --> 00:08:33.627
 Ensuite i passe à quatre, et quatre n'est
 pas plus petit que quatre :
 
-00:07:54.021 --> 00:07:58.833
+00:08:33.627 --> 00:08:38.439
 la condition de continuité est fausse, la
 boucle s'arrête.
 
-00:07:59.383 --> 00:08:01.726
+00:08:38.989 --> 00:08:41.332
 Rappel : trois boucles, un seul schéma.
 
-00:08:01.726 --> 00:08:05.692
+00:08:41.332 --> 00:08:45.298
 Pour : je connais le nombre de
 répétitions, et aucune condition ne
 
-00:08:05.692 --> 00:08:06.233
+00:08:45.298 --> 00:08:45.839
 m'arrête.
 
-00:08:06.233 --> 00:08:11.039
+00:08:45.839 --> 00:08:50.645
 Le compteur va de la position initiale à
 la position finale, et je fais le bloc.
 
-00:08:11.039 --> 00:08:15.245
+00:08:50.645 --> 00:08:54.851
 Retenez la question : est-ce que je
 connais le nombre de répétitions à
 
-00:08:15.245 --> 00:08:15.846
+00:08:54.851 --> 00:08:55.452
 l'avance ?
 
-00:08:16.396 --> 00:08:19.978
+00:08:56.002 --> 00:08:59.584
 Nouveau problème : je cherche une valeur X
 dans le tableau.
 
-00:08:19.978 --> 00:08:24.774
+00:08:59.584 --> 00:09:04.380
 Est-ce que je connais le nombre de tours à
 l'avance ? Non : ça dépend où est X.
 
-00:08:24.774 --> 00:08:27.992
+00:09:04.380 --> 00:09:07.598
 S'il est au premier étage, je m'arrête
 tout de suite.
 
-00:08:27.992 --> 00:08:30.724
+00:09:07.598 --> 00:09:10.330
 S'il est au dernier, je fais tout
 l'immeuble.
 
-00:08:30.724 --> 00:08:33.578
+00:09:10.330 --> 00:09:13.184
 Et s'il n'est pas là, je visite tout pour
 rien.
 
-00:08:33.578 --> 00:08:35.460
+00:09:13.184 --> 00:09:15.066
 Donc : nombre de tours inconnu.
 
-00:08:36.009 --> 00:08:40.152
+00:09:15.615 --> 00:09:19.758
 Mais il y a une condition d'arrêt : dès
 que je trouve X, je m'arrête.
 
-00:08:40.152 --> 00:08:44.715
+00:09:19.758 --> 00:09:24.321
 Alors je pose la troisième question :
 combien de fois, au moins, je répète ?
 
-00:08:44.715 --> 00:08:49.158
+00:09:24.321 --> 00:09:28.764
 Au moins une fois : je dois tester au
 moins une case, sinon je ne peux pas
 
-00:08:49.158 --> 00:08:49.579
+00:09:28.764 --> 00:09:29.185
 savoir.
 
-00:08:49.579 --> 00:08:52.100
+00:09:29.185 --> 00:09:31.706
 Au moins une fois, donc : répéter jusqu'à.
 
-00:08:52.100 --> 00:08:54.562
+00:09:31.706 --> 00:09:34.168
 Regardez le schéma : c'est cette branche.
 
-00:08:55.112 --> 00:08:59.041
+00:09:34.718 --> 00:09:38.647
 Algorithme. Je me place sur la première
 case : i égal zéro.
 
-00:08:59.041 --> 00:09:01.705
+00:09:38.647 --> 00:09:41.311
 Répéter : prendre la valeur T crochet i.
 
-00:09:01.705 --> 00:09:04.036
+00:09:41.311 --> 00:09:43.642
 Si c'est X, j'arrête : j'ai trouvé.
 
-00:09:04.036 --> 00:09:06.366
+00:09:43.642 --> 00:09:45.972
 Sinon, je passe à la case suivante.
 
-00:09:06.366 --> 00:09:09.563
+00:09:45.972 --> 00:09:49.169
 Jusqu'à : trouvé, ou i dépasse la dernière
 case.
 
-00:09:09.563 --> 00:09:14.757
+00:09:49.169 --> 00:09:54.363
 Deux façons de sortir : la valeur est
 trouvée, ou j'ai fini le tableau sans la
 
-00:09:14.757 --> 00:09:15.290
+00:09:54.363 --> 00:09:54.896
 trouver.
 
-00:09:15.840 --> 00:09:18.977
+00:09:55.446 --> 00:09:58.583
 En JavaScript : do, entre accolades, le
 corps.
 
-00:09:18.977 --> 00:09:23.954
+00:09:58.583 --> 00:10:03.560
 Puis while, entre parenthèses : trouvé est
 faux, et i inférieur à quatre.
 
-00:09:23.954 --> 00:09:28.114
+00:10:03.560 --> 00:10:07.720
 Le corps s'exécute avant le test : c'est
 ça, répéter jusqu'à.
 
-00:09:28.114 --> 00:09:31.592
+00:10:07.720 --> 00:10:11.198
 On entre toujours au moins une fois dans
 la boucle.
 
-00:09:31.592 --> 00:09:35.751
+00:10:11.198 --> 00:10:15.357
 Et si on ne l'a pas trouvée, on sort et on
 affiche : absente.
 
-00:09:36.301 --> 00:09:37.453
+00:10:15.907 --> 00:10:18.408
+La recherche, maintenant, en PHP.
+
+00:10:18.408 --> 00:10:23.563
+J'écris : do, accolade ouvrante, le corps,
+accolade fermante, while,
+
+00:10:23.563 --> 00:10:26.140
+et la condition entre parenthèses.
+
+00:10:26.140 --> 00:10:31.370
+La condition ne change pas : non trouvé,
+et $i plus petit que quatre.
+
+00:10:31.370 --> 00:10:34.932
+Deux différences d'écriture, et deux
+seulement.
+
+00:10:34.932 --> 00:10:39.101
+Chaque variable porte son dollar : $i,
+$trouve, $T, $X.
+
+00:10:39.101 --> 00:10:44.104
+Et la comparaison s'écrit avec deux
+égales, parce que trois égales
+
+00:10:44.104 --> 00:10:45.771
+n'existent pas en PHP.
+
+00:10:45.771 --> 00:10:50.319
+Le drapeau, lui, se comporte exactement
+comme en JavaScript.
+
+00:10:50.869 --> 00:10:52.021
 Cherchons sept.
 
-00:09:37.453 --> 00:09:41.755
+00:10:52.021 --> 00:10:56.323
 Tour un : T crochet zéro vaut quatre. Ce
 n'est pas sept.
 
-00:09:41.755 --> 00:09:47.976
+00:10:56.323 --> 00:11:02.544
 Tour deux : T crochet un vaut sept. C'est
 sept : trouvé passe à vrai, et on sort.
 
-00:09:47.976 --> 00:09:49.589
+00:11:02.544 --> 00:11:04.157
 Deux tours seulement.
 
-00:09:49.589 --> 00:09:54.505
+00:11:04.157 --> 00:11:09.073
 La condition d'arrêt a fait son travail
 avant la fin du tableau.
 
-00:09:55.056 --> 00:09:57.703
+00:11:09.624 --> 00:11:12.271
 Cherchons cinq. Cinq n'est nulle part.
 
-00:09:57.703 --> 00:10:02.858
+00:11:12.271 --> 00:11:17.426
 Tour un : quatre. Tour deux : sept. Tour
 trois : deux. Tour quatre : neuf.
 
-00:10:02.858 --> 00:10:03.833
+00:11:17.426 --> 00:11:18.401
 Jamais trouvé.
 
-00:10:03.833 --> 00:10:07.804
+00:11:18.401 --> 00:11:22.372
 i vaut quatre : la deuxième condition est
 vraie, on sort.
 
-00:10:07.804 --> 00:10:10.242
+00:11:22.372 --> 00:11:24.810
 Et là, le résultat, c'est : absent.
 
-00:10:10.242 --> 00:10:16.024
+00:11:24.810 --> 00:11:30.592
 Attention : sans le test i plus petit que
 quatre, la boucle continuerait au-delà du
 
-00:10:16.024 --> 00:10:16.581
+00:11:30.592 --> 00:11:31.149
 tableau.
 
-00:10:17.131 --> 00:10:21.932
+00:11:31.699 --> 00:11:36.500
 Rappel. Répéter jusqu'à : le nombre de
 tours n'est pas connu, il y a une
 
-00:10:21.932 --> 00:10:25.266
+00:11:36.500 --> 00:11:39.834
 condition d'arrêt, et je répète au moins
 une fois.
 
-00:10:25.266 --> 00:10:27.266
+00:11:39.834 --> 00:11:41.834
 Le test se fait après le bloc.
 
-00:10:27.266 --> 00:10:31.667
+00:11:41.834 --> 00:11:46.235
 Dans le tableau : boucle avec condition,
 au moins un tour garanti.
 
-00:10:32.216 --> 00:10:37.667
+00:11:46.784 --> 00:11:52.235
 Dernier cas. J'ai une boîte de jetons, et
 je veux les mettre dans le sac, un par un,
 
-00:10:37.667 --> 00:10:38.965
+00:11:52.235 --> 00:11:53.533
 tant qu'il en reste.
 
-00:10:38.965 --> 00:10:44.221
+00:11:53.533 --> 00:11:58.789
 Est-ce que je connais le nombre de tours ?
 Non, il dépend du contenu de la boîte.
 
-00:10:44.221 --> 00:10:48.179
+00:11:58.789 --> 00:12:02.747
 Est-ce qu'il y a une condition d'arrêt ?
 Oui : la boîte vide.
 
-00:10:48.179 --> 00:10:53.175
+00:12:02.747 --> 00:12:07.743
 Et combien de fois au moins ? Là, ça peut
 être zéro : si la boîte est vide au
 
-00:10:53.175 --> 00:10:55.122
+00:12:07.743 --> 00:12:09.690
 départ, je ne fais aucun tour.
 
-00:10:55.673 --> 00:10:58.689
+00:12:10.241 --> 00:12:13.257
 Donc : tant que la boîte n'est pas vide,
 faire.
 
-00:10:58.689 --> 00:11:03.118
+00:12:13.257 --> 00:12:17.686
 Prendre un jeton. Le mettre dans le sac,
 et ajouter un au compteur n,
 
-00:11:03.118 --> 00:11:06.648
+00:12:17.686 --> 00:12:21.216
 le nombre de jetons qui sont dans le sac.
 Fin tant que.
 
-00:11:06.648 --> 00:11:10.691
+00:12:21.216 --> 00:12:25.259
 Le test est avant le bloc : si la boîte
 est vide dès le départ,
 
-00:11:10.691 --> 00:11:12.745
+00:12:25.259 --> 00:12:27.313
 on ne rentre pas dans la boucle.
 
-00:11:12.745 --> 00:11:17.687
+00:12:27.313 --> 00:12:32.255
 C'est exactement ce que je veux ici :
 aucun jeton à prendre, aucun tour, et n
 
-00:11:17.687 --> 00:11:18.521
+00:12:32.255 --> 00:12:33.089
 reste à zéro.
 
-00:11:19.071 --> 00:11:22.897
+00:12:33.639 --> 00:12:37.464
 En JavaScript : while, entre parenthèses,
 jetons supérieur à zéro.
 
-00:11:22.897 --> 00:11:26.838
+00:12:37.464 --> 00:12:41.406
 Entre accolades : jetons moins moins, pour
 en sortir un de la boîte,
 
-00:11:26.838 --> 00:11:30.026
+00:12:41.406 --> 00:12:44.594
 et n plus plus, pour en compter un de plus
 dans le sac.
 
-00:11:30.026 --> 00:11:32.518
+00:12:44.594 --> 00:12:47.086
 Tant que la condition est vraie, on
 répète.
 
-00:11:32.518 --> 00:11:34.373
+00:12:47.086 --> 00:12:48.941
 Dès qu'elle est fausse, on sort.
 
-00:11:34.923 --> 00:11:39.304
+00:12:49.491 --> 00:12:52.342
+Et la boucle Tant que, en PHP.
+
+00:12:52.342 --> 00:12:57.094
+Tant que devient while, avec les mêmes
+accolades :
+
+00:12:57.094 --> 00:13:01.940
+while, $jetons supérieur à zéro, accolade
+ouvrante,
+
+00:13:01.940 --> 00:13:06.977
+$jetons moins moins, $n plus plus,
+accolade fermante.
+
+00:13:06.977 --> 00:13:12.584
+Le test est toujours avant le bloc : zéro
+jeton, zéro tour.
+
+00:13:12.584 --> 00:13:15.910
+Trois langages, une seule logique :
+
+00:13:15.910 --> 00:13:20.757
+l'algorithme en français, le JavaScript,
+et le PHP.
+
+00:13:21.307 --> 00:13:25.688
 Avec trois jetons : trois tours, la boîte
 se vide, le sac se remplit,
 
-00:11:39.304 --> 00:11:42.351
+00:13:25.688 --> 00:13:28.735
 n vaut trois, et on sort quand jetons vaut
 zéro.
 
-00:11:42.351 --> 00:11:45.907
+00:13:28.735 --> 00:13:32.291
 Avec zéro jeton : la condition est fausse
 tout de suite,
 
-00:11:45.907 --> 00:11:48.827
+00:13:32.291 --> 00:13:35.211
 zéro tour, et le sac reste vide : n vaut
 zéro.
 
-00:11:48.827 --> 00:11:53.271
+00:13:35.211 --> 00:13:39.655
 Comparez avec répéter jusqu'à : là, on
 serait entré au moins une fois,
 
-00:11:53.271 --> 00:11:56.065
+00:13:39.655 --> 00:13:42.449
 et on aurait pris un jeton qui n'existe
 pas.
 
-00:11:56.615 --> 00:12:00.871
+00:13:42.999 --> 00:13:47.255
 Rappel. Tant que : nombre de tours
 inconnu, condition d'arrêt,
 
-00:12:00.871 --> 00:12:02.449
+00:13:47.255 --> 00:13:48.833
 et risque de zéro tour.
 
-00:12:02.449 --> 00:12:04.508
+00:13:48.833 --> 00:13:50.892
 Le test se fait avant le bloc.
 
-00:12:04.508 --> 00:12:09.107
+00:13:50.892 --> 00:13:55.491
 C'est la boucle la plus prudente : elle
 peut ne rien faire du tout.
 
-00:12:09.657 --> 00:12:11.465
+00:13:56.041 --> 00:13:57.849
 Le tableau des trois boucles.
 
-00:12:11.465 --> 00:12:16.390
+00:13:57.849 --> 00:14:02.774
 Pour : nombre de tours connu, pas de
 condition d'arrêt, test avant, le compteur
 
-00:12:16.390 --> 00:12:19.383
+00:14:02.774 --> 00:14:05.767
 va de la position initiale à la position
 finale.
 
-00:12:19.383 --> 00:12:24.121
+00:14:05.767 --> 00:14:10.505
 Répéter jusqu'à : nombre inconnu,
 condition d'arrêt, test après, au moins un
 
-00:12:24.121 --> 00:12:24.433
+00:14:10.505 --> 00:14:10.817
 tour.
 
-00:12:24.433 --> 00:12:29.233
+00:14:10.817 --> 00:14:15.617
 Tant que : nombre inconnu, condition
 d'arrêt, test avant, zéro tour possible.
 
-00:12:29.233 --> 00:12:31.228
+00:14:15.617 --> 00:14:17.612
 Trois boucles, trois situations.
 
-00:12:31.779 --> 00:12:35.401
+00:14:18.162 --> 00:14:21.784
 Et pour choisir, une seule chose à faire :
 poser les questions,
 
-00:12:35.401 --> 00:12:36.148
+00:14:21.784 --> 00:14:22.531
 dans l'ordre.
 
-00:12:36.148 --> 00:12:38.908
+00:14:22.531 --> 00:14:25.291
 Est-ce que je connais le nombre de
 répétitions ?
 
-00:12:38.908 --> 00:12:40.748
+00:14:25.291 --> 00:14:27.131
 Oui, et rien ne m'arrête : Pour.
 
-00:12:40.748 --> 00:12:45.462
+00:14:27.131 --> 00:14:31.845
 Oui, mais une condition peut m'arrêter :
 répéter jusqu'à si au moins un tour, tant
 
-00:12:45.462 --> 00:12:46.037
+00:14:31.845 --> 00:14:32.420
 que sinon.
 
-00:12:46.037 --> 00:12:50.292
+00:14:32.420 --> 00:14:36.675
 Non : boucle conditionnelle, et je regarde
 si le premier tour est garanti.
 
-00:12:50.292 --> 00:12:50.924
+00:14:36.675 --> 00:14:37.307
 C'est tout.
 
-00:12:51.473 --> 00:12:55.872
+00:14:37.857 --> 00:14:41.392
 Une dernière chose : ne mélangez pas les
-deux écritures.
+écritures.
 
-00:12:55.872 --> 00:13:02.078
-À droite, en haut, l'algorithme : Pour,
-Répéter jusqu'à, Tant que, en français.
+00:14:41.392 --> 00:14:45.134
+À droite, de haut en bas : l'algorithme,
+en français ;
 
-00:13:02.078 --> 00:13:05.613
-En bas, le JavaScript : for, do while,
-while.
+00:14:45.134 --> 00:14:48.184
+le JavaScript, avec for, do while et
+while ;
 
-00:13:05.613 --> 00:13:07.813
-Même logique, deux langages.
+00:14:48.184 --> 00:14:52.203
+et le PHP, avec for, do while et while —
+plus les dollars.
 
-00:13:07.813 --> 00:13:11.976
-On écrit l'algorithme d'abord, on le
-traduit ensuite.
+00:14:52.203 --> 00:14:54.213
+Même logique, trois langages.
 
-00:13:12.527 --> 00:13:14.843
+00:14:54.213 --> 00:14:58.441
+On écrit l'algorithme d'abord, puis on le
+traduit, deux fois.
+
+00:14:58.992 --> 00:15:01.308
 Voilà les trois blocs côte à côte.
 
-00:13:14.843 --> 00:13:19.272
+00:15:01.308 --> 00:15:05.737
 À gauche, Pour : je connais le nombre de
 tours, rien ne m'arrête,
 
-00:13:19.272 --> 00:13:23.359
+00:15:05.737 --> 00:15:09.824
 le compteur va de la position initiale à
 la position finale.
 
-00:13:23.359 --> 00:13:28.469
+00:15:09.824 --> 00:15:14.934
 Au milieu, Répéter jusqu'à : le nombre est
 inconnu, une condition m'arrête,
 
-00:13:28.469 --> 00:13:30.581
+00:15:14.934 --> 00:15:17.046
 et je répète au moins une fois.
 
-00:13:30.581 --> 00:13:35.145
+00:15:17.046 --> 00:15:21.610
 À droite, Tant que : le nombre est
 inconnu, une condition m'arrête,
 
-00:13:35.145 --> 00:13:37.598
+00:15:21.610 --> 00:15:24.063
 mais je peux ne pas répéter du tout.
 
-00:13:37.598 --> 00:13:41.958
+00:15:24.063 --> 00:15:28.423
 Trois boucles, trois situations, et le
 même schéma pour choisir.
 
-00:13:42.508 --> 00:13:46.931
+00:15:28.973 --> 00:15:33.396
 La méthode tient en trois questions, et
 elles se posent toujours dans cet ordre.
 
-00:13:46.931 --> 00:13:50.470
+00:15:33.396 --> 00:15:36.935
 Un : est-ce que je connais le nombre de
 répétitions à l'avance ?
 
-00:13:50.470 --> 00:13:53.787
+00:15:36.935 --> 00:15:40.252
 Deux : est-ce qu'une condition peut
 m'arrêter avant la fin ?
 
-00:13:53.787 --> 00:13:56.939
+00:15:40.252 --> 00:15:43.404
 Trois : combien de fois, au moins, est-ce
 que je répète ?
 
-00:13:56.939 --> 00:14:00.422
+00:15:43.404 --> 00:15:46.887
 Avec ces trois réponses, vous ne vous
 tromperez plus de boucle.
 
-00:14:00.972 --> 00:14:05.879
+00:15:47.437 --> 00:15:52.844
 Voilà. Trois boucles, un schéma, et cette
 question à se poser à chaque fois.
 
-00:14:05.879 --> 00:14:08.333
+00:15:52.844 --> 00:15:55.548
 À vous de jouer, dans STI Version 2.0.
 
-00:14:08.333 --> 00:14:10.399
-Série 6, les boucles. À bientôt.
+00:15:55.548 --> 00:15:57.967
+La capsule des boucles. À bientôt.

@@ -1,6 +1,6 @@
 """Texte de la voix off de « Les boucles — Pour, Répéter…jusqu'à, Tant que ».
 
-Capsule de la Série 6 (JavaScript). Elle montre les **trois** boucles et,
+Capsule « Les boucles » (JavaScript et PHP). Elle montre les **trois** boucles et,
 surtout, **comment choisir**. Le fil conducteur est un **schéma de décision** :
 
     une répétition
@@ -36,8 +36,8 @@ Les trois exemples, dans le même décor (l'immeuble, l'ascenseur, le sac) :
 * **TANT QUE** : vider la boîte de jetons dans le sac — trois jetons (trois
   tours) et zéro jeton (aucun tour : c'est là que répéter…jusqu'à serait faux).
 
-À droite, **l'algorithme et le JavaScript sont deux cadres séparés** : on écrit
-toujours l'algorithme d'abord, on le traduit ensuite.
+À droite, **trois cadres séparés** : l'algorithme, le JavaScript et le PHP.
+On écrit toujours l'algorithme d'abord, puis on le traduit deux fois.
 """
 from __future__ import annotations
 
@@ -48,10 +48,11 @@ ORDRE = [
     "repetition",
     "q1", "q2", "q3",
     "engendrer",
-    "pour_algo", "pour_js", "pour_trace", "rappel1",
-    "chercher_quoi", "chercher_q", "repet_algo", "repet_js",
+    "pour_algo", "pour_js", "pour_php", "pour_trace", "rappel1",
+    "chercher_quoi", "chercher_q", "repet_algo", "repet_js", "repet_php",
     "repet_trouve", "repet_absent", "rappel2",
-    "tantque_quoi", "tantque_algo", "tantque_js", "tantque_trace", "rappel3",
+    "tantque_quoi", "tantque_algo", "tantque_js", "tantque_php",
+    "tantque_trace", "rappel3",
     "tableau3", "choisir", "algo_js",
     "bilan", "conclusion", "generique",
 ]
@@ -266,6 +267,21 @@ SECTIONS = {
             ]),
         ],
     },
+    "pour_php": {
+        "titre": "La boucle Pour — PHP",
+        "segments": [
+            ("pour_php", [
+                "Et en PHP, cette boucle Pour ? Exactement la même.",
+                "J'écris : for, entre parenthèses, $i égal zéro, point-virgule,",
+                " $i plus petit que count($T), point-virgule, $i plus plus.",
+                "Trois choses à retenir pour lire du PHP.",
+                "Un : chaque variable porte un dollar — $i, $T, $S.",
+                "Deux : la hauteur du tableau s'écrit count($T), pas T point length.",
+                "Trois : les crochets restent les crochets — $T crochet $i.",
+                "L'algorithme, le JavaScript et le PHP disent donc la même chose.",
+            ]),
+        ],
+    },
     "pour_trace": {
         "titre": "La boucle Pour — les quatre tours",
         "segments": [
@@ -348,6 +364,22 @@ SECTIONS = {
             ]),
         ],
     },
+    "repet_php": {
+        "titre": "Répéter…jusqu'à — PHP",
+        "segments": [
+            ("repet_php", [
+                "La recherche, maintenant, en PHP.",
+                "J'écris : do, accolade ouvrante, le corps, accolade fermante, while,",
+                " et la condition entre parenthèses.",
+                "La condition ne change pas : non trouvé, et $i plus petit que quatre.",
+                "Deux différences d'écriture, et deux seulement.",
+                "Chaque variable porte son dollar : $i, $trouve, $T, $X.",
+                "Et la comparaison s'écrit avec deux égales, parce que trois égales",
+                " n'existent pas en PHP.",
+                "Le drapeau, lui, se comporte exactement comme en JavaScript.",
+            ]),
+        ],
+    },
     "repet_trouve": {
         "titre": "X = 7 : trouvé au deuxième tour",
         "segments": [
@@ -426,6 +458,20 @@ SECTIONS = {
             ]),
         ],
     },
+    "tantque_php": {
+        "titre": "Tant que — PHP",
+        "segments": [
+            ("tantque_php", [
+                "Et la boucle Tant que, en PHP.",
+                "Tant que devient while, avec les mêmes accolades :",
+                " while, $jetons supérieur à zéro, accolade ouvrante,",
+                " $jetons moins moins, $n plus plus, accolade fermante.",
+                "Le test est toujours avant le bloc : zéro jeton, zéro tour.",
+                "Trois langages, une seule logique :",
+                " l'algorithme en français, le JavaScript, et le PHP.",
+            ]),
+        ],
+    },
     "tantque_trace": {
         "titre": "Tant que — trois jetons, puis zéro",
         "segments": [
@@ -481,15 +527,15 @@ SECTIONS = {
         ],
     },
     "algo_js": {
-        "titre": "Algorithme et JavaScript : ne pas mélanger",
+        "titre": "Algorithme, JavaScript et PHP : ne pas mélanger",
         "segments": [
             ("algo_js", [
-                "Une dernière chose : ne mélangez pas les deux écritures.",
-                "À droite, en haut, l'algorithme : Pour, Répéter jusqu'à, Tant que,"
-                " en français.",
-                "En bas, le JavaScript : for, do while, while.",
-                "Même logique, deux langages.",
-                "On écrit l'algorithme d'abord, on le traduit ensuite.",
+                "Une dernière chose : ne mélangez pas les écritures.",
+                "À droite, de haut en bas : l'algorithme, en français ;",
+                " le JavaScript, avec for, do while et while ;",
+                " et le PHP, avec for, do while et while — plus les dollars.",
+                "Même logique, trois langages.",
+                "On écrit l'algorithme d'abord, puis on le traduit, deux fois.",
             ]),
         ],
     },
@@ -527,7 +573,7 @@ SECTIONS = {
                 "Voilà. Trois boucles, un schéma, et cette question à se poser"
                 " à chaque fois.",
                 "À vous de jouer, dans STI Version 2.0.",
-                "Série 6, les boucles. À bientôt.",
+                "La capsule des boucles. À bientôt.",
             ]),
         ],
     },
