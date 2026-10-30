@@ -3,7 +3,7 @@
   "generatedAt": "2026-10-30T14:12:25Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 743,
-  "totalBytes": 942255920,
+  "totalBytes": 942263640,
   "files": [
     {
       "path": "404.html",
@@ -62,8 +62,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 61051,
-      "gitSha": "721d69c6ba59e5b5831469997717d38eae6246e6"
+      "bytes": 62370,
+      "gitSha": "cc73b96de144f44c3eb665284cc70ac22b1d2c98"
     },
     {
       "path": "admin.html",
@@ -647,8 +647,8 @@
     },
     {
       "path": "assets/js/acces.js",
-      "bytes": 932346,
-      "gitSha": "398763f191167e8e30d61f70508103b3ef6f4e5d"
+      "bytes": 934476,
+      "gitSha": "0fc72822a271e5f7a2618f6c2986a1a77c54755b"
     },
     {
       "path": "assets/js/admin-couverture.js",
@@ -682,8 +682,8 @@
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 709074,
-      "gitSha": "e2061ea89a5c2fcfefaf0633a5b1b73892e6b935"
+      "bytes": 711214,
+      "gitSha": "147f45031ea7d374b0c7639f8e4d6725672e8310"
     },
     {
       "path": "assets/js/analytique.js",
@@ -897,8 +897,8 @@
     },
     {
       "path": "assets/js/roue-initiales.js",
-      "bytes": 16501,
-      "gitSha": "2d46b39b74a68f88c2a919c9bbdbba9f7d94f2d3"
+      "bytes": 18636,
+      "gitSha": "89b2ec78261e0f83cfd387fb742b95fbbd5243b2"
     },
     {
       "path": "assets/js/roue-nuage.js",
@@ -3717,8 +3717,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 98869,
-      "gitSha": "61552219dfddbd649680b94b0895751274d60c06"
+      "bytes": 98865,
+      "gitSha": "1b5d163666d6a35c1741982177e1daa3937ff9a5"
     }
   ]
 }
