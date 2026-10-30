@@ -31,9 +31,16 @@ LARGEUR, HAUTEUR = 1920, 1080
 
 # ── Zones de l'écran ───────────────────────────────────────────────────────
 MARGE = 64
-PANEL_G = (MARGE, 186, 1072, 884)        # l'histoire : immeuble, sac, ascenseur
-PANEL_D = (1104, 186, 1856, 884)         # ce que j'écris : le cahier
+PANEL_G = (64, 186, 644, 884)            # l'histoire : l'immeuble et son ascenseur
+PANEL_M = (670, 186, 1250, 884)          # le brouillon : ce que je note à la main
+PANEL_D = (1276, 186, 1856, 884)         # l'algo · le code : ce que j'écris vraiment
 BANDE = (MARGE, 906, 1856, 1012)         # le fil rouge : T · compteur · S
+
+# Le papier du brouillon et le stylo rouge
+PAPIER = (29, 36, 53)
+PAPIER_LIGNE = (44, 54, 75)
+ENCRE = (216, 224, 238)
+ROUGE_STYLO = (238, 92, 92)
 
 # ── Couleurs du récit ──────────────────────────────────────────────────────
 SAC = (234, 140, 48)
@@ -398,7 +405,7 @@ def immeuble(d: ImageDraw.ImageDraw, box, valeurs=VALEURS, actif: int | None = N
 
     # ── l'écran du compteur, au-dessus de la cage
     if not compact:
-        ecran = [cage[0] + 4, haut_corps - 50, cage[2] - 2, haut_corps - 6]
+        ecran = [cage[0] + 4, y0 - 48, cage[2] - 2, y0 - 8]
         boite_arrondie(d, ecran, rayon=8, fond=(8, 12, 22),
                        bord=melange(BORDURE, BLEU, 0.6), largeur_bord=2)
         d.text(((ecran[0] + ecran[2]) / 2, (ecran[1] + ecran[3]) / 2),
@@ -624,6 +631,91 @@ def boucle_schema(d: ImageDraw.ImageDraw, box, n: int = 4, compteur: int = 0,
 
 
 # ══════════════════════════════════════════════════════════════════════════
+#  Le brouillon : du papier réglé, et le stylo rouge
+# ══════════════════════════════════════════════════════════════════════════
+def papier_brouillon(d: ImageDraw.ImageDraw, box, regles_y=None):
+    """Le papier du brouillon : fond, lignes réglées et marge rouge à gauche."""
+    x0, y0, x1, y1 = box
+    boite_arrondie(d, box, rayon=14, fond=PAPIER,
+                   bord=melange(BORDURE, AMBRE, 0.30), largeur_bord=2)
+    d.line([(x0 + 52, y0 + 12), (x0 + 52, y1 - 12)],
+           fill=melange(PAPIER, ROUGE_BORD, 0.55), width=2)
+    y = y0 + 46
+    while y < y1 - 14:
+        d.line([(x0 + 14, y), (x1 - 14, y)], fill=PAPIER_LIGNE, width=1)
+        y += 46
+
+
+def crayon(d: ImageDraw.ImageDraw, x: float, y: float, texte: str, taille: int = 26,
+           couleur=ENCRE, a_partir_de: float = 0.0, p: float = 1.0, duree: float = 0.20,
+           gras: bool = False):
+    """Écrit au crayon sur une ligne du brouillon, en révélant les caractères."""
+    k = _apparait(p, a_partir_de, duree)
+    if k <= 0:
+        return 0.0
+    visible = texte[: max(1, int(len(texte) * k + 0.999))]
+    f = police(taille, gras, mono=True)
+    d.text((x, y), visible, font=f, fill=couleur, anchor="lm")
+    if k < 1:
+        d.rectangle([x + f.getlength(visible) + 2, y - taille * 0.5,
+                     x + f.getlength(visible) + 5, y + taille * 0.5], fill=AMBRE)
+    return f.getlength(visible)
+
+
+def crayon_centre(d: ImageDraw.ImageDraw, cx: float, y: float, texte: str, taille: int = 26,
+                  couleur=ENCRE, a_partir_de: float = 0.0, p: float = 1.0,
+                  duree: float = 0.20, gras: bool = False):
+    """Comme `crayon`, mais centré horizontalement sur `cx`."""
+    k = _apparait(p, a_partir_de, duree)
+    if k <= 0:
+        return
+    visible = texte[: max(1, int(len(texte) * k + 0.999))]
+    f = police(taille, gras, mono=True)
+    d.text((cx, y), visible, font=f, fill=couleur, anchor="mm")
+
+
+def stylo_cercle(d: ImageDraw.ImageDraw, cx: float, cy: float, rx: float, ry: float,
+                 progression: float = 1.0, couleur=ROUGE_STYLO, epaisseur: int = 3):
+    """Un cercle tracé au stylo rouge : ovale et ouvert, comme à la main."""
+    if progression <= 0.02:
+        return
+    k = _ease_out(min(1.0, progression))
+    depart = -125
+    d.arc([cx - rx, cy - ry, cx + rx, cy + ry], start=depart, end=depart + 356 * k,
+          fill=couleur, width=epaisseur)
+
+
+def stylo_souligne(d: ImageDraw.ImageDraw, x0: float, y: float, x1: float,
+                   progression: float = 1.0, couleur=ROUGE_STYLO, epaisseur: int = 3):
+    """Un trait de stylo sous un mot."""
+    if progression <= 0.02:
+        return
+    k = _ease_out(min(1.0, progression))
+    d.line([(x0, y), (x0 + (x1 - x0) * k, y + 3)], fill=couleur, width=epaisseur)
+
+
+def stylo_note(d: ImageDraw.ImageDraw, x: float, y: float, texte: str, taille: int = 24,
+               couleur=ROUGE_STYLO, ancre: str = "lm", a_partir_de: float = 0.0,
+               p: float = 1.0, duree: float = 0.18):
+    """Une annotation en marge, au stylo rouge."""
+    k = _apparait(p, a_partir_de, duree)
+    if k <= 0:
+        return
+    visible = texte[: max(1, int(len(texte) * k + 0.999))]
+    d.text((x, y), visible, font=police(taille, True), fill=couleur, anchor=ancre)
+
+
+def stylo_fleche(d: ImageDraw.ImageDraw, p0, p1, progression: float = 1.0,
+                 couleur=ROUGE_STYLO, epaisseur: int = 3):
+    fleche(d, p0, p1, couleur=couleur, epaisseur=epaisseur, progression=progression, pointe=15)
+
+
+def cadre_algo(d: ImageDraw.ImageDraw, box, titre: str = "l'algo · le code", accent=VIOLET):
+    """La colonne de droite : l'algorithme en haut, le JavaScript en bas."""
+    cadre_code(d, box, titre, accent)
+
+
+# ══════════════════════════════════════════════════════════════════════════
 #  Le cahier : ce que j'écris
 # ══════════════════════════════════════════════════════════════════════════
 class Ligne:
@@ -794,7 +886,7 @@ def bandeau_etat(d: ImageDraw.ImageDraw, indice: int | None = None, somme: int =
     boite_arrondie(d, [x0 + 784, y0 + 42, x0 + 908, y1 - 14], rayon=12,
                    fond=melange((16, 24, 38), VERT if somme_connue else BLEU, 0.20),
                    bord=melange(BORDURE, VERT if somme_connue else BLEU, 0.65), largeur_bord=3)
-    d.text((x0 + 846, y0 + 66), str(somme) if somme_connue else "…",
+    d.text((x0 + 846, y0 + 66), str(somme) if somme_connue else "?",
            font=police(32, True, mono=True),
            fill=VERT if somme_connue else TEXTE_2, anchor="mm")
 

@@ -1,21 +1,16 @@
-"""Les dix scènes de « La boucle Pour — l'immeuble et le sac ».
+"""Les onze scènes de « La boucle Pour — de la variable à la boucle ».
 
-Chaque fonction reçoit le dessin, l'avancement `p` (0 → 1) de la séquence et le
-temps absolu `t`. À gauche l'histoire (l'immeuble et son ascenseur, le sac),
-à droite ce que j'écris — comme dans les autres capsules du site.
+Trois colonnes, toujours les mêmes :
 
-La progression pédagogique est volontairement lente :
+  * à gauche **l'immeuble** (et son ascenseur) ;
+  * au milieu **le brouillon** : le papier réglé, l'écriture au crayon, et les
+    annotations au stylo rouge ;
+  * à droite **l'algo · le code** : ce que j'écris vraiment.
 
- 1. `probleme`    l'immeuble, le tableau T, la somme cherchée ;
- 2. `variable`    le sac : un nom fixe, un contenu qui change ;
- 3. `nom`         plusieurs sacs → un seul nom, S ;
- 4. `accumuler`   `S = S + …` : lire, ajouter, réécrire ;
- 5. `immeuble`    l'ascenseur : le même geste à chaque étage ;
- 6. `etage0`      le premier tour, à la main ;
- 7. `repetition`  les étages 1, 2, 3 : quatre fois la même ligne ;
- 8. `pourquoi`    sans boucle : une ligne par étage — 100 étages, 100 lignes ;
- 9. `bloc`        le geste une seule fois, avec le compteur ;
-10. `boucle`      la boucle Pour, et la somme : 22.
+Le cheminement (cf. `narration.py`) mène du brouillon à l'algorithme, revient au
+brouillon avec le stylo rouge pour y écrire « compteur » et y encercler les
+chiffres entre crochets, pose la question principale (connaît-on le nombre de
+répétitions ?), puis engendre le bloc par la boucle Pour.
 """
 from __future__ import annotations
 
@@ -31,14 +26,24 @@ from theme import (
 )
 import dessin as G
 from dessin import (
-    LARGEUR, HAUTEUR, MARGE, PANEL_G, PANEL_D, BANDE,
-    sac, immeuble, personnage, jeton, cahier, cadre_code, boite_memoire,
+    LARGEUR, HAUTEUR, MARGE, PANEL_G, PANEL_M, PANEL_D, BANDE,
+    sac, immeuble, personnage, jeton, cahier, cadre_code, cadre_algo, boite_memoire,
     pile_lignes, boucle_schema, bandeau_etat, bulle, coche, panneau, entete,
-    etape_pastille, Ligne, _ease, _ease_out, _apparait, VALEURS, SOMME_TOTALE,
-    N_ETAGES,
+    etape_pastille, papier_brouillon, crayon, crayon_centre,
+    stylo_cercle, stylo_souligne, stylo_note, stylo_fleche,
+    Ligne, _ease, _ease_out, _apparait, VALEURS, SOMME_TOTALE, N_ETAGES,
+    ENCRE, ROUGE_STYLO, PAPIER, CODE_FOND,
 )
 
-TOTAL = 10
+TOTAL = 11
+
+# ── Géométrie des trois colonnes ───────────────────────────────────────────
+IMB = [88, 292, 620, 806]               # l'immeuble, colonne de gauche
+PAPIER_BOX = [686, 250, 1234, 862]      # le papier du brouillon
+X_CRAYON = 756                          # la première ligne, à droite de la marge
+Y_REGLE = 296                           # la première ligne réglée
+PAS_REGLE = 46
+X_SAC = 1566                            # axe de la colonne de droite
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -53,109 +58,117 @@ def _etat(d, indice=None, somme=0, compteur=None, connue=True, t=0.0):
     bandeau_etat(d, indice=indice, somme=somme, compteur=compteur, t=t, somme_connue=connue)
 
 
-def _entete(d, titre, etape, chapitre):
-    entete(d, titre, etape, TOTAL, chapitre)
+def _entete(d, etape, chapitre):
+    entete(d, "La boucle Pour — de la variable à la boucle", etape, TOTAL, chapitre)
 
 
-def _panneaux(d, titre_gauche, titre_droite="ce que j'écris"):
-    panneau(d, PANEL_G, titre_gauche, accent=melange(BORDURE, ORANGE, 0.35))
-    cadre_code(d, PANEL_D, titre_droite)
+def _panneaux(d, t_g="l'immeuble", t_m="le brouillon", t_d="l'algo · le code"):
+    panneau(d, PANEL_G, t_g, accent=melange(BORDURE, ORANGE, 0.30))
+    panneau(d, PANEL_M, t_m, accent=melange(BORDURE, AMBRE, 0.40))
+    cadre_algo(d, PANEL_D, t_d)
+
+
+def _regle(i: int) -> float:
+    """L'ordonnée de la i-ème ligne réglée du brouillon."""
+    return Y_REGLE + i * PAS_REGLE
+
+
+def _ligne(d, i, texte_, taille=26, couleur=ENCRE, a_partir_de=0.0, p=1.0, duree=0.20,
+           gras=False):
+    """Écrit une ligne du brouillon sur le i-ème filet."""
+    return crayon(d, X_CRAYON, _regle(i) - 10, texte_, taille, couleur,
+                  a_partir_de, p, duree, gras)
 
 
 def _carte(d, box, titre=None, accent=BORDURE, a=1.0):
-    """Une carte arrondie posée dans le panneau (avec un titre optionnel)."""
+    """Une carte arrondie posée dans une colonne (avec un titre optionnel)."""
     if a <= 0.01:
         return
-    boite_arrondie(d, box, rayon=18,
-                   fond=melange(FOND_PANNEAU, melange(FOND_PANNEAU_2, accent, 0.06), a),
+    boite_arrondie(d, box, rayon=16,
+                   fond=melange(FOND_PANNEAU, melange(FOND_PANNEAU_2, accent, 0.07), a),
                    bord=melange(BORDURE, accent, 0.55 * a), largeur_bord=2)
     if titre:
         x0, y0, _, _ = box
-        d.text((x0 + 22, y0 + 18), titre, font=police(18, True),
+        d.text((x0 + 20, y0 + 16), titre, font=police(17, True),
                fill=melange(TEXTE_3, accent, 0.55 * a))
 
 
-def _legende(d, x, y, contenu, taille=19, couleur=TEXTE_3, ancre="mm"):
-    d.text((x, y), contenu, font=police(taille), fill=couleur, anchor=ancre)
+def _sac_colonne(d, contenu=(), nom="S", valeur=0, echelle=0.55, halo=0.0, t=0.0,
+                 connue=True, y=650):
+    """Le sac, en bas de la colonne « algo · code » : la mémoire du programme."""
+    if connue and not contenu:
+        contenu = (str(valeur),)
+    sac(d, X_SAC, y, contenu=contenu, nom=nom, echelle=echelle, halo=halo)
+    d.text((X_SAC, y + 88 * echelle + 24), f"S = {valeur}" if connue else "S = …",
+           font=police(26, True, mono=True),
+           fill=VERT if connue else _encre(TEXTE_3), anchor="mm")
 
 
-def _formule(d, cx, cy, gauche="S", operateur="=", droite="S + T[0]",
-             taille=44, accent_gauche=ORANGE, accent_droit=BLEU, echelle=1.0):
-    """Écrit `S = S + T[0]` en colorant les deux S différemment."""
-    if echelle <= 0.02:
-        return
-    f = police(max(8, int(taille * echelle)), True, mono=True)
-    larg_g = f.getlength(gauche)
-    larg_o = f.getlength(" " + operateur + " ")
-    larg_d = f.getlength(droite)
-    total = larg_g + larg_o + larg_d
-    x = cx - total / 2
-    d.text((x, cy), gauche, font=f, fill=accent_gauche, anchor="lm")
-    d.text((x + larg_g, cy), " " + operateur + " ", font=f, fill=TEXTE_3, anchor="lm")
-    d.text((x + larg_g + larg_o, cy), droite, font=f, fill=accent_droit, anchor="lm")
+def _etiquette_colonne(d, y, texte_, couleur=VIOLET):
+    """Le petit intitulé au-dessus d'un bloc de la colonne de droite."""
+    d.text((1300, y), texte_, font=police(15, True), fill=melange(TEXTE_3, couleur, 0.6))
+
+
+def _encre(couleur, a=1.0):
+    """La couleur d'un texte écrit sur le fond d'un panneau."""
+    return melange(FOND_PANNEAU_2, couleur, a)
+
+
+def _attente(d, y, texte_):
+    """Un cadre en pointillé : « ce que j'écrirai plus tard »."""
+    boite_arrondie(d, [1300, y, 1832, y + 54], rayon=12, fond=None,
+                   bord=melange(BORDURE, TEXTE_3, 0.25), largeur_bord=2)
+    d.text((1566, y + 27), texte_, font=police(17), fill=_encre(TEXTE_3), anchor="mm")
+
+
+def _rien_encore(d):
+    """La colonne « algo » reste vide : le travail se fait sur le brouillon."""
+    boite_arrondie(d, [1300, 268, 1832, 470], rayon=14, fond=None,
+                   bord=melange(BORDURE, TEXTE_3, 0.22), largeur_bord=2)
+    d.text((1566, 336), "l'algo, plus tard", font=police(22, True),
+           fill=_encre(TEXTE_3), anchor="mm")
+    d.text((1566, 382), "d'abord, je travaille", font=police(18),
+           fill=_encre(melange(TEXTE_3, TEXTE_2, 0.35)), anchor="mm")
+    d.text((1566, 410), "sur le brouillon", font=police(18),
+           fill=_encre(melange(TEXTE_3, TEXTE_2, 0.35)), anchor="mm")
 
 
 # ══════════════════════════════════════════════════════════════════════════
-#  1 · Le problème : quatre étages, quatre cases, une somme
+#  1 · Le problème et le plan de travail
 # ══════════════════════════════════════════════════════════════════════════
 def scene_probleme(d, p, t):
-    _entete(d, "La boucle Pour — de la variable à la boucle", 1,
-            "1 · Le problème : la somme des quatre étages")
-    _panneaux(d, "le problème")
+    _entete(d, 1, "1 · Le problème : la somme des quatre étages")
+    _panneaux(d)
 
-    # l'immeuble, qui se dresse
-    k = _apparait(p, 0.02, 0.25)
-    immeuble(d, [104, 300 - 26 * (1 - k), 704, 826], cabine=None, actif=None, t=t,
-             fenetres=True)
-    _legende(d, 404, 858, "quatre étages · quatre cases du tableau", 20)
+    immeuble(d, IMB, actif=None, cabine=None, t=t)
+    d.text((354, 846), "quatre étages", font=police(19), fill=TEXTE_3, anchor="mm")
 
-    # le tableau, à droite
-    boite = [744, 300, 1046, 604]
-    a = _apparait(p, 0.22, 0.2)
-    _carte(d, boite, "le tableau T", AMBRE, a)
-    if a > 0:
-        cx = boite[0] + 46
-        for i, v in enumerate(VALEURS):
-            ak = _apparait(p, 0.26 + 0.07 * i, 0.12)
-            if ak <= 0:
-                continue
-            boite_arrondie(d, [cx - 30, 372, cx + 30, 434], rayon=10,
-                           fond=melange((24, 34, 52), AMBRE, 0.14 * ak),
-                           bord=melange(BORDURE, AMBRE, 0.65 * ak), largeur_bord=2)
-            d.text((cx, 404), str(v), font=police(30, True, mono=True),
-                   fill=melange(FOND, TEXTE, ak), anchor="mm")
-            d.text((cx, 452), f"T[{i}]", font=police(15, True, mono=True),
-                   fill=melange(FOND, AMBRE, 0.75 * ak), anchor="mm")
-            cx += 68
+    papier_brouillon(d, PAPIER_BOX)
+    _ligne(d, 0, "l'immeuble :", 24, melange(ENCRE, TEXTE_3, 0.45), 0.06, p)
+    # les quatre valeurs, écrites au crayon
+    cx = X_CRAYON + 34
+    for i, v in enumerate(VALEURS):
+        k = _apparait(p, 0.16 + 0.06 * i, 0.12)
+        if k <= 0:
+            continue
+        boite_arrondie(d, [cx - 26, _regle(1) - 26, cx + 26, _regle(1) + 14], rayon=8,
+                       fond=melange(PAPIER, AMBRE, 0.16 * k),
+                       bord=melange(BORDURE, AMBRE, 0.7 * k), largeur_bord=2)
+        d.text((cx, _regle(1) - 6), str(v), font=police(26, True, mono=True),
+               fill=melange(PAPIER, TEXTE, k), anchor="mm")
+        cx += 70
+    _ligne(d, 2, "c'est un tableau :  T", 24, ENCRE, 0.40, p)
+    _ligne(d, 3, "T = [4, 7, 2, 9]", 28, AMBRE, 0.50, p)
+    _ligne(d, 5, "la somme, dans S :", 24, melange(ENCRE, TEXTE_3, 0.4), 0.62, p)
+    _ligne(d, 6, "S = ?", 32, ORANGE, 0.72, p, gras=True)
 
-        af = _apparait(p, 0.56, 0.16)
-        if af > 0:
-            d.text((895, 506), "S = T[0] + T[1] + T[2] + T[3]", font=police(17, True, mono=True),
-                   fill=melange(FOND, TEXTE, af), anchor="mm")
-            d.text((895, 560), "S = ?", font=police(34, True, mono=True),
-                   fill=melange(FOND, ORANGE, af), anchor="mm")
+    _etiquette_colonne(d, 244, "ce que je cherche")
+    d.text((1300, 292), "S = T[0] + T[1] + T[2] + T[3]", font=police(21, True, mono=True),
+           fill=_encre(TEXTE, _apparait(p, 0.44, 0.2)))
+    d.text((1300, 342), "S = ?", font=police(34, True, mono=True),
+           fill=_encre(ORANGE, _apparait(p, 0.70, 0.2)))
+    _sac_colonne(d, contenu=(), nom="S", valeur=0, t=t, connue=False)
 
-    if p > 0.72:
-        ak = _apparait(p, 0.72, 0.16)
-        boite_arrondie(d, [744, 640, 1046, 700], rayon=14,
-                       fond=melange(FOND_PANNEAU, ORANGE, 0.16 * ak),
-                       bord=melange(BORDURE, ORANGE, 0.8 * ak), largeur_bord=2)
-        d.text((895, 670), "comment m'y prendre ?", font=police(21, True),
-               fill=melange(FOND, ORANGE, ak), anchor="mm")
-
-    lignes = [
-        Ligne("LE PROBLÈME", AMBRE, 26, gras=True, mono=False, a_partir_de=0.04),
-        Ligne("quatre étages :", TEXTE, 30, mono=False, a_partir_de=0.12),
-        Ligne("4 · 7 · 2 · 9", TEXTE, 30, retrait=18, a_partir_de=0.20),
-        Ligne("", a_partir_de=0.3),
-        Ligne("ça s'appelle un tableau", TEXTE_2, 25, mono=False, a_partir_de=0.34),
-        Ligne("T = [4, 7, 2, 9]", AMBRE, 30, a_partir_de=0.46),
-        Ligne("", a_partir_de=0.5),
-        Ligne("ce que je cherche :", TEXTE_2, 25, mono=False, a_partir_de=0.56),
-        Ligne("la somme, dans S", ORANGE, 30, gras=True, mono=False, a_partir_de=0.66),
-        Ligne("S = T[0]+T[1]+T[2]+T[3]", TEXTE, 24, a_partir_de=0.76),
-    ]
-    cahier(d, PANEL_D, lignes, p)
     _etat(d, connue=False, t=t)
 
 
@@ -163,64 +176,58 @@ def scene_probleme(d, p, t):
 #  2 · La variable : un nom, un contenu qui change
 # ══════════════════════════════════════════════════════════════════════════
 def scene_variable(d, p, t):
-    _entete(d, "La boucle Pour — de la variable à la boucle", 2,
-            "2 · Une variable : un nom, un contenu qui change")
-    _panneaux(d, "l'histoire")
+    _entete(d, 2, "2 · Une variable : un nom, un contenu qui change")
+    _panneaux(d)
 
-    # le sac, dont le contenu change (rien → 4 → 7)
+    immeuble(d, IMB, actif=None, cabine=None, t=t)
+
+    # le brouillon : les trois essais
+    papier_brouillon(d, PAPIER_BOX)
+    _ligne(d, 0, "j'essaie :", 24, melange(ENCRE, TEXTE_3, 0.45), 0.10, p)
+    actif = 0 if p < 0.40 else (1 if p < 0.56 else 2)
+    essais = [("S  ←  rien", "vide"), ("S  ←  4", "4"), ("S  ←  7", "7")]
+    for i, (code, val) in enumerate(essais):
+        k = _apparait(p, 0.18 + 0.16 * i, 0.16)
+        if k <= 0:
+            continue
+        chaud = i == actif
+        couleur = AMBRE if chaud else melange(ENCRE, TEXTE_3, 0.35)
+        crayon(d, X_CRAYON, _regle(2 + i) - 10, code, 26, couleur, 0.18 + 0.16 * i, p, 0.16,
+               gras=chaud)
+        if chaud:
+            stylo_souligne(d, X_CRAYON + 130, _regle(2 + i) + 2,
+                           X_CRAYON + 130 + 70, _apparait(p, 0.20 + 0.16 * i, 0.2),
+                           couleur=melange(ROUGE_STYLO, AMBRE, 0.4), epaisseur=2)
+    _ligne(d, 6, "même boîte", 24, VERT, 0.66, p)
+    _ligne(d, 7, "autre contenu", 24, VERT, 0.72, p)
+
+    # la colonne de droite : le sac en grand, et la définition
     if p < 0.30:
-        contenu, valeur, legende = (), "vide", "contenu : rien"
+        contenu, valeur = (), 0
     elif p < 0.50:
-        contenu, valeur, legende = (str(VALEURS[0]),), str(VALEURS[0]), f"contenu : {VALEURS[0]}"
+        contenu, valeur = (str(VALEURS[0]),), VALEURS[0]
     else:
-        contenu, valeur, legende = (str(VALEURS[1]),), str(VALEURS[1]), f"contenu : {VALEURS[1]}"
+        contenu, valeur = (str(VALEURS[1]),), VALEURS[1]
+    _etiquette_colonne(d, 244, "la case mémoire")
+    secousse = 0.0
+    for centre in (0.36, 0.56):
+        if abs(p - centre) < 0.05:
+            secousse = 1 - abs((p - centre) / 0.05)
+    sac(d, X_SAC, 500, contenu=contenu, nom=None, echelle=0.80,
+        halo=0.40 + 0.30 * G._pulse(t, 2.1), secousse=secousse * 0.6)
+    d.text((X_SAC, 606), f"contenu : {valeur if p > 0.30 else 'rien'}",
+           font=police(24, True, mono=True), fill=AMBRE, anchor="mm")
+    a = _apparait(p, 0.74, 0.18)
+    if a > 0:
+        d.text((X_SAC, 686), "un nom", font=police(20), fill=_encre(TEXTE_3, a),
+               anchor="mm")
+        d.text((X_SAC, 726), "+  une valeur", font=police(20), fill=_encre(TEXTE_3, a),
+               anchor="mm")
+        d.text((X_SAC, 790), "le nom reste,", font=police(21, True),
+               fill=_encre(VERT, a), anchor="mm")
+        d.text((X_SAC, 824), "la valeur bouge", font=police(21, True),
+               fill=_encre(VERT, a), anchor="mm")
 
-    bascule = 0.0
-    if 0.28 < p < 0.36:
-        bascule = 1 - abs((p - 0.32) / 0.04)
-    if 0.48 < p < 0.56:
-        bascule = 1 - abs((p - 0.52) / 0.04)
-    sac(d, 292, 540, contenu=contenu, nom=None, echelle=1.0,
-        halo=0.45 + 0.35 * G._pulse(t, 2.1), secousse=bascule * 0.6, legende=legende)
-
-    # l'ancienne valeur s'échappe du sac quand on la remplace
-    if 0.30 < p < 0.44:
-        a = (p - 0.30) / 0.14
-        jeton(d, 300 + 60 * a, 600 - 90 * a, str(VALEURS[0]),
-              couleur=melange(TEXTE_3, ROUGE_BORD, 0.4), echelle=0.7)
-        _legende(d, 300 + 60 * a, 640 - 90 * a, "avant", 16, TEXTE_3)
-
-    # la carte de la variable
-    a = _apparait(p, 0.42, 0.2)
-    historique = []
-    if p > 0.62:
-        historique = [("vide", None)]
-    if p > 0.72:
-        historique.append((str(VALEURS[0]), None))
-    boite_memoire(d, [590, 360, 1030, 700], nom="?", valeur=valeur if p > 0.42 else "?",
-                  historique=historique, a=a, t=t)
-
-    if p > 0.78:
-        ak = _apparait(p, 0.78, 0.18)
-        boite_arrondie(d, [590, 726, 1030, 786], rayon=14,
-                       fond=melange(FOND_PANNEAU, VIOLET, 0.16 * ak),
-                       bord=melange(BORDURE, VIOLET, 0.8 * ak), largeur_bord=2)
-        d.text((810, 756), "c'est ça, une variable", font=police(24, True),
-               fill=melange(FOND, VIOLET, ak), anchor="mm")
-
-    lignes = [
-        Ligne("UNE CASE MÉMOIRE", VIOLET, 24, gras=True, mono=False, a_partir_de=0.02),
-        Ligne("un sac :", TEXTE, 30, mono=False, a_partir_de=0.08),
-        Ligne("un nom + une valeur", TEXTE, 26, retrait=18, a_partir_de=0.16),
-        Ligne("", a_partir_de=0.24),
-        Ligne("au début : vide", TEXTE_2, 26, mono=False, a_partir_de=0.30),
-        Ligne("puis je mets 4 → 7", TEXTE_2, 26, mono=False, a_partir_de=0.50),
-        Ligne("", a_partir_de=0.6),
-        Ligne("même sac · autre contenu", AMBRE, 25, mono=False, a_partir_de=0.70),
-        Ligne("le nom reste,", VERT, 28, gras=True, mono=False, a_partir_de=0.84),
-        Ligne("la valeur bouge", VERT, 28, gras=True, mono=False, a_partir_de=0.88),
-    ]
-    cahier(d, PANEL_D, lignes, p)
     _etat(d, connue=False, t=t)
 
 
@@ -228,53 +235,35 @@ def scene_variable(d, p, t):
 #  3 · Le nom : plusieurs sacs, un seul S
 # ══════════════════════════════════════════════════════════════════════════
 def scene_nom(d, p, t):
-    _entete(d, "La boucle Pour — de la variable à la boucle", 3,
-            "3 · Un nom : S, le même jusqu'à la fin")
-    _panneaux(d, "l'histoire")
+    _entete(d, 3, "3 · Un nom : S, le même jusqu'à la fin")
+    _panneaux(d)
 
-    positions = (232, 528, 824)
-    legendes = ("le sac de l'étage 0", "le sac de l'étage 1", "mon sac à moi")
-    contenus = ((str(VALEURS[0]),), (str(VALEURS[1]),), ())
+    immeuble(d, IMB, actif=None, cabine=None, t=t)
 
-    for i, cx in enumerate(positions):
-        a = _apparait(p, 0.04 + 0.09 * i, 0.18)
-        if a <= 0:
+    papier_brouillon(d, PAPIER_BOX)
+    _ligne(d, 0, "beaucoup de sacs :", 24, melange(ENCRE, TEXTE_3, 0.45), 0.06, p)
+    nomme = _apparait(p, 0.54, 0.18)
+    for i in range(4):
+        k = _apparait(p, 0.10 + 0.05 * i, 0.12)
+        if k <= 0:
             continue
-        nom = "S" if (i == 2 and p > 0.62) else ("?" if i < 2 else None)
-        halo = 0.2 + 0.5 * (1 - abs(p - 0.62) * 4) if i == 2 and 0.50 < p < 0.74 else 0.0
-        sac(d, cx, 604, contenu=contenus[i], nom=nom, echelle=0.78,
-            halo=max(0.0, halo), legende=None)
-        d.text((cx, 748), legendes[i], font=police(18), fill=TEXTE_3, anchor="mm")
+        base = melange(ENCRE, TEXTE_3, 0.55)
+        couleur = melange(base, PAPIER, 0.55 * nomme)
+        crayon(d, X_CRAYON, _regle(1 + i) - 10, f"sac n°{i + 1}   ?", 24, couleur,
+               0.10 + 0.05 * i, 1.0)
+    if p < 0.54:
+        crayon_centre(d, 960, _regle(6) - 10, "« le sac » … lequel ?", 26, ROSE, 0.34, p)
+    else:
+        _ligne(d, 6, "je donne un nom : S", 26, AMBRE, 0.56, p, gras=True)
+        _ligne(d, 7, "le même dans tout", 24, VERT, 0.70, p)
+        _ligne(d, 8, "mon algorithme", 24, VERT, 0.76, p)
 
-    # la question, puis la réponse
-    if p < 0.46:
-        bulle(d, [300, 288, 940, 392], ["« le sac »… lequel ?"], min(1.0, 0.4 + p),
-              accent=ROSE, taille=26)
-    if p > 0.62:
-        a = _apparait(p, 0.62, 0.16)
-        d.text((812, 300), "un seul nom : S", font=police(32, True),
-               fill=melange(FOND, AMBRE, a), anchor="mm")
-        d.text((812, 344), "le même dans tout le programme", font=police(19),
-               fill=melange(FOND, TEXTE_2, a), anchor="mm")
-        # la flèche qui désigne le bon sac
-        fleche(d, (1046 - 220, 372), (824, 500), couleur=melange(FOND, AMBRE, a),
-               progression=a)
+    _etiquette_colonne(d, 244, "la variable, nommée")
+    boite_memoire(d, [1300, 272, 1832, 556], nom="S" if p > 0.58 else "?",
+                  valeur="0" if p > 0.58 else "?", a=_apparait(p, 0.40, 0.2), t=t,
+                  titre="une variable", note="un seul nom, pour tout le programme")
+    _sac_colonne(d, contenu=(), nom="S" if p > 0.58 else None, valeur=0, t=t, y=712)
 
-    lignes = [
-        Ligne("PLUSIEURS SACS", ROSE, 24, gras=True, mono=False, a_partir_de=0.02),
-        Ligne("un par étage,", TEXTE, 29, mono=False, a_partir_de=0.08),
-        Ligne("un par habitant", TEXTE, 29, mono=False, a_partir_de=0.14),
-        Ligne("", a_partir_de=0.2),
-        Ligne("« le sac » ? lequel ?", TEXTE_2, 25, mono=False, a_partir_de=0.26),
-        Ligne("l'ordinateur ne devine pas", TEXTE_3, 22, mono=False, a_partir_de=0.36),
-        Ligne("", a_partir_de=0.44),
-        Ligne("alors : une étiquette", AMBRE, 25, mono=False, a_partir_de=0.50),
-        Ligne("S", AMBRE, 44, gras=True, a_partir_de=0.64),
-        Ligne("S comme somme", VERT, 25, mono=False, a_partir_de=0.74),
-        Ligne("quand j'écris S,", TEXTE, 24, mono=False, a_partir_de=0.84),
-        Ligne("c'est CE sac-là", VERT, 26, gras=True, mono=False, a_partir_de=0.90),
-    ]
-    cahier(d, PANEL_D, lignes, p)
     _etat(d, connue=False, t=t)
 
 
@@ -282,427 +271,419 @@ def scene_nom(d, p, t):
 #  4 · S = S + … : lire, ajouter, réécrire
 # ══════════════════════════════════════════════════════════════════════════
 def scene_accumuler(d, p, t):
-    _entete(d, "La boucle Pour — de la variable à la boucle", 4,
-            "4 · S = S + … : lire, ajouter, réécrire")
-    _panneaux(d, "l'histoire")
+    _entete(d, 4, "4 · S = S + … : lire, ajouter, réécrire")
+    _panneaux(d)
 
-    # la formule, en haut
-    _carte(d, [96, 240, 1040, 360], "l'idée la plus importante", ORANGE,
-           _apparait(p, 0.02, 0.18))
-    af = _apparait(p, 0.06, 0.2)
-    if af > 0:
-        _formule(d, 568, 312, taille=42, droite="S + quelque chose", echelle=af)
-        a1 = _apparait(p, 0.42, 0.14)
-        if a1 > 0:
-            d.text((520, 372), "la NOUVELLE valeur", font=police(17, True),
-                   fill=melange(FOND, ORANGE, a1), anchor="mm")
-            d.text((760, 372), "l'ANCIENNE valeur", font=police(17, True),
-                   fill=melange(FOND, BLEU, a1), anchor="mm")
-            fleche(d, (520, 352), (466, 330), couleur=melange(FOND, ORANGE, a1), progression=a1)
-            fleche(d, (760, 352), (800, 330), couleur=melange(FOND, BLEU, a1), progression=a1)
+    immeuble(d, IMB, actif=None, cabine=None, t=t)
 
-    # le sac, et sa valeur qui monte
-    if p < 0.34:
-        contenu, valeur = (), 0
-    elif p < 0.62:
-        contenu, valeur = (str(VALEURS[0]),), VALEURS[0]
-    else:
-        contenu, valeur = (str(VALEURS[0]), str(VALEURS[1])), VALEURS[0] + VALEURS[1]
+    papier_brouillon(d, PAPIER_BOX)
+    _ligne(d, 0, "je calcule :", 24, melange(ENCRE, TEXTE_3, 0.45), 0.06, p)
+    _ligne(d, 1, "S = 0", 26, ENCRE, 0.14, p)
+    _ligne(d, 2, "0 + 4 = 4", 26, ENCRE, 0.30, p)
+    _ligne(d, 3, "S = 4", 26, AMBRE, 0.40, p)
+    _ligne(d, 4, "4 + 7 = 11", 26, ENCRE, 0.58, p)
+    _ligne(d, 5, "S = 11", 26, AMBRE, 0.66, p)
+    _ligne(d, 7, "le nouveau = l'ancien + ...", 22, VERT, 0.76, p)
 
-    sac(d, 300, 600, contenu=contenu, nom="S", echelle=0.9,
-        halo=0.35 + 0.4 * G._pulse(t, 1.9))
-    _legende(d, 300, 748, "le sac, c'est la mémoire", 18)
+    # la ligne clé, dans l'algorithme : les deux S, en deux couleurs
+    _etiquette_colonne(d, 244, "la ligne la plus importante")
+    k = _apparait(p, 0.20, 0.2)
+    if k > 0:
+        f = police(24, True, mono=True)
+        morceaux = [("S", ORANGE), (" = ", TEXTE_3), ("S", BLEU),
+                    (" + ", TEXTE_3), ("quelque chose", AMBRE)]
+        total = sum(f.getlength(m) for m, _ in morceaux)
+        x = 1566 - total / 2
+        for m, c in morceaux:
+            d.text((x, 296), m, font=f, fill=_encre(c, k), anchor="lm")
+            x += f.getlength(m)
+    a1 = _apparait(p, 0.46, 0.16)
+    if a1 > 0:
+        for i, (chip, txt, coul) in enumerate(
+                [("S", "à gauche : la nouvelle valeur", ORANGE),
+                 ("S", "à droite : l'ancienne valeur", BLEU)]):
+            y = 344 + i * 34
+            d.text((1300, y), chip, font=police(20, True, mono=True),
+                   fill=_encre(coul, a1), anchor="lm")
+            d.text((1330, y), txt, font=police(17), fill=_encre(TEXTE_2, a1), anchor="lm")
 
-    # les trois gestes, à droite
-    gestes = [
-        ("lire S", f"{valeur if p > 0.60 else (VALEURS[0] if p > 0.34 else 0)}", BLEU),
-        ("ajouter", f"+ {VALEURS[1] if p > 0.60 else VALEURS[0]}", AMBRE),
-        ("écrire dans S", f"→ {valeur}", ORANGE),
-    ]
-    y = 430
-    for i, (titre_, detail, couleur) in enumerate(gestes):
-        a = _apparait(p, 0.12 + 0.16 * i, 0.16)
-        if a <= 0:
+    for i, (titre_, detail, couleur) in enumerate(
+            [("lire S", "→ 4", BLEU), ("ajouter", "+ 7", AMBRE), ("écrire dans S", "→ 11", ORANGE)]):
+        ai = _apparait(p, 0.30 + 0.12 * i, 0.16)
+        if ai <= 0:
             continue
-        boite_arrondie(d, [560, y, 1030, y + 112], rayon=16,
-                       fond=melange(FOND_PANNEAU, couleur, 0.10 * a),
-                       bord=melange(BORDURE, couleur, 0.7 * a), largeur_bord=2)
-        etape_pastille(d, 604, y + 56, i + 1, couleur=couleur, echelle=1.1)
-        d.text((650, y + 40), titre_, font=police(24, True), fill=melange(FOND, TEXTE, a))
-        d.text((650, y + 74), "S  " + detail if i < 2 else "S  " + detail,
-               font=police(22, True, mono=True), fill=melange(FOND, couleur, a))
-        y += 132
+        y = 412 + i * 66
+        boite_arrondie(d, [1300, y, 1832, y + 54], rayon=12,
+                       fond=melange(FOND_PANNEAU_2, couleur, 0.12 * ai),
+                       bord=melange(BORDURE, couleur, 0.65 * ai), largeur_bord=2)
+        etape_pastille(d, 1330, y + 27, i + 1, couleur=couleur, echelle=0.85)
+        d.text((1366, y + 27), titre_, font=police(20, True),
+               fill=_encre(TEXTE, ai), anchor="lm")
+        d.text((1800, y + 27), detail, font=police(20, True, mono=True),
+               fill=_encre(couleur, ai), anchor="rm")
 
-    lignes = [
-        Ligne("LIRE · AJOUTER · ÉCRIRE", BLEU, 22, gras=True, mono=False, a_partir_de=0.02),
-        Ligne("S = S + quelque chose", TEXTE, 27, a_partir_de=0.10),
-        Ligne("", a_partir_de=0.2),
-        Ligne("S à droite : l'ancienne", TEXTE_2, 23, mono=False, a_partir_de=0.44),
-        Ligne("valeur", TEXTE_2, 23, mono=False, a_partir_de=0.48),
-        Ligne("S à gauche : la nouvelle", ORANGE, 23, mono=False, a_partir_de=0.60),
-        Ligne("", a_partir_de=0.7),
-        Ligne("0 + 4 = 4", VERT, 27, a_partir_de=0.74),
-        Ligne("4 + 7 = 11", VERT, 27, a_partir_de=0.86),
-    ]
-    cahier(d, PANEL_D, lignes, p)
-    _etat(d, somme=valeur, connue=True, compteur=None, t=t)
+    _sac_colonne(d, contenu=tuple(str(v) for v in VALEURS[:2]) if p > 0.60 else (),
+                 valeur=VALEURS[0] + VALEURS[1] if p > 0.60 else VALEURS[0], t=t, y=712)
+
+    _etat(d, somme=VALEURS[0] + VALEURS[1] if p > 0.60 else VALEURS[0], connue=True, t=t)
 
 
 # ══════════════════════════════════════════════════════════════════════════
 #  5 · L'immeuble et l'ascenseur : le même geste à chaque étage
 # ══════════════════════════════════════════════════════════════════════════
 def scene_immeuble(d, p, t):
-    _entete(d, "La boucle Pour — de la variable à la boucle", 5,
-            "5 · L'immeuble et l'ascenseur")
-    _panneaux(d, "l'histoire")
+    _entete(d, 5, "5 · L'immeuble et l'ascenseur")
+    _panneaux(d)
 
-    actif = 0 if p > 0.58 else None
-    immeuble(d, [104, 300, 630, 826], actif=actif, cabine=0.0, ouvert=_apparait(p, 0.66, 0.16),
-             t=t)
+    actif = 0 if p > 0.56 else None
+    immeuble(d, IMB, actif=actif, cabine=0.0, ouvert=_apparait(p, 0.66, 0.16), t=t)
 
-    # la question
-    if p < 0.52:
-        bulle(d, [664, 330, 1036, 452], ["à chaque étage,", "qu'est-ce que je fais ?"],
-              min(1.0, 0.3 + p * 1.4), accent=ROSE, taille=25)
-    else:
-        a = _apparait(p, 0.52, 0.16)
-        _carte(d, [664, 320, 1036, 620], "le geste, toujours le même", VERT, a)
-        gestes = [("ouvrir la porte", AMBRE), ("prendre la valeur", AMBRE), ("l'ajouter dans S", VERT)]
-        y = 400
-        for i, (intitule, couleur) in enumerate(gestes):
-            ai = _apparait(p, 0.56 + 0.07 * i, 0.12)
-            if ai <= 0:
-                continue
-            etape_pastille(d, 706, y + 18, i + 1, couleur=couleur)
-            d.text((740, y + 18), intitule, font=police(23),
-                   fill=melange(FOND, TEXTE, ai), anchor="lm")
-            y += 66
+    papier_brouillon(d, PAPIER_BOX)
+    _ligne(d, 0, "à chaque étage :", 24, melange(ENCRE, TEXTE_3, 0.45), 0.10, p)
+    for i, geste in enumerate(["ouvrir la porte", "prendre la valeur", "l'ajouter dans S"]):
+        k = _apparait(p, 0.34 + 0.10 * i, 0.14)
+        if k <= 0:
+            continue
+        crayon(d, X_CRAYON, _regle(2 + i) - 10, f"{i + 1}. {geste}", 25,
+               melange(ENCRE, VERT, k * 0.8), 0.34 + 0.10 * i, p, 0.14)
+    _ligne(d, 6, "toujours pareil", 26, VERT, 0.72, p, gras=True)
 
-    if p > 0.78:
-        a = _apparait(p, 0.78, 0.16)
-        d.text((850, 660), "quatre étages · quatre fois le même geste",
-               font=police(19), fill=melange(FOND, TEXTE_2, a), anchor="mm")
+    _etiquette_colonne(d, 244, "ce que j'écrirai")
+    _rien_encore(d)
+    _sac_colonne(d, contenu=(), valeur=0, t=t)
 
-    lignes = [
-        Ligne("L'IMMEUBLE", AMBRE, 24, gras=True, mono=False, a_partir_de=0.02),
-        Ligne("j'ai mon sac,", TEXTE, 28, mono=False, a_partir_de=0.08),
-        Ligne("j'ai mon tableau", TEXTE, 28, mono=False, a_partir_de=0.14),
-        Ligne("", a_partir_de=0.2),
-        Ligne("il reste à monter", TEXTE_2, 25, mono=False, a_partir_de=0.26),
-        Ligne("→ l'ascenseur", BLEU, 28, gras=True, mono=False, a_partir_de=0.36),
-        Ligne("", a_partir_de=0.46),
-        Ligne("toujours le même geste :", TEXTE_2, 23, mono=False, a_partir_de=0.54),
-        Ligne("prendre + ajouter", VERT, 26, gras=True, mono=False, a_partir_de=0.68),
-    ]
-    cahier(d, PANEL_D, lignes, p)
-    _etat(d, indice=actif, somme=0, compteur=0 if p > 0.58 else None, t=t)
+    _etat(d, indice=actif, somme=0, compteur=0 if actif is not None else None, t=t)
 
 
 # ══════════════════════════════════════════════════════════════════════════
-#  6 · Étage 0 : le premier tour, à la main
+#  6 · Étage 0, sur le brouillon
 # ══════════════════════════════════════════════════════════════════════════
 def scene_etage0(d, p, t):
-    _entete(d, "La boucle Pour — de la variable à la boucle", 6,
-            "6 · Étage 0 : le premier tour, à la main")
-    _panneaux(d, "l'histoire")
+    _entete(d, 6, "6 · Étage 0, sur le brouillon : S = S + T[0]")
+    _panneaux(d)
 
-    ouvert = _ease_out(max(0.0, min(1.0, (p - 0.16) / 0.16)))
-    ramasse = max(0.0, min(1.0, (p - 0.40) / 0.24))
-    immeuble(d, [96, 300, 606, 826], actif=0, cabine=0.0, ouvert=ouvert,
-             faits=(0,) if ramasse > 0.94 else (), ramassage=ramasse if ramasse < 1 else None, t=t)
+    ouvert = _ease_out(max(0.0, min(1.0, (p - 0.14) / 0.16)))
+    ramasse = max(0.0, min(1.0, (p - 0.36) / 0.26))
+    immeuble(d, IMB, actif=0, cabine=0.0, ouvert=ouvert,
+             faits=(0,) if ramasse > 0.94 else (),
+             ramassage=ramasse if ramasse < 1 else None, t=t)
 
-    # le sac, à droite
-    dedans = (str(VALEURS[0]),) if ramasse > 0.94 else ()
-    sac(d, 830, 552, contenu=dedans, nom="S", echelle=1.0,
-        halo=0.5 + 0.35 * G._pulse(t, 1.8), secousse=0.4 if 0.5 < ramasse < 0.95 else 0.0)
-    d.text((830, 714), f"S = {_somme(1) if ramasse > 0.94 else 0}", font=police(30, True, mono=True),
-           fill=VERT if ramasse > 0.94 else TEXTE_2, anchor="mm")
+    papier_brouillon(d, PAPIER_BOX)
+    _ligne(d, 0, "tour n°1 · étage 0", 24, melange(ENCRE, TEXTE_3, 0.45), 0.10, p)
+    _ligne(d, 1, "la porte s'ouvre", 24, ENCRE, 0.20, p)
+    _ligne(d, 2, "T[0] = 4", 28, AMBRE, 0.30, p)
+    _ligne(d, 4, "S valait 0", 24, BLEU, 0.44, p)
+    _ligne(d, 5, "S = S + T[0]", 30, ORANGE, 0.56, p, gras=True)
+    _ligne(d, 7, "S = 4", 30, VERT, 0.74, p, gras=True)
 
-    # le jeton qui voyage de l'étage 0 jusqu'au sac
-    if 0.42 < ramasse < 1.0:
-        a = ramasse
-        depart = (462, 700)
-        arrivee = (782, 540)
-        x = depart[0] + (arrivee[0] - depart[0]) * _ease(a)
-        y = depart[1] + (arrivee[1] - depart[1]) * _ease(a) - math.sin(a * math.pi) * 80
-        jeton(d, x, y, str(VALEURS[0]), couleur=AMBRE, echelle=1.0)
+    _etiquette_colonne(d, 244, "ce que j'écrirai")
+    _rien_encore(d)
+    _sac_colonne(d, contenu=(str(VALEURS[0]),) if ramasse > 0.94 else (),
+                 valeur=_somme(1) if ramasse > 0.94 else 0, t=t,
+                 halo=0.4 if 0.5 < ramasse < 1 else 0.0)
 
-    if p > 0.72:
-        a = _apparait(p, 0.72, 0.14)
-        coche(d, 786, 640, 46, progression=a)
-
-    lignes = [
-        Ligne("ÉTAGE 0", AMBRE, 24, gras=True, mono=False, a_partir_de=0.02),
-        Ligne("la porte s'ouvre", TEXTE_2, 24, mono=False, a_partir_de=0.12),
-        Ligne("T[0]  =  4", AMBRE, 30, a_partir_de=0.22),
-        Ligne("", a_partir_de=0.3),
-        Ligne("lire S      → 0", TEXTE_2, 24, mono=False, a_partir_de=0.36),
-        Ligne("ajouter     + 4", TEXTE_2, 24, mono=False, a_partir_de=0.46),
-        Ligne("écrire      → 4", TEXTE_2, 24, mono=False, a_partir_de=0.56),
-        Ligne("", a_partir_de=0.62),
-        Ligne("S = S + T[0]", ORANGE, 30, gras=True, a_partir_de=0.66, souligne=True),
-        Ligne("", a_partir_de=0.76),
-        Ligne("S  =  4", VERT, 32, gras=True, a_partir_de=0.82),
-    ]
-    cahier(d, PANEL_D, lignes, p)
     _etat(d, indice=0, somme=_somme(1) if ramasse > 0.94 else 0, compteur=0, t=t)
 
 
 # ══════════════════════════════════════════════════════════════════════════
-#  7 · Répétition : quatre fois la même ligne
+#  7 · Étages 1, 2, 3 : seul le chiffre change
 # ══════════════════════════════════════════════════════════════════════════
 def scene_repetition(d, p, t):
-    _entete(d, "La boucle Pour — de la variable à la boucle", 7,
-            "7 · Étages 1, 2, 3 : quatre fois la même ligne")
-    _panneaux(d, "l'histoire")
+    _entete(d, 7, "7 · Étages 1, 2, 3 : seul le chiffre change")
+    _panneaux(d)
 
-    # l'ascenseur monte : étage 1 → 2 → 3
-    montee = max(0.0, min(3.0, (p - 0.04) / 0.24))
+    montee = max(0.0, min(3.0, (p - 0.04) / 0.26))
     etage = int(round(montee))
-    faits = tuple(range(0, min(4, etage + 1))) if p > 0.62 else tuple(range(0, etage))
-    immeuble(d, [88, 300, 540, 826], actif=min(3, etage), cabine=montee, ouvert=0.85, faits=faits, t=t)
+    immeuble(d, IMB, actif=min(3, etage), cabine=montee, ouvert=0.85,
+             faits=tuple(range(0, min(4, etage + 1))), t=t)
 
-    # le sac qui accumule
-    dedans = tuple(str(v) for v in VALEURS[:max(0, etage + 1)]) if p > 0.30 else \
-        tuple(str(v) for v in VALEURS[:max(1, etage)])
-    sac(d, 646, 470, contenu=dedans, nom="S", echelle=0.78,
-        halo=0.4 + 0.3 * G._pulse(t, 1.7))
-    d.text((646, 606), f"S = {_somme(min(4, etage + 1)) if p > 0.30 else _somme(etage)}",
-           font=police(26, True, mono=True), fill=VERT, anchor="mm")
-
-    # les lignes écrites, une par étage
-    _carte(d, [724, 300, 1046, 700], "ce que j'écris", ORANGE, 1.0)
-    y = 372
+    papier_brouillon(d, PAPIER_BOX)
+    _ligne(d, 0, "mon brouillon :", 24, melange(ENCRE, TEXTE_3, 0.45), 0.06, p)
     for k in range(4):
-        a = _apparait(p, 0.10 + 0.20 * k, 0.16)
+        a = _apparait(p, 0.10 + 0.16 * k, 0.16)
         if a <= 0:
             continue
-        boite_arrondie(d, [746, y, 1024, y + 54], rayon=10,
-                       fond=melange(FOND_PANNEAU_2, VERT, 0.10 * a),
-                       bord=melange(BORDURE, VERT, 0.5 * a), largeur_bord=1)
-        d.text((762, y + 27), f"S = S + T[{k}]", font=police(23, True, mono=True),
-               fill=melange(FOND, TEXTE, a), anchor="lm")
-        d.text((1006, y + 27), f"= {_somme(k + 1)}", font=police(20, True, mono=True),
-               fill=melange(FOND, VERT, a), anchor="rm")
-        y += 66
+        y = _regle(2 + k) - 10
+        crayon(d, X_CRAYON, y, f"S = S + T[{k}]", 26,
+               melange(ENCRE, TEXTE, a), 0.10 + 0.16 * k, p, 0.16)
+        d.text((X_CRAYON + 300, y), f"= {_somme(k + 1)}", font=police(26, True, mono=True),
+               fill=melange(PAPIER, VERT, a), anchor="lm")
+    if p > 0.70:
+        stylo_note(d, X_CRAYON, _regle(7) - 6, "quatre fois la même ligne !", 24,
+                   a_partir_de=0.70, p=p)
+    if p > 0.84:
+        stylo_note(d, X_CRAYON, _regle(8) - 6, "seul le chiffre change", 22,
+                   a_partir_de=0.84, p=p)
 
-    if p > 0.72:
-        a = _apparait(p, 0.72, 0.16)
-        d.text((885, 660), "4 fois la même ligne !", font=police(24, True),
-               fill=melange(FOND, AMBRE, a), anchor="mm")
+    _etiquette_colonne(d, 244, "ce que j'écrirai")
+    _rien_encore(d)
+    _sac_colonne(d, contenu=tuple(str(v) for v in VALEURS[:min(4, etage + 1)]),
+                 valeur=_somme(min(4, etage + 1)), t=t)
 
-    lignes = [
-        Ligne("JE ME RÉPÈTE", AMBRE, 24, gras=True, mono=False, a_partir_de=0.02),
-        Ligne("étage 1 :  4 + 7", TEXTE, 24, mono=False, a_partir_de=0.10),
-        Ligne("étage 2 : 11 + 2", TEXTE, 24, mono=False, a_partir_de=0.26),
-        Ligne("étage 3 : 13 + 9", TEXTE, 24, mono=False, a_partir_de=0.44),
-        Ligne("", a_partir_de=0.52),
-        Ligne("S = 22", VERT, 32, gras=True, a_partir_de=0.56),
-        Ligne("", a_partir_de=0.64),
-        Ligne("même ligne,", TEXTE_2, 22, mono=False, a_partir_de=0.70),
-        Ligne("seul l'indice change", ORANGE, 24, gras=True, mono=False, a_partir_de=0.78),
-    ]
-    cahier(d, PANEL_D, lignes, p)
-    _etat(d, indice=min(3, etage), somme=_somme(min(4, etage + 1)), compteur=min(3, etage), t=t)
+    _etat(d, indice=min(3, etage), somme=_somme(min(4, etage + 1)),
+          compteur=min(3, etage), t=t)
 
 
 # ══════════════════════════════════════════════════════════════════════════
-#  8 · Pourquoi une boucle : le papier qui déborde
+#  8 · Passage à l'algo : T[quelque chose]
+# ══════════════════════════════════════════════════════════════════════════
+def scene_quelquechose(d, p, t):
+    _entete(d, 8, "8 · Passage à l'algo : ce n'est plus un chiffre")
+    _panneaux(d)
+
+    immeuble(d, IMB, actif=3, cabine=3.0, faits=(0, 1, 2, 3), t=t)
+
+    # le brouillon : les quatre lignes, les crochets qui brillent
+    papier_brouillon(d, PAPIER_BOX)
+    _ligne(d, 0, "ce qui change :", 24, melange(ENCRE, TEXTE_3, 0.45), 0.06, p)
+    for k in range(4):
+        y = _regle(2 + k) - 10
+        a = max(0.35, _apparait(p, 0.10 + 0.05 * k, 0.1))
+        crayon(d, X_CRAYON, y, f"S = S + T[{k}]", 26, melange(PAPIER, TEXTE_3, a), 0.02, 1.0)
+        # le chiffre entre crochets, mis en avant
+        cw = largeur_texte("0", 26, False, True)
+        xd = X_CRAYON + len("S = S + T[") * cw + cw / 2
+        lueur = _apparait(p, 0.34 + 0.06 * k, 0.14)
+        if lueur > 0:
+            halo = 4 + 2 * G._pulse(t, 1.3)
+            d.ellipse([xd - 13 - halo, y - 17 - halo, xd + 13 + halo, y + 17 + halo],
+                      outline=melange(PAPIER, AMBRE, 0.65 * lueur), width=2)
+        d.text((xd, y), str(k), font=police(26, False, True),
+               fill=melange(PAPIER, AMBRE, lueur), anchor="mm")
+    stylo_note(d, X_CRAYON, _regle(7) - 6, "un seul chiffre change", 23, couleur=AMBRE,
+               a_partir_de=0.62, p=p)
+
+    # l'algo et le JavaScript apparaissent
+    _etiquette_colonne(d, 244, "l'algorithme")
+    k = _apparait(p, 0.30, 0.2)
+    if k > 0:
+        boite_arrondie(d, [1296, 268, 1836, 330], rayon=12,
+                       fond=melange(FOND_PANNEAU_2, AMBRE, 0.12 * k),
+                       bord=melange(BORDURE, AMBRE, 0.8 * k), largeur_bord=2)
+        d.text((1566, 299), "S = S + T[quelque chose]", font=police(22, True, mono=True),
+               fill=_encre(AMBRE, k), anchor="mm")
+    _etiquette_colonne(d, 352, "le JavaScript", VERT)
+    kj = _apparait(p, 0.56, 0.2)
+    if kj > 0:
+        boite_arrondie(d, [1296, 376, 1836, 438], rayon=12,
+                       fond=(9, 14, 24), bord=melange(BORDURE, VERT, 0.7 * kj), largeur_bord=2)
+        d.text((1566, 407), "S = S + T[i];", font=police(23, True, mono=True),
+               fill=_encre(VERT, kj), anchor="mm")
+    if p > 0.78:
+        a = _apparait(p, 0.78, 0.16)
+        d.text((1566, 480), "i, c'est le compteur", font=police(19),
+               fill=_encre(TEXTE_2, a), anchor="mm")
+
+    _sac_colonne(d, contenu=tuple(str(v) for v in VALEURS), valeur=SOMME_TOTALE, t=t)
+    _etat(d, indice=None, somme=SOMME_TOTALE, connue=True, t=t)
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  9 · Retour au brouillon, stylo rouge : le compteur
+# ══════════════════════════════════════════════════════════════════════════
+def scene_compteur(d, p, t):
+    _entete(d, 9, "9 · Retour au brouillon, stylo rouge : le compteur")
+    _panneaux(d)
+
+    immeuble(d, IMB, actif=3, cabine=3.0, faits=(0, 1, 2, 3), t=t)
+
+    papier_brouillon(d, PAPIER_BOX)
+    _ligne(d, 0, "mon brouillon :", 24, melange(ENCRE, TEXTE_3, 0.45), 0.04, p)
+    cw = largeur_texte("0", 26, False, True)
+    for k in range(4):
+        y = _regle(2 + k) - 10
+        crayon(d, X_CRAYON, y, f"S = S + T[{k}]", 26, melange(PAPIER, ENCRE, 0.85), 0.02, 1.0)
+
+    # les cercles rouges sur le 0 et le 1
+    for i, k in enumerate((0, 1)):
+        y = _regle(2 + k) - 10
+        xd = X_CRAYON + len("S = S + T[") * cw + cw / 2
+        kc = _apparait(p, 0.30 + 0.14 * i, 0.16)
+        if kc > 0:
+            stylo_cercle(d, xd, y, 17, 21, progression=kc)
+
+    # la note rouge : « compteur »
+    kn = _apparait(p, 0.58, 0.18)
+    if kn > 0:
+        stylo_note(d, X_CRAYON + 300, _regle(2) - 10, "compteur", 30, a_partir_de=0.58, p=p)
+        fl = _apparait(p, 0.72, 0.14)
+        if fl > 0:
+            stylo_fleche(d, (X_CRAYON + 296, _regle(2) - 24), (X_CRAYON + 196, _regle(2) - 16),
+                         progression=fl)
+            stylo_fleche(d, (X_CRAYON + 296, _regle(3) - 16), (X_CRAYON + 196, _regle(3) - 10),
+                         progression=fl)
+    if p > 0.84:
+        stylo_note(d, X_CRAYON, _regle(7) - 6, "zéro, un, deux, trois…", 22,
+                   a_partir_de=0.84, p=p)
+
+    # la colonne de droite : « quelque chose » va devenir le compteur
+    _etiquette_colonne(d, 244, "mon algorithme")
+    d.text((1566, 299), "S = S + T[quelque chose]", font=police(22, True, mono=True),
+           fill=AMBRE, anchor="mm")
+    kq = _apparait(p, 0.68, 0.18)
+    if kq > 0:
+        stylo_note(d, 1566, 366, "= le compteur", 24, ancre="mm", a_partir_de=0.68, p=p)
+        stylo_cercle(d, 1706, 299, 96, 26, progression=kq)
+    d.text((1566, 436), "S = S + T[i];", font=police(20, True, mono=True),
+           fill=_encre(VERT, 0.9), anchor="mm")
+
+    _sac_colonne(d, contenu=tuple(str(v) for v in VALEURS), valeur=SOMME_TOTALE, t=t)
+    _etat(d, indice=None, somme=SOMME_TOTALE, connue=True, t=t)
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# 10 · La question principale : combien de répétitions ?
 # ══════════════════════════════════════════════════════════════════════════
 def scene_pourquoi(d, p, t):
-    _entete(d, "La boucle Pour — de la variable à la boucle", 8,
-            "8 · Pourquoi une boucle ? Parce que je me répète")
-    _panneaux(d, "le problème")
+    _entete(d, 10, "10 · La question principale : combien de répétitions ?")
+    _panneaux(d)
 
-    # le nombre d'étages raconté par la scène : 4 → 10 → 100
-    if p < 0.24:
-        n, depasse = 4, False
-    elif p < 0.46:
-        n, depasse = 10, False
-    else:
-        n, depasse = 100, True
+    immeuble(d, IMB, actif=3, cabine=3.0, faits=(0, 1, 2, 3), t=t)
+    d.text((354, 846), "4 étages = 4 tours", font=police(19), fill=VERT, anchor="mm")
 
-    pile_lignes(d, [88, 276, 596, 838], n, p=p, depasse=depasse, t=t,
-                titre=f"un immeuble de {n} étages")
+    papier_brouillon(d, PAPIER_BOX)
+    _ligne(d, 0, "ce que je remarque :", 24, melange(ENCRE, TEXTE_3, 0.45), 0.04, p)
+    k1 = _apparait(p, 0.10, 0.16)
+    if k1 > 0:
+        crayon(d, X_CRAYON, _regle(2) - 10, "entre les crochets :", 24,
+               melange(PAPIER, ENCRE, k1), 0.10, p)
+        crayon(d, X_CRAYON, _regle(3) - 10, "0, 1, 2, 3", 30,
+               melange(PAPIER, ROUGE_STYLO, k1), 0.12, p, gras=True)
+        crayon(d, X_CRAYON, _regle(4) - 10, "= le pas du compteur", 24,
+               melange(PAPIER, ROUGE_STYLO, k1 * 0.9), 0.18, p)
+    k2 = _apparait(p, 0.34, 0.18)
+    if k2 > 0:
+        stylo_note(d, X_CRAYON, _regle(6) - 10, "donc : une boucle", 26,
+                   a_partir_de=0.34, p=p)
+        stylo_note(d, X_CRAYON, _regle(7) - 10, "et un compteur", 26,
+                   a_partir_de=0.40, p=p)
+    k3 = _apparait(p, 0.56, 0.18)
+    if k3 > 0:
+        boite_arrondie(d, [704, 700, 1216, 754], rayon=12,
+                       fond=melange(PAPIER, AMBRE, 0.16 * k3),
+                       bord=melange(BORDURE, AMBRE, 0.8 * k3), largeur_bord=2)
+        d.text((960, 727), "combien de répétitions ?", font=police(24, True),
+               fill=melange(PAPIER, AMBRE, k3), anchor="mm")
+    k4 = _apparait(p, 0.74, 0.16)
+    if k4 > 0:
+        d.text((X_CRAYON, 792), "ici : 4 · je connais n", font=police(24, True, mono=True),
+               fill=melange(PAPIER, VERT, k4), anchor="lm")
+        d.text((X_CRAYON, 832), "donc je complète la fin", font=police(24, True, mono=True),
+               fill=melange(PAPIER, VERT, k4), anchor="lm")
 
-    # l'immeuble, de plus en plus haut
-    immeuble(d, [628, 330, 846, 800],
-             valeurs=tuple(VALEURS[i % 4] for i in range(min(n, 100))),
-             compact=(n >= 100), actif=None, montrer_valeurs=False, etiquettes=(n < 6),
-             fenetres=(n < 100), toit=True, cabine=None)
-    d.text((737, 830), f"{n} étages", font=police(20, True), fill=TEXTE_2, anchor="mm")
-
-    # la conclusion : écrire une fois
-    if p > 0.56:
-        a = _apparait(p, 0.56, 0.18)
-        boite_arrondie(d, [872, 330, 1046, 560], rayon=16,
-                       fond=melange(FOND_PANNEAU, ROUGE_BORD, 0.10 * a),
-                       bord=melange(BORDURE, ROUGE_BORD, 0.7 * a), largeur_bord=2)
-        d.text((959, 372), "sans boucle", font=police(19, True),
-               fill=melange(FOND, ROUGE_BORD, a), anchor="mm")
-        G._croix(d, 959, 432, 62 * a, progression=a)
-        d.text((959, 500), f"{n} lignes", font=police(26, True, mono=True),
-               fill=melange(FOND, TEXTE, a), anchor="mm")
-        d.text((959, 532), "à recopier", font=police(17),
-               fill=melange(FOND, TEXTE_3, a), anchor="mm")
-    if p > 0.76:
-        a = _apparait(p, 0.76, 0.18)
-        boite_arrondie(d, [872, 586, 1046, 800], rayon=16,
-                       fond=melange(FOND_PANNEAU, VERT, 0.12 * a),
-                       bord=melange(BORDURE, VERT, 0.75 * a), largeur_bord=2)
-        d.text((959, 626), "avec une boucle", font=police(19, True),
-               fill=melange(FOND, VERT, a), anchor="mm")
-        d.text((959, 690), "1 ligne", font=police(30, True, mono=True),
-               fill=melange(FOND, TEXTE, a), anchor="mm")
-        d.text((959, 730), "écrite une fois", font=police(17),
-               fill=melange(FOND, TEXTE_2, a), anchor="mm")
-        d.text((959, 768), "répétée n fois", font=police(19, True),
-               fill=melange(FOND, VERT, a), anchor="mm")
-
-    lignes = [
-        Ligne("SANS BOUCLE ?", ROUGE_BORD, 24, gras=True, mono=False, a_partir_de=0.02),
-        Ligne("1 étage = 1 ligne", TEXTE, 27, mono=False, a_partir_de=0.08),
-        Ligne("10 étages = 10 lignes", TEXTE, 27, mono=False, a_partir_de=0.26),
-        Ligne("100 étages = 100 lignes", ROUGE_BORD, 27, gras=True, mono=False, a_partir_de=0.48),
-        Ligne("", a_partir_de=0.58),
-        Ligne("et si je me trompe ?", TEXTE_3, 23, mono=False, a_partir_de=0.64),
-        Ligne("", a_partir_de=0.7),
-        Ligne("écrire UNE fois,", VERT, 27, gras=True, mono=False, a_partir_de=0.76),
-        Ligne("répéter n fois", VERT, 27, gras=True, mono=False, a_partir_de=0.82),
-        Ligne("→ une boucle", ORANGE, 30, gras=True, mono=False, a_partir_de=0.9),
-    ]
-    cahier(d, PANEL_D, lignes, p)
-    _etat(d, connue=False, t=t)
-
-
-# ══════════════════════════════════════════════════════════════════════════
-#  9 · Le bloc : le geste une seule fois, avec le compteur
-# ══════════════════════════════════════════════════════════════════════════
-def scene_bloc(d, p, t):
-    _entete(d, "La boucle Pour — de la variable à la boucle", 9,
-            "9 · Le bloc et le compteur")
-    _panneaux(d, "l'histoire")
-
-    montee = max(0.0, min(3.0, p * 3.6))
-    immeuble(d, [88, 300, 546, 826], actif=min(3, int(round(montee))), cabine=montee,
-             ouvert=0.7, faits=tuple(range(0, int(montee))), t=t)
-
-    # le bloc, entre accolades
-    a = _apparait(p, 0.10, 0.2)
-    _carte(d, [612, 300, 1046, 620], "le bloc à répéter", AMBRE, a)
-    if a > 0:
-        d.text((628, 386), "{", font=police(44, True, mono=True), fill=melange(FOND, AMBRE, a))
-        d.text((1030, 386), "}", font=police(44, True, mono=True), fill=melange(FOND, AMBRE, a),
-               anchor="ra")
-        ab = _apparait(p, 0.24, 0.18)
-        _formule(d, 830, 404, gauche="S", droite="S + T[compteur]", taille=25,
-                 accent_gauche=ORANGE, accent_droit=AMBRE, echelle=ab)
-        d.text((830, 470), "le seul élément qui change :", font=police(18),
-               fill=melange(FOND, TEXTE_3, ab), anchor="mm")
-
-        # les quatre indices, dont un seul est « actif »
-        cx = 686
-        actif_i = min(3, int(round(montee)))
-        for k in range(4):
-            ak = _apparait(p, 0.34 + 0.05 * k, 0.12)
-            if ak <= 0:
+    _etiquette_colonne(d, 244, "mon algorithme")
+    d.text((1566, 299), "S = S + T[compteur]", font=police(22, True, mono=True),
+           fill=AMBRE, anchor="mm")
+    ka = _apparait(p, 0.64, 0.18)
+    if ka > 0:
+        _etiquette_colonne(d, 356, "ce qu'il me manque", VERT)
+        for i, (mot, couleur) in enumerate([("où je commence", BLEU),
+                                            ("quand je m'arrête", AMBRE)]):
+            ai = _apparait(p, 0.66 + 0.10 * i, 0.16)
+            if ai <= 0:
                 continue
-            chaud = k == actif_i
-            boite_arrondie(d, [cx - 34, 504, cx + 34, 556], rayon=10,
-                           fond=melange((24, 34, 52), AMBRE, 0.20 if chaud else 0.04),
-                           bord=melange(BORDURE, AMBRE, (0.9 if chaud else 0.35) * ak),
-                           largeur_bord=2 if chaud else 1)
-            d.text((cx, 530), f"T[{k}]", font=police(15, True, mono=True),
-                   fill=melange(FOND, AMBRE if chaud else TEXTE_3, ak), anchor="mm")
-            cx += 82
-        d.text((830, 590), "c'est le compteur de l'ascenseur", font=police(17),
-               fill=melange(FOND, BLEU, _apparait(p, 0.56, 0.16)), anchor="mm")
+            y = 386 + i * 58
+            boite_arrondie(d, [1300, y, 1832, y + 46], rayon=10,
+                           fond=melange(FOND_PANNEAU_2, couleur, 0.14 * ai),
+                           bord=melange(BORDURE, couleur, 0.75 * ai), largeur_bord=2)
+            d.text((1566, y + 23), mot, font=police(19, True),
+                   fill=_encre(couleur, ai), anchor="mm")
+        k5 = _apparait(p, 0.86, 0.14)
+        d.text((1566, 512), "→ une structure complète", font=police(20, True),
+               fill=_encre(VERT, k5), anchor="mm")
 
-    if p > 0.66:
-        a2 = _apparait(p, 0.66, 0.16)
-        d.text((829, 664), "voilà le geste : une seule fois", font=police(21, True),
-               fill=melange(FOND, VERT, a2), anchor="mm")
-
-    lignes = [
-        Ligne("LE BLOC", AMBRE, 24, gras=True, mono=False, a_partir_de=0.02),
-        Ligne("prendre la valeur", TEXTE, 26, mono=False, a_partir_de=0.08),
-        Ligne("l'ajouter dans S", TEXTE, 26, mono=False, a_partir_de=0.16),
-        Ligne("", a_partir_de=0.24),
-        Ligne("ce qui change :", TEXTE_2, 22, mono=False, a_partir_de=0.32),
-        Ligne("l'indice  k", BLEU, 26, gras=True, mono=False, a_partir_de=0.40),
-        Ligne("0 → 1 → 2 → 3", TEXTE_2, 23, mono=False, a_partir_de=0.50),
-        Ligne("", a_partir_de=0.58),
-        Ligne("c'est le compteur", AMBRE, 24, gras=True, mono=False, a_partir_de=0.64),
-        Ligne("", a_partir_de=0.7),
-        Ligne("S = S + T[compteur]", ORANGE, 26, gras=True, a_partir_de=0.74, souligne=True),
-    ]
-    cahier(d, PANEL_D, lignes, p)
-    _etat(d, indice=min(3, int(round(montee))), somme=_somme(1 + int(montee)),
-          compteur=min(3, int(round(montee))), t=t)
+    _sac_colonne(d, contenu=tuple(str(v) for v in VALEURS), valeur=SOMME_TOTALE, t=t)
+    _etat(d, indice=None, somme=SOMME_TOTALE, connue=True, t=t)
 
 
 # ══════════════════════════════════════════════════════════════════════════
-# 10 · La boucle Pour : écrire une fois, répéter n fois
+# 11 · La boucle Pour : engendrer le bloc
 # ══════════════════════════════════════════════════════════════════════════
 def scene_boucle(d, p, t):
-    _entete(d, "La boucle Pour — de la variable à la boucle", 10,
-            "10 · La boucle Pour : écrire une fois, répéter n fois")
-    _panneaux(d, "l'histoire")
+    _entete(d, 11, "11 · La boucle Pour : engendrer le bloc")
+    _panneaux(d)
 
-    # le compteur fait le tour de la boucle
-    etape = max(0, min(4, int(p * 5.2)))
-    boucle_schema(d, [88, 268, 648, 706], n=N_ETAGES, compteur=min(etape, N_ETAGES - 1),
-                  p=p, t=t)
+    # l'ascenseur fait les quatre tours
+    tour = max(0.0, min(4.0, p * 5.4))
+    immeuble(d, IMB, actif=min(3, int(tour)), cabine=min(3.0, tour), ouvert=0.8,
+             faits=tuple(range(0, min(4, int(tour)))), t=t)
 
-    # le sac, qui se remplit tout seul
-    somme = _somme(etape)
-    dedans = tuple(str(v) for v in VALEURS[:etape])
-    sac(d, 856, 404, contenu=dedans, nom="S", echelle=0.92,
-        halo=0.45 + 0.3 * G._pulse(t, 1.7))
-    fini = etape >= N_ETAGES
-    boite_arrondie(d, [708, 556, 1014, 620], rayon=16,
+    # le brouillon : pourquoi le compteur dans les crochets
+    papier_brouillon(d, PAPIER_BOX)
+    _ligne(d, 0, "pourquoi [compteur] ?", 24, melange(ENCRE, ROUGE_STYLO, 0.75), 0.04, p)
+    for i in range(4):
+        k = _apparait(p, 0.16 + 0.12 * i, 0.14)
+        if k <= 0:
+            continue
+        y = _regle(2 + i) - 10
+        crayon(d, X_CRAYON, y, f"tour {i + 1}", 22, melange(PAPIER, TEXTE_3, k), 0.16 + 0.12 * i,
+               p, 0.14)
+        crayon(d, X_CRAYON + 110, y, f"compteur = {i}", 22, melange(PAPIER, BLEU, k),
+               0.16 + 0.12 * i, p, 0.14)
+        crayon(d, X_CRAYON + 300, y, f"→ {VALEURS[i]}", 24,
+               melange(PAPIER, AMBRE if i < 3 else VERT, k), 0.20 + 0.12 * i, p, 0.14)
+    stylo_note(d, X_CRAYON, _regle(7) - 6, "il change à chaque tour", 23,
+               a_partir_de=0.62, p=p)
+    stylo_note(d, X_CRAYON, _regle(8) - 6, "puis il atteint n = 4 :", 22,
+               a_partir_de=0.74, p=p)
+    stylo_note(d, X_CRAYON, _regle(9) - 6, "la boucle s'arrête", 24,
+               a_partir_de=0.80, p=p)
+
+    # la colonne de droite : la boucle complète, et le résultat
+    _etiquette_colonne(d, 236, "mon algorithme", VERT)
+    # la ligne seule, puis l'enveloppe du bloc autour d'elle
+    enveloppe = _apparait(p, 0.24, 0.20)
+    y_corps = 272 + 34 * enveloppe
+    # d'abord l'enveloppe du bloc, pour que la ligne reste lisible par-dessus
+    if enveloppe > 0:
+        boite_arrondie(d, [1296, y_corps - 20, 1836, y_corps + 20], rayon=10,
+                       fond=melange(FOND_PANNEAU_2, VIOLET, 0.10 * enveloppe),
+                       bord=melange(BORDURE, VIOLET, 0.85 * enveloppe), largeur_bord=2)
+        etq = _apparait(p, 0.30, 0.16)
+        if etq > 0:
+            boite_arrondie(d, [1742, y_corps - 13, 1828, y_corps + 13], rayon=7,
+                           fond=FOND_PANNEAU_2,
+                           bord=melange(BORDURE, VIOLET, 0.9 * etq), largeur_bord=2)
+            d.text((1785, y_corps), "le bloc", font=police(15, True),
+                   fill=_encre(VIOLET, etq), anchor="mm")
+    k0 = _apparait(p, 0.04, 0.16)
+    if k0 > 0:
+        d.text((1300 + 18 * enveloppe, y_corps), "S = S + T[compteur]",
+               font=police(19, True, mono=True), fill=_encre(AMBRE, k0), anchor="lm")
+    kp = _apparait(p, 0.26, 0.16)
+    if kp > 0:
+        d.text((1300, 272), "Pour compteur de 0 à n-1 faire", font=police(19, True, mono=True),
+               fill=_encre(TEXTE, kp), anchor="lm")
+    kf = _apparait(p, 0.34, 0.16)
+    if kf > 0:
+        d.text((1300, y_corps + 34), "Fin Pour", font=police(19, True, mono=True),
+               fill=_encre(TEXTE, kf), anchor="lm")
+
+    k5 = _apparait(p, 0.46, 0.16)
+    if k5 > 0:
+        d.text((1566, 392), "n = 4 : quatre tours, puis on sort", font=police(19),
+               fill=_encre(VERT, k5), anchor="mm")
+
+    _etiquette_colonne(d, 424, "le JavaScript", VERT)
+    js = ["for (let i = 0; i < n; i++) {", "    S = S + T[i];", "}"]
+    for i, txt in enumerate(js):
+        k = _apparait(p, 0.36 + 0.06 * i, 0.16)
+        if k <= 0:
+            continue
+        d.text((1300, 458 + i * 28), txt, font=police(17, True, mono=True),
+               fill=_encre(TEXTE_2, k), anchor="lm")
+
+    sac(d, X_SAC, 634, contenu=tuple(str(v) for v in VALEURS), nom="S", echelle=0.55,
+        halo=0.35 + 0.3 * G._pulse(t, 1.7))
+    fini = p > 0.70
+    boite_arrondie(d, [1420, 762, 1712, 820], rayon=14,
                    fond=melange(FOND_PANNEAU_2, VERT if fini else ORANGE, 0.20),
                    bord=melange(BORDURE, VERT if fini else ORANGE, 0.8), largeur_bord=2)
-    d.text((861, 588), f"S = {somme}", font=police(30, True, mono=True),
+    d.text((1566, 791), f"S = {SOMME_TOTALE}", font=police(28, True, mono=True),
            fill=TEXTE, anchor="mm")
-    if fini:
-        a = _apparait(p, 0.80, 0.14)
-        d.text((861, 648), "4 + 7 + 2 + 9 = 22", font=police(20),
-               fill=melange(FOND, TEXTE_2, a), anchor="mm")
 
-    # le récapitulatif : variable, bloc, boucle
-    if p > 0.62:
-        recap = [("une variable", ORANGE), ("un bloc", AMBRE), ("une boucle", VERT)]
-        cx = 176
-        for i, (mot, couleur) in enumerate(recap):
-            a = _apparait(p, 0.62 + 0.07 * i, 0.14)
-            if a <= 0:
-                continue
-            larg = largeur_texte(mot, 20, True) + 44
-            boite_arrondie(d, [cx, 742, cx + larg, 796], rayon=14,
-                           fond=melange(FOND_PANNEAU_2, couleur, 0.16 * a),
-                           bord=melange(BORDURE, couleur, 0.8 * a), largeur_bord=2)
-            d.text((cx + larg / 2, 769), mot, font=police(20, True),
-                   fill=melange(FOND, couleur, a), anchor="mm")
-            cx += larg + 18
-
-    lignes = [
-        Ligne("LA BOUCLE POUR", VERT, 24, gras=True, mono=False, a_partir_de=0.02),
-        Ligne("Pour compteur de 0 à n-1", TEXTE, 22, a_partir_de=0.10),
-        Ligne("faire", TEXTE, 22, a_partir_de=0.16),
-        Ligne("S = S + T[compteur]", AMBRE, 22, retrait=22, a_partir_de=0.22),
-        Ligne("Fin Pour", TEXTE, 22, a_partir_de=0.28),
-        Ligne("", a_partir_de=0.34),
-        Ligne("départ : 0", BLEU, 21, mono=False, a_partir_de=0.40),
-        Ligne("condition : < n", AMBRE, 21, mono=False, a_partir_de=0.46),
-        Ligne("pas : + 1", VERT, 21, mono=False, a_partir_de=0.52),
-        Ligne("", a_partir_de=0.6),
-        Ligne("S = 22", VERT, 34, gras=True, a_partir_de=0.70),
-        Ligne("la somme est juste", VERT, 22, mono=False, a_partir_de=0.80),
-    ]
-    cahier(d, PANEL_D, lignes, p)
-    _etat(d, indice=min(N_ETAGES - 1, etape), somme=somme,
-          compteur=min(N_ETAGES - 1, etape), t=t)
+    _etat(d, indice=min(3, int(tour)), somme=_somme(min(4, int(tour))),
+          compteur=min(3, int(tour)), t=t)
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -716,8 +697,9 @@ SCENES = {
     "immeuble": scene_immeuble,
     "etage0": scene_etage0,
     "repetition": scene_repetition,
+    "quelquechose": scene_quelquechose,
+    "compteur": scene_compteur,
     "pourquoi": scene_pourquoi,
-    "bloc": scene_bloc,
     "boucle": scene_boucle,
 }
 

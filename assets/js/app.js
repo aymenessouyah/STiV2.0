@@ -260,7 +260,7 @@
       badgeClasse: "badge-js",
       couleur: "#f7df1e",
       titre: "La boucle Pour — de la variable à la boucle",
-      dureeTexte: "5:09",
+      dureeTexte: "5:41",
       srcPrincipal: "assets/videos/BouclePour.mp4",
       srcSecours: "assets/videos/BouclePour.mp4",
       sousTitres: "assets/subtitles/BouclePour-fr.vtt",
