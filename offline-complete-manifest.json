@@ -1,9 +1,9 @@
 {
-  "version": "v544-sti-atelier-v380",
-  "generatedAt": "2026-10-30T10:21:31Z",
+  "version": "v545-sti-atelier-v380",
+  "generatedAt": "2026-10-30T10:35:33Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 736,
-  "totalBytes": 849972672,
+  "totalBytes": 849972752,
   "files": [
     {
       "path": "404.html",
@@ -687,8 +687,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 117899,
-      "gitSha": "cc168aa15dcee3a4a2ef901f310f914bf96e6b33"
+      "bytes": 117914,
+      "gitSha": "a9436629a05235ecc8b881a48c1b42a782fb8a4b"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -822,8 +822,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 227163,
-      "gitSha": "95d0190cbfb23336a50b50d03022bcd06a53b6b0"
+      "bytes": 227173,
+      "gitSha": "7b8c8a780f8b32011eb9816c4b9f1d43444cdf44"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -1021,7 +1021,7 @@
       "gitSha": "e0353283900aad5750d7763aa3e38c3d3fb3020a"
     },
     {
-      "path": "assets/subtitles/BouclePour-fr.vtt",
+      "path": "assets/subtitles/BouclePour-fr-v544.vtt",
       "bytes": 15200,
       "gitSha": "701bf50c2752d138682eea7175a5e8f7ceb1c970"
     },
@@ -1091,7 +1091,7 @@
       "gitSha": "5158f5ee77d84f230345e39f7fa5313bf3f87a4e"
     },
     {
-      "path": "assets/videos/BouclePour.mp4",
+      "path": "assets/videos/BouclePour-v544.mp4",
       "bytes": 33131111,
       "gitSha": "451352ae56a47e392e19a0530b20b1c44e2da5b1"
     },
@@ -1287,8 +1287,8 @@
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 133496,
-      "gitSha": "9dccbbe22af8d1442da0453f758bc89ccf5bc835"
+      "bytes": 133516,
+      "gitSha": "b4e7e531204bd97bec66f8068ca98c942e881aa0"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -3682,8 +3682,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 98038,
-      "gitSha": "bd72ae1887df7e53a0f667bef03a856bd932cf6d"
+      "bytes": 98073,
+      "gitSha": "4ebecb4fdaf59aa806cdd5d323c872a1b1dc3891"
     }
   ]
 }

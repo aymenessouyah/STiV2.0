@@ -1,6 +1,6 @@
 """Régénère `offline-complete-manifest.json` (paquet hors-ligne complet).
 
-    python3 manifeste.py            # réécrit le manifeste, version v544
+    python3 manifeste.py            # réécrit le manifeste, version v545
     python3 manifeste.py --verifier # contrôle des empreintes seulement
 
 Le manifeste recense les fichiers du paquet hors-ligne avec leur taille et leur
@@ -24,7 +24,7 @@ ICI = os.path.dirname(os.path.abspath(__file__))
 RACINE = os.path.normpath(os.path.join(ICI, "..", ".."))
 MANIFESTE = os.path.join(RACINE, "offline-complete-manifest.json")
 
-VERSION = "v544-sti-atelier-v380"
+VERSION = "v545-sti-atelier-v380"
 PORTEE = "installation-complete-windows-sans-doublons-de-casse"
 
 
@@ -48,9 +48,17 @@ def main() -> int:
     ancien = json.load(open(MANIFESTE, encoding="utf-8"))
     chemins = [f["path"] for f in ancien["files"]]
     connus = {c.lower() for c in chemins}
+    offline = chemins_offline()
+
+    # Un fichier renommé ou supprimé sort du manifeste : il n'est plus sur le
+    # disque et il a quitté la liste hors ligne. S'il manque alors qu'il est
+    # encore listé, c'est une vraie erreur, signalée plus bas.
+    listes = {c.lower() for c in offline}
+    chemins = [c for c in chemins
+               if os.path.exists(os.path.join(RACINE, c)) or c.lower() in listes]
 
     nouveaux = []
-    for chemin in chemins_offline():
+    for chemin in offline:
         canonique = unicodedata.normalize("NFC", chemin)
         if canonique.lower() in connus:
             continue
