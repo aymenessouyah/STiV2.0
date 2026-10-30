@@ -79,9 +79,17 @@ test('v575 : couvertures, PDF et index ne restent plus sur l’ancienne édition
   assert.match(lire('cours/sql-bases-ldd-lmd-lcd.html'), /couverture-3si\.jpg\?v=\d+/);
 
   /* Les révisions du service worker suivent, sinon le cache hors ligne garde les anciennes. */
-  for (const fichier of ['livre-smart.html', 'assets/js/smart-book.js', 'assets/images/smart-books/couverture-3si.jpg',
-    'assets/images/smart-books/couverture-4si.jpg', 'assets/data/smart-book-3si-2026.json', 'assets/data/smart-book-2026.json']) {
-    assert.match(sw, new RegExp('url: "\\./' + fichier.replace(/[.]/g, '\\.') + '", revision: "livre-smart-v575"'), fichier);
+  /* v576 : le nom du PDF téléchargé change → les deux fichiers du lecteur repartent en v576. */
+  const revisions = {
+    'livre-smart.html': 'livre-smart-v576',
+    'assets/js/smart-book.js': 'livre-smart-v576',
+    'assets/images/smart-books/couverture-3si.jpg': 'livre-smart-v575',
+    'assets/images/smart-books/couverture-4si.jpg': 'livre-smart-v575',
+    'assets/data/smart-book-3si-2026.json': 'livre-smart-v575',
+    'assets/data/smart-book-2026.json': 'livre-smart-v575'
+  };
+  for (const [fichier, revision] of Object.entries(revisions)) {
+    assert.match(sw, new RegExp('url: "\\./' + fichier.replace(/[.]/g, '\\.') + '", revision: "' + revision + '"'), fichier);
   }
 
   /* L’index d’un manuel change à chaque édition : il se lit d’abord sur le réseau. */
@@ -134,8 +142,9 @@ test('v575 : le compteur de cours de l’accueil suit le nouveau cours', () => {
 async function chargerLecteur(recherche) {
   const elements = {};
   const element = (id) => elements[id] || (elements[id] = {
-    id, textContent: '', value: '', href: '', max: '', disabled: false, hidden: false, style: {}, dataset: {}, children: [],
-    setAttribute() {}, getAttribute() {}, addEventListener() {}, classList: { toggle() {}, add() {}, remove() {} },
+    id, textContent: '', value: '', href: '', max: '', disabled: false, hidden: false, style: {}, dataset: {}, children: [], attributs: {},
+    setAttribute(cle, valeur) { this.attributs[cle] = String(valeur); }, getAttribute(cle) { return this.attributs[cle] || null; },
+    addEventListener() {}, classList: { toggle() {}, add() {}, remove() {} },
     append(...n) { this.children.push(...n); }, replaceChildren() { this.children = []; }
   });
   const documentSimule = {
@@ -185,4 +194,25 @@ test('v575 : le lecteur charge réellement les deux manuels (écran de la captur
   /* Lien historique « ?niveau=3si » conservé sur les pages du site. */
   const ancien = await chargerLecteur('?niveau=3si');
   assert.match(ancien['global-status'].textContent, /3ème SI — 2026 prêt/);
+});
+
+test('v576 : le PDF téléchargé porte un nom de fichier propre', async () => {
+  /* Le lien statique annonce déjà le manuel 4e SI (sélection par défaut). */
+  assert.match(livre, /id="download-book"[^>]*download="STI-Smart-Book-4SI-2026\.pdf"/);
+  /* Le lecteur renomme à chaque changement de manuel, sans perdre le cache-buster. */
+  assert.match(lecteur, /setAttribute\('download', nomPdf\)/);
+  assert.match(lecteur, /'STI-Smart-Book-' \+ \(id === '3si-2026' \? '3SI' : '4SI'\) \+ '-2026\.pdf'/);
+
+  const trois = await chargerLecteur('?livre=3si-2026');
+  assert.equal(trois['download-book'].attributs.download, 'STI-Smart-Book-3SI-2026.pdf');
+  assert.equal(trois['download-book'].href, 'documents/livre/sti-smart-book-3si-2026.pdf?v=575');
+
+  const quatre = await chargerLecteur('?livre=4si-2026');
+  assert.equal(quatre['download-book'].attributs.download, 'STI-Smart-Book-4SI-2026.pdf');
+  assert.equal(quatre['download-book'].href, 'documents/livre/sti-smart-book-2026.pdf?v=575');
+
+  /* Aucun nom de fichier ne contient le paramètre de version. */
+  for (const nom of [trois['download-book'].attributs.download, quatre['download-book'].attributs.download]) {
+    assert.doesNotMatch(nom, /[?=]|_v\d/);
+  }
 });

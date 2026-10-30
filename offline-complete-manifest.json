@@ -1,9 +1,9 @@
 {
   "version": "v575-sti-atelier-v386",
-  "generatedAt": "2026-10-30T23:12:24Z",
+  "generatedAt": "2026-10-30T23:24:29Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 751,
-  "totalBytes": 1059998793,
+  "totalBytes": 1059999151,
   "files": [
     {
       "path": "404.html",
@@ -932,8 +932,8 @@
     },
     {
       "path": "assets/js/smart-book.js",
-      "bytes": 19294,
-      "gitSha": "2d07487653f4318a85b42ccf90e11e3024fda089"
+      "bytes": 19622,
+      "gitSha": "87252b5beae67dfb947fb6a7365e8174780381e0"
     },
     {
       "path": "assets/js/sql-playground.js",
@@ -3162,8 +3162,8 @@
     },
     {
       "path": "livre-smart.html",
-      "bytes": 7731,
-      "gitSha": "042cb279dcb8d09fe6cbbb30dd0749fc6460b9d3"
+      "bytes": 7761,
+      "gitSha": "967bc2beea99b12bf2de55bf09efac95ea877da6"
     },
     {
       "path": "ma-fiche-revision.html",
@@ -3758,7 +3758,7 @@
     {
       "path": "sw.js",
       "bytes": 99581,
-      "gitSha": "f7d756ed9c69328f59309eab45c15b283790f6a2"
+      "gitSha": "bfe6c4268b367153a9500313ee034c3bb7045e84"
     }
   ]
 }
