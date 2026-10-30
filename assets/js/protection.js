@@ -1016,6 +1016,12 @@
      - La nouvelle vidéo du Guichet (assets/videos/php-guichet-v10.mp4) porte la narration
        avec la voix de l'homme qui explique les étapes pas à pas.
      ═══════════════════════════════════════════════════════════════════════════ */
+  /* v554 : le suivi de page piloté par la vidéo est déclaré à l'intérieur de
+     installerVideosPasAPasSTI() ; init(), qui vit dans la portée de l'IIFE, ne pouvait
+     donc pas l'appeler (ReferenceError « brancherSuiviVideoSTI is not defined » en v553).
+     Ce relais transmet la fonction interne sans changer son code ni sa portée. */
+  var brancherSuiviVideoSTIExpose = null;
+
   function installerVideosPasAPasSTI() {
     try {
       /* Couper et neutraliser définitivement toute synthèse vocale (window.speechSynthesis) */
@@ -1636,6 +1642,8 @@
           poserSuiviPageSTI(videos[i]);
         }
       }
+      /* v554 : exposer la fonction à init() (voir brancherSuiviVideoSTIExpose plus haut). */
+      brancherSuiviVideoSTIExpose = brancherSuiviVideoSTI;
 
       (function () {
         var noter = function () { suspendreSuiviPageSTI(); };
@@ -4197,7 +4205,9 @@
     installerMasquageAdressePC();
     installerPauseQRVideosPageSTI();
     installerVideosPasAPasSTI();
-    brancherSuiviVideoSTI();
+    if (typeof brancherSuiviVideoSTIExpose === "function") {
+      try { brancherSuiviVideoSTIExpose(); } catch (eSuiviVideo) {}
+    }
     installerGuideVocalEnParlant();
   }
 

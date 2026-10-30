@@ -58,7 +58,8 @@ class SmartBooks(unittest.TestCase):
         self.assertIn('v358-quiz-sync', sw)
         # Les vrais PDF lourds restent exclus du delta ; les pages .pdf.html (HTML leger) sont autorisees.
         self.assertNotIn('.pdf"', updates)
-        self.assertIn('var CACHE = "sti-atelier-v354";', sw)
+        # Le nom du cache évolue à chaque publication : vérifier le format, pas une version figée.
+        self.assertRegex(sw, r'var CACHE = "sti-atelier-v\d+";')
 
     def test_manifeste_et_empreintes(self):
         manifest = json.loads((ROOT / 'offline-complete-manifest.json').read_text())

@@ -116,3 +116,6 @@ Disallow: /
 User-agent: *
 Allow: /
 
+
+# --- Plan du site pour les moteurs de recherche classiques ---
+Sitemap: https://aymenessouyah.github.io/STiV2.0/sitemap.xml

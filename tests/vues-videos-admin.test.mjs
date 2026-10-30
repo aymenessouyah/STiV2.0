@@ -457,7 +457,7 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
   /* sync-progressions.js est reparti au lot v534 (pastille de synchro) : cinq fichiers restent. */
   /* admin-vues-videos.js repart au lot v549 (capsule PHP au catalogue du coin). */
   assert.equal((sw.match(new RegExp('revision: "' + REV + '"', 'g')) || []).length, 3, 'trois fichiers restent au lot v531');
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "suivi-video-v551"/, 'le lecteur repart au lot v545');
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "suivi-video-repare-v554"/, 'le lecteur repart au lot v545');
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   for (const chemin of ['assets/js/reconnexion-profil.js',
     'assets/js/reprendre.js', 'admin.html']) {

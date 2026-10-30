@@ -4,8 +4,8 @@ Plateforme éducative interactive et **PWA utilisable hors ligne après mise en 
 
 > 🌐 **Plateforme en ligne** : https://aymenessouyah.github.io/STiV2.0/
 > 👨‍🏫 **Auteur** : M. Aymen Essouyah — Lycée Rafèha
-> 🏗️ **Architecture** : Frontend statique GitHub Pages + Supabase PostgreSQL (15 tables historiques et deux tables techniques XP protégées par RLS) + Service Worker incrémental (`sw.js` — `sti-atelier-v357`, historique `sti-atelier-v356` / `sti-atelier-v355` / `sti-atelier-v354` / `sti-atelier-v353` / `sti-atelier-v352` / `sti-atelier-v351` / `sti-atelier-v350` / `sti-atelier-v349` / `sti-atelier-v348` / `sti-atelier-v347` / `sti-atelier-v346` / `sti-atelier-v345` / `sti-atelier-v344` / `sti-atelier-v343` / `sti-atelier-v342` / `sti-atelier-v341` / `sti-atelier-v340`)
-> 📌 **Version du code** : **v500** (`sti-atelier-v361` — 28 octobre 2026). La configuration d'accès protégée conserve son socle v479 (`sti-atelier-v340`) ; la version effective est lue depuis le Service Worker.
+> 🏗️ **Architecture** : Frontend statique GitHub Pages + Supabase PostgreSQL (15 tables historiques et deux tables techniques XP protégées par RLS) + Service Worker incrémental (`sw.js`, cache courant `sti-atelier-v386`, identifiant de publication `v553-defilement-passif-20261030` ; l'historique complet des caches est tenu à jour dans `sw.js`)
+> 📌 **Version du code** : **v553** (`sti-atelier-v386` — `UPDATE_ID` `v553-defilement-passif-20261030`, 30 octobre 2026). La version effective est toujours lue depuis le Service Worker ; la configuration d'accès protégée conserve son socle historique v479 (`sti-atelier-v340`).
 
 ---
 

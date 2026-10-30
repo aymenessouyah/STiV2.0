@@ -3,7 +3,7 @@
   "generatedAt": "2026-10-30T14:12:25Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 740,
-  "totalBytes": 942194470,
+  "totalBytes": 942195093,
   "files": [
     {
       "path": "404.html",
@@ -62,8 +62,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 50877,
-      "gitSha": "21439479a4bd94bb2d97ab22cb6c2543030554c1"
+      "bytes": 50714,
+      "gitSha": "21ce18ad60145a8bf69f3d541b2f14d197908a81"
     },
     {
       "path": "admin.html",
@@ -822,8 +822,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 242622,
-      "gitSha": "e052cf69c347cc0375ef5c97002e8352241cb934"
+      "bytes": 243275,
+      "gitSha": "d0dd751171281c0fd70557a44b83b41f14f93c70"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -3657,8 +3657,8 @@
     },
     {
       "path": "robots.txt",
-      "bytes": 2569,
-      "gitSha": "0ad471c485121fb368def098f23314c7423fe3af"
+      "bytes": 2695,
+      "gitSha": "17647e20ecb25f2fae2b2b6c40cb0b28d46ad5cb"
     },
     {
       "path": "scripts/verify_css3_publication.py",
@@ -3702,8 +3702,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 98397,
-      "gitSha": "4485bf9f5a14533e220132c5d709547b46eabe3d"
+      "bytes": 98404,
+      "gitSha": "4ff75969ffe3cd8264be7fa906cef8fcf0001bc7"
     }
   ]
 }

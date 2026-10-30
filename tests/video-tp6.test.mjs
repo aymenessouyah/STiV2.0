@@ -156,7 +156,7 @@ test('le cache hors-ligne embarque la vidéo sans téléchargement automatique',
   assert.ok(!delta.includes(`"./${VIDEO}"`), 'la vidéo n’entre jamais dans le delta mobile');
   assert.ok(!delta.includes(`"./${VTT}"`), 'ni ses sous-titres');
   assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "console-variables-v548"/);
-  assert.match(delta, /url: "\.\/assets\/js\/protection\.js", revision: "suivi-video-v551"/);
+  assert.match(delta, /url: "\.\/assets\/js\/protection\.js", revision: "suivi-video-repare-v554"/);
   assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "boucles-et-effets-v550"/);
   assert.ok(sw.includes('var UPDATE_FILES = [') && sw.split('var UPDATE_FILES = [')[1].split('];')[0].split('{ url:').length - 1 <= 262);
 });

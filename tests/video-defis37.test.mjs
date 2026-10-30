@@ -139,7 +139,7 @@ test('le cache hors-ligne embarque la vidéo sans téléchargement automatique',
   assert.ok(!delta.includes(`"./${VIDEO}"`), 'la vidéo n’entre jamais dans le delta mobile');
   assert.ok(!delta.includes(`"./${VTT}"`), 'ni ses sous-titres');
   assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "console-variables-v548"/);
-  assert.match(delta, /url: "\.\/assets\/js\/protection\.js", revision: "suivi-video-v551"/);
+  assert.match(delta, /url: "\.\/assets\/js\/protection\.js", revision: "suivi-video-repare-v554"/);
   assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "boucles-et-effets-v550"/);
   const nbDelta = delta.split('{ url:').length - 1;
   assert.ok(nbDelta <= 262, `delta trop long : ${nbDelta}`);
