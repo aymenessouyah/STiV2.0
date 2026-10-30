@@ -1,0 +1,199 @@
+/* STI by AE — v556 · capsules « boucles » et « variables » (JavaScript & PHP)
+   ─────────────────────────────────────────────────────────────────────────
+   Trois capsules du catalogue :
+     • boucle-pour        « Les boucles — Pour, Répéter…jusqu'à, Tant que »
+     • console-variables  « La console, les variables et les types »       (JavaScript)
+     • php-variables      « PHP — Les variables, la portée et les types »  (PHP)
+
+   Elles respirent doucement au lieu de clignoter sèchement : un halo de la
+   couleur de leur matière s'allume et s'éteint en 5,6 s, sans à-coup.
+
+   Règle de conception : attirer l'œil SANS fatiguer.
+     • une seule alternance toutes les ~2,8 s ;
+     • variation d'opacité limitée (0,34 → 0,72) et d'échelle (1 → 1,012) ;
+     • aucune couleur clignotante, aucun déplacement de mise en page ;
+     • tout se fige si l'élève a demandé moins d'animation.
+
+   Deux portées, volontairement séparées :
+     1. la grille d'accueil  → `#videosGrid .video-card--capsule`
+        (classe déjà posée par assets/js/app.js ; on n'utilise AUCUN
+        pseudo-élément, car ::before/::after y portent déjà les effets
+        de survol v550 selon `data-effet`) ;
+     2. les pages de cours   → `.sti-capsule-vedette`
+        (classe posée dans cours/javascript.html et cours/php.html), avec un
+        liseré qui respire, une étiquette « ✦ Capsule » et un renfort :has()
+        pour les navigateurs qui le connaissent. */
+
+/* ────────────────────────────────────────────────────────────────
+   1. Grille d'accueil — le halo respire par l'ombre de la carte
+   ──────────────────────────────────────────────────────────────── */
+#videosGrid .video-card--capsule {
+  border-color: color-mix(in srgb, var(--accent, #f7df1e) 45%, var(--border, #2a3350));
+  animation: sti-capsule-respire-V556 5.6s ease-in-out infinite;
+}
+
+@keyframes sti-capsule-respire-V556 {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--accent, #f7df1e) 24%, transparent),
+      0 10px 24px -22px color-mix(in srgb, var(--accent, #f7df1e) 55%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 0 2px color-mix(in srgb, var(--accent, #f7df1e) 52%, transparent),
+      0 16px 34px -18px color-mix(in srgb, var(--accent, #f7df1e) 72%, transparent);
+  }
+}
+
+/* Survol : la carte se fige et prend la main (l'effet v550 reste visible). */
+#videosGrid .video-card--capsule:hover,
+#videosGrid .video-card--capsule:focus-within {
+  animation: none;
+  border-color: color-mix(in srgb, var(--accent, #f7df1e) 78%, var(--border, #2a3350));
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--accent, #f7df1e) 62%, transparent),
+    var(--shadow-md, 0 10px 24px -18px rgba(0, 0, 0, .45));
+}
+
+/* ────────────────────────────────────────────────────────────────
+   2. Pages de cours — liseré qui respire + étiquette discrète
+   ──────────────────────────────────────────────────────────────── */
+/* Les pages de cours chargent leur feuille APRÈS celle-ci : la bordure et
+   l'ombre sont donc posées sur deux classes pour passer devant les règles de
+   base `.featured-video-card` / `.matiere-video-card`. L'animation, elle, prime
+   de toute façon sur les déclarations statiques. */
+.sti-capsule-vedette {
+  position: relative;
+  isolation: isolate;
+  --sti-capsule-accent: var(--accent, #f7df1e);
+}
+
+.featured-video-card.sti-capsule-vedette,
+.matiere-video-card.sti-capsule-vedette {
+  border-color: color-mix(in srgb, var(--sti-capsule-accent) 42%, var(--border, #2a3350));
+  animation: sti-capsule-lisere-V556 5.6s ease-in-out infinite;
+}
+
+/* La couleur de la capsule PHP, reprise du catalogue (#a78bfa). */
+.sti-capsule-vedette[data-capsule-matiere="php"] {
+  --sti-capsule-accent: #a78bfa;
+}
+
+@keyframes sti-capsule-lisere-V556 {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--sti-capsule-accent) 22%, transparent),
+      0 10px 26px -24px color-mix(in srgb, var(--sti-capsule-accent) 50%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 0 2.5px color-mix(in srgb, var(--sti-capsule-accent) 50%, transparent),
+      0 18px 38px -20px color-mix(in srgb, var(--sti-capsule-accent) 68%, transparent);
+  }
+}
+
+/* L'étiquette : petite, sobre, elle ne clignote pas — elle s'éclaircit. */
+.featured-video-card.sti-capsule-vedette::before,
+.matiere-video-card.sti-capsule-vedette::before {
+  content: "✦ Capsule";
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 4;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: #12161f;
+  background: color-mix(in srgb, var(--sti-capsule-accent) 88%, #ffffff);
+  box-shadow: 0 4px 12px -6px rgba(0, 0, 0, .55);
+  pointer-events: none;
+  opacity: .85;
+  animation: sti-capsule-etiquette-V556 5.6s ease-in-out infinite;
+}
+
+@keyframes sti-capsule-etiquette-V556 {
+  0%, 100% { opacity: .82; }
+  50% { opacity: 1; }
+}
+
+/* Survol / focus : plus de pulsation, la lueur reste allumée. */
+.featured-video-card.sti-capsule-vedette:hover,
+.featured-video-card.sti-capsule-vedette:focus-within,
+.matiere-video-card.sti-capsule-vedette:hover,
+.matiere-video-card.sti-capsule-vedette:focus-within {
+  animation: none;
+  border-color: color-mix(in srgb, var(--sti-capsule-accent) 72%, var(--border, #2a3350));
+  box-shadow:
+    0 0 0 2.5px color-mix(in srgb, var(--sti-capsule-accent) 60%, transparent),
+    var(--shadow-md, 0 10px 24px -18px rgba(0, 0, 0, .45));
+}
+.sti-capsule-vedette:hover::before,
+.sti-capsule-vedette:focus-within::before {
+  opacity: 1;
+  animation: none;
+}
+
+/* Renfort : les navigateurs qui connaissent :has() obtiennent le même effet
+   même si la classe venait à manquer dans le balisage. */
+@supports selector(:has(*)) {
+  .featured-video-card:has(video[data-video-id="boucle-pour"]),
+  .featured-video-card:has(video[data-video-id="console-variables"]),
+  .matiere-video-card:has([data-video-open="boucle-pour"]),
+  .matiere-video-card:has([data-video-open="php-variables"]) {
+    position: relative;
+    isolation: isolate;
+    border-color: color-mix(in srgb, var(--sti-capsule-accent, #f7df1e) 42%, var(--border, #2a3350));
+    animation: sti-capsule-lisere-V556 5.6s ease-in-out infinite;
+  }
+  .matiere-video-card:has([data-video-open="php-variables"]) {
+    --sti-capsule-accent: #a78bfa;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────
+   3. Accessibilité et impression
+   ──────────────────────────────────────────────────────────────── */
+
+/* « Réduire les animations » : plus rien ne bouge, la capsule reste signalée
+   par un liseré coloré fixe. */
+@media (prefers-reduced-motion: reduce) {
+  #videosGrid .video-card--capsule,
+  .featured-video-card.sti-capsule-vedette,
+  .matiere-video-card.sti-capsule-vedette,
+  .featured-video-card.sti-capsule-vedette::before,
+  .matiere-video-card.sti-capsule-vedette::before {
+    animation: none !important;
+  }
+  #videosGrid .video-card--capsule {
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent, #f7df1e) 45%, transparent);
+  }
+  .featured-video-card.sti-capsule-vedette,
+  .matiere-video-card.sti-capsule-vedette {
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--sti-capsule-accent) 45%, transparent);
+  }
+  .featured-video-card.sti-capsule-vedette::before,
+  .matiere-video-card.sti-capsule-vedette::before { opacity: 1; }
+}
+
+/* Mode contraste élevé : le halo décoratif s'efface, la bordure suffit. */
+@media (forced-colors: active) {
+  #videosGrid .video-card--capsule,
+  .sti-capsule-vedette {
+    animation: none !important;
+    box-shadow: none !important;
+    outline: 2px solid CanvasText;
+    outline-offset: 2px;
+  }
+}
+
+/* Impression : aucun halo, l'étiquette reste lisible. */
+@media print {
+  #videosGrid .video-card--capsule,
+  .sti-capsule-vedette {
+    animation: none !important;
+    box-shadow: none !important;
+  }
+}
