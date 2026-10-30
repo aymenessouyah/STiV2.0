@@ -168,10 +168,10 @@ test('v498 : les boîtes « en cours » tiennent sur une seule ligne compacte', 
 
 test('v498 : service worker et manifeste hors ligne connaissent le drapeau et la vidéo', () => {
   assert.match(sw, /var CACHE = "sti-atelier-v380"/);
-  assert.match(sw, /var UPDATE_ID = "v540-boucle-pour-variable-20261030"/);
+  assert.match(sw, /var UPDATE_ID = "v541-boucle-pour-brouillon-20261030"/);
   assert.match(sw, /url: "\.\/index\.html", revision: "defis37-lecteur-v528"/);
   assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "classe-nav-v536"/);
-  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "boucle-pour-v540"/);
+  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "boucle-pour-v541"/);
   assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "ruban-vert-v517"/);
   assert.match(sw, /url: "\.\/assets\/images\/drapeau-tunisie\.svg", revision: "accueil-lycee-v503"/);
   const shell = sw.split('var SHELL = [')[1].split('];')[0];
@@ -189,5 +189,5 @@ test('v498 : service worker et manifeste hors ligne connaissent le drapeau et la
     assert.equal(entree.bytes, data.length, chemin);
     assert.equal(entree.gitSha, createHash('sha1').update(`blob ${data.length}\0`).update(data).digest('hex'), chemin);
   }
-  assert.equal(manifeste.version, 'v540-sti-atelier-v380');
+  assert.equal(manifeste.version, 'v541-sti-atelier-v380');
 });

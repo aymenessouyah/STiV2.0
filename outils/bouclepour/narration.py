@@ -1,36 +1,49 @@
-"""Texte de la voix off de « La boucle Pour — l'immeuble et le sac ».
+"""Texte de la voix off de « La boucle Pour — de la variable à la boucle ».
 
-Le récit est reconstruit de bout en bout autour de l'immeuble, avec une
-progression volontairement lente sur deux idées difficiles :
+La capsule se lit sur **trois colonnes**, toujours les mêmes :
 
-  * **la variable** (sections `variable` et `accumuler`) : un sac vide, un nom
-    qui ne bouge pas, un contenu qui change ; puis `S = S + valeur`, où le S de
-    droite est l'ancien contenu et le S de gauche le nouveau ;
-  * **la nécessité de la boucle** (section `pourquoi`) : sans boucle il faut
-    écrire une ligne par étage — quatre lignes pour quatre étages, cent lignes
-    pour cent étages — et le copier-coller ne passe pas à l'échelle.
+  * à gauche **l'immeuble** (et son ascenseur) ;
+  * au milieu **le brouillon** : ce que je note à la main, et où je reviens
+    avec le stylo rouge ;
+  * à droite **l'algo · le code** : ce que j'écris vraiment.
 
-Chaque section correspond à un fichier audio de `voix/` ; c'est la voix qui
-donne la durée de la scène, l'image suit (`calage.json`).
+Le cheminement suit exactement celui dicté :
+
+ 1. le problème : quatre étages, le tableau T, la somme cherchée dans S ;
+ 2. la variable : un nom fixe, un contenu qui change ;
+ 3. le nom : plusieurs sacs, « lequel ? », l'étiquette S ;
+ 4. `S = S + …` : lire, ajouter, réécrire ;
+ 5. l'immeuble et l'ascenseur : le même geste à chaque étage ;
+ 6. étage 0, sur le brouillon : `S = S + T[0]` ;
+ 7. étage 1, 2, 3 : quatre lignes, seul le chiffre entre crochets change ;
+ 8. **passage à l'algo** : `S = S + T[quelque chose]` ;
+ 9. **retour au brouillon, stylo rouge** : « compteur », et les cercles
+    autour du 0 et du 1 entre les crochets ;
+10. **la question principale** : est-ce que je connais dès le départ le nombre
+    de répétitions ? Oui ⇒ je dois compléter la fin ⇒ la boucle Pour ;
+11. **engendrer le bloc** par la boucle Pour, et expliquer pourquoi on y écrit
+    le compteur dans les crochets.
 """
 from __future__ import annotations
 
 # L'ordre de lecture et le découpage des sous-titres.
 ORDRE = ["probleme", "variable", "nom", "accumuler", "immeuble",
-         "etage0", "repetition", "pourquoi", "bloc", "boucle"]
+         "etage0", "repetition", "quelquechose", "compteur", "pourquoi", "boucle"]
 
 SECTIONS = {
     "probleme": {
-        "titre": "Le problème : la somme des étages",
+        "titre": "Le problème et le plan de travail",
         "segments": [
             ("probleme", [
-                "Voici mon immeuble : quatre étages.",
+                "Voilà mon plan de travail.",
+                "À gauche, l'immeuble. Au milieu, mon brouillon."
+                " Et à droite, ce que j'écris vraiment : l'algorithme, puis le code.",
+                "Commençons par l'immeuble : quatre étages.",
                 "Au rez-de-chaussée, il y a quatre. Au premier, sept."
                 " Au deuxième, deux. Et au troisième, neuf.",
                 "Quatre nombres, rangés dans cet ordre : c'est un tableau."
                 " Et ce tableau, je l'appelle T.",
-                "Ce que je veux, c'est la somme de ces quatre nombres :"
-                " quatre, plus sept, plus deux, plus neuf.",
+                "Ce que je veux, c'est la somme de ces quatre nombres.",
                 "Et je veux ranger le résultat dans une case que j'appelle S.",
                 "S égal T crochet zéro, plus T crochet un, plus T crochet deux,"
                 " plus T crochet trois.",
@@ -39,7 +52,7 @@ SECTIONS = {
         ],
     },
     "variable": {
-        "titre": "Une variable : une boîte au contenu changeable",
+        "titre": "Une variable : un nom, un contenu qui change",
         "segments": [
             ("variable", [
                 "Première idée : il me faut une case mémoire.",
@@ -50,6 +63,8 @@ SECTIONS = {
                 " mais son contenu, oui.",
                 "Je change d'avis : je retire quatre, je mets sept."
                 " Même sac, même nom, autre valeur.",
+                "Et tout ça, je le note au brouillon : la valeur d'avant,"
+                " et la valeur d'aujourd'hui.",
                 "C'est exactement ça, une variable :"
                 " une boîte avec un nom, un contenu qu'on peut lire,"
                 " et un contenu qu'on peut remplacer.",
@@ -68,7 +83,7 @@ SECTIONS = {
                 "Alors je donne un nom à celui que je vais utiliser :"
                 " une étiquette, et je m'y tiens.",
                 "Il s'appelle S. S comme somme.",
-                "Et maintenant, quand j'écris S dans mon programme,"
+                "Et maintenant, quand j'écris S dans mon algorithme,"
                 " c'est ce sac-là, et pas un autre.",
             ]),
         ],
@@ -107,78 +122,92 @@ SECTIONS = {
         ],
     },
     "etage0": {
-        "titre": "Étage 0 : le premier tour, à la main",
+        "titre": "Étage 0, sur le brouillon : S = S + T[0]",
         "segments": [
             ("etage0", [
                 "Allons-y. Étage zéro.",
                 "La porte s'ouvre : la case T crochet zéro contient quatre.",
-                "Je lis mon sac : zéro. J'ajoute quatre. J'écris quatre dans le sac.",
-                "En une seule ligne : S égal S plus T crochet zéro.",
-                "Et voilà : mon sac contient quatre. Je peux monter.",
+                "Je prends mon brouillon, et je note le premier tour.",
+                "Le sac vaut zéro : j'ajoute quatre, et j'écris quatre.",
+                "Donc, sur le brouillon : S égal S plus T crochet zéro.",
+                "Le sac contient quatre. Je peux monter.",
             ]),
         ],
     },
     "repetition": {
-        "titre": "Étages 1, 2, 3 : je me répète",
+        "titre": "Étages 1, 2, 3 : seul le chiffre change",
         "segments": [
             ("repetition", [
-                "Étage un. La porte s'ouvre : sept.",
-                "S égal S plus T crochet un. Mon sac contient onze.",
-                "Étage deux : deux. S égal S plus T crochet deux. Treize.",
+                "Étage un. Sept. S égal S plus T crochet un : onze.",
+                "Étage deux : deux. Treize.",
                 "Étage trois : neuf. Vingt-deux.",
-                "Et là, je m'arrête et je regarde ce que j'ai écrit.",
-                "Quatre lignes. Quatre fois la même ligne,"
-                " avec juste le numéro de l'étage qui change.",
-                "Ça marche… mais ça se voit que je me répète.",
+                "Et maintenant, regardez mon brouillon.",
+                "Quatre lignes. Quatre fois la même chose.",
+                "Seul le chiffre entre les crochets a changé : zéro, un, deux, trois.",
+            ]),
+        ],
+    },
+    "quelquechose": {
+        "titre": "Passage à l'algo : T[quelque chose]",
+        "segments": [
+            ("quelquechose", [
+                "Alors je quitte le brouillon, et je passe à l'algorithme.",
+                "Puisque seul le chiffre entre les crochets change,"
+                " je n'écris plus de chiffre : j'écris quelque chose.",
+                "S égal S plus T crochet quelque chose.",
+                "Voilà le geste écrit une seule fois,"
+                " et qui vaut pour n'importe quel étage.",
+                "En JavaScript, cette même ligne s'écrit : S égal S plus T crochet i.",
+            ]),
+        ],
+    },
+    "compteur": {
+        "titre": "Retour au brouillon, stylo rouge : le compteur",
+        "segments": [
+            ("compteur", [
+                "Mais revenons au brouillon. Cette fois, avec le stylo rouge.",
+                "Dans S plus T crochet zéro, il y a zéro.",
+                "Dans S plus T crochet un, il y a un.",
+                "Dans les deux suivantes, deux, puis trois.",
+                "Zéro, un, deux, trois : c'est une suite, et elle monte toute seule.",
+                "Qui la fait monter ? Le compteur de l'ascenseur.",
+                "Alors j'écris en rouge : compteur.",
+                "Et j'entoure les deux chiffres, parce que c'est exactement la même chose.",
             ]),
         ],
     },
     "pourquoi": {
-        "titre": "Pourquoi une boucle ? Parce que je me répète",
+        "titre": "La question principale : combien de répétitions ?",
         "segments": [
             ("pourquoi", [
-                "Imaginons maintenant un immeuble de cent étages.",
-                "Sans boucle, je dois écrire une ligne par étage : cent lignes.",
-                "Mille étages ? Mille lignes.",
-                "Et le jour où l'immeuble gagne un étage, il faut encore en ajouter une.",
-                "Et si je me trompe sur une seule ligne, tout le résultat est faux.",
-                "Recopier, ce n'est pas programmer : c'est du travail d'escargot.",
-                "Ce que je veux, c'est écrire le geste une seule fois,"
-                " et demander à l'ordinateur de le répéter pour chaque étage.",
-                "C'est exactement le travail d'une boucle.",
-            ]),
-        ],
-    },
-    "bloc": {
-        "titre": "Le bloc et le compteur",
-        "segments": [
-            ("bloc", [
-                "Alors, quel est le geste, exactement ?",
-                "Prendre la valeur de l'étage, et l'ajouter dans le sac.",
-                "Une seule chose change d'un étage à l'autre : le numéro de la case.",
-                "Zéro, puis un, puis deux, puis trois.",
-                "Et ce numéro, l'ascenseur le connaît déjà : c'est son compteur.",
-                "Donc le geste s'écrit : S égal S plus T crochet compteur.",
-                "Voilà le bloc, seul, entre deux accolades.",
-                "C'est lui qu'on va répéter.",
+                "À partir de ce moment, je remarque quelque chose d'important.",
+                "Ce qui est entre les crochets est changeable,"
+                " exactement comme le pas du compteur.",
+                "Donc il y a une boucle, et il y a un compteur.",
+                "Alors je me pose la question principale :"
+                " est-ce que je connais, dès le départ, le nombre de répétitions ?",
+                "Ici, oui : quatre étages, donc quatre tours.",
+                "Et si je connais le nombre de tours, je dois compléter la fin :"
+                " dire où je commence, et dire quand je m'arrête.",
+                "Une structure répétitive, mais complète.",
+                "C'est exactement ça, la boucle Pour.",
             ]),
         ],
     },
     "boucle": {
-        "titre": "La boucle Pour : écrire une fois, répéter n fois",
+        "titre": "La boucle Pour : engendrer le bloc",
         "segments": [
             ("boucle", [
-                "Il ne reste qu'à l'entourer.",
+                "Il ne me reste qu'à engendrer le bloc.",
+                "Je prends mon algorithme, S égal S plus T crochet quelque chose,"
+                " et je l'entoure.",
                 "Pour compteur de zéro à n moins un, faire le bloc. Fin Pour.",
-                "Trois choses sont dites, et les trois comptent.",
-                "Le départ : le compteur vaut zéro.",
-                "La condition : tant que le compteur reste plus petit que n, on continue.",
-                "Le pas : à chaque tour, le compteur augmente de un.",
-                "L'ordinateur fait alors tout seul ce que je faisais à la main :"
-                " il monte, il ajoute, il compte.",
-                "Quatre étages : le compteur passe par zéro, un, deux, trois, puis s'arrête.",
-                "Et dans le sac, à la fin : vingt-deux.",
-                "Quatre plus sept plus deux plus neuf. La somme est juste.",
+                "Et maintenant, la question : pourquoi j'écris compteur dans les crochets ?",
+                "Parce que c'est lui qui change à chaque tour.",
+                "Premier tour : zéro, donc T crochet zéro, quatre.",
+                "Deuxième tour : un, sept. Troisième : deux, deux. Quatrième : trois, neuf.",
+                "Puis le compteur atteint quatre, et la boucle s'arrête.",
+                "Dans le sac, à la fin : vingt-deux.",
                 "Une variable pour garder le résultat. Un bloc pour le geste."
                 " Une boucle pour le répéter.",
                 "Voilà tout ce qu'il fallait.",
