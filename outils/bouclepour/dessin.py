@@ -929,7 +929,7 @@ def _question(d, box, numero, texte_, couleur, allumee, a, t):
               fill=melange(FOND_PANNEAU_2, couleur, 0.55 * a if allumee else 0.2 * a))
     d.text((x0 + 28, (y0 + y1) / 2), str(numero), font=police(18, True),
            fill=TEXTE if allumee else TEXTE_3, anchor="mm")
-    d.text((x0 + 50, (y0 + y1) / 2), texte_, font=police(14, allumee),
+    d.text((x0 + 50, (y0 + y1) / 2), texte_, font=police(15, allumee),
            fill=TEXTE if allumee else TEXTE_2, anchor="lm")
 
 
@@ -943,11 +943,14 @@ def _reponse(d, box, texte_, couleur, allumee, a, t, sens="droite"):
                    bord=melange(BORDURE, couleur, (0.9 if allumee else 0.3) * a),
                    largeur_bord=3 if allumee else 2)
     lignes = texte_.split("\n")
-    f = police(15, allumee)
-    h = 19
+    h = 17
     y = (y0 + y1) / 2 - (len(lignes) - 1) * h / 2
+    dispo = (x1 - x0) - 14
     for ligne in lignes:
-        d.text(((x0 + x1) / 2, y), ligne, font=f,
+        taille = 15
+        while taille > 11 and largeur_texte(ligne, taille, allumee) > dispo:
+            taille -= 1
+        d.text(((x0 + x1) / 2, y), ligne, font=police(taille, allumee),
                fill=TEXTE if allumee else TEXTE_2, anchor="mm")
         y += h
 
@@ -963,15 +966,15 @@ def schema_arbre(d: ImageDraw.ImageDraw, box, etape: int = 0, actif: str | None 
     if a <= 0.01:
         return
     gauche, largeur = x0 + 22, (x1 - x0) - 44
-    y_q = [y0 + 26, y0 + 176, y0 + 326]
-    h_q = 64
-    largeur_q = largeur - 220
+    y_q = [y0 + 18, y0 + 166, y0 + 314]
+    h_q = 80
+    largeur_q = largeur - 236
 
     # les trois questions
     for i, (num, texte_) in enumerate([
-        (1, "Est-ce que je connais le\nnombre de répétitions ?"),
-        (2, "Est-ce qu'une condition\nd'arrêt peut m'arrêter ?"),
-        (3, "Combien de fois, au moins,\nje répète ?"),
+        (1, "Est-ce que je connais\nle nombre de répétitions\nà l'avance ?"),
+        (2, "Est-ce qu'une condition\nd'arrêt peut\nm'arrêter ?"),
+        (3, "Combien de fois,\nau moins,\nje répète ?"),
     ], start=1):
         allumee = etape >= i
         _question(d, [gauche, y_q[i - 1], gauche + largeur_q, y_q[i - 1] + h_q],
