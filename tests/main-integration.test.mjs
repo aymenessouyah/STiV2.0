@@ -76,7 +76,8 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./index.html'), 'boucles-et-effets-v550');
   assert.equal(revisions.get('./assets/js/admin.js'), 'photo-secours-v562');
   assert.equal(revisions.get('./assets/css/cours.css'), 'retrait-fond-cours-v508');
-  assert.equal(revisions.get('./cours/sql.html'), 'retrait-fond-cours-v508');
+  /* v563 : le cours SQL accueille la convention d'écriture d'un schéma. */
+  assert.equal(revisions.get('./cours/sql.html'), 'schema-notation-v563');
   /* v549 : la page PHP reçoit la capsule des variables. */
   assert.equal(revisions.get('./cours/php.html'), 'audit-plateforme-v552');
   /* v523 : le cours JavaScript reçoit les liens du TP Train. */

@@ -584,6 +584,167 @@ CREATE TABLE Carte_grise (
             exactement ces règles.
           </div>
         </div>
+
+        <div class="card" id="intro-notation">
+          <h3>Écrire un schéma relationnel : la convention officielle</h3>
+          <p>
+            Savoir <em>lire</em> une base ne suffit pas : il faut savoir
+            l'<strong>écrire</strong> exactement comme le professeur — et comme
+            le sujet d'examen. Le programme impose <strong>deux règles
+            d'écriture</strong> et <strong>trois notations</strong> de
+            cardinalité. Tout le reste du cours, les exercices et les sujets de
+            Bac les respectent à la lettre.
+          </p>
+
+          <h4>1. Les deux règles d'écriture</h4>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Élément</th><th>Comment l'écrire</th><th>Exemple</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Clé primaire</strong></td>
+                  <td><strong>soulignée</strong> — jamais entre parenthèses, jamais colorée</td>
+                  <td><code><u>NCIN_Cli</u></code></td>
+                </tr>
+                <tr>
+                  <td><strong>Clé étrangère</strong></td>
+                  <td>suivie du symbole <strong>#</strong>, juste après le nom du champ</td>
+                  <td><code>NCIN_Cli#</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="muted">
+            Une clé étrangère est <em>toujours</em> la clé primaire d'une autre
+            table : le <code>#</code> dit « ce champ n'est pas inventé ici, il
+            vient d'ailleurs ». Un champ qui est à la fois clé primaire et clé
+            étrangère (dans une table d'association) est donc
+            <strong>souligné et suivi de</strong> <code>#</code>.
+          </p>
+
+          <h4>2. Le schéma de la base de location</h4>
+          <p>
+            Les quatre tables utilisées plus bas, écrites avec cette convention.
+            Chaque table tient sur une ligne, entre parenthèses, la clé primaire
+            en premier.
+          </p>
+          <pre class="pre-notation-v563"><code>Client (<u>NCIN_Cli</u>, nom_Cli, prenom_Cli, tel_Cli)
+Vehicule (<u>immat_Vehicule</u>, marque_Vehicule, modele_Vehicule, annee)
+Location (<u>NCIN_Cli</u>#, <u>immat_Vehicule</u>#, <u>date_loc</u>, duree_loc)
+Carte_grise (<u>num_carte</u>, date_emission, immat_Vehicule#)</code></pre>
+          <div class="query-result">
+            <strong>Lecture du schéma :</strong>
+            <code>Client</code> et <code>Vehicule</code> n'ont aucune clé
+            étrangère : ce sont des <b>tables mères</b>.
+            <code>Location</code> porte <b>deux</b> clés étrangères : c'est la
+            <b>table fille</b> d'une relation <b>∞ : ∞</b> (elle sert de table
+            d'association). <code>Carte_grise</code> porte <b>une</b> clé
+            étrangère : c'est la table fille d'une relation <b>1 : 1</b>.
+          </div>
+
+          <h4>3. Les trois notations de cardinalité</h4>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Type de relation</th>
+                  <th>Notation officielle</th>
+                  <th>Autre écriture courante</th>
+                  <th>Où placer la clé étrangère</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Un à un</strong></td>
+                  <td><code>1 : 1</code></td>
+                  <td><code>1 — 1</code></td>
+                  <td>dans l'une des deux tables, avec <code>UNIQUE</code></td>
+                </tr>
+                <tr>
+                  <td><strong>Un à plusieurs</strong></td>
+                  <td><code>1 : ∞</code></td>
+                  <td><code>1 : N</code> ou <code>1 — N</code></td>
+                  <td>dans la table du côté <b>∞</b> (le côté « plusieurs »)</td>
+                </tr>
+                <tr>
+                  <td><strong>Plusieurs à plusieurs</strong></td>
+                  <td><code>∞ : ∞</code></td>
+                  <td><code>N : N</code> ou <code>N — N</code></td>
+                  <td>dans une <b>table d'association</b>, clé primaire composée</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="muted">
+            <code>∞</code> se lit « plusieurs » ; certains sujets écrivent
+            <code>N</code> ou <code>n</code> à la place. Les deux écritures sont
+            acceptées, mais il faut garder la <b>même</b> sur toute la copie.
+          </p>
+
+          <h4>4. Où écrire la cardinalité sur un schéma graphique</h4>
+          <p>
+            Sur un dessin, le nombre se place <strong>près de la table qu'il
+            décrit</strong> : le <code>1</code> du côté de la table mère, le
+            <code>∞</code> du côté de la table fille, au milieu du trait.
+          </p>
+          <pre class="pre-notation-v563"><code>  Client                                Location
+┌────────────────┐                 ┌──────────────────┐
+│ NCIN_Cli       │───── 1 ── ∞ ────│ NCIN_Cli#        │
+└────────────────┘                 └──────────────────┘
+
+  Un client  ── 1  (une seule ligne de Client)
+  Plusieurs locations ── ∞  (beaucoup de lignes de Location)</code></pre>
+
+          <h4>5. Les erreurs qui coûtent des points</h4>
+          <ul>
+            <li>Oublier de <strong>souligner</strong> la clé primaire.</li>
+            <li>Mettre <code>#</code> sur une clé qui n'est <em>pas</em>
+              étrangère (ou l'oublier sur une vraie clé étrangère).</li>
+            <li>Écrire <code>1 : N</code> du mauvais côté : le
+              <code>∞</code> va toujours avec la table qui reçoit la clé
+              étrangère.</li>
+            <li>Noter <code>∞ : ∞</code> sans créer la table d'association qui
+              la réalise.</li>
+            <li>Séparer les champs par des virgules mais oublier les
+              parenthèses autour de la table.</li>
+          </ul>
+
+          <h4>6. Du schéma au code SQL</h4>
+          <p>
+            Chaque règle d'écriture a sa traduction directe dans
+            <code>CREATE TABLE</code> :
+          </p>
+          <pre class="pre-notation-v563"><code>-- souligné dans le schéma  →  PRIMARY KEY dans le code
+-- # dans le schéma         →  FOREIGN KEY ... REFERENCES dans le code
+
+CREATE TABLE Location (
+    NCIN_Cli        VARCHAR(8),
+    immat_Vehicule  VARCHAR(10),
+    date_loc        DATE,
+    duree_loc       INT,
+    PRIMARY KEY (NCIN_Cli, immat_Vehicule, date_loc),  -- clé primaire composée
+    FOREIGN KEY (NCIN_Cli)       REFERENCES Client(NCIN_Cli),
+    FOREIGN KEY (immat_Vehicule) REFERENCES Vehicule(immat_Vehicule)
+);</code></pre>
+
+          <div class="analogy-note">
+            <strong>À retenir :</strong> clé primaire <u>soulignée</u>, clé
+            étrangère suivie de <code>#</code>, relations notées
+            <code>1 : 1</code>, <code>1 : ∞</code> et <code>∞ : ∞</code>. Ces
+            trois réflexes suffisent pour présenter n'importe quel schéma sans
+            perdre de points de forme.
+          </div>
+          <p>
+            <strong>S'entraîner :</strong>
+            <a href="../exercices/sql/Tp1-bd.html">TP 1 — création d'une base</a>
+            ·
+            <a href="../exercices/sql/sql.html">série SQL complète</a>
+            ·
+            <a href="../exercices/series-exercices.html#bdd">séries d'exercices</a>
+          </p>
+        </div>
       <footer class="chapter-footer"><button type="button" class="btn-revise" data-toggle-revise="intro" aria-pressed="false">☐ Marquer comme révisé</button><nav aria-label="Navigation du chapitre"><span></span><a class="source-link" href="#ldd">LDD : définition des données →</a></nav></footer></section>
 <section id="ldd" class="course-chapter" data-chapter-id="ldd">
         <h2 class="course-chapter__title" tabindex="-1"><span class="course-chapter__num" aria-hidden="true">02</span> 2. Partie LDD (Langage de Définition des Données)</h2>
