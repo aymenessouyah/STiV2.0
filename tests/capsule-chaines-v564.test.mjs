@@ -75,14 +75,13 @@ function catalogue() {
 /* ═════════════════════════════════════════════════════════════════════════
    1 · Le nœud-capsule de « Vidéos explicatives »
    ═════════════════════════════════════════════════════════════════════════ */
-test('chaque nœud-capsule de la grille reçoit une étiquette verte « Capsule »', () => {
+test('chaque nœud-capsule de la grille reçoit son étiquette « Capsule »', () => {
   const app = lire('assets/js/app.js');
 
-  /* L'étiquette est un vrai élément : ::before et ::after portent déjà les
-     effets de survol v550 sur la même carte. */
-  assert.ok(app.includes("'<span class=\"video-card__capsule\">Capsule</span>'"),
+  /* v571 : l'étiquette est une vraie étiquette dorée, en CSS pur. */
+  assert.ok(app.includes('class="video-card__capsule sti-etiquette-capsule"'),
     'le modèle de carte doit poser l’étiquette');
-  assert.ok(/\(estCapsuleVideo\(v\) \? '<span class="video-card__capsule">/.test(app),
+  assert.ok(/\(estCapsuleVideo\(v\) \? '<span class="video-card__capsule/.test(app),
     'l’étiquette ne doit apparaître que sur les capsules');
 
   /* Elle est posée avant la vignette, donc sous le pouce, en haut à gauche. */
@@ -91,25 +90,51 @@ test('chaque nœud-capsule de la grille reçoit une étiquette verte « Capsule 
     'l’étiquette précède la vignette');
 });
 
-test('l’étiquette « Capsule » est verte, en haut à gauche, et ne cache pas « Vue »', () => {
+test('l’étiquette est une étiquette dorée, en haut à gauche, et ne cache pas « Vue »', () => {
   const css = lire('assets/css/capsules-vedettes.css');
 
-  const bloc = css.slice(css.indexOf('#videosGrid .video-card__capsule'), css.indexOf('#videosGrid .video-card__capsule') + 1200);
-  assert.ok(bloc.length > 100, 'le bloc de l’étiquette doit exister');
+  const bloc = css.slice(css.indexOf('.sti-etiquette-capsule {'),
+    css.indexOf('.sti-etiquette-capsule {') + 1400);
+  assert.ok(bloc.length > 200, 'le bloc de l’étiquette doit exister');
   assert.match(bloc, /position:\s*absolute/);
-  assert.match(bloc, /top:\s*10px/);
+  assert.match(bloc, /inset-block-start:\s*8px/);
   assert.match(bloc, /inset-inline-start:\s*10px/, 'en haut à GAUCHE, même en RTL');
-  assert.match(bloc, /background:\s*#22c55e/, 'fond vert');
   assert.match(bloc, /text-transform:\s*uppercase/);
   assert.match(bloc, /z-index:\s*5/, 'au-dessus de la vignette et des effets de survol');
   assert.match(bloc, /pointer-events:\s*none/, 'l’étiquette ne vole pas le clic');
 
-  /* Contraste : texte sombre sur vert clair (≈ 8:1). */
-  assert.match(bloc, /color:\s*#052e16/);
+  /* Le dessin : deux tons dorés, coins coupés, cordon et œillet. */
+  assert.match(css, /\.sti-etiquette-capsule::before \{[^}]*clip-path:\s*polygon\(/s,
+    'le corps est découpé en étiquette');
+  assert.match(css, /linear-gradient\(90deg, #fbce4f 0 50%, #eeb02a 50% 100%\)/,
+    'les deux tons de la fiche');
+  assert.match(css, /\.sti-etiquette-capsule::after \{[^}]*data:image\/svg\+xml/s,
+    'le cordon et l’œillet');
+
+  /* Contraste : brun sombre sur doré (≈ 7:1). */
+  assert.match(bloc, /color:\s*#4a3208/);
+
+  /* Le cordon est un SVG en ligne : la CSP des pages doit autoriser data:. */
+  const index = lire('index.html');
+  assert.match(index, /img-src 'self' data:/, 'data: autorisé pour le cordon');
 
   /* Le repère « ✓ Vue » occupait le même coin : il doit changer de côté. */
   const vus = css.slice(css.indexOf('.video-card--capsule .video-card__seen'));
   assert.match(vus, /inset-inline-end:\s*10px/, '« Vue » passe à droite');
+});
+
+test('les cartes des pages de cours portent la même étiquette', () => {
+  for (const page of ['cours/javascript.html', 'cours/php.html']) {
+    const html = lire(page);
+    const cartes = (html.match(/sti-capsule-vedette/g) || []).length;
+    const etiquettes = (html.match(/class="sti-etiquette-capsule"/g) || []).length;
+    assert.ok(etiquettes > 0, page + ' : au moins une étiquette');
+    assert.equal(etiquettes, cartes, page + ' : une étiquette par carte-capsule');
+    /* L'étiquette ouvre la carte : elle suit immédiatement la balise ouvrante. */
+    const ouvertes = html.match(
+      /class="(?:featured|matiere)-video-card sti-capsule-vedette ?"[^>]*><span class="sti-etiquette-capsule"/g) || [];
+    assert.equal(ouvertes.length, cartes, page + ' : l’étiquette ouvre chaque carte');
+  }
 });
 
 test('les capsules historiques sont reconnues', () => {
@@ -233,11 +258,13 @@ test('la capsule est dans le paquet hors-ligne et versionnée', () => {
   const sw = lire('sw.js');
   assert.ok(sw.includes(`"./assets/videos/FonctionsChaine-v564.mp4"`));
   assert.ok(sw.includes(`"./assets/subtitles/FonctionsChaine-fr-v564.vtt"`));
-  assert.ok(sw.includes('revision: "php-chaines-v566"'), 'les pages touchées sont réinvalidées');
+  assert.ok(sw.includes('revision: "etiquette-capsule-v571"'), 'les pages touchées sont réinvalidées');
+  const REV_PAGES = new Set(['./index.html', './cours/javascript.html', './cours/php.html', './assets/js/app.js']);
+  const attendu = (page) => (REV_PAGES.has(page) ? 'etiquette-capsule-v571' : 'php-chaines-v566');
   for (const page of ['./index.html', './cours/javascript.html', './assets/js/app.js',
     './assets/js/protection.js', './assets/js/lecteur-commun.js']) {
-    assert.ok(sw.includes(`{ url: "${page}", revision: "php-chaines-v566"`) ||
-      sw.includes(`{ url: "${page}", revision: "php-chaines-v566",`), 'révision de ' + page);
+    assert.ok(sw.includes(`{ url: "${page}", revision: "${attendu(page)}"`) ||
+      sw.includes(`{ url: "${page}", revision: "${attendu(page)}",`), 'révision de ' + page);
   }
 });
 

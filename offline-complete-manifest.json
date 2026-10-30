@@ -1,9 +1,9 @@
 {
   "version": "v553-sti-atelier-v386",
-  "generatedAt": "2026-10-30T21:53:16Z",
+  "generatedAt": "2026-10-30T22:07:11Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 749,
-  "totalBytes": 1059902898,
+  "totalBytes": 1059906812,
   "files": [
     {
       "path": "404.html",
@@ -187,8 +187,8 @@
     },
     {
       "path": "assets/css/capsules-vedettes.css",
-      "bytes": 9991,
-      "gitSha": "f211a332a830ca5d6a88811caf8f049bf32bfd94"
+      "bytes": 13174,
+      "gitSha": "248bcf396e9998e49b0dba7a1cf7e3ec36c63894"
     },
     {
       "path": "assets/css/cours-css3.css",
@@ -692,8 +692,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 122987,
-      "gitSha": "1b59d4858ba27e2e591e75f7777b57b2fc4668f1"
+      "bytes": 123211,
+      "gitSha": "4e1ad09990fc4b8fe1e65e7cf0d2d7dd24d96051"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -1342,8 +1342,8 @@
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 140572,
-      "gitSha": "b963fd22e5acef7a0a242133155ab8d7cbbefbcd"
+      "bytes": 140848,
+      "gitSha": "c9bb7d61532435b82e242c10ad73319b539a2162"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -1352,8 +1352,8 @@
     },
     {
       "path": "cours/php.html",
-      "bytes": 205673,
-      "gitSha": "8e78c2330e3d1b731cb62076d83ffd13552ba70a"
+      "bytes": 205880,
+      "gitSha": "24fd23d6bcb2332af28af7b74a58c9cf323a28b6"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -3148,7 +3148,7 @@
     {
       "path": "index.html",
       "bytes": 61336,
-      "gitSha": "943e2be1e93958970f825e6a1561faaaeeed41ed"
+      "gitSha": "c9c5733ca221aae6e98ad6df37a61f49b48502bc"
     },
     {
       "path": "livre-smart.html",
@@ -3747,8 +3747,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 99102,
-      "gitSha": "e3fa11bf6fff3acda60c2fd2b39f38d55198f2d4"
+      "bytes": 99126,
+      "gitSha": "09176d1aa7b9057f913aae4f0028f02cde6c4354"
     }
   ]
 }

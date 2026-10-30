@@ -1045,11 +1045,13 @@
           '" data-matiere="' + echapperHtml(v.matiere) +
           '" data-effet="' + effetVideo(v) +
           '" style="--accent:' + echapperHtml(v.couleur || "#38bdf8") + '">' +
-          /* v570 : chaque nœud-capsule de la vidéothèque porte son étiquette
-             verte « Capsule », en haut à gauche — un vrai élément, et non un
+          /* v571 : chaque nœud-capsule de la vidéothèque porte son étiquette
+             dorée « Capsule », en haut à gauche — un vrai élément, et non un
              pseudo-élément : ::before et ::after servent déjà aux effets de
-             survol v550 sur cette même carte. */
-          (estCapsuleVideo(v) ? '<span class="video-card__capsule">Capsule</span>' : "") +
+             survol v550 sur cette même carte. Le texte est réel, pas un
+             `content` CSS : il se met à l'échelle et se traduit ; il reste
+             décoratif (aria-hidden), le titre de la carte dit déjà tout. */
+          (estCapsuleVideo(v) ? '<span class="video-card__capsule sti-etiquette-capsule" aria-hidden="true">Capsule</span>' : "") +
           '<button type="button" class="video-card__thumb" data-play-video="' + echapperHtml(v.id) + '" aria-label="▶ ' + (dejaVue ? '✓ Vue ' : '') + echapperHtml(v.dureeTexte) + ' — Lire la vidéo ' + echapperHtml(v.titre) + '">' +
             '<img src="' + echapperHtml(poster) + '" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" />' +
             '<span class="video-card__play"><span class="video-play-btn" aria-hidden="true">▶</span></span>' +
