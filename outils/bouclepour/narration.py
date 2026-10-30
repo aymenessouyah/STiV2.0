@@ -1,77 +1,93 @@
-"""Texte de la voix off de « La boucle Pour — le sac et l'ascenseur ».
+"""Texte de la voix off de « La boucle Pour — l'immeuble et le sac ».
 
-Chaque section correspond à un fichier audio de `voix/` produit par l'outil de
-synthèse. La vidéo est calée sur la durée réelle de ces fichiers : c'est la voix
-qui mène, l'image suit (`calage.json`).
+Le récit est reconstruit de bout en bout autour de l'immeuble, avec une
+progression volontairement lente sur deux idées difficiles :
 
-La capsule commence par le but (calculer la somme des éléments d'un immeuble,
-c'est-à-dire d'un tableau), puis suit exactement les onze étapes dictées :
+  * **la variable** (sections `variable` et `accumuler`) : un sac vide, un nom
+    qui ne bouge pas, un contenu qui change ; puis `S = S + valeur`, où le S de
+    droite est l'ancien contenu et le S de gauche le nouveau ;
+  * **la nécessité de la boucle** (section `pourquoi`) : sans boucle il faut
+    écrire une ligne par étage — quatre lignes pour quatre étages, cent lignes
+    pour cent étages — et le copier-coller ne passe pas à l'échelle.
 
- 1. j'ai besoin de ramasser, je prends un sac ;
- 2. le contenu du sac est changeable → une variable ;
- 3. plusieurs sacs : il faut les distinguer → je le nomme S ;
- 4. un immeuble, l'ascenseur, et la question « que faire avec chaque client ? » ;
- 5. étage 0 : le sac reçoit l'étage → S = S + T[0] ;
- 6. l'ascenseur avance et compte → un compteur ;
- 7. je répète la même opération à l'étage 1 ;
- 8. la première fois S = S + T[0], maintenant S = S + T[1] ;
- 9. ce « quelque chose » qui change, c'est le compteur → S = S + T[compteur] ;
-10. j'écris le bloc ;
-11. combien de fois ? un arrêt avant la fin ? → la boucle Pour, complète.
+Chaque section correspond à un fichier audio de `voix/` ; c'est la voix qui
+donne la durée de la scène, l'image suit (`calage.json`).
 """
 from __future__ import annotations
 
 # L'ordre de lecture et le découpage des sous-titres.
-ORDRE = ["intro", "sac", "nom", "immeuble", "etage0", "compteur", "repetition",
-         "quelquechose", "bloc", "boucle"]
+ORDRE = ["probleme", "variable", "nom", "accumuler", "immeuble",
+         "etage0", "repetition", "pourquoi", "bloc", "boucle"]
 
 SECTIONS = {
-    "intro": {
-        "titre": "Le but : la somme des étages",
+    "probleme": {
+        "titre": "Le problème : la somme des étages",
         "segments": [
-            ("intro", [
-                "Voilà mon problème.",
-                "Cet immeuble a quatre étages, et sur chaque étage il y a un nombre : quatre, sept, deux, neuf.",
-                "Tous ces nombres, rangés ensemble, ça s'appelle un tableau."
-                " Et dans mon carnet, ce tableau s'appelle T.",
-                "Ce que je dois calculer, c'est la somme de tous ces nombres."
-                " Cette somme, je vais la mettre dans S.",
-                "S égal T crochet zéro, plus T crochet un, plus T crochet deux, plus T crochet trois.",
-                "Alors, comment je vais m'y prendre ?",
+            ("probleme", [
+                "Voici mon immeuble : quatre étages.",
+                "Au rez-de-chaussée, il y a quatre. Au premier, sept."
+                " Au deuxième, deux. Et au troisième, neuf.",
+                "Quatre nombres, rangés dans cet ordre : c'est un tableau."
+                " Et ce tableau, je l'appelle T.",
+                "Ce que je veux, c'est la somme de ces quatre nombres :"
+                " quatre, plus sept, plus deux, plus neuf.",
+                "Et je veux ranger le résultat dans une case que j'appelle S.",
+                "S égal T crochet zéro, plus T crochet un, plus T crochet deux,"
+                " plus T crochet trois.",
+                "La question, c'est : comment je vais m'y prendre ?",
             ]),
         ],
     },
-    "sac": {
-        "titre": "Un sac, c'est une variable",
+    "variable": {
+        "titre": "Une variable : une boîte au contenu changeable",
         "segments": [
-            ("sac", [
-                "Comme j'ai besoin de ramasser, je prends un sac.",
-                "Voilà mon sac.",
-                "Pour l'instant il est vide : je n'ai encore rien ramassé.",
-                "Mais attention : le contenu de ce sac est changeable.",
-                "Je peux y mettre une chose, puis une autre à la place, autant de fois que je veux.",
-                "Changeable… ah, une variable !",
-                "Car en programmation, une variable c'est exactement ça : une boîte avec un nom,"
-                " dans laquelle je range une valeur, et dont je peux changer le contenu quand je veux.",
-                "Un sac, c'est une variable : il a un contenu, et ce contenu peut changer.",
+            ("variable", [
+                "Première idée : il me faut une case mémoire.",
+                "Un sac, si vous voulez.",
+                "Une boîte, avec un nom, et une valeur dedans.",
+                "Au début, mon sac est vide : je n'ai encore rien ramassé.",
+                "Maintenant, j'y mets quatre. Regardez : le sac n'a pas changé,"
+                " mais son contenu, oui.",
+                "Je change d'avis : je retire quatre, je mets sept."
+                " Même sac, même nom, autre valeur.",
+                "C'est exactement ça, une variable :"
+                " une boîte avec un nom, un contenu qu'on peut lire,"
+                " et un contenu qu'on peut remplacer.",
+                "Le nom reste, la valeur bouge.",
             ]),
         ],
     },
     "nom": {
-        "titre": "Plusieurs sacs : il faut un nom",
+        "titre": "Un nom : S, le même jusqu'à la fin",
         "segments": [
             ("nom", [
-                "Seulement voilà : je possède plusieurs sacs.",
-                "Un sac pour chaque étage, un sac pour chaque client :"
-                " trois sacs, et trois contenus différents.",
-                "Si je dis simplement « le sac », personne ne sait duquel je parle."
-                " L'ordinateur, encore moins.",
-                "Alors je dois les distinguer. Comment faire ?",
-                "Mmmm… ah, voilà : je vais lui donner un nom.",
-                "Une étiquette sur le sac : un seul nom, le même dans tout le programme.",
-                "Je le nomme S. S, comme sac.",
-                "Et maintenant, quand j'écris S, c'est de ce sac-là que je parle."
-                " Je m'en servirai jusqu'à la fin.",
+                "Mais attention : dans un immeuble, il y a beaucoup de sacs.",
+                "Un par étage, un par habitant.",
+                "Si je dis simplement « le sac », personne ne sait duquel je parle.",
+                "L'ordinateur, encore moins que moi.",
+                "Alors je donne un nom à celui que je vais utiliser :"
+                " une étiquette, et je m'y tiens.",
+                "Il s'appelle S. S comme somme.",
+                "Et maintenant, quand j'écris S dans mon programme,"
+                " c'est ce sac-là, et pas un autre.",
+            ]),
+        ],
+    },
+    "accumuler": {
+        "titre": "S = S + … : lire, ajouter, réécrire",
+        "segments": [
+            ("accumuler", [
+                "Passons à l'idée la plus importante.",
+                "S, je peux le lire. S, je peux aussi l'écrire."
+                " Et je peux faire les deux dans la même ligne.",
+                "Mon sac vaut zéro. Je lis : zéro. J'ajoute quatre : quatre."
+                " J'écris dans le sac : quatre.",
+                "Je recommence : je lis S, qui vaut quatre. J'ajoute sept : onze."
+                " J'écris onze dans S.",
+                "Le nouveau contenu, c'est l'ancien contenu, plus ce que j'ajoute.",
+                "Ça s'écrit : S égal S plus quelque chose.",
+                "Et ça ne tourne pas en rond : le S de droite, c'est l'ancienne valeur ;"
+                " le S de gauche, c'est la nouvelle.",
             ]),
         ],
     },
@@ -79,93 +95,98 @@ SECTIONS = {
         "titre": "L'immeuble et l'ascenseur",
         "segments": [
             ("immeuble", [
-                "Je commence. Oh, c'est un immeuble !",
-                "Donc je dois utiliser l'ascenseur.",
-                "Mais attends, je dois réfléchir un peu.",
-                "Que dois-je faire ?",
-                "Et que dois-je faire avec chaque client ?",
-                "Mmmm.",
+                "J'ai mon sac, j'ai mon tableau. Il reste à monter.",
+                "Quatre étages, quatre cases : je vais les visiter un par un,"
+                " et l'ascenseur va m'y aider.",
+                "Mais avant de partir, une question : à chaque étage,"
+                " qu'est-ce que je fais ?",
+                "Réponse : toujours la même chose.",
+                "J'ouvre la porte, je prends la valeur de l'étage,"
+                " et je l'ajoute dans mon sac.",
             ]),
         ],
     },
     "etage0": {
-        "titre": "Étage 0 : le sac reçoit l'étage",
+        "titre": "Étage 0 : le premier tour, à la main",
         "segments": [
             ("etage0", [
-                "Je prends l'ascenseur, et je mets étage un.",
-                "La porte est ouverte : donc je ramasse ce qu'il y a dans l'étage,",
-                "et je l'ajoute à mon sac S.",
-                "Le nouveau contenu du sac, c'est l'ancien contenu plus ce que j'ai trouvé dans l'étage numéro zéro.",
-                "Mmmm… mais pourquoi j'écris toute cette phrase ?",
-                "Donc je vais dire : S égal S plus T crochet zéro.",
-                "Et oui, ça marche ! Donc je passe à l'étage un.",
-            ]),
-        ],
-    },
-    "compteur": {
-        "titre": "L'ascenseur compte",
-        "segments": [
-            ("compteur", [
-                "Je prends l'ascenseur et j'avance.",
-                "Ah… c'est moi qui avance, ou c'est l'ascenseur qui avance ?",
-                "Et oui, c'est l'ascenseur.",
-                "Mais il est en train de compter les étages.",
-                "Donc on va utiliser un compteur.",
+                "Allons-y. Étage zéro.",
+                "La porte s'ouvre : la case T crochet zéro contient quatre.",
+                "Je lis mon sac : zéro. J'ajoute quatre. J'écris quatre dans le sac.",
+                "En une seule ligne : S égal S plus T crochet zéro.",
+                "Et voilà : mon sac contient quatre. Je peux monter.",
             ]),
         ],
     },
     "repetition": {
-        "titre": "Je répète l'opération",
+        "titre": "Étages 1, 2, 3 : je me répète",
         "segments": [
             ("repetition", [
-                "Et ça marche.",
-                "Je répète la même opération dans l'étage numéro un.",
-                "Attends… j'ai dit : je répète.",
-                "La première fois j'ai écrit S égal S plus T crochet zéro.",
-                "Et maintenant, S égal S plus T crochet un.",
+                "Étage un. La porte s'ouvre : sept.",
+                "S égal S plus T crochet un. Mon sac contient onze.",
+                "Étage deux : deux. S égal S plus T crochet deux. Treize.",
+                "Étage trois : neuf. Vingt-deux.",
+                "Et là, je m'arrête et je regarde ce que j'ai écrit.",
+                "Quatre lignes. Quatre fois la même ligne,"
+                " avec juste le numéro de l'étage qui change.",
+                "Ça marche… mais ça se voit que je me répète.",
             ]),
         ],
     },
-    "quelquechose": {
-        "titre": "Ce quelque chose, c'est le compteur",
+    "pourquoi": {
+        "titre": "Pourquoi une boucle ? Parce que je me répète",
         "segments": [
-            ("quelquechose", [
-                "Attends, ça se répète !",
-                "Donc j'écris : S égal S plus T crochet quelque chose.",
-                "Mmmm… c'est quoi, alors, ce quelque chose ?",
-                "Quand le compteur est à zéro, j'écris zéro.",
-                "Et quand il est à un, je mets un.",
-                "Et bien voilà : ce quelque chose, c'est bel et bien le compteur.",
+            ("pourquoi", [
+                "Imaginons maintenant un immeuble de cent étages.",
+                "Sans boucle, je dois écrire une ligne par étage : cent lignes.",
+                "Mille étages ? Mille lignes.",
+                "Et le jour où l'immeuble gagne un étage, il faut encore en ajouter une.",
+                "Et si je me trompe sur une seule ligne, tout le résultat est faux.",
+                "Recopier, ce n'est pas programmer : c'est du travail d'escargot.",
+                "Ce que je veux, c'est écrire le geste une seule fois,"
+                " et demander à l'ordinateur de le répéter pour chaque étage.",
+                "C'est exactement le travail d'une boucle.",
             ]),
         ],
     },
     "bloc": {
-        "titre": "Le bloc à répéter",
+        "titre": "Le bloc et le compteur",
         "segments": [
             ("bloc", [
-                "Attends, j'écris le bloc.",
-                "Donc c'est : S égal S plus T crochet compteur.",
-                "Voilà le bloc, tout seul, entre deux accolades.",
+                "Alors, quel est le geste, exactement ?",
+                "Prendre la valeur de l'étage, et l'ajouter dans le sac.",
+                "Une seule chose change d'un étage à l'autre : le numéro de la case.",
+                "Zéro, puis un, puis deux, puis trois.",
+                "Et ce numéro, l'ascenseur le connaît déjà : c'est son compteur.",
+                "Donc le geste s'écrit : S égal S plus T crochet compteur.",
+                "Voilà le bloc, seul, entre deux accolades.",
+                "C'est lui qu'on va répéter.",
             ]),
         ],
     },
     "boucle": {
-        "titre": "La boucle Pour, complète",
+        "titre": "La boucle Pour : écrire une fois, répéter n fois",
         "segments": [
             ("boucle", [
-                "Et bien c'est vrai. Mais combien de fois je vais répéter ça ?",
-                "Et est-ce qu'il y a un risque d'arrêt avant la fin ?",
-                "Donc je dois compléter.",
-                "Il me faut une structure répétitive, itérative, complète.",
-                "C'est-à-dire : je complète à la fin.",
-                "Et bien, je l'ai trouvée : c'est la boucle Pour, que je vais engendrer au bloc.",
-                "Et voilà : le sac S contient vingt-deux.",
-                "Quatre, plus sept, plus deux, plus neuf : c'est bien la somme des quatre étages.",
-                "OUI, c'est ça ! Et voilà le résultat.",
+                "Il ne reste qu'à l'entourer.",
+                "Pour compteur de zéro à n moins un, faire le bloc. Fin Pour.",
+                "Trois choses sont dites, et les trois comptent.",
+                "Le départ : le compteur vaut zéro.",
+                "La condition : tant que le compteur reste plus petit que n, on continue.",
+                "Le pas : à chaque tour, le compteur augmente de un.",
+                "L'ordinateur fait alors tout seul ce que je faisais à la main :"
+                " il monte, il ajoute, il compte.",
+                "Quatre étages : le compteur passe par zéro, un, deux, trois, puis s'arrête.",
+                "Et dans le sac, à la fin : vingt-deux.",
+                "Quatre plus sept plus deux plus neuf. La somme est juste.",
+                "Une variable pour garder le résultat. Un bloc pour le geste."
+                " Une boucle pour le répéter.",
+                "Voilà tout ce qu'il fallait.",
             ]),
         ],
     },
 }
+
 
 # Ce que dit chaque section, phrases à plat (pour les sous-titres).
 def texte_segment(section: str, cle: str) -> str:
