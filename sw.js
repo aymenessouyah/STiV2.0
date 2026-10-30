@@ -36,7 +36,7 @@ var UPDATE_FILES = [
   { url: "./documents/annexes/annexe-php.pdf.html", revision: "meta-seo-v521" },
   /* v531 : le module du petit coin doit être invalidé comme les autres (place prise
      sur l'annexe SQL, figée depuis la v481 ; à remettre dans la liste si elle évolue). */
-  { url: "./assets/js/admin-vues-videos.js", revision: "php-variables-v549" },
+  { url: "./assets/js/admin-vues-videos.js", revision: "chaines-v564" },
   { url: "./documents/complet/complet-3eme-si-bd.pdf.html", revision: "meta-seo-v521" },
   { url: "./documents/complet/complet-3eme-si.pdf.html", revision: "meta-seo-v521" },
   { url: "./documents/complet/complet-4eme-si-cours.pdf.html", revision: "meta-seo-v521" },

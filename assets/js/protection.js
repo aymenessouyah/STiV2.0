@@ -1471,6 +1471,18 @@
         { t: 491.569, short: "9 · Exercice — que s'affiche-t-il ?", label: "8:12 · 9 · Exercice — que s'affiche-t-il ?" },
         { t: 585.062, short: "10 · Exercice — la fonction moyenne", label: "9:45 · 10 · Exercice — la fonction moyenne" }
       ];
+      STI_CHAPITRES_MEDIA["fonctions-chaine"] = [
+        { t: 1.200, short: "1 · Bienvenue — les chaînes de caractères", label: "0:01 · 1 · Bienvenue — les chaînes de caractères" },
+        { t: 59.430, short: "2 · Les positions : de zéro à length moins un", label: "0:59 · 2 · Les positions : de zéro à length moins un" },
+        { t: 116.700, short: "3 · Concaténer ( + ) et mesurer ( length )", label: "1:57 · 3 · Concaténer ( + ) et mesurer ( length )" },
+        { t: 182.770, short: "4 · Accéder ( [p] ), indexOf et lastIndexOf", label: "3:03 · 4 · Accéder ( [p] ), indexOf et lastIndexOf" },
+        { t: 254.240, short: "5 · Découper ( substring ) et remplacer ( replace )", label: "4:14 · 5 · Découper ( substring ) et remplacer ( replace )" },
+        { t: 322.630, short: "6 · La casse et les espaces : toLowerCase, toUpperCase, trim", label: "5:23 · 6 · La casse et les espaces : toLowerCase, toUpperCase, trim" },
+        { t: 378.100, short: "7 · Les codes des caractères : charCodeAt, fromCharCode", label: "6:18 · 7 · Les codes des caractères : charCodeAt, fromCharCode" },
+        { t: 436.770, short: "8 · Convertir : isNaN, Number, parseFloat, parseInt", label: "7:17 · 8 · Convertir : isNaN, Number, parseFloat, parseInt" },
+        { t: 521.840, short: "9 · String( ) et l'objet Date", label: "8:42 · 9 · String( ) et l'objet Date" },
+        { t: 585.750, short: "10 · Exercices et ce qu'il faut retenir", label: "9:46 · 10 · Exercices et ce qu'il faut retenir" }
+      ];
       /* Repères de la capsule « PHP — les variables, la portée et les types » (v549). */
       STI_CHAPITRES_MEDIA["php-variables"] = [
         { t: 1.200, short: "1 · Bienvenue — les variables PHP", label: "0:01 · 1 · Bienvenue — les variables PHP" },

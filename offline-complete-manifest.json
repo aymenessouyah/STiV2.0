@@ -1,9 +1,9 @@
 {
   "version": "v553-sti-atelier-v386",
-  "generatedAt": "2026-10-30T14:12:25Z",
+  "generatedAt": "2026-10-30T20:42:54Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 743,
-  "totalBytes": 942274144,
+  "totalFiles": 745,
+  "totalBytes": 977735048,
   "files": [
     {
       "path": "404.html",
@@ -187,8 +187,8 @@
     },
     {
       "path": "assets/css/capsules-vedettes.css",
-      "bytes": 8837,
-      "gitSha": "1194d76133831707dec1ac2e55d5f679be61287b"
+      "bytes": 9991,
+      "gitSha": "f211a332a830ca5d6a88811caf8f049bf32bfd94"
     },
     {
       "path": "assets/css/cours-css3.css",
@@ -677,8 +677,8 @@
     },
     {
       "path": "assets/js/admin-vues-videos.js",
-      "bytes": 29566,
-      "gitSha": "d54c80b115cef82520977f716e10f8d0dac9e3f5"
+      "bytes": 29674,
+      "gitSha": "927507675a41e956b2ce396131b4f1ef345fa6c9"
     },
     {
       "path": "assets/js/admin.js",
@@ -692,8 +692,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 120335,
-      "gitSha": "fc188c84bf9dcd3c170180b874900f455e339571"
+      "bytes": 121552,
+      "gitSha": "02600a4ce412e74eb7bbafeef9b71da013cd874c"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -767,8 +767,8 @@
     },
     {
       "path": "assets/js/lecteur-commun.js",
-      "bytes": 14067,
-      "gitSha": "977877fafc8e1db9f921ca3e955078faecfda9f3"
+      "bytes": 14173,
+      "gitSha": "cb1594b48ebcf5a07ddf6cc512a0d4b105e2eafd"
     },
     {
       "path": "assets/js/mobile-nav.js",
@@ -827,8 +827,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 243275,
-      "gitSha": "d0dd751171281c0fd70557a44b83b41f14f93c70"
+      "bytes": 245217,
+      "gitSha": "c87773dd53980e8a2536daa1e749cbfb6b2dda71"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -1036,6 +1036,11 @@
       "gitSha": "adc00b86c8f890a1b603899afd0a0ea3f81935e8"
     },
     {
+      "path": "assets/subtitles/FonctionsChaine-fr-v564.vtt",
+      "bytes": 14882,
+      "gitSha": "c96ec0bd08efa9ae3fba39a76b359fa55e3f726d"
+    },
+    {
       "path": "assets/subtitles/PhpVariables-fr-v549.vtt",
       "bytes": 17987,
       "gitSha": "3a243f00aa82fd2bc2aa2a3502be4e272dbb0173"
@@ -1114,6 +1119,11 @@
       "path": "assets/videos/ConsoleVariables-v548.mp4",
       "bytes": 33889151,
       "gitSha": "33aca5a190d9b0e51e48e6c5a6427b41efaa5e80"
+    },
+    {
+      "path": "assets/videos/FonctionsChaine-v564.mp4",
+      "bytes": 35439184,
+      "gitSha": "9eb0d4d63701b24f9aaa496057b287c891ac3524"
     },
     {
       "path": "assets/videos/PhpVariables-v549.mp4",
@@ -1312,8 +1322,8 @@
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 135978,
-      "gitSha": "b2fb3a95d0cec0d0a83e2f3dcaf9e43a7cce5580"
+      "bytes": 138253,
+      "gitSha": "4f84bc7e853d86f8262925a4fa10fde829d0599a"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -1323,7 +1333,7 @@
     {
       "path": "cours/php.html",
       "bytes": 204351,
-      "gitSha": "d0b15f37bd2b99ebe27ed69ecb5f349c57ed37fd"
+      "gitSha": "c089ca22f3ca13a1056fa5483b6d49fbfedfe25c"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -3118,7 +3128,7 @@
     {
       "path": "index.html",
       "bytes": 61336,
-      "gitSha": "0682f91463b54d81275a48270b900c7c6f1fe032"
+      "gitSha": "bda5aa371251ad8f996102664a6da8e097f449a7"
     },
     {
       "path": "livre-smart.html",
@@ -3717,8 +3727,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 98870,
-      "gitSha": "f8f2d1ba6fb536c673d89a171715e6e497bbbaf6"
+      "bytes": 98906,
+      "gitSha": "4cdc6abf9e0f1ffe99decdc8b3d99185293b5ee5"
     }
   ]
 }

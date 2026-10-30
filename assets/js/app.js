@@ -295,7 +295,7 @@
       badgeClasse: "badge-js",
       couleur: "#f7df1e",
       titre: "Les chaînes de caractères — méthodes, conversions et dates",
-      dureeTexte: "10:30",
+      dureeTexte: "11:21",
       srcPrincipal: "assets/videos/FonctionsChaine-v564.mp4",
       srcSecours: "assets/videos/FonctionsChaine-v564.mp4",
       sousTitres: "assets/subtitles/FonctionsChaine-fr-v564.vtt",

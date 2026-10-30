@@ -131,6 +131,8 @@ def ruban(d, x: int, y: int, chaine: str, indices: bool = True,
 
 def marqueur(d, x: int, y: int, case: int, position: int, couleur=VERT, k: float = 1.0):
     """Le trait qui désigne une case précise du ruban, sous le ruban."""
+    if k <= 0.004:
+        return          # pas encore révélé : on ne dessine rien du tout
     xc = x + position * case + case / 2
     d.line([(xc, y), (xc, y + 12)], fill=melange(PAPIER, couleur, k), width=3)
     d.polygon([(xc - 7, y + 12), (xc + 7, y + 12), (xc, y + 21)],

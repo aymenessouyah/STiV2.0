@@ -1,0 +1,28 @@
+{
+  "durees": {
+    "ouverture": 57.68,
+    "positions": 56.72,
+    "concat_longueur": 65.52,
+    "acces_recherche": 70.92,
+    "decouper_remplacer": 67.84,
+    "casse_trim": 54.92,
+    "codes": 58.12,
+    "nombres": 84.52,
+    "texte_date": 63.36,
+    "exercices": 92.96
+  },
+  "debuts": {
+    "ouverture": 1.2,
+    "positions": 59.43,
+    "concat_longueur": 116.7,
+    "acces_recherche": 182.77,
+    "decouper_remplacer": 254.24,
+    "casse_trim": 322.63,
+    "codes": 378.1,
+    "nombres": 436.77,
+    "texte_date": 521.84,
+    "exercices": 585.75
+  },
+  "total": 680.51,
+  "debit": 14.04
+}
