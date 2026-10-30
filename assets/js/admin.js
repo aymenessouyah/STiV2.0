@@ -122,6 +122,112 @@
     lecteur.readAsDataURL(file);
   }
 
+  /* v560 : bascule automatique des photos historiques restées en base64.
+     But : vider profiles.photo_url des anciennes data URLs sans qu'on ait à
+     ouvrir l'outil de migration. Déroulé volontairement prudent :
+       • seulement pour l'administrateur connecté et en ligne ;
+       • au plus 5 photos par ouverture du tableau de bord, une à la fois ;
+       • l'ancienne valeur n'est remplacée qu'après un dépôt réussi ET une URL
+         signée relue, et la RPC admin_gerer_photo_eleve vérifie en base que
+         le fichier existe réellement dans le bucket ;
+       • tout échec laisse la photo intacte et arrête proprement la passe ;
+       • les photos en attente de validation (photo_attente) ne sont pas
+         touchées : seul l'enseignant décide de ce qu'il valide. */
+  var TTL_PHOTO_BUCKET_ADMIN = 315360000; /* 10 ans, comme acces.js */
+  var MAX_PHOTOS_PAR_PASSE_V560 = 5;
+  var passePhotosV560 = false;
+
+  function octetsDepuisDataUrlAdmin(dataUrl) {
+    var m = /^data:(image\/(?:jpeg|jpg|png|webp));base64,([A-Za-z0-9+/=]+)$/i.exec(String(dataUrl || "").trim());
+    if (!m) return null;
+    var octets;
+    try {
+      var bin = atob(m[2]);
+      octets = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) octets[i] = bin.charCodeAt(i);
+    } catch (e) { return null; }
+    if (!octets.length || octets.length > 2097152) return null;
+    var type = m[1].toLowerCase();
+    if (type === "image/jpg") type = "image/jpeg";
+    return {
+      octets: octets,
+      type: type,
+      ext: type.indexOf("png") >= 0 ? "png" : type.indexOf("webp") >= 0 ? "webp" : "jpg"
+    };
+  }
+
+  function jetonFichierAdmin() {
+    try {
+      var tab = new Uint8Array(16);
+      window.crypto.getRandomValues(tab);
+      var jeton = "";
+      for (var i = 0; i < tab.length; i++) jeton += ("0" + tab[i].toString(16)).slice(-2);
+      return jeton;
+    } catch (e) {
+      return String(Date.now()) + Math.random().toString(16).slice(2, 10);
+    }
+  }
+
+  function migrerUnePhotoBase64Admin(profil) {
+    return new Promise(function (resoudre, rejeter) {
+      var paquet = octetsDepuisDataUrlAdmin(profil && profil.photo_url);
+      if (!paquet) return rejeter(new Error("format de photo inattendu"));
+      var chemin = profil.id + "/" + jetonFichierAdmin() + "." + paquet.ext;
+      sb.storage.from("photos-profils")
+        .upload(chemin, paquet.octets, { contentType: paquet.type, upsert: false, cacheControl: "31536000" })
+        .then(function (up) {
+          if (up && up.error) throw up.error;
+          return sb.storage.from("photos-profils").createSignedUrl(chemin, TTL_PHOTO_BUCKET_ADMIN);
+        })
+        .then(function (sg) {
+          if (sg && sg.error) throw sg.error;
+          var d = sg && sg.data;
+          var url = d && (d.signedUrl || d.signedURL);
+          if (!url) throw new Error("URL signée absente");
+          return sb.rpc("admin_gerer_photo_eleve", { p_uid: profil.id, p_action: "definir", p_data_url: url });
+        })
+        .then(function (r) {
+          if (r && r.error) throw r.error;
+          resoudre(true);
+        })
+        .catch(rejeter);
+    });
+  }
+
+  function migrerPhotosBase64Admin() {
+    if (passePhotosV560 || !sb || !sb.storage || !navigator.onLine) return;
+    passePhotosV560 = true;
+    var migrees = 0;
+    var echecs = 0;
+    function finPasse() {
+      if (!migrees) return;
+      try {
+        console.info("[STI v560] photos historiques déplacées vers le Storage : " + migrees +
+          (echecs ? " (" + echecs + " laissée(s) intacte(s))" : ""));
+      } catch (e) {}
+    }
+    sb.from("profiles").select("id,photo_url")
+      .like("photo_url", "data:image/%")
+      .limit(MAX_PHOTOS_PAR_PASSE_V560)
+      .then(function (r) {
+        if (r && r.error) throw r.error;
+        var liste = (r && r.data) || [];
+        var i = 0;
+        function suivante() {
+          if (i >= liste.length || !navigator.onLine) { finPasse(); return; }
+          var p = liste[i++];
+          return migrerUnePhotoBase64Admin(p).then(function () {
+            migrees++;
+          }).catch(function () {
+            echecs++;
+          }).then(suivante);
+        }
+        if (!liste.length) { finPasse(); return; }
+        return suivante();
+      })
+      .catch(function () { /* réseau ou droits : on retentera à la prochaine ouverture */ });
+  }
+
   /* v447 : Loupe flottante automatique au survol de n'importe quelle photo candidat dans le Tableau de bord */
   (function installerLoupePhotoEleveAdmin() {
     var pop = null;
@@ -2673,6 +2779,9 @@
       installerProtectionsMfaAdmin();
       rafraichirEtatMfaAdmin();
       demarrerMiniTableauLaboDevicesV303();
+      /* v560 : les photos historiques encore en base64 rejoignent le bucket
+         privé, sans action de l'enseignant (5 au plus par ouverture). */
+      migrerPhotosBase64Admin();
     }
     /* Affichage immédiat du dernier instantané IndexedDB, puis contrôle complet au démarrage. */
     chargerDepuisCacheAdmin(true, "");

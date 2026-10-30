@@ -70,11 +70,11 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./assets/js/news-perso.js'), 'ruban-vert-v517');
   /* v507 : ruban sans logo et compteurs de vidéos. */
   assert.equal(revisions.get('./assets/css/theme.css'), 'classe-nav-v536');
-  assert.equal(revisions.get('./admin.html'), 'taille-stockage-v558');
+  assert.equal(revisions.get('./admin.html'), 'photos-auto-v560');
   assert.equal(revisions.get('./assets/js/sante.js'), 'tp-transitions-v512');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */
   assert.equal(revisions.get('./index.html'), 'boucles-et-effets-v550');
-  assert.equal(revisions.get('./assets/js/admin.js'), 'taille-stockage-v558');
+  assert.equal(revisions.get('./assets/js/admin.js'), 'photos-auto-v560');
   assert.equal(revisions.get('./assets/css/cours.css'), 'retrait-fond-cours-v508');
   assert.equal(revisions.get('./cours/sql.html'), 'retrait-fond-cours-v508');
   /* v549 : la page PHP reçoit la capsule des variables. */
