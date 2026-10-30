@@ -14,6 +14,7 @@
     'validation-nom-prenom-js': ['javascript','Validation du champ Nom & Prénom'],
     'tp-train-serie6': ['javascript','TP Train — correction détaillée (Série 6)'],
     'defis37-tableau-aleas-media': ['javascript','Les 37 Défis — Tableau, Aléas & Captchas, Média'],
+    'boucle-pour': ['javascript','La boucle Pour — de la variable à la boucle'],
     'sql-cours': ['sql','Cours SQL'],
     'sql-initiation': ['sql','Construire une requête SQL'],
     'sql-serie4': ['sql','Série 4 SQL'],
