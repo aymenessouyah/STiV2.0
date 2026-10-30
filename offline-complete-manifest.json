@@ -2,8 +2,8 @@
   "version": "v553-sti-atelier-v386",
   "generatedAt": "2026-10-30T14:12:25Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 742,
-  "totalBytes": 942248646,
+  "totalFiles": 743,
+  "totalBytes": 942255920,
   "files": [
     {
       "path": "404.html",
@@ -62,8 +62,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 59204,
-      "gitSha": "6dfedea9934649e34764ddb697c00e3d20719eea"
+      "bytes": 61051,
+      "gitSha": "721d69c6ba59e5b5831469997717d38eae6246e6"
     },
     {
       "path": "admin.html",
@@ -3709,6 +3709,11 @@
       "path": "supabase/migrations/20261029_xp_jamais_en_recul_v520.sql",
       "bytes": 12775,
       "gitSha": "0f677df6c7df2301534a167a5e09c4d13f2b5634"
+    },
+    {
+      "path": "supabase/migrations/20261102_photos_contraintes_v561.sql",
+      "bytes": 5427,
+      "gitSha": "c85d09b22bee4512b174a0f697fc34f17f73f5a7"
     },
     {
       "path": "sw.js",
