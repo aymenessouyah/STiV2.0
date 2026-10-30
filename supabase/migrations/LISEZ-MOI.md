@@ -45,6 +45,7 @@ idempotents.
 | `20261030_admin_taille_base_v557.sql` | `20261030163139` | appliquée via l'outillage ; la version du registre est l'horodatage d'exécution, pas la date du nom de fichier |
 | `20261031_admin_taille_stockage_v558.sql` | `20261030164012` | idem |
 | `20261101_photos_bucket_v559.sql` | `20261030165557` (`photos_bucket_v559`) **et** `20261030165603` (`photos_rpc_v559`) | un seul fichier, deux entrées : les deux moitiés ont été exécutées séparément |
+| `20261102_photos_contraintes_v561.sql` | non inscrit au registre | appliquée directement en SQL le 30/10/2026 ; idempotente, à rejouer si une base est recréée |
 
 **Ce qu'il faut retenir.** Pour les migrations v557 à v559, la correspondance entre le
 nom de fichier et la version du registre n'est pas littérale. C'est sans conséquence :
@@ -69,6 +70,30 @@ select policyname from pg_policies
 Le test automatisé `tests/photos-bucket-v559.test.mjs` vérifie, côté dépôt, que les
 fichiers décrivent bien ces objets. Il ne peut pas interroger la base : la vérification
 finale reste celle des requêtes ci-dessus.
+
+**v561 — contraintes photo élargies (à appliquer absolument).** Les contraintes
+`chk_profiles_photo_url_safe` et `chk_profiles_photo_attente_safe`, posées en v445,
+n'acceptaient **que** les data URLs base64. Depuis la v559, la base doit pourtant
+stocker l'URL signée du bucket privé : chaque écriture était donc rejetée, en silence,
+et le site retombait sur le base64. Les fichiers arrivaient bien dans le bucket, mais
+aucun profil ne pointait dessus. Le fichier `20261102_photos_contraintes_v561.sql`
+remplace les deux contraintes (base64 **ou** URL signée du bucket, borne de 64 Ko
+conservée) et aligne `sti_photo_url_valide()` sur le même motif que les validateurs
+d'affichage. À vérifier ensuite :
+
+```sql
+select conname, pg_get_constraintdef(oid)
+  from pg_constraint
+ where conrelid = 'public.profiles'::regclass and conname like 'chk_profiles_photo%';
+
+-- Objectif : 0 photo encore en base64
+select count(*) from public.profiles where photo_url like 'data:image/%';
+select count(*) from storage.objects where bucket_id = 'photos-profils';
+```
+
+Le test `tests/photos-contraintes-v561.test.mjs` compare le motif de la base, celui de
+la RPC et ceux de `acces.js`, `admin.js` et `roue-initiales.js` : les quatre doivent
+accepter et refuser exactement les mêmes valeurs.
 
 **v560 — aucune migration à appliquer.** Les photos encore stockées en base64 sont
 désormais basculées par le tableau de bord lui-même : à chaque ouverture par
@@ -97,6 +122,8 @@ Appliquer les fichiers dans l'ordre de leur nom, **sans exception** :
 3. `20261030_admin_taille_base_v557.sql`
 4. `20261031_admin_taille_stockage_v558.sql`
 5. `20261101_photos_bucket_v559.sql`
+6. `20261102_photos_contraintes_v561.sql` (obligatoire : sans elle, les photos du
+   bucket sont refusées par la base et tout retombe en base64)
 
 Les objets `auth.*`, `storage.*` et la fonction `public.est_admin()` sont fournis par
 Supabase ou par les migrations antérieures à ce dossier : sur une base neuve, créer

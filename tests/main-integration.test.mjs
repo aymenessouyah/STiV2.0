@@ -70,11 +70,11 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./assets/js/news-perso.js'), 'ruban-vert-v517');
   /* v507 : ruban sans logo et compteurs de vidéos. */
   assert.equal(revisions.get('./assets/css/theme.css'), 'classe-nav-v536');
-  assert.equal(revisions.get('./admin.html'), 'photos-auto-v560');
+  assert.equal(revisions.get('./admin.html'), 'photo-secours-v562');
   assert.equal(revisions.get('./assets/js/sante.js'), 'tp-transitions-v512');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */
   assert.equal(revisions.get('./index.html'), 'boucles-et-effets-v550');
-  assert.equal(revisions.get('./assets/js/admin.js'), 'photos-auto-v560');
+  assert.equal(revisions.get('./assets/js/admin.js'), 'photo-secours-v562');
   assert.equal(revisions.get('./assets/css/cours.css'), 'retrait-fond-cours-v508');
   assert.equal(revisions.get('./cours/sql.html'), 'retrait-fond-cours-v508');
   /* v549 : la page PHP reçoit la capsule des variables. */
@@ -96,11 +96,11 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
     assert.equal(revisions.get('./' + chemin), 'badge-image-v488', chemin);
   }
   /* v553 : la roue écoute le défilement en mode passif (audit de fluidité). */
-  assert.equal(revisions.get('./assets/js/roue-initiales.js'), 'defilement-passif-v553');
+  assert.equal(revisions.get('./assets/js/roue-initiales.js'), 'photo-secours-v562');
   for (const chemin of ['assets/css/theme-patrimoine.css']) {
     assert.equal(revisions.get('./' + chemin), 'fidelite-origine-v481', chemin);
   }
-  assert.equal(revisions.get('./assets/js/acces.js'), 'defilement-passif-v553');
+  assert.equal(revisions.get('./assets/js/acces.js'), 'photo-secours-v562');
   /* v529 : masquer la reprise ne doit pas effacer le compteur de vues vidéo. */
   assert.equal(revisions.get('./assets/js/reprendre.js'), 'vues-videos-v531');
   assert.equal(revisions.get('./assets/js/config.js'), 'barre-mobile-v532');

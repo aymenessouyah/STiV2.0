@@ -40,6 +40,43 @@
     if (!/^data:image\/(jpeg|jpg|png|webp);base64,[A-Za-z0-9+/=\s]+$/i.test(s)) return "";
     return s.replace(/\s+/g, "");
   }
+  /* v562 : une photo dont le fichier a disparu du bucket (fichier supprimé,
+     URL signée révoquée) ne doit jamais laisser une icône cassée : si l'image
+     ne se charge pas, on la remplace par les initiales du nom. Le nom est lu
+     dans data-nom, sinon alt, sinon le texte du plus proche conteneur. */
+  function initialesPhotoSecoursRoue(nom) {
+    var mots = String(nom || "").replace(/[^\p{L}\p{N}\s-]/gu, " ").trim().split(/[\s-]+/)
+      .filter(function (m) { return m.length > 0; });
+    if (!mots.length) return "?";
+    return mots.slice(0, 2).map(function (m) { return m.charAt(0); }).join("").toUpperCase();
+  }
+  function nomDepuisImageRoue(img) {
+    var el = img;
+    for (var i = 0; i < 4 && el; i++) {
+      if (el.getAttribute && el.getAttribute("data-nom")) return el.getAttribute("data-nom");
+      el = el.parentElement;
+    }
+    if (img.getAttribute && img.getAttribute("alt")) return img.getAttribute("alt");
+    var conteneur = img.closest ? img.closest("td,li,article,div") : null;
+    return conteneur ? String(conteneur.textContent || "").slice(0, 40) : "";
+  }
+  /* Écoute unique et déléguée : elle couvre les avatars construits après coup. */
+  document.addEventListener("error", function (ev) {
+    var img = ev.target;
+    if (!img || img.tagName !== "IMG") return;
+    var src = String((img.getAttribute && img.getAttribute("src")) || "");
+    if (!/\/storage\/v1\/object\/(?:sign|public)\/photos-profils\//.test(src)) return;
+    var secours = document.createElement("span");
+    secours.className = (img.className ? img.className + " " : "") + "sti-photo-secoursRoue";
+    secours.style.cssText = "display:inline-flex;align-items:center;justify-content:center;" +
+      "background:#1e293b;color:#e2e8f0;font-weight:800;border-radius:50%;" +
+      "width:100%;height:100%;min-width:28px;min-height:28px;font-size:.85em;";
+    secours.textContent = initialesPhotoSecoursRoue(nomDepuisImageRoue(img));
+    secours.setAttribute("role", "img");
+    secours.setAttribute("aria-label", "Photo indisponible");
+    if (img.parentNode) img.parentNode.replaceChild(secours, img);
+  }, true);
+
   function premiereLettre(s) {
     s = String(s || "").trim();
     if (!s) return "";
