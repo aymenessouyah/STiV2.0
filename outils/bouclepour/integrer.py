@@ -4,8 +4,13 @@
     python3 integrer.py            # copie le MP4 + le VTT, réécrit la durée
     python3 integrer.py --verifier # contrôle seulement (aucune écriture)
 
-1. copie `sortie_bouclepour.mp4` vers `assets/videos/BouclePour.mp4` ;
-2. copie `sous-titres.vtt` vers `assets/subtitles/BouclePour-fr.vtt` ;
+1. copie `sortie_bouclepour.mp4` vers `assets/videos/BouclePour-<version>.mp4` ;
+2. copie `sous-titres.vtt` vers `assets/subtitles/BouclePour-fr-<version>.vtt` ;
+
+Le nom du fichier porte la version (`VERSION_MEDIA`) : c'est la seule façon de
+forcer un nouveau téléchargement côté élève, car le service worker sert les
+vidéos depuis son cache et ne les revalide jamais (`.mp4` et `.vtt` sont en
+« cache d'abord »). Renommer à chaque refonte de la capsule.
 3. relit la durée réelle et met à jour les badges « (5:41) » de
    `cours/javascript.html` et la `dureeTexte` de `assets/js/app.js` ;
 4. réécrit les **chapitres** `STI_CHAPITRES_MEDIA["boucle-pour"]` de
@@ -26,10 +31,13 @@ RACINE = os.path.normpath(os.path.join(ICI, "..", ".."))
 FF = os.path.normpath(os.path.join(RACINE, "node_modules", "@ffmpeg-installer", "linux-x64", "ffmpeg"))
 
 SLUG = "BouclePour"
+VERSION_MEDIA = "v544"          # à changer à chaque refonte : l'URL est la version
+NOM_MP4 = f"{SLUG}-{VERSION_MEDIA}.mp4"
+NOM_VTT = f"{SLUG}-fr-{VERSION_MEDIA}.vtt"
 SOURCE_MP4 = os.path.join(ICI, "sortie_bouclepour.mp4")
 SOURCE_VTT = os.path.join(ICI, "sous-titres.vtt")
-CIBLE_MP4 = os.path.join(RACINE, "assets", "videos", f"{SLUG}.mp4")
-CIBLE_VTT = os.path.join(RACINE, "assets", "subtitles", f"{SLUG}-fr.vtt")
+CIBLE_MP4 = os.path.join(RACINE, "assets", "videos", NOM_MP4)
+CIBLE_VTT = os.path.join(RACINE, "assets", "subtitles", NOM_VTT)
 
 PAGES = ["cours/javascript.html", "assets/js/app.js"]
 PROTECTION = os.path.join(RACINE, "assets", "js", "protection.js")
@@ -117,7 +125,7 @@ def main():
 
     sw = open(os.path.join(RACINE, "sw.js"), encoding="utf-8").read()
     absents = 0
-    for chemin in (f"./assets/videos/{SLUG}.mp4", f"./assets/subtitles/{SLUG}-fr.vtt"):
+    for chemin in (f"./assets/videos/{NOM_MP4}", f"./assets/subtitles/{NOM_VTT}"):
         etat = "présent" if chemin in sw else "ABSENT"
         print(f"OFFLINE_LIST {chemin} : {etat}")
         absents += etat == "ABSENT"
@@ -130,7 +138,7 @@ def main():
     absents += reperes != len(N.ORDRE)
 
     page = open(os.path.join(RACINE, "cours/javascript.html"), encoding="utf-8").read()
-    if f"../assets/videos/{SLUG}.mp4" not in page:
+    if f"../assets/videos/{NOM_MP4}" not in page:
         print("ABSENT : la carte vidéo de cours/javascript.html")
         absents += 1
     app = open(os.path.join(RACINE, "assets/js/app.js"), encoding="utf-8").read()

@@ -74,6 +74,21 @@ La capsule **s'ouvre** par la définition et **se ferme** par la méthode et le
 générique : le rendu applique un fondu d'entrée (1 s) et de sortie (2,4 s), donc
 l'image ne coupe jamais net.
 
+## Le nom des fichiers porte la version
+
+Le service worker sert les vidéos et les sous-titres **depuis son cache**, sans
+jamais les revalider (`.mp4` et `.vtt` sont en « cache d'abord »). Une capsule
+réécrite sous le même nom ne se verrait donc jamais sur un téléphone déjà venu :
+il continuerait à jouer l'ancienne version.
+
+D'où la règle, tenue par `integrer.py` (`VERSION_MEDIA`) et par un test :
+
+- `assets/videos/BouclePour-v544.mp4`
+- `assets/subtitles/BouclePour-fr-v544.vtt`
+
+À chaque refonte, on change `VERSION_MEDIA` : l'URL est neuve, le téléchargement
+repart, et l'ancienne copie reste dans le cache du téléphone sans gêner.
+
 ## Le vocabulaire, une fois pour toutes
 
 | Nom | Ce qu'il désigne | Où |

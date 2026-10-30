@@ -1,5 +1,5 @@
 /* v544 — capsule « Les boucles — Pour, Répéter…jusqu'à, Tant que » (JavaScript).
-   Contrôle la vidéo livrée, ses sous-titres français, les vingt-six étapes du
+   Contrôle la vidéo livrée, ses sous-titres français, les vingt-neuf étapes du
    récit (décor · brouillon · schéma de décision · tableau des trois boucles)
    avec l'algorithme et le JavaScript dans deux cadres séparés, l'intégration
    dans le site (carte vidéo, catalogue, lecteur partagé, chapitres) et le
@@ -14,12 +14,15 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const lire = (chemin) => readFileSync(join(root, chemin), 'utf8');
 const existe = (chemin) => existsSync(join(root, chemin));
 
-const VIDEO = 'assets/videos/BouclePour.mp4';
-const VTT = 'assets/subtitles/BouclePour-fr.vtt';
+/* Le nom des médias porte la version : c'est elle qui force le nouveau
+   téléchargement, le service worker servant les vidéos depuis son cache. */
+const VERSION_MEDIA = 'v544';
+const VIDEO = `assets/videos/BouclePour-${VERSION_MEDIA}.mp4`;
+const VTT = `assets/subtitles/BouclePour-fr-${VERSION_MEDIA}.vtt`;
 const ID = 'boucle-pour';
 const TITRE = "Les boucles — Pour, Répéter…jusqu'à, Tant que";
 
-/** Les vingt-six sections de la capsule, dans l'ordre de la voix off. */
+/** Les vingt-neuf sections de la capsule, dans l'ordre de la voix off. */
 const ORDRE = [
   'ouverture', 'introduction', 'probleme', 'repetition', 'q1', 'q2', 'q3',
   'pour_algo', 'pour_js', 'pour_trace', 'rappel1',
@@ -288,6 +291,31 @@ test('les trois blocs finissent côte à côte, chacun avec ses deux écritures'
   assert.ok(vtt.includes('trois boucles, trois situations'), 'la conclusion du bilan');
 });
 
+test("l'URL des médias porte la version : sinon le téléphone garde l'ancienne vidéo", () => {
+  /* Le service worker sert .mp4 et .vtt en « cache d'abord » et ne les
+     revalide jamais : seule une URL neuve force le nouveau téléchargement. */
+  assert.ok(existe(VIDEO), 'le MP4 versionné est dans le dépôt');
+  assert.ok(existe(VTT), 'le VTT versionné est dans le dépôt');
+  assert.ok(!existe('assets/videos/BouclePour.mp4'), "l'ancienne URL ne doit pas rester");
+  assert.ok(!existe('assets/subtitles/BouclePour-fr.vtt'), "l'ancien VTT non plus");
+
+  /* la page, le catalogue et le lecteur pointent tous vers la même URL */
+  assert.ok(lire('cours/javascript.html').includes(`src="../${VIDEO}"`), 'la carte vidéo');
+  assert.ok(lire('assets/js/app.js').includes(`srcPrincipal: "${VIDEO}"`), 'le catalogue');
+  assert.ok(lire('assets/js/protection.js').includes(`videos/BouclePour-${VERSION_MEDIA}.mp4`),
+    'le lecteur pas à pas');
+
+  /* et la liste hors ligne du service worker suit */
+  const sw = lire('sw.js');
+  assert.ok(sw.includes(`"./${VIDEO}"`), 'MP4 dans OFFLINE_LIST');
+  assert.ok(sw.includes(`"./${VTT}"`), 'VTT dans OFFLINE_LIST');
+
+  /* la convention est écrite dans l'outil qui installe la capsule */
+  const integrer = lire('outils/bouclepour/integrer.py');
+  assert.match(integrer, /VERSION_MEDIA = "v\d+"/, 'la version des médias est déclarée');
+  assert.match(integrer, /NOM_MP4 = f"\{SLUG\}-\{VERSION_MEDIA\}\.mp4"/, 'le nom en dérive');
+});
+
 test('la fabrication compte vingt-neuf sections, de la voix aux scènes', () => {
   const narration = lire('outils/bouclepour/narration.py');
   const trouve = [...narration.matchAll(/"([a-z0-9_]+)": \{/g)].map((m) => m[1]);
@@ -327,13 +355,13 @@ test('la capsule se lance depuis la grille de l\'accueil', () => {
     'le garde-fou du lecteur laisse passer la capsule');
   assert.ok(protection.includes('var slugCible = estBouclePour ? "boucle-pour"'),
     'le slug de la capsule est transmis');
-  assert.ok(protection.includes('videos/BouclePour.mp4'),
+  assert.ok(protection.includes(`videos/BouclePour-${VERSION_MEDIA}.mp4`),
     'le lecteur ouvre bien le fichier de la capsule');
   assert.ok(protection.includes('🎥 Les boucles — Pour, Répéter…jusqu\'à, Tant que'),
     'le titre affiché dans la modale');
 
   /* les sous-titres suivent la vidéo dans la modale */
-  assert.ok(protection.includes('subtitles/BouclePour-fr.vtt'),
+  assert.ok(protection.includes(`subtitles/BouclePour-fr-${VERSION_MEDIA}.vtt`),
     'les sous-titres sont attachés au lecteur de la grille');
 
   /* un repère de chapitre par section, calé sur la voix off */
@@ -360,14 +388,14 @@ test('la capsule se lance depuis la grille de l\'accueil', () => {
     bloc.replace('return;', 'return true;') + '\nreturn false;');
   const traverse = (slug) => fonction(slug, false, false, false, false, false, false, false, false);
   assert.equal(traverse('boucle-pour'), false, 'la capsule ouvre le lecteur');
-  assert.equal(traverse('BouclePour.mp4'), false, 'le nom du fichier aussi');
+  assert.equal(traverse(`BouclePour-${VERSION_MEDIA}.mp4`), false, 'le nom du fichier aussi');
   assert.equal(traverse('tp-train-serie6'), false, 'le TP Train continue de fonctionner');
   assert.equal(traverse('defis37-tableau-aleas-media'), false, 'les 37 Défis continuent');
   assert.equal(traverse('slug-inconnu'), true, 'un slug inconnu reste refusé');
 
   /* le service worker sert la nouvelle version du lecteur */
   const sw = lire('sw.js');
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "boucles-v544"/);
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "boucles-v545"/);
   /* le lecteur commun n'a pas bougé depuis la v543 : il garde sa révision */
   assert.match(sw, /url: "\.\/assets\/js\/lecteur-commun\.js", revision: "boucles-v543"/);
 });
@@ -405,10 +433,10 @@ test('la capsule est dans le paquet hors-ligne complet', () => {
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   assert.ok(complet.includes(`"./${VIDEO}"`), 'MP4 hors-ligne');
   assert.ok(complet.includes(`"./${VTT}"`), 'VTT hors-ligne');
-  assert.ok(!delta.includes('BouclePour.mp4'), 'les médias restent hors du delta léger');
-  assert.match(sw, /var UPDATE_ID = "v544-boucles-intro-fin-20261030";/);
-  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "boucles-v544"/);
-  assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "boucles-v544"/);
+  assert.ok(!delta.includes(`BouclePour-${VERSION_MEDIA}.mp4`), 'les médias restent hors du delta léger');
+  assert.match(sw, /var UPDATE_ID = "v545-boucles-media-20261030";/);
+  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "boucles-v545"/);
+  assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "boucles-v545"/);
 });
 
 test('la fabrique de la capsule reste dans le dépôt', () => {
@@ -420,7 +448,7 @@ test('la fabrique de la capsule reste dans le dépôt', () => {
   assert.match(integrer, /def bloc_chapitres\(/, 'les chapitres sont recalculés');
   assert.match(integrer, /def ecrire_chapitres\(/, 'et réécrits dans protection.js');
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  assert.match(manifeste.version, /^v544/, 'manifeste du lot');
+  assert.match(manifeste.version, /^v545/, 'manifeste du lot');
   assert.ok(manifeste.files.some((f) => f.path === VIDEO), 'MP4 dans le manifeste');
   assert.ok(manifeste.files.some((f) => f.path === VTT), 'VTT dans le manifeste');
 });
