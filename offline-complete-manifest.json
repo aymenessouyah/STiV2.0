@@ -1,9 +1,9 @@
 {
-  "version": "v549-sti-atelier-v382",
-  "generatedAt": "2026-10-30T13:11:48Z",
+  "version": "v550-sti-atelier-v383",
+  "generatedAt": "2026-10-30T13:24:45Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 740,
-  "totalBytes": 942180018,
+  "totalBytes": 942185418,
   "files": [
     {
       "path": "404.html",
@@ -687,8 +687,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 119158,
-      "gitSha": "f326e7fe871acea88c0c8a0b445a99862b8e13ad"
+      "bytes": 120335,
+      "gitSha": "fc188c84bf9dcd3c170180b874900f455e339571"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -1317,8 +1317,8 @@
     },
     {
       "path": "cours/php.html",
-      "bytes": 203426,
-      "gitSha": "fa885e76f57f093f2d20087a69d8d45314a13a6b"
+      "bytes": 204121,
+      "gitSha": "cfa0b1511ad02a47b072e916327e44a2ee69335d"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -3112,8 +3112,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 57703,
-      "gitSha": "46547d107087df3490e25101f0a92dab5be6c3cc"
+      "bytes": 61221,
+      "gitSha": "9cd24487cb07fc7b240ce2383a289b923ce7dc5c"
     },
     {
       "path": "livre-smart.html",
@@ -3702,8 +3702,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 98346,
-      "gitSha": "70b7cd6d31a6d943633a830b40b7de136b434425"
+      "bytes": 98356,
+      "gitSha": "0065fac3a273ed2ffa93a45610e2235817832feb"
     }
   ]
 }

@@ -18,6 +18,75 @@
     .featured-video-card[data-video-a-la-une]:not(.is-pret) .featured-video-card__head,
     .featured-video-card[data-video-a-la-une]:not(.is-pret) .video-hero-overlay__meta { visibility: hidden; }
   </style>
+  <style>
+    /* ── v550 · un effet de survol différent pour chaque carte de la vidéothèque ──
+       L'indice (data-effet) et la couleur (--accent) viennent du catalogue :
+       chaque nœud qui porte une capsule a donc sa propre lumière. */
+    #videosGrid .video-card { position: relative; isolation: isolate; }
+    #videosGrid .video-card::before,
+    #videosGrid .video-card::after {
+      content: ""; position: absolute; pointer-events: none; opacity: 0;
+      transition: opacity 260ms ease, transform 620ms cubic-bezier(.22,.7,.2,1);
+      z-index: 3; border-radius: inherit;
+    }
+    #videosGrid .video-card:hover::before,
+    #videosGrid .video-card:hover::after,
+    #videosGrid .video-card:focus-within::before,
+    #videosGrid .video-card:focus-within::after { opacity: 1; }
+
+    /* 0 · le halo : la carte s'allume à la couleur de sa matière */
+    #videosGrid .video-card[data-effet="0"]::before {
+      inset: 0;
+      background: radial-gradient(120% 80% at 50% 0%,
+        color-mix(in srgb, var(--accent) 26%, transparent), transparent 68%);
+    }
+    #videosGrid .video-card[data-effet="0"]:hover {
+      box-shadow: 0 18px 40px -20px color-mix(in srgb, var(--accent) 75%, transparent), var(--shadow-md);
+    }
+
+    /* 1 · le balayage : une lumière traverse la vignette */
+    #videosGrid .video-card[data-effet="1"]::after {
+      inset: -30% -55%;
+      background: linear-gradient(112deg, transparent 40%,
+        color-mix(in srgb, var(--accent) 26%, transparent) 50%, transparent 60%);
+      transform: translateX(-22%);
+    }
+    #videosGrid .video-card[data-effet="1"]:hover::after { transform: translateX(22%); }
+
+    /* 2 · le liseré : la bordure dégradée tourne autour de la carte */
+    #videosGrid .video-card[data-effet="2"]::before {
+      inset: 0; padding: 1.5px;
+      background: linear-gradient(100deg, var(--accent), transparent 32%, transparent 68%, var(--accent));
+      background-size: 220% 100%;
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      animation: sti-lisere-V550 3.2s linear infinite;
+    }
+    @keyframes sti-lisere-V550 { from { background-position: 0 0; } to { background-position: 220% 0; } }
+
+    /* 3 · le zoom : la vignette s'approche et la carte se cerne */
+    #videosGrid .video-card[data-effet="3"] .video-card__thumb img {
+      transition: transform 620ms cubic-bezier(.22,.7,.2,1);
+    }
+    #videosGrid .video-card[data-effet="3"]:hover .video-card__thumb img { transform: scale(1.06); }
+    #videosGrid .video-card[data-effet="3"]:hover {
+      box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--accent) 60%, transparent), var(--shadow-md);
+    }
+
+    /* Les trois capsules portent un liseré permanent, discret. */
+    #videosGrid .video-card--capsule { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+    #videosGrid .video-card--capsule:hover { border-color: color-mix(in srgb, var(--accent) 78%, var(--border)); }
+
+    @media (prefers-reduced-motion: reduce) {
+      #videosGrid .video-card::before,
+      #videosGrid .video-card::after,
+      #videosGrid .video-card .video-card__thumb img { transition: none !important; animation: none !important; }
+      #videosGrid .video-card[data-effet="2"]::before { animation: none !important; }
+      #videosGrid .video-card:hover { transform: none; }
+    }
+  </style>
   <link rel="stylesheet" href="assets/css/protection.css?v=227" />
 
   <!-- Ordre strict des scripts : config -> supabase-umd -> acces -> sync-progressions -> profil -> app -->
@@ -304,7 +373,7 @@
               <button type="button" class="filter-chip" data-video-filter="css3">CSS3 (8)</button>
               <button type="button" class="filter-chip" data-video-filter="javascript">JS (6)</button>
               <button type="button" class="filter-chip" data-video-filter="sql">SQL (4)</button>
-              <button type="button" class="filter-chip sti-4si-only" data-video-filter="php">PHP (4)</button>
+              <button type="button" class="filter-chip sti-4si-only" data-video-filter="php">PHP (5)</button>
             </div>
             <div style="display:flex;gap:6px">
               <button type="button" class="btn btn-secondary btn-icon btn-sm" id="videosScrollPrev" aria-label="Faire défiler vers la gauche">◀</button>
@@ -518,7 +587,7 @@
               <div class="subject-card__icon" aria-hidden="true"><svg class="matiere-logo" viewBox="0 0 48 48"><use href="assets/icons/matieres.svg#php"></use></svg></div>
               <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
                 <span class="badge badge-4si">🎓 Réservé 4e SI</span>
-                <span class="badge badge-php">🎥 4 vidéos &amp; 🔊 audio</span>
+                <span class="badge badge-php">🎥 5 vidéos &amp; 🔊 audio</span>
                 <button type="button" class="revise-btn" data-toggle-course="php" aria-pressed="false">○ À réviser</button>
               </div>
             </div>
@@ -530,7 +599,7 @@
               <a class="subject-pill-link" href="cours/php.html">📖 Cours</a>
               <a class="subject-pill-link" href="cours/php.html#exercices">📝 Exercices</a>
               <a class="subject-pill-link" href="cours/php.html#annexes">📎 Annexe</a>
-              <a class="subject-pill-link" href="cours/php.html#videos">🎥 4 Vidéos</a>
+              <a class="subject-pill-link" href="cours/php.html#videos">🎥 5 Vidéos</a>
             </div>
             <div class="subject-card__footer">
               <a class="btn btn-primary btn-sm" href="cours/php.html">Ouvrir PHP ➜</a>
@@ -795,7 +864,7 @@
             <li><a href="cours/css3.html">🎨 CSS3 (8 vidéos)</a></li>
             <li><a href="cours/javascript.html">⚡ JavaScript (6 vidéos)</a></li>
             <li><a href="cours/sql.html">🗄️ SQL (4 vidéos)</a></li>
-            <li class="sti-4si-only"><a href="cours/php.html">🐘 PHP (4e SI) · 4 vidéos</a></li>
+            <li class="sti-4si-only"><a href="cours/php.html">🐘 PHP (4e SI) · 5 vidéos</a></li>
           </ul>
         </div>
 

@@ -344,7 +344,7 @@ test('le catalogue du site compte la nouvelle capsule', () => {
   assert.ok(Math.abs(13 * 60 + 34 - reelle) <= 2, `durée annoncée 13:34 vs réelle ${reelle}`);
 
   assert.ok(index.includes('data-video-filter="all">Toutes (23)</button>'), 'pastille « Toutes »');
-  assert.ok(index.includes('data-video-filter="php">PHP (4)</button>'), 'pastille PHP');
+  assert.ok(index.includes('data-video-filter="php">PHP (5)</button>'), 'pastille PHP');
   assert.ok(index.includes('id="videosTotalNombre">23<'), 'compteur des capsules');
 
   const admin = lire('assets/js/admin-vues-videos.js');
@@ -363,5 +363,5 @@ test('le manifeste hors ligne contient la vidéo, ses sous-titres et ses emprein
     const sha = createHash('sha1').update(Buffer.concat([Buffer.from(`blob ${blob.length}\0`), blob])).digest('hex');
     assert.equal(entree.gitSha, sha, `sha1 de ${chemin}`);
   }
-  assert.match(manifeste.version, /^v549/);
+  assert.match(manifeste.version, /^v550/);
 });
