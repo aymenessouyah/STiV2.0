@@ -540,7 +540,7 @@ test('la capsule se lance depuis la grille de l\'accueil', () => {
 
   /* le service worker sert la nouvelle version du lecteur */
   const sw = lire('sw.js');
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "suivi-video-v551"/);
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "suivi-video-repare-v554"/);
   /* le lecteur commun n'a pas bougé depuis la v543 : il garde sa révision */
   assert.match(sw, /url: "\.\/assets\/js\/lecteur-commun\.js", revision: "php-variables-v549"/);
 });

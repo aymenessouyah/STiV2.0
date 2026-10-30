@@ -64,7 +64,12 @@ const fauxVideo = (attributs, src) => ({
 
 test('le bloc v551 est bien celui du fichier livré', () => {
   assert.ok(BLOC.length > 1500, 'le bloc est présent');
-  assert.ok(protection.includes('brancherSuiviVideoSTI();'), 'branché au chargement');
+  /* v554 : la fonction est déclarée dans installerVideosPasAPasSTI(), donc invisible depuis
+     init(); elle est désormais exposée par brancherSuiviVideoSTIExpose, seul point d'appel. */
+  assert.ok(protection.includes('brancherSuiviVideoSTIExpose = brancherSuiviVideoSTI;'),
+    'la fonction interne est exposée à la portée de l’IIFE');
+  assert.ok(protection.includes('if (typeof brancherSuiviVideoSTIExpose === "function")'),
+    'branché au chargement');
   assert.ok(protection.includes('poserChapitresAutoSTI(slugBandeau, mVid.duration || 0)'),
     'le lecteur complète les vidéos sans repères');
   assert.ok(protection.includes('remplirBandeauChapitresModale(chapsBandeau)'),
@@ -202,7 +207,7 @@ test('le lot v551 est publié', () => {
   const sw = lire('sw.js');
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
   assert.match(sw, /var UPDATE_ID = "v553-defilement-passif-20261030"/);
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "suivi-video-v551"/);
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "suivi-video-repare-v554"/);
   assert.ok(!sw.split('var UPDATE_FILES = [')[1].split('];')[0].includes('BouclePour-v547.mp4'),
     'les capsules restent hors du delta automatique');
 });

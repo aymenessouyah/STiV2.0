@@ -87,7 +87,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v526 : le lecteur commun suit la nouvelle capsule ; les sous-titres restent sur leur lot. */
   assert.equal(revisions.get('./assets/js/lecteur-commun.js'), 'php-variables-v549');
   assert.equal(revisions.get('./assets/subtitles/validation-nom-prenom-js-fr.vtt'), 'video-js-validation-v485');
-  assert.equal(revisions.get('./assets/js/protection.js'), 'suivi-video-v551');
+  assert.equal(revisions.get('./assets/js/protection.js'), 'suivi-video-repare-v554');
   for (const chemin of ['package.json', 'package-lock.json']) {
     assert.equal(revisions.get('./' + chemin), 'xp-operations-v487', chemin);
   }

@@ -155,7 +155,7 @@ var UPDATE_FILES = [
   { url: "./assets/data/nouveautes.json", revision: "compteur-media-v479" },
   { url: "./assets/js/config.js", revision: "barre-mobile-v532" },
   { url: "./assets/js/acces.js", revision: "defilement-passif-v553" },
-  { url: "./assets/js/protection.js", revision: "suivi-video-v551" },
+  { url: "./assets/js/protection.js", revision: "suivi-video-repare-v554" },
   { url: "./assets/js/mobile-nav.js", revision: "defilement-passif-v553" },
   { url: "./assets/js/roue-nuage.js", revision: "pastille-sync-v534" },
   { url: "./assets/js/roue-habillage.js", revision: "badge-dependances-v483", bootstrapBySize: true, bytes: 8050, sha256: "0cbd800edc65bb32fa9f370071ce4405c30b2088a72ef89119d14232685557fc" },
