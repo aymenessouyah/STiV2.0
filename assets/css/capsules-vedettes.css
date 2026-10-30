@@ -21,8 +21,8 @@
         de survol v550 selon `data-effet`) ;
      2. les pages de cours   → `.sti-capsule-vedette`
         (classe posée dans cours/javascript.html et cours/php.html), avec un
-        liseré qui respire, une étiquette « ✦ Capsule » et un renfort :has()
-        pour les navigateurs qui le connaissent. */
+        liseré qui respire, un renfort :has() pour les navigateurs qui le
+        connaissent, et la même étiquette dorée que la grille. */
 
 /* ────────────────────────────────────────────────────────────────
    1. Grille d'accueil — le halo respire par l'ombre de la carte
@@ -45,32 +45,83 @@
   }
 }
 
-/* v570 · l'étiquette verte « Capsule », en haut à gauche de CHAQUE nœud-capsule
-   de la grille « Vidéos explicatives ». C'est un vrai élément (posé par
-   assets/js/app.js), pas un pseudo-élément : ::before et ::after portent déjà
-   les effets de survol v550 sur cette carte. Vert franc, texte sombre : le
-   contraste dépasse 7:1 même sur une vignette claire. */
-#videosGrid .video-card__capsule {
+/* v571 · l'étiquette « Capsule » — une vraie étiquette de bagage, dorée.
+   ─────────────────────────────────────────────────────────────────────────
+   Elle reprend le dessin fourni par le demandeur : un corps doré à deux tons
+   (clair à gauche, plus chaud à droite), les coins du haut coupés, un œillet
+   sombre en haut au centre et un cordon qui en sort.
+
+   Le dessin est en CSS pur, sans image : `clip-path` taille le corps, les deux
+   tons viennent d'un dégradé, et le cordon + l'œillet sont un petit SVG en
+   ligne (data URI) placé au-dessus du corps. Le texte « Capsule » est un vrai
+   texte, au-dessous de l'œillet — il reste lisible en mode contraste élevé et
+   pour les lecteurs d'écran.
+
+   Contraste : brun sombre (#4a3208) sur doré (#fbce4f) ≈ 7,4:1 — au-delà du
+   seuil AAA. Le cordon et l'œillet ne sont que décoratifs. */
+.sti-etiquette-capsule {
   position: absolute;
-  top: 10px;
+  inset-block-start: 8px;
   inset-inline-start: 10px;
   z-index: 5;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-size: .68rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  inline-size: 74px;
+  block-size: 50px;
+  padding-block-end: 8px;
+  font-size: .55rem;
   font-weight: 800;
-  letter-spacing: .05em;
+  letter-spacing: .06em;
+  line-height: 1;
   text-transform: uppercase;
-  line-height: 1.35;
-  color: #052e16;
-  background: #22c55e;
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, .35),
-    0 4px 12px -6px rgba(0, 0, 0, .55);
+  text-indent: .06em;             /* compense la lettre espacée : texte centré */
+  color: #4a3208;
   pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, .45));
+}
+
+/* Le corps de l'étiquette : deux tons, coins du haut coupés. */
+.sti-etiquette-capsule::before {
+  content: "";
+  position: absolute;
+  inset: 12px 0 0 0;              /* sous le cordon */
+  z-index: -1;
+  background: linear-gradient(90deg, #fbce4f 0 50%, #eeb02a 50% 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .45),
+    inset 0 -6px 10px rgba(120, 78, 0, .18);
+  border-radius: 0 0 4px 4px;      /* repli si clip-path n'est pas connu */
+  -webkit-clip-path: polygon(0 26%, 24% 0, 76% 0, 100% 26%, 100% 93%, 93% 100%, 7% 100%, 0 93%);
+  clip-path: polygon(0 26%, 24% 0, 76% 0, 100% 26%, 100% 93%, 93% 100%, 7% 100%, 0 93%);
+}
+
+/* Le cordon et l'œillet : deux brins qui se rejoignent dans l'anneau sombre.
+   Le dessin est un SVG en ligne (aucun fichier à charger, aucun réseau — il
+   s'affiche même dans un aperçu hors ligne). */
+.sti-etiquette-capsule::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  block-size: 26px;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 74 26'%3E%3Cg fill='none' stroke='%23dfa91f' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M17 2C24 7 32 12 35 19'/%3E%3Cpath d='M57 2C50 7 42 12 39 19'/%3E%3C/g%3E%3Ccircle cx='37' cy='18' r='4.6' fill='%23f6dc9a' stroke='%236b4d12' stroke-width='2.9'/%3E%3C/svg%3E")
+    center top / 74px 26px no-repeat;
+}
+
+/* Sur un téléphone étroit, la carte est petite : l'étiquette se réduit d'autant
+   pour ne pas manger l'affiche. */
+@media (max-width: 420px) {
+  .sti-etiquette-capsule {
+    inline-size: 62px;
+    block-size: 42px;
+    padding-block-end: 7px;
+    font-size: .47rem;
+  }
+  .sti-etiquette-capsule::before { inset-block-start: 10px; }
+  .sti-etiquette-capsule::after { block-size: 22px; background-size: 62px 22px; }
+  .featured-video-card.sti-capsule-vedette .featured-video-card__head { padding-inline-start: 82px; }
 }
 
 /* Le repère « ✓ Vue » occupait le même coin : il passe à droite, sinon les deux
@@ -127,31 +178,25 @@
   }
 }
 
-/* L'étiquette : petite, sobre, elle ne clignote pas — elle s'éclaircit. */
-.featured-video-card.sti-capsule-vedette::before,
-.matiere-video-card.sti-capsule-vedette::before {
-  content: "✦ Capsule";
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 4;
-  padding: 3px 9px;
-  border-radius: 999px;
-  font-size: .68rem;
-  font-weight: 800;
-  letter-spacing: .04em;
-  text-transform: uppercase;
-  color: #12161f;
-  background: color-mix(in srgb, var(--sti-capsule-accent) 88%, #ffffff);
-  box-shadow: 0 4px 12px -6px rgba(0, 0, 0, .55);
-  pointer-events: none;
-  opacity: .85;
-  animation: sti-capsule-etiquette-V556 5.6s ease-in-out infinite;
+/* L'étiquette des pages de cours est la même que celle de la grille : un vrai
+   élément `.sti-etiquette-capsule`, posé dans le balisage (voir les cartes de
+   cours/javascript.html et cours/php.html). Elle ne clignote pas.
+
+   La carte doit d'abord être le repère de cette étiquette (position absolue) :
+   sans cela, elle se collerait au coin de la fenêtre. */
+.featured-video-card.sti-capsule-vedette,
+.matiere-video-card.sti-capsule-vedette { position: relative; }
+
+.sti-capsule-vedette .sti-etiquette-capsule {
+  inset-block-start: 10px;
+  inset-inline-start: 10px;
 }
 
-@keyframes sti-capsule-etiquette-V556 {
-  0%, 100% { opacity: .82; }
-  50% { opacity: 1; }
+/* Le grand lecteur a un bandeau de titre en haut : on lui laisse la place de
+   l'étiquette, sinon le titre passerait dessous. La carte d'une matière, elle,
+   commence par l'affiche — l'étiquette s'y pose sans gêner personne. */
+.featured-video-card.sti-capsule-vedette .featured-video-card__head {
+  padding-inline-start: 96px;
 }
 
 /* Survol / focus : plus de pulsation, la lueur reste allumée. */
@@ -164,11 +209,6 @@
   box-shadow:
     0 0 0 2.5px color-mix(in srgb, var(--sti-capsule-accent) 60%, transparent),
     var(--shadow-md, 0 10px 24px -18px rgba(0, 0, 0, .45));
-}
-.sti-capsule-vedette:hover::before,
-.sti-capsule-vedette:focus-within::before {
-  opacity: 1;
-  animation: none;
 }
 
 /* Renfort : les navigateurs qui connaissent :has() obtiennent le même effet
@@ -198,8 +238,7 @@
   #videosGrid .video-card--capsule,
   .featured-video-card.sti-capsule-vedette,
   .matiere-video-card.sti-capsule-vedette,
-  .featured-video-card.sti-capsule-vedette::before,
-  .matiere-video-card.sti-capsule-vedette::before {
+  .sti-etiquette-capsule {
     animation: none !important;
   }
   #videosGrid .video-card--capsule {
@@ -209,8 +248,7 @@
   .matiere-video-card.sti-capsule-vedette {
     box-shadow: 0 0 0 2px color-mix(in srgb, var(--sti-capsule-accent) 45%, transparent);
   }
-  .featured-video-card.sti-capsule-vedette::before,
-  .matiere-video-card.sti-capsule-vedette::before { opacity: 1; }
+  .sti-etiquette-capsule { opacity: 1; }
 }
 
 /* Mode contraste élevé : le halo décoratif s'efface, la bordure suffit. */
@@ -222,6 +260,14 @@
     outline: 2px solid CanvasText;
     outline-offset: 2px;
   }
+  /* L'étiquette perd ses couleurs : on garde sa silhouette et son mot. */
+  .sti-etiquette-capsule { filter: none; color: CanvasText; }
+  .sti-etiquette-capsule::before {
+    background: Canvas;
+    border: 1px solid CanvasText;
+    box-shadow: none;
+  }
+  .sti-etiquette-capsule::after { display: none; }  /* cordon décoratif */
 }
 
 /* Impression : aucun halo, l'étiquette reste lisible. */
@@ -231,4 +277,9 @@
     animation: none !important;
     box-shadow: none !important;
   }
+  /* L'étiquette garde ses couleurs à l'impression : sans elles, le mot brun
+     sur blanc resterait lisible mais l'étiquette ne ressemblerait plus à rien. */
+  .sti-etiquette-capsule,
+  .sti-etiquette-capsule::before,
+  .sti-etiquette-capsule::after { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
 }

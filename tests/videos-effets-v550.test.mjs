@@ -105,9 +105,9 @@ test('le lot v550 est publié et versionné', () => {
   const sw = lire('sw.js');
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
   assert.match(sw, /var UPDATE_ID = "v553-defilement-passif-20261030"/);
-  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "php-chaines-v566"/);
-  assert.match(sw, /url: "\.\/index\.html", revision: "php-chaines-v566"/);
-  assert.match(sw, /url: "\.\/cours\/php\.html", revision: "php-chaines-v566"/);
+  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "etiquette-capsule-v571"/);
+  assert.match(sw, /url: "\.\/index\.html", revision: "etiquette-capsule-v571"/);
+  assert.match(sw, /url: "\.\/cours\/php\.html", revision: "etiquette-capsule-v571"/);
   /* la capsule des boucles reste hors du delta automatique (média lourd) */
   assert.ok(!sw.split('var UPDATE_FILES = [')[1].split('];')[0].includes('BouclePour-v547.mp4'));
 });
