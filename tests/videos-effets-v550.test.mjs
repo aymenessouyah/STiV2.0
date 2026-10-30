@@ -38,7 +38,7 @@ test('chaque carte de la vidéothèque reçoit son effet et sa couleur', () => {
     'les capsules portent leur classe');
 
   const liste = catalogue();
-  assert.equal(liste.length, 25, 'vingt-cinq cartes');
+  assert.equal(liste.length, 26, 'vingt-six cartes');
   assert.ok(liste.every((v) => v.couleur && /^#[0-9a-f]{6}$/i.test(v.couleur)), 'chaque carte a sa couleur');
   const effets = liste.map((v) => effetAttendu(v.id));
   assert.ok(effets.every((e) => e >= 0 && e <= 3), 'quatre effets possibles');
@@ -88,7 +88,7 @@ test('la capsule des boucles appartient à JavaScript et à PHP', () => {
   const index = lire('index.html');
   const compte = (cle) => liste.filter((v) => ((v.matieres || [v.matiere]).indexOf(cle) !== -1)).length;
   assert.equal(compte('javascript'), 8);
-  assert.equal(compte('php'), 5);
+  assert.equal(compte('php'), 6);
   assert.ok(index.includes(`data-video-filter="javascript">JS (${compte('javascript')})</button>`), 'pastille JS');
   assert.ok(index.includes(`data-video-filter="php">PHP (${compte('php')})</button>`), 'pastille PHP');
   assert.ok(index.includes(`data-video-filter="all">Toutes (${liste.length})</button>`), 'pastille « Toutes »');
@@ -105,9 +105,9 @@ test('le lot v550 est publié et versionné', () => {
   const sw = lire('sw.js');
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
   assert.match(sw, /var UPDATE_ID = "v553-defilement-passif-20261030"/);
-  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "date-js-v565"/);
-  assert.match(sw, /url: "\.\/index\.html", revision: "date-js-v565"/);
-  assert.match(sw, /url: "\.\/cours\/php\.html", revision: "date-js-v565"/);
+  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "php-chaines-v566"/);
+  assert.match(sw, /url: "\.\/index\.html", revision: "php-chaines-v566"/);
+  assert.match(sw, /url: "\.\/cours\/php\.html", revision: "php-chaines-v566"/);
   /* la capsule des boucles reste hors du delta automatique (média lourd) */
   assert.ok(!sw.split('var UPDATE_FILES = [')[1].split('];')[0].includes('BouclePour-v547.mp4'));
 });

@@ -185,10 +185,10 @@ test('le montage suit le modèle des autres capsules', () => {
 test('le lecteur du site sait ouvrir la capsule depuis la grille', () => {
   const protection = lire('assets/js/protection.js');
   assert.ok(protection.includes('var estDateJs = '), 'le garde-fou doit reconnaître le slug');
-  assert.ok(/url = estDateJs \? prefixeAssetsSTI\(\) \+ "videos\/DateJS-v565\.mp4"/.test(protection),
+  assert.ok(/estDateJs \? prefixeAssetsSTI\(\) \+ "videos\/DateJS-v565\.mp4"/.test(protection),
     'le fichier joué');
   assert.ok(protection.includes('STI_CHAPITRES_MEDIA["date-js"] = ['), 'les chapitres');
-  assert.ok(/slugCible = estDateJs \? "date-js"/.test(protection), 'le slug des chapitres');
+  assert.ok(/slugCible = estPhpChaines \? "php-chaines" : estDateJs \? "date-js"/.test(protection), 'le slug des chapitres');
 
   const lecteur = lire('assets/js/lecteur-commun.js');
   assert.match(lecteur, /'date-js': \['javascript',/);
@@ -227,7 +227,7 @@ test('la capsule est dans le paquet hors-ligne et versionnée', () => {
   for (const page of ['./index.html', './cours/javascript.html', './assets/js/app.js',
     './assets/js/protection.js', './assets/js/lecteur-commun.js',
     './assets/js/admin-vues-videos.js']) {
-    assert.ok(sw.includes(`{ url: "${page}", revision: "date-js-v565"`), 'révision de ' + page);
+    assert.ok(sw.includes(`{ url: "${page}", revision: "php-chaines-v566"`), 'révision de ' + page);
   }
 });
 
@@ -235,7 +235,7 @@ test('les totaux de l’accueil et du catalogue suivent', () => {
   const liste = catalogue();
   const index = lire('index.html');
   const js = liste.filter((v) => (v.matieres || [v.matiere]).includes('javascript')).length;
-  assert.equal(liste.length, 25, 'vingt-cinq capsules');
+  assert.equal(liste.length, 26, 'vingt-six capsules');
   assert.equal(js, 8, 'huit capsules JavaScript');
   assert.ok(index.includes(`data-video-filter="all">Toutes (${liste.length})</button>`));
   assert.ok(index.includes(`<span id="videosTotalNombre">${liste.length}</span>`));

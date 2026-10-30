@@ -19,6 +19,7 @@
     'fonctions-chaine': ['javascript','Les chaînes de caractères — méthodes, conversions et dates'],
     'date-js': ['javascript','L\'objet Date — le jour, le mois, l\'année'],
     'php-variables': ['php','PHP — Les variables, la portée et les types'],
+    'php-chaines': ['php','PHP — Chaînes, transtypage et date/heure'],
     'sql-cours': ['sql','Cours SQL'],
     'sql-initiation': ['sql','Construire une requête SQL'],
     'sql-serie4': ['sql','Série 4 SQL'],

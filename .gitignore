@@ -60,3 +60,11 @@ build/
 /outils/datejs/voix-off.wav
 /outils/datejs/voix/*.wav
 /outils/datejs/rendu.log
+
+# Capsule « Chaînes, transtypage et date/heure » (outils/phpchaines) :
+# les MP3 de la voix off sont livrés avec la fiche, le reste est intermédiaire.
+/outils/phpchaines/__pycache__/
+/outils/phpchaines/sortie_*.mp4
+/outils/phpchaines/voix-off.wav
+/outils/phpchaines/voix/*.wav
+/outils/phpchaines/rendu.log

@@ -207,7 +207,7 @@ test('le lot v551 est publié', () => {
   const sw = lire('sw.js');
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
   assert.match(sw, /var UPDATE_ID = "v553-defilement-passif-20261030"/);
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "date-js-v565"/);
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "php-chaines-v566"/);
   assert.ok(!sw.split('var UPDATE_FILES = [')[1].split('];')[0].includes('BouclePour-v547.mp4'),
     'les capsules restent hors du delta automatique');
 });

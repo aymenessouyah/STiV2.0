@@ -138,9 +138,9 @@ test('le cache hors-ligne embarque la vidéo sans téléchargement automatique',
   for (const chemin of [VIDEO, VTT]) assert.ok(offline.includes(`"./${chemin}"`), chemin);
   assert.ok(!delta.includes(`"./${VIDEO}"`), 'la vidéo n’entre jamais dans le delta mobile');
   assert.ok(!delta.includes(`"./${VTT}"`), 'ni ses sous-titres');
-  assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "date-js-v565"/);
-  assert.match(delta, /url: "\.\/assets\/js\/protection\.js", revision: "date-js-v565"/);
-  assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "date-js-v565"/);
+  assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "php-chaines-v566"/);
+  assert.match(delta, /url: "\.\/assets\/js\/protection\.js", revision: "php-chaines-v566"/);
+  assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "php-chaines-v566"/);
   const nbDelta = delta.split('{ url:').length - 1;
   assert.ok(nbDelta <= 262, `delta trop long : ${nbDelta}`);
 });
