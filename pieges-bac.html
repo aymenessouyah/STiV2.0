@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html data-sti-heritage="interface" lang="fr">
 <head>
+<meta charset="utf-8" />
 <script id="sti-early-boot">
 /* v425 (consigne auteur) : « quand on appelle la page index depuis une autre page, la barre du
    bas disparaît quelques millisecondes ; idem exercices qui s'affiche en clair avant de se
@@ -60,7 +61,6 @@
   } catch (e) {}
 })();
 </script>
-  <meta charset="UTF-8">
   <meta name="description" content="Les 25 pièges du Bac STI à éviter : erreurs fréquentes en HTML, CSS, JavaScript, SQL et PHP, avec la bonne pratique à retenir.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Les 25 Pièges du Bac STI à éviter — STI V2.0 By AE</title>
@@ -422,7 +422,7 @@
           id: "p3", cat: "htmlcss", badge: "🌐 HTML5 / CSS3",
           titre: "3. Mauvaise liaison entre <nav> et <iframe name=\"cadre\">",
           exp: "Pour qu'un lien du menu s'ouvre dans le cadre droit sans recharger toute la page index.html, l'attribut target du lien <a> doit être strictement identique au name de l'iframe.",
-          faux: '<a href="inscription.html" target="_blank">Inscription</a>\n<iframe id="cadre" src="inscription.html"></iframe>',
+          faux: '<a href="inscription.html" target="_blank" rel="noopener noreferrer">Inscription</a>\n<iframe id="cadre" src="inscription.html"></iframe>',
           vrai: '<a href="inscription.html" target="cadre">Inscription</a>\n<iframe name="cadre" src="inscription.html"></iframe>'
         },
         {
