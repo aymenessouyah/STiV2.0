@@ -1,0 +1,761 @@
+WEBVTT
+
+00:00:01.200 --> 00:00:03.414
+Bienvenue dans STI Version 2.0.
+
+00:00:03.414 --> 00:00:08.629
+Aujourd'hui, une capsule de PHP : les
+variables, la portée, et les types.
+
+00:00:08.629 --> 00:00:13.272
+L'écran est coupé en deux : à gauche, le
+cours et ses analogies ;
+
+00:00:13.272 --> 00:00:16.344
+à droite, le code PHP, et rien que le
+code.
+
+00:00:16.344 --> 00:00:22.130
+Et à la fin, des exercices : l'énoncé à
+gauche, la correction détaillée à droite.
+
+00:00:22.130 --> 00:00:25.987
+Une différence avec JavaScript, à dire
+tout de suite :
+
+00:00:25.987 --> 00:00:29.559
+en PHP, une variable commence par le signe
+dollar,
+
+00:00:29.559 --> 00:00:32.202
+et il n'y a ni var, ni let, ni const.
+
+00:00:32.202 --> 00:00:34.416
+On commence par la déclaration.
+
+00:00:34.966 --> 00:00:38.575
+En PHP, une variable commence par le signe
+dollar.
+
+00:00:38.575 --> 00:00:43.338
+Il n'y a pas de mot-clé de déclaration :
+ni var, ni let, ni const.
+
+00:00:43.338 --> 00:00:46.441
+La variable naît à sa première
+affectation.
+
+00:00:46.441 --> 00:00:51.493
+J'écris : dollar nom égal Ali entre
+guillemets, dollar age égal seize,
+
+00:00:51.493 --> 00:00:54.380
+dollar moyenne égal treize virgule cinq.
+
+00:00:54.380 --> 00:00:55.318
+Trois règles.
+
+00:00:55.318 --> 00:01:00.659
+Un : le nom commence par une lettre ou un
+souligné, jamais par un chiffre.
+
+00:01:00.659 --> 00:01:04.917
+Dollar note un est correct ; dollar un
+note est une erreur.
+
+00:01:04.917 --> 00:01:08.814
+Deux : PHP distingue les majuscules et les
+minuscules.
+
+00:01:08.814 --> 00:01:12.928
+Dollar age et dollar Age sont deux
+variables différentes.
+
+00:01:12.928 --> 00:01:17.331
+Trois : le type est attaché à la valeur,
+comme en JavaScript.
+
+00:01:17.331 --> 00:01:19.929
+Dollar x égal dix, c'est un entier ;
+
+00:01:19.929 --> 00:01:25.414
+puis dollar x égal le mot dix entre
+guillemets, c'est une chaîne : autorisé.
+
+00:01:25.414 --> 00:01:27.579
+Pour afficher, j'utilise echo.
+
+00:01:27.579 --> 00:01:31.621
+Avec des guillemets doubles, la variable
+est remplacée :
+
+00:01:31.621 --> 00:01:35.013
+echo, Bonjour, dollar nom, affiche Bonjour
+Ali.
+
+00:01:35.013 --> 00:01:38.910
+Avec des guillemets simples, le texte
+reste tel quel :
+
+00:01:38.910 --> 00:01:42.879
+echo, Bonjour, dollar nom, affiche
+Bonjour, dollar nom.
+
+00:01:42.879 --> 00:01:45.766
+Et pour coller deux morceaux, le point :
+
+00:01:45.766 --> 00:01:48.148
+echo, Bonjour, point, dollar nom.
+
+00:01:48.148 --> 00:01:50.241
+Trois fonctions pour tester :
+
+00:01:50.241 --> 00:01:53.777
+isset, qui dit si elle existe et n'est pas
+null ;
+
+00:01:53.777 --> 00:01:55.509
+unset, qui la supprime ;
+
+00:01:55.509 --> 00:01:58.035
+et empty, qui dit si elle est vide.
+
+00:01:58.035 --> 00:01:59.551
+Enfin les constantes.
+
+00:01:59.551 --> 00:02:05.036
+Une constante ne change jamais de valeur,
+et son nom ne porte pas de dollar.
+
+00:02:05.036 --> 00:02:10.088
+On la crée avec define, entre
+parenthèses : define, TVA, virgule, zéro
+
+00:02:10.088 --> 00:02:11.315
+virgule dix-neuf.
+
+00:02:11.315 --> 00:02:15.357
+Ou avec const : const, PI, égal, trois
+virgule quatorze.
+
+00:02:15.357 --> 00:02:20.192
+Et une constante est visible partout, y
+compris dans les fonctions.
+
+00:02:20.743 --> 00:02:25.825
+La portée, en anglais scope, c'est la zone
+du programme où une variable existe.
+
+00:02:25.825 --> 00:02:28.848
+En dehors de cette zone, PHP ne la connaît
+pas.
+
+00:02:28.848 --> 00:02:34.187
+Pour la comprendre, pensez au lycée : la
+portée, c'est la distance que la voix peut
+
+00:02:34.187 --> 00:02:34.830
+atteindre.
+
+00:02:34.830 --> 00:02:39.590
+Une annonce au haut-parleur est entendue
+dans le couloir et dans la cour :
+
+00:02:39.590 --> 00:02:41.327
+c'est une variable globale.
+
+00:02:41.327 --> 00:02:45.058
+Une fonction, elle, est une salle de
+classe porte fermée :
+
+00:02:45.058 --> 00:02:47.631
+l'annonce du haut-parleur n'y entre pas.
+
+00:02:47.631 --> 00:02:52.519
+Ce qui se dit dans la salle reste dans la
+salle : c'est une variable locale.
+
+00:02:52.519 --> 00:02:55.800
+Et voilà la différence importante avec
+JavaScript :
+
+00:02:55.800 --> 00:03:00.689
+dans une fonction PHP, une variable
+globale n'est pas accessible par défaut.
+
+00:03:00.689 --> 00:03:05.835
+Regardez à droite : dollar site égal STI,
+puis une fonction qui fait echo dollar
+
+00:03:05.835 --> 00:03:06.156
+site.
+
+00:03:06.156 --> 00:03:10.595
+Rien ne s'affiche : PHP donne un
+avertissement, variable non définie.
+
+00:03:10.595 --> 00:03:15.483
+Pour ouvrir la porte, le mot global :
+global, dollar site, et l'echo affiche
+
+00:03:15.483 --> 00:03:15.741
+STI.
+
+00:03:15.741 --> 00:03:20.050
+Autre solution, souvent préférable :
+passer la valeur en paramètre.
+
+00:03:20.050 --> 00:03:24.682
+Et il y a les carnets de liaison : dollar
+underscore GET, POST, SESSION.
+
+00:03:24.682 --> 00:03:29.313
+Ils sont donnés à tous les élèves : ce
+sont les variables superglobales,
+
+00:03:29.313 --> 00:03:30.471
+entendues partout.
+
+00:03:31.020 --> 00:03:36.744
+Deuxième différence avec JavaScript : en
+PHP, il n'y a pas de portée de bloc.
+
+00:03:36.744 --> 00:03:41.874
+Les accolades de if, de for et de while ne
+créent pas de zone propre.
+
+00:03:41.874 --> 00:03:45.739
+Une variable créée dans un bloc reste
+visible après.
+
+00:03:45.739 --> 00:03:49.382
+Regardez : if, true, accolades, dollar a
+égal un.
+
+00:03:49.382 --> 00:03:53.768
+Puis echo dollar a, en dehors du bloc : la
+page affiche un.
+
+00:03:53.768 --> 00:03:58.005
+Avec une boucle for, dollar i vaut trois
+après la boucle,
+
+00:03:58.005 --> 00:04:01.722
+et dollar dernier garde la dernière
+valeur : deux.
+
+00:04:01.722 --> 00:04:04.770
+Seule la fonction crée une portée locale.
+
+00:04:04.770 --> 00:04:09.305
+Une variable locale, elle, disparaît à la
+fin de la fonction.
+
+00:04:09.305 --> 00:04:13.914
+Avec le mot static, elle garde sa valeur
+d'un appel à l'autre.
+
+00:04:13.914 --> 00:04:19.564
+Voici un compteur : function compteur,
+accolades, static dollar n égal zéro.
+
+00:04:19.564 --> 00:04:22.612
+Dollar n plus plus, puis return dollar n.
+
+00:04:22.612 --> 00:04:27.147
+Premier appel : un. Deuxième appel : deux.
+Troisième : trois.
+
+00:04:27.147 --> 00:04:32.648
+Sans static, dollar n serait recréée à
+zéro à chaque appel, et afficherait
+
+00:04:32.648 --> 00:04:33.540
+toujours un.
+
+00:04:34.090 --> 00:04:36.623
+Le hoisting, en français la remontée :
+
+00:04:36.623 --> 00:04:42.021
+en JavaScript, les déclarations remontent
+en haut de leur zone avant l'exécution.
+
+00:04:42.021 --> 00:04:46.887
+PHP ne le fait pas pour les variables : le
+fichier est lu de haut en bas.
+
+00:04:46.887 --> 00:04:52.352
+L'analogie de la classe : le surveillant
+n'appelle que les élèves déjà inscrits et
+
+00:04:52.352 --> 00:04:52.885
+arrivés.
+
+00:04:52.885 --> 00:04:56.884
+Un élève qui n'existe pas encore sur la
+liste ne répond pas.
+
+00:04:56.884 --> 00:05:00.817
+Regardez à droite : echo dollar x, puis
+dollar x égal cinq.
+
+00:05:00.817 --> 00:05:05.416
+Le premier echo n'affiche rien :
+avertissement, variable non définie.
+
+00:05:05.416 --> 00:05:06.949
+Le second affiche cinq.
+
+00:05:06.949 --> 00:05:09.881
+Une exception, et une seule : les
+fonctions.
+
+00:05:09.881 --> 00:05:14.947
+Elles sont connues avant le début de la
+lecture, comme le règlement du lycée
+
+00:05:14.947 --> 00:05:16.613
+affiché avant la rentrée.
+
+00:05:16.613 --> 00:05:21.145
+On peut donc appeler double de quatre
+avant de l'avoir écrit : huit.
+
+00:05:21.695 --> 00:05:25.074
+Les types, maintenant. PHP a trois
+familles.
+
+00:05:25.074 --> 00:05:28.223
+Les scalaires : int, float, string, bool.
+
+00:05:28.223 --> 00:05:30.603
+Le composé : array, le tableau.
+
+00:05:30.603 --> 00:05:34.443
+Et le spécial : null, qui veut dire aucune
+valeur.
+
+00:05:34.443 --> 00:05:38.436
+Scalaire vient du latin scala, l'échelle,
+le degré :
+
+00:05:38.436 --> 00:05:43.505
+une valeur simple, à un seul niveau, qui
+ne contient rien d'autre.
+
+00:05:43.505 --> 00:05:49.418
+L'analogie de la cuisine : le sel, la
+farine et l'œuf sont des ingrédients de
+
+00:05:49.418 --> 00:05:49.802
+base,
+
+00:05:49.802 --> 00:05:52.874
+impossibles à décomposer en plus simple.
+
+00:05:52.874 --> 00:05:58.403
+Un gâteau, lui, est composé de plusieurs
+ingrédients : c'est un tableau.
+
+00:05:58.403 --> 00:06:01.168
+Pour connaître le type, deux outils.
+
+00:06:01.168 --> 00:06:06.159
+gettype : entier pour quinze, double pour
+trois virgule quatorze,
+
+00:06:06.159 --> 00:06:11.842
+chaîne pour Ali, booléen pour true, NULL
+pour null, array pour un tableau.
+
+00:06:11.842 --> 00:06:15.912
+var_dump, plus précis, affiche le type et
+la valeur :
+
+00:06:15.912 --> 00:06:17.986
+int, quinze ; string, deux.
+
+00:06:17.986 --> 00:06:22.901
+Et pour tester : is int, is float, is
+string, is array, is null.
+
+00:06:22.901 --> 00:06:26.510
+Et voici la grande différence avec
+JavaScript :
+
+00:06:26.510 --> 00:06:30.810
+en PHP, tout est copié par valeur, les
+tableaux compris.
+
+00:06:30.810 --> 00:06:35.802
+Dollar a égal cinq ; dollar b égal dollar
+a ; dollar b égal dix :
+
+00:06:35.802 --> 00:06:37.952
+dollar a vaut toujours cinq.
+
+00:06:37.952 --> 00:06:42.714
+Dollar t un égal un tableau ; dollar t
+deux égal dollar t un ;
+
+00:06:42.714 --> 00:06:47.321
+puis dollar t deux crochet zéro égal
+quatre-vingt-dix-neuf :
+
+00:06:47.321 --> 00:06:50.547
+dollar t un crochet zéro vaut toujours un.
+
+00:06:50.547 --> 00:06:56.153
+L'analogie : copier par valeur, c'est
+donner une photocopie du document ;
+
+00:06:56.153 --> 00:06:57.996
+l'original reste intact.
+
+00:06:57.996 --> 00:07:03.218
+Copier par référence, avec le et
+commercial, c'est donner l'original
+
+00:07:03.218 --> 00:07:03.986
+lui-même :
+
+00:07:03.986 --> 00:07:07.211
+toute modification est vue des deux côtés.
+
+00:07:07.211 --> 00:07:10.513
+Dans une fonction, dollar n est une
+copie ;
+
+00:07:10.513 --> 00:07:13.662
+et commercial dollar n, c'est l'original.
+
+00:07:14.213 --> 00:07:18.057
+Un tableau range plusieurs valeurs sous un
+seul nom.
+
+00:07:18.057 --> 00:07:24.118
+Il en existe deux sortes, et la différence
+tient à la façon de retrouver une case.
+
+00:07:24.118 --> 00:07:29.957
+Le tableau indexé : chaque case porte un
+numéro, l'indice, qui commence à zéro.
+
+00:07:29.957 --> 00:07:35.722
+L'analogie du couloir : une rangée de
+casiers numérotés zéro, un, deux, trois.
+
+00:07:35.722 --> 00:07:39.713
+Pour retrouver un objet, on donne le
+numéro du casier.
+
+00:07:39.713 --> 00:07:43.557
+Dollar notes égal un tableau de douze,
+quinze, neuf.
+
+00:07:43.557 --> 00:07:46.440
+Dollar notes crochet un affiche quinze.
+
+00:07:46.440 --> 00:07:50.653
+Dollar notes crochet zéro égal quatorze
+modifie une case.
+
+00:07:50.653 --> 00:07:55.531
+Dollar notes crochet trois égal dix ajoute
+le casier numéro trois.
+
+00:07:55.531 --> 00:07:58.340
+Et count de dollar notes donne quatre.
+
+00:07:58.340 --> 00:08:04.031
+Pour parcourir : une boucle for, avec i
+plus petit que count de dollar notes.
+
+00:08:04.031 --> 00:08:08.836
+Le tableau associatif, lui, repère ses
+cases par un nom : la clé.
+
+00:08:08.836 --> 00:08:10.979
+On écrit clé, flèche, valeur.
+
+00:08:10.979 --> 00:08:16.892
+L'analogie de la fiche de renseignements :
+une fiche d'élève avec des rubriques,
+
+00:08:16.892 --> 00:08:18.223
+nom, age, moyenne.
+
+00:08:18.223 --> 00:08:23.619
+Pour lire une information, on donne le nom
+de la rubrique, pas un numéro.
+
+00:08:23.619 --> 00:08:29.384
+Dollar eleve égal un tableau, nom flèche
+Ali, age flèche seize, moyenne flèche
+
+00:08:29.384 --> 00:08:30.862
+treize virgule cinq.
+
+00:08:30.862 --> 00:08:33.967
+Echo dollar eleve crochet nom affiche Ali.
+
+00:08:33.967 --> 00:08:38.476
+On ajoute une rubrique, classe, et on
+parcourt avec foreach :
+
+00:08:38.476 --> 00:08:42.910
+foreach, dollar eleve as, dollar cle,
+flèche, dollar valeur.
+
+00:08:42.910 --> 00:08:48.380
+À chaque tour, dollar cle reçoit
+l'étiquette et dollar valeur son contenu.
+
+00:08:48.380 --> 00:08:52.741
+Et pour tester une clé : isset de dollar
+eleve crochet nom.
+
+00:08:53.290 --> 00:08:58.249
+Deux apartés, maintenant. Ils sont hors
+programme, mais c'est bien de les
+
+00:08:58.249 --> 00:08:58.928
+connaître.
+
+00:08:58.928 --> 00:09:02.120
+Premier aparté : les valeurs vraies et
+fausses.
+
+00:09:02.120 --> 00:09:05.856
+Dans un test, PHP transforme la valeur en
+vrai ou faux.
+
+00:09:05.856 --> 00:09:10.068
+Sont fausses : false, zéro, zéro virgule
+zéro, la chaîne vide,
+
+00:09:10.068 --> 00:09:12.853
+la chaîne zéro, un tableau vide, et null.
+
+00:09:12.853 --> 00:09:14.415
+Tout le reste est vrai.
+
+00:09:14.415 --> 00:09:19.374
+Attention : contrairement à JavaScript, la
+chaîne zéro est fausse en PHP.
+
+00:09:19.374 --> 00:09:21.751
+Deuxième aparté : les comparaisons.
+
+00:09:21.751 --> 00:09:26.710
+Cinq égal égal cinq entre guillemets donne
+true, parce que PHP convertit.
+
+00:09:26.710 --> 00:09:31.736
+Cinq égal égal égal cinq entre guillemets
+donne false, parce que les types
+
+00:09:31.736 --> 00:09:32.416
+diffèrent.
+
+00:09:32.416 --> 00:09:38.121
+Et zéro virgule un plus zéro virgule deux
+égal égal zéro virgule trois donne false :
+
+00:09:38.121 --> 00:09:39.684
+la précision des réels.
+
+00:09:39.684 --> 00:09:42.808
+La règle : utilisez trois égales, et pas
+égal.
+
+00:09:42.808 --> 00:09:47.971
+Et retenez les conversions : cinq entre
+guillemets plus deux donne sept, une
+
+00:09:47.971 --> 00:09:48.650
+addition ;
+
+00:09:48.650 --> 00:09:53.609
+cinq entre guillemets point deux donne
+cinquante-deux, une concaténation.
+
+00:09:53.609 --> 00:09:57.684
+Entier de quinze px donne quinze ; entier
+de abc donne zéro.
+
+00:09:57.684 --> 00:10:02.507
+Ces apartés sont hors programme : on les
+connaît, on ne les révise pas.
+
+00:10:03.057 --> 00:10:09.450
+Passons aux exercices. Même écran, coupé
+en deux : l'énoncé à gauche, la correction
+
+00:10:09.450 --> 00:10:10.143
+à droite.
+
+00:10:10.143 --> 00:10:12.762
+Exercice un : que s'affiche-t-il ?
+
+00:10:12.762 --> 00:10:18.231
+Pour chaque extrait, donner ce qui
+s'affiche, ou le problème rencontré.
+
+00:10:18.231 --> 00:10:24.238
+Extrait a : dollar a égal un, puis une
+fonction f qui fait echo dollar a, puis
+
+00:10:24.238 --> 00:10:24.855
+l'appel.
+
+00:10:24.855 --> 00:10:30.708
+Correction : rien ne s'affiche, avec un
+avertissement, variable non définie.
+
+00:10:30.708 --> 00:10:34.097
+La fonction ne voit pas la variable
+globale.
+
+00:10:34.097 --> 00:10:40.413
+Extrait b : dollar b égal deux, fonction
+g, global dollar b, echo dollar b, appel.
+
+00:10:40.413 --> 00:10:43.571
+Correction : deux. Global ouvre la porte.
+
+00:10:43.571 --> 00:10:49.964
+Extrait c : if, true, accolades, dollar c
+égal trois, puis echo dollar c en dehors.
+
+00:10:49.964 --> 00:10:54.432
+Correction : trois. Il n'y a pas de portée
+de bloc en PHP.
+
+00:10:54.432 --> 00:11:00.670
+Extrait d : fonction h, static dollar n
+égal zéro, dollar n plus plus, echo, puis
+
+00:11:00.670 --> 00:11:01.672
+trois appels.
+
+00:11:01.672 --> 00:11:07.063
+Correction : un, deux, trois. Static garde
+la valeur entre les appels.
+
+00:11:07.063 --> 00:11:11.146
+Extrait e : echo dollar d, puis dollar d
+égal quatre.
+
+00:11:11.146 --> 00:11:17.384
+Correction : rien, avec un avertissement.
+Il n'y a pas de remontée des variables.
+
+00:11:17.384 --> 00:11:23.007
+Extrait f : define, X, dix, une fonction k
+qui fait echo X, puis l'appel.
+
+00:11:23.007 --> 00:11:27.012
+Correction : dix. Une constante est
+visible partout.
+
+00:11:27.012 --> 00:11:32.250
+Six extraits, et trois idées : la portée,
+static, et les constantes.
+
+00:11:32.800 --> 00:11:34.189
+Dernier exercice.
+
+00:11:34.189 --> 00:11:40.724
+Écrire une fonction moyenne de dollar
+notes, qui reçoit un tableau de nombres et
+
+00:11:40.724 --> 00:11:42.521
+retourne leur moyenne.
+
+00:11:42.521 --> 00:11:48.729
+Contraintes : une boucle for, la fonction
+count, et aucune variable globale.
+
+00:11:48.729 --> 00:11:51.833
+Lisons la correction, ligne par ligne.
+
+00:11:51.833 --> 00:11:56.816
+Ligne un : function moyenne, entre
+parenthèses, dollar notes.
+
+00:11:56.816 --> 00:11:59.839
+Le paramètre est local à la fonction.
+
+00:11:59.839 --> 00:12:02.779
+Ligne deux : dollar somme égal zéro.
+
+00:12:02.779 --> 00:12:09.151
+Ligne trois : for, dollar i égal zéro,
+dollar i plus petit que count de dollar
+
+00:12:09.151 --> 00:12:11.275
+notes, dollar i plus plus.
+
+00:12:11.275 --> 00:12:17.320
+Ligne quatre : dollar somme égal dollar
+somme plus dollar notes crochet i.
+
+00:12:17.320 --> 00:12:19.035
+J'ajoute chaque note.
+
+00:12:19.035 --> 00:12:25.815
+Ligne six, après la boucle : return dollar
+somme divisé par count de dollar notes :
+
+00:12:25.815 --> 00:12:29.001
+le total divisé par le nombre de notes.
+
+00:12:29.001 --> 00:12:33.902
+À l'appel, avec douze, quinze, neuf : la
+page affiche douze.
+
+00:12:33.902 --> 00:12:40.274
+Vérifions : douze plus quinze plus neuf,
+trente-six ; divisé par trois, douze.
+
+00:12:40.274 --> 00:12:41.091
+À retenir.
+
+00:12:41.091 --> 00:12:47.708
+Une variable commence par un dollar, sans
+mot-clé ; PHP distingue les majuscules.
+
+00:12:47.708 --> 00:12:53.916
+Une constante se crée avec define ou
+const, sans dollar, et se voit partout.
+
+00:12:53.916 --> 00:13:00.124
+Dans une fonction, une variable globale
+n'est pas visible : un paramètre, ou
+
+00:13:00.124 --> 00:13:00.696
+global.
+
+00:13:00.696 --> 00:13:07.231
+Seule la fonction crée une portée ; static
+garde la valeur d'un appel à l'autre.
+
+00:13:07.231 --> 00:13:13.929
+Les scalaires : int, float, string, bool ;
+le composé : array ; le spécial : null.
+
+00:13:13.929 --> 00:13:16.952
+Un tableau est indexé, ou associatif.
+
+00:13:16.952 --> 00:13:22.262
+Tout est copié par valeur ; le et
+commercial transmet l'original.
+
+00:13:22.262 --> 00:13:27.816
+Le plus additionne, le point concatène ;
+et on préfère trois égales.
+
+00:13:27.816 --> 00:13:31.819
+À vous de jouer, dans STI Version 2.0. À
+bientôt.

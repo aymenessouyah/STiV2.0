@@ -315,7 +315,7 @@ test("le lecteur commun reconnaît la capsule et son fichier compile", () => {
   assert.doesNotThrow(() => new Function(lecteur), 'lecteur-commun.js compile');
 
   assert.match(protection, /var estConsoleVariables = \(sSlug === "console-variables"/);
-  assert.ok(protection.includes('!estBouclePour && !estConsoleVariables) {'),
+  assert.ok(protection.includes('!estBouclePour && !estConsoleVariables && !estPhpVariables) {'),
     'le garde-fou du lecteur laisse passer la capsule');
   assert.ok(protection.includes('var slugCible = estBouclePour ? "boucle-pour" : estConsoleVariables ? "console-variables"'),
     'le slug de la capsule est transmis');
@@ -335,7 +335,7 @@ test('le catalogue du site compte la nouvelle capsule', () => {
   const reelle = Math.round(dureeMp4(VIDEO));
   assert.ok(Math.abs(11 * 60 + 31 - reelle) <= 2, `durée annoncée 11:31 vs réelle ${reelle}`);
 
-  assert.ok(index.includes('data-video-filter="all">Toutes (22)</button>'), 'pastille « Toutes »');
+  assert.ok(index.includes('data-video-filter="all">Toutes (23)</button>'), 'pastille « Toutes »');
   assert.ok(index.includes('data-video-filter="javascript">JS (6)</button>'), 'pastille JavaScript');
 
   const admin = lire('assets/js/admin-vues-videos.js');
@@ -354,5 +354,5 @@ test('le manifeste hors ligne contient la vidéo, ses sous-titres et ses emprein
     const sha = createHash('sha1').update(Buffer.concat([Buffer.from(`blob ${blob.length}\0`), blob])).digest('hex');
     assert.equal(entree.gitSha, sha, `sha1 de ${chemin}`);
   }
-  assert.match(manifeste.version, /^v548/);
+  assert.match(manifeste.version, /^v549/);
 });

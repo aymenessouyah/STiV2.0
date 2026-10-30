@@ -78,8 +78,8 @@ test('v495 : protection.js n’installe le lecteur de vidéos que hors des pages
 
 test('v495 : sw.js invalide protection.js et le manifeste reste cohérent', () => {
   const sw = lire('sw.js');
-  assert.match(sw, /var CACHE = "sti-atelier-v381"/);
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "console-variables-v548"/);
+  assert.match(sw, /var CACHE = "sti-atelier-v382"/);
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "php-variables-v549"/);
   const bloc = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   const urls = [...bloc.matchAll(/url:\s*"([^"]+)"/g)].map(m => m[1]);
   assert.equal(new Set(urls).size, urls.length, 'aucune URL de mise à jour en double');

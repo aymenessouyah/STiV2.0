@@ -90,14 +90,14 @@ function dureeMp4(path) {
   } finally { closeSync(fd); }
 }
 
-test('catalogue : fichiers réels, 22 entrées distinctes, durées MP4 et restrictions', () => {
+test('catalogue : fichiers réels, 23 entrées distinctes, durées MP4 et restrictions', () => {
   const js = lire('assets/js/app.js');
   const texte = js.split('var CATALOGUE_VIDEOS = ')[1].split('\n  ];')[0] + '\n  ]';
   const catalogue = vm.runInNewContext('(' + texte + ')');
-  assert.equal(catalogue.length, 22);
+  assert.equal(catalogue.length, 23);
   assert.equal(new Set(catalogue.map(v => v.id)).size, catalogue.length);
   const comptes = {}; for (const v of catalogue) comptes[v.matiere] = (comptes[v.matiere] || 0) + 1;
-  assert.deepEqual(comptes, { html5:4, css3:5, javascript:6, sql:4, php:3 });
+  assert.deepEqual(comptes, { html5:4, css3:5, javascript:6, sql:4, php:4 });
   assert.ok(catalogue.some(v => v.id === 'tp-evenements-liens'
     && v.matieres.join() === 'html5,css3'
     && v.srcPrincipal === 'assets/videos/tp-evenements-liens-v2.mp4'
@@ -137,11 +137,12 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
   }
   assert.doesNotMatch(delta, /"\.\/[^"\n]+\.(?:mp4|mp3|pdf|wasm)"/i);
   for (const chemin of ['assets/css/cours.css','assets/js/app.js','assets/js/cours-matieres.js','cours/html5.html','cours/css3.html','cours/javascript.html','cours/sql.html','cours/php.html']) {
-    const revision = chemin === 'assets/js/app.js' ? 'console-variables-v548'
+    const revision = chemin === 'assets/js/app.js' ? 'php-variables-v549'
       : chemin === 'assets/css/cours.css' ? 'retrait-fond-cours-v508'
       : chemin === 'cours/css3.html' ? 'tp-transitions-v512'
       : chemin === 'cours/html5.html' ? 'tp-display-v510'
       : chemin === 'cours/javascript.html' ? 'console-variables-v548'
+      : chemin === 'cours/php.html' ? 'php-variables-v549'
       : chemin.startsWith('cours/') ? 'retrait-fond-cours-v508' : 'progression-chapitres-v492';
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${revision}"`), `révision de ${chemin}`);
   }
@@ -319,8 +320,8 @@ test('v513 : les totaux de vidéos de l’accueil suivent le catalogue', () => {
   const index = lire('index.html');
   const compter = (cle) => catalogue.filter((v) => ((v.matieres || [v.matiere]).indexOf(cle) !== -1)).length;
   const total = catalogue.length;
-  /* Une seule source de vérité : 22 capsules aujourd'hui (dont les 37 Défis, la boucle Pour et la console). */
-  assert.equal(total, 22);
+  /* Une seule source de vérité : 23 capsules aujourd'hui (dont les 37 Défis, la boucle Pour, la console et PHP). */
+  assert.equal(total, 23);
   assert.ok(index.includes(`data-video-filter="all">Toutes (${total})</button>`), 'pastille « Toutes »');
   assert.match(index, new RegExp(`id="videosTotalNombre">${total}</span>`));
   /* Les pastilles par matière, les cartes de cours et le pied de page disent la même chose. */

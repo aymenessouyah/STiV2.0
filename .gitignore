@@ -37,3 +37,9 @@ build/
 /outils/variables/sortie_*.mp4
 /outils/variables/voix-off.wav
 /outils/variables/voix/*.wav
+
+# PHP, les variables et les types : rendus intermédiaires, piste audio de montage et cache Python
+/outils/phpvariables/__pycache__/
+/outils/phpvariables/sortie_*.mp4
+/outils/phpvariables/voix-off.wav
+/outils/phpvariables/voix/*.wav

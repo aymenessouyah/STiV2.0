@@ -54,7 +54,7 @@ test('v525 : la grille est responsive et les cartes restent lisibles', () => {
 });
 
 test('v525 : la grille est livrée hors ligne et son empreinte est exacte', () => {
-  assert.match(sw, /var UPDATE_ID = "v548-console-variables-20261030"/);
+  assert.match(sw, /var UPDATE_ID = "v549-php-variables-20261030"/);
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   assert.match(delta, /url: "\.\/assets\/css\/cours-javascript\.css", revision: "barre-mobile-v532"/);
   assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "console-variables-v548", refreshIfCached: true/);
@@ -64,7 +64,7 @@ test('v525 : la grille est livrée hors ligne et son empreinte est exacte', () =
     assert.ok(contenu.includes('"./cours/javascript.html"'), bloc + ' : page du cours');
   }
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  assert.equal(manifeste.version, 'v548-sti-atelier-v381');
+  assert.equal(manifeste.version, 'v549-sti-atelier-v382');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((n, f) => n + f.bytes, 0));
   for (const chemin of ['cours/javascript.html', 'assets/css/cours-javascript.css', 'sw.js']) {
