@@ -43,3 +43,4 @@ build/
 /outils/phpvariables/sortie_*.mp4
 /outils/phpvariables/voix-off.wav
 /outils/phpvariables/voix/*.wav
+/tests/__pycache__/
