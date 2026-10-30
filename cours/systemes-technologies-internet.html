@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="sombre" data-taille-texte="normale" class="sti-theme-wait">
+<head>
+  <meta charset="UTF-8">
+  <!-- Éviter le flash de thème avant l'exécution ordonnée de profil.js.
+       Le délai de secours et noscript rendent le contenu visible en cas d'échec. -->
+  <style>html.sti-theme-wait body { visibility: hidden; }</style>
+  <noscript><style>html.sti-theme-wait body { visibility: visible; }</style></noscript>
+  <script>setTimeout(function () { document.documentElement.classList.remove("sti-theme-wait"); }, 3000);</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Cours 3ème SI « Systèmes, technologies et Internet » : systèmes d’exploitation, réseaux informatiques et objets connectés — la partie du manuel qui précède HTML5.">
+  <meta name="author" content="Aymen Essouyah">
+  <meta name="robots" content="noai, noimageai">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https://vywujxmepvcbgedgmger.supabase.co; media-src 'self' blob:; connect-src 'self' https: wss:; frame-src 'self' https://www.youtube.com https://example.com; form-action 'self' https://www.google.com; worker-src 'self'; object-src 'none'; base-uri 'self'">
+  <title>Systèmes, technologies et Internet — Cours 3ème SI · STI V2.0</title>
+  <link rel="icon" href="../assets/icons/STI_by_AE.ico">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/cours.css">
+  <link rel="stylesheet" href="../assets/css/cours-sti.css?v=573">
+  <link rel="stylesheet" href="../assets/css/protection.css?v=227">
+  <!-- Dépendances de l’accès conservées telles quelles et exécutées dans cet ordre. -->
+  <script src="../assets/js/config.js?v=479" defer></script>
+  <script src="../assets/js/supabase-umd.js" defer></script>
+  <script src="../assets/js/acces.js?v=479" defer></script>
+  <script src="../assets/js/sync-progressions.js?v=479" defer></script>
+  <script src="../assets/js/profil.js" defer></script>
+  <script src="../assets/js/app.js" defer></script><script src="../assets/js/suivi-profil.js" defer></script><script src="../assets/js/reconnexion-profil.js" defer></script><script src="../assets/js/appel-quiz.js" defer></script>
+<script src="../assets/js/cours-onglets-mobile.js" defer></script>
+  <script src="../assets/js/protection.js?v=227&amp;rev=479" defer></script><script src="../assets/js/lecteur-commun.js" defer></script>
+</head>
+<body class="sti-v2 course-page course-page--sti" data-course-unified="sti">
+  <a class="skip-link" href="#contenu-principal">Aller au contenu principal</a>
+  <div class="reading-progress" id="readingProgressBar" aria-hidden="true"></div>
+  <header class="site-header" role="banner">
+    <div class="container site-header__inner">
+      <!-- Identité visuelle STI V2.0 -->
+      <a class="brand-logo" href="../index.html" aria-label="STI V2.0 Lycée Raféha · 3e &amp; 4e SI — Retour à l’accueil">
+        <img class="brand-logo__drapeau" src="../assets/images/drapeau-tunisie.svg" alt="Drapeau tunisien" width="40" height="40" loading="lazy">
+        <span class="brand-logo__mark" aria-hidden="true"><img src="../assets/icons/sti-icon-192.png" alt="" width="40" height="40"></span>
+        <span class="brand-logo__text">
+          <span class="brand-logo__title">STI V2.0</span>
+          <span class="brand-logo__sub">Lycée Raféha · 3e &amp; 4e SI</span>
+        </span>
+      </a>
+
+      <!-- Navigation principale -->
+      <nav class="site-nav" aria-label="Navigation principale">
+        <a class="site-nav__link" href="../index.html#videos" data-i18n="nav.videos">Vidéos</a>
+        <a class="site-nav__link" href="../index.html#cours" data-i18n="nav.cours">Cours</a>
+        <a class="site-nav__link" href="../index.html#smart-book" data-i18n="nav.livres">Scanner mon livre</a>
+        <a class="site-nav__link" href="../index.html#outils-bac" data-i18n="nav.outils">Outils Bac</a>
+        <a class="site-nav__link" href="../index.html#quiz" data-i18n="nav.quiz">Quiz</a>
+        <a class="site-nav__link" href="../glossaire.html" data-i18n="nav.glossaire">Glossaire</a>
+      </nav>
+
+      <!-- Actions rapides : Recherche Ctrl+K · PWA · 3 Modes · Badge Abonné -->
+      <div class="header-actions">
+        <button type="button" class="search-trigger" data-open-search="" aria-label="Rechercher… Ctrl K — Ouvrir la recherche rapide" data-course-search-trigger="">
+          <span aria-hidden="true">🔎</span>
+          <span class="search-trigger__label">Rechercher…</span>
+          <kbd>Ctrl K</kbd>
+        </button>
+
+        <button type="button" class="btn btn-secondary btn-sm" id="installBtn" hidden="" title="Installer l'application STI V2.0 hors-ligne">
+          📲 Installer
+        </button>
+
+        <div class="theme-switcher" role="group" aria-label="Choisir le mode d'affichage">
+          <button type="button" class="theme-switcher__btn" data-set-theme="clair" aria-pressed="false" title="Mode clair">☀️</button>
+          <button type="button" class="theme-switcher__btn" data-set-theme="intermediaire" aria-pressed="false" title="Mode intermédiaire">🌗</button>
+          <button type="button" class="theme-switcher__btn" data-set-theme="sombre" aria-pressed="true" title="Mode sombre">🌙</button>
+        </div>
+
+        <!-- Emplacement dynamique du Badge Abonné (remplace l'ancienne roue) -->
+        <div data-subscriber-slot=""></div>
+
+        <button type="button" class="burger-btn" id="stiBurgerBtn" aria-label="Ouvrir le menu mobile" aria-expanded="false" aria-controls="stiMobileNav">
+          ☰
+        </button>
+      </div>
+    </div>
+
+    <!-- Menu déroulant mobile -->
+    <nav class="mobile-nav-drawer container" id="stiMobileNav" aria-label="Navigation mobile">
+      <a class="site-nav__link" href="../index.html#videos">🎥 Vidéos explicatives</a>
+      <a class="site-nav__link" href="../index.html#cours">📚 Cours &amp; Matières</a>
+      <a class="site-nav__link" href="../index.html#smart-book">📱 Scanner mon livre (Smart Book)</a>
+      <a class="site-nav__link" href="../index.html#outils-bac">🛠️ Ateliers &amp; Outils Bac</a>
+      <a class="site-nav__link" href="../index.html#quiz">🎯 Quiz &amp; Mes erreurs</a>
+      <a class="site-nav__link" href="../glossaire.html">🌍 Glossaire FR · EN · AR</a>
+      <a class="site-nav__link" href="../dashboard.html">📊 Mon tableau de bord</a>
+    </nav>
+  </header>
+  <main id="contenu-principal">
+    <section class="course-hero" aria-labelledby="titre-cours-sti">
+      <div class="container">
+        <nav class="course-breadcrumb" aria-label="Fil d’Ariane"><a href="../index.html">Accueil</a><span aria-hidden="true">›</span><a href="../index.html#cours">Cours</a><span aria-hidden="true">›</span><span class="course-breadcrumb__current" aria-current="page">Systèmes, technologies et Internet</span></nav>
+        <div class="course-hero__grid">
+          <div class="course-hero__copy">
+            <div class="course-eyebrow"><span class="badge" style="background:var(--accent-gold-soft);border:1px solid var(--accent-gold-border);color:var(--accent-gold)">🖥️ Systèmes · Réseaux · IoT</span><span class="course-eyebrow__meta">COURS COMPLET · 3ÈME SI UNIQUEMENT</span></div>
+            <h1 class="course-hero__title" id="titre-cours-sti">Comprendre la machine <span>avant le Web.</span></h1>
+            <p class="course-hero__lead">Le cours qui précède HTML5 : comment un ordinateur fonctionne, comment les équipements communiquent entre eux, et comment les objets connectés envoient leurs mesures sur Internet. Trois chapitres, des schémas, des activités corrigées et une évaluation générale.</p>
+            <p class="course-reading-time" title="Estimation fondée sur le texte des chapitres, à 180 mots par minute."><span aria-hidden="true">⏱</span> Lecture estimée : <strong>22 min</strong> <span>· hors activités</span></p>
+            <div class="hero-actions">
+              <a class="btn btn-course-primary" href="#introduction">📖 Commencer le cours</a>
+              <a class="btn btn-secondary" href="#evaluation">📝 Aller à l’évaluation</a>
+              <a class="hero-annexe-link" href="../livre-smart.html?livre=3si-2026&amp;page=5">📖 Ouvrir les pages 5 à 13 du manuel ↗</a>
+            </div>
+            <div class="course-hero__facts"><span>▦ 3 chapitres</span><span>✦ Activités corrigées</span><span>📝 Évaluation sur 10 points</span></div>
+          </div>
+          <section class="course-overview" data-sti-feuille-de-route aria-label="Présentation du cours">
+            <div class="course-lesson" aria-labelledby="sti-lecon-titre">
+              <h2 id="sti-lecon-titre">Dans cette leçon</h2>
+              <p>À la fin, vous serez en mesure de :</p>
+              <ul class="course-lesson__objectifs">
+                <li>Expliquer le rôle d’un système d’exploitation et citer ses fonctions.</li>
+                <li>Distinguer logiciel propriétaire et logiciel libre, et déployer un système.</li>
+                <li>Décrire un réseau, son étendue, ses équipements et ses paramètres (IP, masque, DNS, MAC).</li>
+                <li>Comparer les architectures client/serveur et poste à poste, et citer les protocoles usuels.</li>
+                <li>Définir l’Internet des objets et suivre le trajet d’une mesure jusqu’à la plateforme.</li>
+              </ul>
+            </div>
+            <nav class="course-roadmap" aria-labelledby="sti-feuille-titre">
+              <h2 id="sti-feuille-titre">Feuille de route du cours</h2>
+              <ol>
+                <li><a href="#ch1-se" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">1</span><span class="course-roadmap__copy"><strong>Les systèmes d’exploitation</strong><span>À quoi sert le logiciel qui pilote la machine, et comment le déployer ?</span></span></a></li>
+                <li><a href="#ch2-definition" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">2</span><span class="course-roadmap__copy"><strong>Les réseaux informatiques</strong><span>Comment les équipements s’échangent-ils des données ?</span></span></a></li>
+                <li><a href="#ch3-definition" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">3</span><span class="course-roadmap__copy"><strong>L’Internet des objets</strong><span>Comment un capteur fait-il remonter une mesure jusqu’à une plateforme ?</span></span></a></li>
+                <li><a href="#synthese" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">4</span><span class="course-roadmap__copy"><strong>La fiche de synthèse</strong><span>Les notions à mémoriser, en un seul tableau.</span></span></a></li>
+                <li><a href="#evaluation" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">5</span><span class="course-roadmap__copy"><strong>L’évaluation générale</strong><span>Dix questions pour vérifier les trois chapitres.</span></span></a></li>
+              </ol>
+            </nav>
+          </section>
+          <section class="featured-video-card" aria-label="Ce cours dans le manuel connecté">
+            <div class="featured-video-card__head">
+              <div><span class="video-label">MANUEL CONNECTÉ · 3ÈME SI</span><h2>Pages 5 à 13 <span>(édition 2026)</span></h2></div>
+              <span class="badge" style="background:var(--accent-gold-soft);border:1px solid var(--accent-gold-border);color:var(--accent-gold)">📖 9 pages</span>
+            </div>
+            <div class="featured-video-card__foot">
+              <p>Ce cours est exactement la partie « Systèmes, technologies et Internet » du manuel : les pages 5 à 13. Scannez le QR code d’une de ces pages — ou saisissez son numéro — pour revenir ici, au bon chapitre.</p>
+              <div class="source-actions">
+                <a class="source-btn" href="../livre-smart.html?livre=3si-2026&amp;page=5">📖 Ouvrir le livre connecté</a>
+                <a class="source-link" href="#manuel">Correspondance page par page</a>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <div id="cours" class="course-panel" data-course-panel="cours">
+      <div class="container" style="padding-block:var(--space-6)">
+        <div class="course-main">
+
+          <!-- ══════════ INTRODUCTION ══════════ -->
+          <section class="course-intro-banner" id="introduction">
+            <p class="sti-partie-banner"><strong>PARTIE 1 · 3ÈME ANNÉE SI</strong> — Avant le développement Web <span class="sti-partie-banner__pages">manuel, pages 5 à 13</span></p>
+            <h2 class="course-chapter__title">Une vision globale du domaine</h2>
+            <p class="source-accent">Un ordinateur, un téléphone, une montre connectée ou une caméra intelligente sont des <strong>équipements informatiques</strong>. Pour fonctionner et communiquer, ils utilisent des <strong>logiciels</strong>, des <strong>réseaux</strong> et des <strong>protocoles</strong>.</p>
+            <div class="sti-triptyque">
+              <div><span aria-hidden="true">💻</span><strong>Le système</strong><p>Gère les ressources matérielles et permet d’exécuter les applications.</p></div>
+              <div><span aria-hidden="true">🌐</span><strong>Le réseau</strong><p>Permet aux équipements d’échanger des données et de partager des ressources.</p></div>
+              <div><span aria-hidden="true">📡</span><strong>L’IoT</strong><p>Connecte des objets physiques capables de transmettre et de recevoir des données.</p></div>
+            </div>
+            <div class="sti-note"><b>Situation de départ.</b> <p>Un élève utilise son ordinateur pour consulter un cours, son téléphone pour envoyer un message et une montre connectée pour suivre son activité. Qui permet à ces équipements de fonctionner ? Comment communiquent-ils ? Comment les données arrivent-elles sur Internet ?</p></div>
+            <nav aria-label="Chapitres de ce cours" class="sti-triptyque">
+              <div><strong>Chapitre 1 · Systèmes d’exploitation</strong><p><a class="source-link" href="#ch1-se">Gérer l’environnement informatique de travail →</a></p></div>
+              <div><strong>Chapitre 2 · Réseaux informatiques</strong><p><a class="source-link" href="#ch2-definition">Assurer la communication entre équipements →</a></p></div>
+              <div><strong>Chapitre 3 · Internet des objets</strong><p><a class="source-link" href="#ch3-definition">Connecter des objets physiques et échanger des données →</a></p></div>
+            </nav>
+          </section>
+
+          <!-- ══════════ CHAPITRE 1 ══════════ -->
+          <section class="course-chapter" id="ch1" aria-labelledby="titre-ch1">
+            <header class="course-chapter__head">
+              <h2 class="course-chapter__title" id="titre-ch1"><span class="course-chapter__num" aria-hidden="true">01</span> Les systèmes d’exploitation</h2>
+              <span class="badge" style="background:var(--accent-gold-soft);border:1px solid var(--accent-gold-border);color:var(--accent-gold)">Gérer l’environnement de travail</span>
+            </header>
+
+            <h3 id="ch1-se">1.1 Définition</h3>
+            <p>Un ordinateur est composé de <strong>matériels</strong> (<em>Hardware</em>) et de <strong>logiciels</strong> (<em>Software</em>). Le matériel comprend notamment l’écran, le clavier, la souris, le processeur, la mémoire vive et le disque. Le logiciel regroupe les programmes utilisés par l’utilisateur.</p>
+            <div class="sti-flux">
+              <div class="sti-flux__etape"><b>👤 Utilisateur</b><small>travaille avec des applications</small></div>
+              <span class="sti-flux__fleche" aria-hidden="true">↕</span>
+              <div class="sti-flux__etape"><b>⚙️ Système d’exploitation</b><small>logiciel de base</small></div>
+              <span class="sti-flux__fleche" aria-hidden="true">↕</span>
+              <div class="sti-flux__etape"><b>🖥️ Matériel</b><small>processeur, mémoire, disque, périphériques</small></div>
+            </div>
+            <p><strong>Définition :</strong> le système d’exploitation est un <strong>logiciel de base</strong> qui assure la gestion du matériel et permet l’exécution des applications.</p>
+
+            <h3 id="ch1-roles">1.2 Les rôles d’un système d’exploitation</h3>
+            <div class="table-card">
+              <div class="table-scroll">
+                <table class="course-table">
+                  <caption>Les six rôles à connaître</caption>
+                  <thead><tr><th scope="col">Rôle</th><th scope="col">Explication</th><th scope="col">Exemple</th></tr></thead>
+                  <tbody>
+                    <tr><th scope="row">Gérer le processeur</th><td>Organiser l’exécution des programmes.</td><td>Navigateur et lecteur vidéo ouverts simultanément.</td></tr>
+                    <tr><th scope="row">Gérer la mémoire</th><td>Répartir la mémoire entre les applications.</td><td>Ouvrir plusieurs logiciels.</td></tr>
+                    <tr><th scope="row">Gérer les fichiers</th><td>Créer, supprimer, déplacer et organiser les fichiers.</td><td>Créer un dossier.</td></tr>
+                    <tr><th scope="row">Gérer les périphériques</th><td>Communiquer avec les équipements.</td><td>Imprimante, clavier.</td></tr>
+                    <tr><th scope="row">Gérer les utilisateurs</th><td>Contrôler les comptes et les autorisations.</td><td>Compte administrateur.</td></tr>
+                    <tr><th scope="row">Assurer la sécurité</th><td>Protéger le système et les données.</td><td>Pare-feu et mises à jour.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <h3 id="ch1-types">1.3 Les types de systèmes d’exploitation</h3>
+            <div class="sti-triptyque">
+              <div><span aria-hidden="true">🖥️</span><strong>Pour PC</strong>
+                <p><strong>Windows</strong> : système propriétaire de Microsoft.<br>
+                <strong>Linux</strong> : famille de systèmes libres, avec plusieurs distributions comme Ubuntu.<br>
+                <strong>macOS</strong> : système des ordinateurs Mac d’Apple.</p></div>
+              <div><span aria-hidden="true">📱</span><strong>Pour mobiles</strong>
+                <p><strong>Android</strong> : utilisé sur de nombreux smartphones et tablettes.<br>
+                <strong>iOS</strong> : système d’exploitation des iPhone.</p></div>
+              <div><span aria-hidden="true">⌚</span><strong>Embarqués</strong>
+                <p><strong>watchOS</strong> : montres Apple.<br>
+                <strong>tvOS</strong> : appareils Apple TV.<br>
+                <strong>QNX</strong> : systèmes embarqués, notamment dans l’automobile.</p></div>
+            </div>
+            <div class="sti-note"><b>📌 À retenir.</b> <p>Un <strong>système embarqué</strong> est intégré dans un appareil spécialisé qui réalise des fonctions précises.</p></div>
+
+            <h3 id="ch1-licences">1.4 Logiciel propriétaire et logiciel libre</h3>
+            <div class="table-card">
+              <div class="table-scroll">
+                <table class="course-table">
+                  <caption>Deux modèles de licence</caption>
+                  <thead><tr><th scope="col"></th><th scope="col">Propriétaire</th><th scope="col">Libre</th></tr></thead>
+                  <tbody>
+                    <tr><th scope="row">Licence</th><td>Utilisation soumise à une licence définissant les droits accordés.</td><td>La licence garantit des libertés d’utilisation, d’étude, de modification et de redistribution.</td></tr>
+                    <tr><th scope="row">Code source</th><td>Généralement non accessible librement.</td><td>Accessible selon les conditions de la licence.</td></tr>
+                    <tr><th scope="row">Exemple</th><td>Windows.</td><td>Distributions GNU/Linux.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="sti-note sti-note--attention"><b>⚠️ Attention.</b> <p><strong>Libre</strong> ne signifie pas nécessairement <strong>gratuit</strong>.</p></div>
+
+            <h3 id="ch1-deploiement">1.5 Déployer un système d’exploitation</h3>
+            <p>Déployer un système consiste à le mettre en place et à le préparer pour son utilisation, en trois temps :</p>
+            <div class="sti-flux">
+              <div class="sti-flux__etape"><b>1. Installer</b><small>Mettre le système d’exploitation sur l’ordinateur.</small></div>
+              <span class="sti-flux__fleche" aria-hidden="true">→</span>
+              <div class="sti-flux__etape"><b>2. Configurer</b><small>Adapter les paramètres selon les besoins.</small></div>
+              <span class="sti-flux__fleche" aria-hidden="true">→</span>
+              <div class="sti-flux__etape"><b>3. Mettre à jour</b><small>Installer les améliorations et les corrections disponibles.</small></div>
+            </div>
+
+            <h3 id="ch1-vm">La machine virtuelle</h3>
+            <p>Une <strong>machine virtuelle</strong> est un ordinateur <em>simulé par un logiciel</em>. Elle permet d’installer et d’utiliser un système d’exploitation dans une fenêtre, <strong>sans remplacer</strong> directement le système principal. Exemples de logiciels de virtualisation : <strong>VMware</strong> et <strong>VirtualBox</strong>.</p>
+            <div class="sti-flux">
+              <div class="sti-flux__etape"><b>💻 PC réel</b><small>Windows</small></div>
+              <span class="sti-flux__fleche" aria-hidden="true">→</span>
+              <div class="sti-flux__etape"><b>📦 Logiciel de virtualisation</b><small>VMware · VirtualBox</small></div>
+              <span class="sti-flux__fleche" aria-hidden="true">→</span>
+              <div class="sti-flux__etape"><b>🐧 Machine virtuelle</b><small>Linux, dans une fenêtre</small></div>
+            </div>
+
+            <h3 id="ch1-securite">1.6 Sécuriser un ordinateur</h3>
+            <div class="table-card">
+              <div class="table-scroll">
+                <table class="course-table">
+                  <caption>Quatre moyens qui se complètent</caption>
+                  <thead><tr><th scope="col">Moyen</th><th scope="col">Rôle</th></tr></thead>
+                  <tbody>
+                    <tr><th scope="row">Antivirus</th><td>Détecter et traiter les logiciels malveillants.</td></tr>
+                    <tr><th scope="row">Pare-feu</th><td>Contrôler les communications réseau.</td></tr>
+                    <tr><th scope="row">Mise à jour</th><td>Corriger des failles et des problèmes.</td></tr>
+                    <tr><th scope="row">Mot de passe</th><td>Limiter l’accès aux utilisateurs autorisés.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="sti-note sti-note--attention"><b>⚠️ Attention.</b> <p>Un antivirus <strong>ne remplace pas</strong> les mises à jour, le pare-feu et les bonnes pratiques de sécurité.</p></div>
+
+            <h3 id="ch1-activites">1.7 Activités d’application</h3>
+            <p><strong>Exercice A — Vrai ou faux.</strong> Indiquez pour chaque affirmation si elle est vraie ou fausse, puis justifiez.</p>
+            <ol>
+              <li>Un système d’exploitation est un logiciel de base.</li>
+              <li>Android est un système d’exploitation pour PC.</li>
+              <li>Linux est un système d’exploitation libre.</li>
+              <li>Une machine virtuelle permet de tester un autre système.</li>
+              <li>Un antivirus suffit à assurer toute la sécurité d’un ordinateur.</li>
+            </ol>
+            <details class="sti-correction"><summary>🔎 Afficher la correction</summary>
+              <p><strong>1. Vrai</strong> · <strong>2. Faux</strong> (Android est un système pour mobiles) · <strong>3. Vrai</strong> · <strong>4. Vrai</strong> · <strong>5. Faux</strong> (l’antivirus ne remplace ni le pare-feu, ni les mises à jour, ni les mots de passe).</p>
+            </details>
+
+            <footer class="chapter-footer">
+              <nav aria-label="Navigation du chapitre"><span></span><a class="source-link" href="#ch2-definition">Chapitre 2 · Les réseaux informatiques →</a></nav>
+            </footer>
+          </section>
+
+          <!-- ══════════ CHAPITRE 2 ══════════ -->
+          <section class="course-chapter" id="ch2" aria-labelledby="titre-ch2">
+            <header class="course-chapter__head">
+              <h2 class="course-chapter__title" id="titre-ch2"><span class="course-chapter__num" aria-hidden="true">02</span> Les réseaux informatiques</h2>
+              <span class="badge" style="background:var(--accent-gold-soft);border:1px solid var(--accent-gold-border);color:var(--accent-gold)">Assurer la communication</span>
+            </header>
+
+            <h3 id="ch2-definition">2.1 Définition</h3>
+            <p>Un <strong>réseau informatique</strong> est un ensemble d’équipements informatiques reliés entre eux afin d’<strong>échanger des données</strong> et de <strong>partager des ressources</strong>.</p>
+            <div class="sti-flux">
+              <div class="sti-flux__etape"><b>💻 PC 1</b><small>poste de travail</small></div>
+              <div class="sti-flux__etape"><b>💻 PC 2</b><small>poste de travail</small></div>
+              <div class="sti-flux__etape"><b>🖨️ Imprimante</b><small>ressource partagée</small></div>
+              <div class="sti-flux__etape"><b>🗄️ Serveur</b><small>services et fichiers</small></div>
+              <span class="sti-flux__fleche" aria-hidden="true">↕</span>
+              <div class="sti-flux__etape"><b>🔀 Switch / Routeur</b><small>relie les équipements</small></div>
+            </div>
+
+            <h3 id="ch2-classes">2.2 Classification selon l’étendue</h3>
+            <div class="table-card">
+              <div class="table-scroll">
+                <table class="course-table">
+                  <caption>LAN, MAN et WAN</caption>
+                  <thead><tr><th scope="col">Type</th><th scope="col">Étendue</th><th scope="col">Exemple</th></tr></thead>
+                  <tbody>
+                    <tr><th scope="row">LAN</th><td>Locale</td><td>Réseau d’un lycée ou d’une salle informatique.</td></tr>
+                    <tr><th scope="row">MAN</th><td>Ville ou zone métropolitaine</td><td>Réseau reliant plusieurs établissements d’une ville.</td></tr>
+                    <tr><th scope="row">WAN</th><td>Très grande zone</td><td>Réseau reliant des sites dans plusieurs pays.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <h3 id="ch2-equipements">2.3 Les équipements d’un réseau</h3>
+            <div class="table-card">
+              <div class="table-scroll">
+                <table class="course-table">
+                  <caption>Qui fait quoi dans le réseau</caption>
+                  <thead><tr><th scope="col">Équipement</th><th scope="col">Fonction</th></tr></thead>
+                  <tbody>
+                    <tr><th scope="row">Carte réseau</th><td>Permet à un appareil de se connecter à un réseau.</td></tr>
+                    <tr><th scope="row">Switch (commutateur)</th><td>Relie plusieurs appareils dans un réseau local.</td></tr>
+                    <tr><th scope="row">Routeur</th><td>Relie différents réseaux et dirige les paquets.</td></tr>
+                    <tr><th scope="row">Point d’accès Wi-Fi</th><td>Permet une connexion sans fil.</td></tr>
+                    <tr><th scope="row">Serveur</th><td>Fournit des services ou des ressources aux clients.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <h3 id="ch2-parametres">2.4 Les paramètres d’un composant réseau</h3>
+            <h4>A. Adresse IP</h4>
+            <p>L’adresse IP <strong>identifie une interface réseau</strong> dans un réseau utilisant le protocole IP. Exemple IPv4 : <code>192.168.1.20</code>. Une adresse IPv4 est composée de <strong>quatre nombres compris entre 0 et 255</strong>, séparés par des points.</p>
+            <h4>B. Masque réseau</h4>
+            <p>Le masque permet de déterminer la <strong>partie réseau</strong> et la <strong>partie hôte</strong> d’une adresse IPv4. Exemple : adresse IP <code>192.168.1.20</code> et masque <code>255.255.255.0</code> ; l’adresse réseau correspondante est <code>192.168.1.0</code>.</p>
+            <h4>C. Serveur DNS</h4>
+            <p><strong>DNS</strong> signifie <em>Domain Name System</em>. Il permet de <strong>traduire un nom de domaine en adresse IP</strong>. Exemple : le navigateur demande la résolution de <code>www.example.com</code>.</p>
+            <h4>D. Adresse MAC</h4>
+            <p>L’adresse <strong>MAC</strong> est associée à une interface réseau. Exemple de format : <code>A4-B1-C1-2D-3E-4F</code>. Elle est notamment utilisée pour identifier une interface dans un <strong>réseau local</strong>.</p>
+            <div class="table-card">
+              <div class="table-scroll">
+                <table class="course-table">
+                  <caption>Les quatre paramètres, en résumé</caption>
+                  <thead><tr><th scope="col">Paramètre</th><th scope="col">Rôle</th></tr></thead>
+                  <tbody>
+                    <tr><th scope="row">Adresse IP</th><td>Identifier une interface au niveau IP.</td></tr>
+                    <tr><th scope="row">Masque réseau</th><td>Déterminer le réseau et la partie hôte.</td></tr>
+                    <tr><th scope="row">DNS</th><td>Résoudre un nom de domaine en adresse IP.</td></tr>
+                    <tr><th scope="row">MAC</th><td>Identifier une interface au niveau de la liaison locale.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <h3 id="ch2-architectures">2.5 Les architectures des réseaux</h3>
+            <h4>Client / serveur</h4>
+            <p>Un ordinateur <strong>client</strong> demande un service à un ordinateur <strong>serveur</strong>.</p>
+            <div class="sti-flux">
+              <div class="sti-flux__etape"><b>Client 1</b><small>demande</small></div>
+              <div class="sti-flux__etape"><b>Client 2</b><small>demande</small></div>
+              <div class="sti-flux__etape"><b>Client 3</b><small>demande</small></div>
+              <span class="sti-flux__fleche" aria-hidden="true">↕</span>
+              <div class="sti-flux__etape"><b>🗄️ Serveur</b><small>fournit le service</small></div>
+            </div>
+            <p><strong>Avantages :</strong> centralisation des données, gestion des utilisateurs et administration centralisée.<br>
+            <strong>Inconvénient :</strong> si le serveur tombe en panne, les services qu’il fournit peuvent devenir indisponibles.</p>
+            <h4>Poste à poste (<em>Peer-to-Peer</em>)</h4>
+            <p>Les ordinateurs communiquent <strong>directement entre eux</strong> et peuvent partager des ressources sans serveur central obligatoire.</p>
+            <div class="sti-flux">
+              <div class="sti-flux__etape"><b>PC 1</b></div>
+              <div class="sti-flux__etape"><b>PC 2</b></div>
+              <div class="sti-flux__etape"><b>PC 3</b></div>
+              <span class="sti-flux__fleche" aria-hidden="true">↔</span>
+              <div class="sti-flux__etape"><b>Communication directe</b><small>sans serveur central</small></div>
+            </div>
+            <p><strong>Avantages :</strong> partage direct et organisation simple pour un petit réseau.<br>
+            <strong>Inconvénients :</strong> gestion moins centralisée, sécurité et sauvegarde plus difficiles à administrer.</p>
+
+            <h3 id="ch2-protocoles">2.6 Les protocoles de communication</h3>
+            <p>Un <strong>protocole</strong> est un ensemble de <strong>règles</strong> qui permet aux équipements de communiquer.</p>
+            <div class="table-card">
+              <div class="table-scroll">
+                <table class="course-table">
+                  <caption>Les protocoles du programme</caption>
+                  <thead><tr><th scope="col">Protocole</th><th scope="col">Signification / rôle</th><th scope="col">Usage</th></tr></thead>
+                  <tbody>
+                    <tr><th scope="row">TCP/IP</th><td>Suite de protocoles de communication sur les réseaux.</td><td>IP assure l’adressage et l’acheminement ; TCP assure une transmission fiable et ordonnée.</td></tr>
+                    <tr><th scope="row">HTTP</th><td><em>HyperText Transfer Protocol</em>.</td><td>Échange de ressources entre un client et un serveur Web.</td></tr>
+                    <tr><th scope="row">HTTPS</th><td>Version sécurisée de HTTP utilisant TLS.</td><td>Échange Web protégé, avec chiffrement et authentification du serveur.</td></tr>
+                    <tr><th scope="row">MQTT</th><td><em>Message Queuing Telemetry Transport</em>.</td><td>Messagerie légère, particulièrement adaptée aux objets connectés.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <p><strong>Exemple MQTT : publication / abonnement.</strong></p>
+            <div class="sti-flux">
+              <div class="sti-flux__etape"><b>📡 Publisher</b><small>publie un message</small></div>
+              <span class="sti-flux__fleche" aria-hidden="true">→</span>
+              <div class="sti-flux__etape"><b>☁️ Broker</b><small>distribue</small></div>
+              <span class="sti-flux__fleche" aria-hidden="true">→</span>
+              <div class="sti-flux__etape"><b>📱 Subscriber</b><small>reçoit le message</small></div>
+            </div>
+
+            <h3 id="ch2-securite">2.7 Sécuriser un réseau</h3>
+            <p><strong>Pare-feu (<em>Firewall</em>)</strong> : contrôle les communications réseau selon des règles de sécurité.<br>
+            <strong>Liste de contrôle d’accès (ACL)</strong> : contient des règles qui autorisent ou interdisent certains accès ou certaines communications.</p>
+            <div class="table-card">
+              <div class="table-scroll">
+                <table class="course-table">
+                  <caption>Exemple de règles ACL</caption>
+                  <thead><tr><th scope="col">Règle</th><th scope="col">Décision</th></tr></thead>
+                  <tbody>
+                    <tr><td>Autoriser le poste professeur</td><td>Autoriser</td></tr>
+                    <tr><td>Autoriser l’accès au serveur pédagogique</td><td>Autoriser</td></tr>
+                    <tr><td>Bloquer un accès non autorisé</td><td>Refuser</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <h3 id="ch2-activites">2.8 Activités d’application</h3>
+            <p><strong>Exercice — Choisir la bonne notion.</strong></p>
+            <ol>
+              <li>Réseau d’une salle informatique.</li>
+              <li>Réseau couvrant une ville.</li>
+              <li>Réseau reliant plusieurs pays.</li>
+              <li>Paramètre qui traduit un nom de domaine.</li>
+              <li>Protocole adapté aux messages des objets connectés.</li>
+            </ol>
+            <details class="sti-correction"><summary>🔎 Afficher la correction</summary>
+              <p><strong>1. LAN</strong> · <strong>2. MAN</strong> · <strong>3. WAN</strong> · <strong>4. DNS</strong> · <strong>5. MQTT</strong>.</p>
+            </details>
+
+            <footer class="chapter-footer">
+              <nav aria-label="Navigation du chapitre"><a class="source-link" href="#ch1-se">← Chapitre 1 · Les systèmes d’exploitation</a><a class="source-link" href="#ch3-definition">Chapitre 3 · L’Internet des objets →</a></nav>
+            </footer>
+          </section>
+
+          <!-- ══════════ CHAPITRE 3 ══════════ -->
+          <section class="course-chapter" id="ch3" aria-labelledby="titre-ch3">
+            <header class="course-chapter__head">
+              <h2 class="course-chapter__title" id="titre-ch3"><span class="course-chapter__num" aria-hidden="true">03</span> L’Internet des objets (IoT)</h2>
+              <span class="badge" style="background:var(--accent-gold-soft);border:1px solid var(--accent-gold-border);color:var(--accent-gold)">Connecter des objets physiques</span>
+            </header>
+
+            <h3 id="ch3-definition">3.1 Définition</h3>
+            <p>L’<strong>Internet des objets</strong>, appelé <strong>IoT</strong> (<em>Internet of Things</em>), désigne l’ensemble des <strong>objets physiques</strong> capables de <strong>collecter</strong>, <strong>transmettre</strong> et <strong>échanger</strong> des données grâce à une connexion réseau.</p>
+            <div class="sti-triptyque">
+              <div><span aria-hidden="true">🏠</span><strong>Maison</strong><p>Éclairage et thermostat connectés.</p></div>
+              <div><span aria-hidden="true">🌱</span><strong>Agriculture</strong><p>Capteur d’humidité du sol.</p></div>
+              <div><span aria-hidden="true">🏥</span><strong>Santé</strong><p>Appareil de suivi connecté.</p></div>
+              <div><span aria-hidden="true">🏭</span><strong>Industrie</strong><p>Capteur de température.</p></div>
+              <div><span aria-hidden="true">🚦</span><strong>Ville</strong><p>Gestion de l’éclairage public.</p></div>
+              <div><span aria-hidden="true">🚗</span><strong>Transport</strong><p>Suivi de véhicules.</p></div>
+            </div>
+
+            <h3 id="ch3-composants">3.2 Les composants fondamentaux</h3>
+            <ul>
+              <li><strong>Objet connecté</strong> : équipement qui collecte ou utilise les données.</li>
+              <li><strong>Capteur</strong> : élément qui mesure une grandeur.</li>
+              <li><strong>Connexion réseau</strong> : permet de transmettre les données.</li>
+              <li><strong>Serveur ou plateforme IoT</strong> : reçoit et stocke les données.</li>
+              <li><strong>Application</strong> : affiche les informations ou permet de commander l’objet.</li>
+            </ul>
+
+            <h3 id="ch3-principe">3.3 Principe général de fonctionnement</h3>
+            <div class="sti-flux">
+              <div class="sti-flux__etape"><b>🌡️ Capteur</b><small>mesure 25 °C</small></div>
+              <span class="sti-flux__fleche" aria-hidden="true">→</span>
+              <div class="sti-flux__etape"><b>🔌 Objet connecté</b><small>prépare la donnée</small></div>
+              <span class="sti-flux__fleche" aria-hidden="true">→</span>
+              <div class="sti-flux__etape"><b>📶 Réseau</b><small>HTTP / MQTT</small></div>
+              <span class="sti-flux__fleche" aria-hidden="true">→</span>
+              <div class="sti-flux__etape"><b>☁️ Plateforme</b><small>reçoit la donnée</small></div>
+              <span class="sti-flux__fleche" aria-hidden="true">→</span>
+              <div class="sti-flux__etape"><b>📱 Utilisateur</b><small>consulte</small></div>
+            </div>
+            <p><strong>Exemple :</strong> suivi de température. Le capteur mesure la température ; l’objet connecté récupère la mesure ; il transmet la valeur à une plateforme distante ; l’utilisateur consulte la température sur son téléphone.</p>
+
+            <h3 id="ch3-echanges">3.4 Échanger des données avec une plateforme IoT</h3>
+            <p>Pour communiquer avec une plateforme distante, l’objet connecté doit :</p>
+            <ol>
+              <li>être <strong>configuré</strong> pour accéder au réseau ;</li>
+              <li>disposer des <strong>informations nécessaires</strong> à la communication ;</li>
+              <li>utiliser un <strong>protocole adapté</strong> ;</li>
+              <li><strong>envoyer ou recevoir</strong> des données ;</li>
+              <li><strong>tester</strong> le programme et <strong>corriger</strong> les erreurs.</li>
+            </ol>
+            <div class="sti-triptyque">
+              <div><strong>Communication avec HTTP</strong><p>HTTP permet à l’objet connecté d’envoyer une <strong>requête</strong> à un serveur.</p></div>
+              <div><strong>Communication avec MQTT</strong><p>MQTT permet l’échange de messages via un <strong>broker</strong>.<br>
+                <strong>Publisher</strong> : publie un message.<br>
+                <strong>Broker</strong> : reçoit et distribue les messages.<br>
+                <strong>Subscriber</strong> : reçoit les messages auxquels il s’est abonné.</p>
+                <p>Exemple de sujet : <code>maison/salon/temperature</code>.</p></div>
+            </div>
+
+            <h3 id="ch3-tester">3.5 Tester et corriger un programme IoT</h3>
+            <div class="table-card">
+              <div class="table-scroll">
+                <table class="course-table">
+                  <caption>Du symptôme à la vérification</caption>
+                  <thead><tr><th scope="col">Problème observé</th><th scope="col">Vérification à effectuer</th></tr></thead>
+                  <tbody>
+                    <tr><td>Pas de connexion</td><td>Vérifier le Wi-Fi et la configuration réseau.</td></tr>
+                    <tr><td>Le serveur ne répond pas</td><td>Vérifier l’adresse du serveur et son accessibilité.</td></tr>
+                    <tr><td>Aucune donnée reçue</td><td>Vérifier la requête HTTP ou le message MQTT.</td></tr>
+                    <tr><td>Mauvaise valeur affichée</td><td>Vérifier la mesure et le format transmis.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <h3 id="ch3-activite">3.6 Activité de synthèse — Une serre intelligente</h3>
+            <p>Une serre agricole est équipée d’un <strong>capteur d’humidité du sol</strong>. Les mesures sont envoyées à une <strong>plateforme IoT</strong>. L’agriculteur consulte les valeurs depuis son <strong>téléphone</strong>.</p>
+            <div class="sti-flux">
+              <div class="sti-flux__etape"><b>Objet connecté</b><small>Requête HTTP<br><code>temperature = 25</code></small></div>
+              <span class="sti-flux__fleche" aria-hidden="true">→</span>
+              <div class="sti-flux__etape"><b>Plateforme IoT</b><small>reçoit la mesure</small></div>
+              <span class="sti-flux__fleche" aria-hidden="true">→</span>
+              <div class="sti-flux__etape"><b>Historique des mesures</b><small>consulté depuis le téléphone</small></div>
+            </div>
+            <p><strong>Questions.</strong></p>
+            <ol>
+              <li>Quel est le rôle du capteur ?</li>
+              <li>Quel est le rôle de l’objet connecté ?</li>
+              <li>Pourquoi l’objet a-t-il besoin d’un réseau ?</li>
+              <li>Quel est le rôle de la plateforme IoT ?</li>
+              <li>Citer deux protocoles qui peuvent être utilisés.</li>
+            </ol>
+            <details class="sti-correction"><summary>🔎 Afficher la correction</summary>
+              <ol>
+                <li>Mesurer l’humidité du sol.</li>
+                <li>Récupérer et transmettre la mesure.</li>
+                <li>Permettre la communication avec la plateforme distante.</li>
+                <li>Recevoir et exploiter les données.</li>
+                <li>HTTP et MQTT.</li>
+              </ol>
+            </details>
+            <div class="sti-note sti-note--attention"><b>Limite du programme.</b> <p>Pour l’IoT, les échanges sont étudiés en se limitant à <strong>HTTP et/ou MQTT</strong>, sans approfondir les différents concepts. La création du compte sur une plateforme IoT est effectuée par l’enseignant.</p></div>
+
+            <footer class="chapter-footer">
+              <nav aria-label="Navigation du chapitre"><a class="source-link" href="#ch2-definition">← Chapitre 2 · Les réseaux informatiques</a><a class="source-link" href="#synthese">Fiche de synthèse →</a></nav>
+            </footer>
+          </section>
+
+          <!-- ══════════ SYNTHÈSE ══════════ -->
+          <section class="course-chapter" id="synthese" aria-labelledby="titre-synthese">
+            <header class="course-chapter__head">
+              <h2 class="course-chapter__title" id="titre-synthese"><span class="course-chapter__num" aria-hidden="true">✦</span> Fiche de synthèse générale</h2>
+              <span class="badge" style="background:var(--accent-gold-soft);border:1px solid var(--accent-gold-border);color:var(--accent-gold)">L’essentiel à mémoriser</span>
+            </header>
+            <div class="table-card">
+              <div class="table-scroll">
+                <table class="course-table">
+                  <caption>Notion · définition ou rôle essentiel</caption>
+                  <thead><tr><th scope="col">Notion</th><th scope="col">Définition / rôle essentiel</th></tr></thead>
+                  <tbody>
+                    <tr><th scope="row">Système d’exploitation</th><td>Logiciel de base qui gère les ressources informatiques.</td></tr>
+                    <tr><th scope="row">Déploiement</th><td>Installation, configuration et mise à jour.</td></tr>
+                    <tr><th scope="row">LAN / MAN / WAN</th><td>Réseau local / métropolitain / étendu.</td></tr>
+                    <tr><th scope="row">Adresse IP</th><td>Identifie une interface au niveau IP.</td></tr>
+                    <tr><th scope="row">Masque réseau</th><td>Détermine la partie réseau et la partie hôte.</td></tr>
+                    <tr><th scope="row">DNS</th><td>Résout un nom de domaine en adresse IP.</td></tr>
+                    <tr><th scope="row">MAC</th><td>Adresse associée à une interface réseau.</td></tr>
+                    <tr><th scope="row">TCP/IP</th><td>Suite de protocoles utilisée pour communiquer sur les réseaux.</td></tr>
+                    <tr><th scope="row">HTTP / HTTPS</th><td>Échange Web / échange Web sécurisé.</td></tr>
+                    <tr><th scope="row">MQTT</th><td>Protocole de messagerie léger, adapté à l’IoT.</td></tr>
+                    <tr><th scope="row">IoT</th><td>Objets physiques connectés qui collectent et échangent des données.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="sti-note"><b>Idée clé.</b> <p>Le <strong>système d’exploitation</strong> gère l’équipement ; le <strong>réseau</strong> permet la communication ; l’<strong>IoT</strong> met cette communication au service d’objets physiques connectés.</p></div>
+            <footer class="chapter-footer">
+              <nav aria-label="Navigation du chapitre"><a class="source-link" href="#ch3-definition">← Chapitre 3 · L’Internet des objets</a><a class="source-link" href="#evaluation">Évaluation générale →</a></nav>
+            </footer>
+          </section>
+
+          <!-- ══════════ ÉVALUATION ══════════ -->
+          <section class="course-chapter sti-evaluation" id="evaluation" aria-labelledby="titre-evaluation">
+            <header class="course-chapter__head">
+              <h2 class="course-chapter__title" id="titre-evaluation"><span class="course-chapter__num" aria-hidden="true">10</span> Évaluation générale</h2>
+              <span class="badge" style="background:var(--accent-gold-soft);border:1px solid var(--accent-gold-border);color:var(--accent-gold)">/ 10 points</span>
+            </header>
+            <p>Vérifier les notions essentielles des trois chapitres. <strong>Consigne :</strong> répondre brièvement et justifier lorsque cela est demandé.</p>
+            <h3>A. Systèmes d’exploitation</h3>
+            <ol>
+              <li>Définir un système d’exploitation et citer deux de ses rôles.</li>
+              <li>Classer Windows et Linux selon le type de licence. Expliquer la différence.</li>
+              <li>À quoi sert une machine virtuelle ? Donner un exemple de logiciel de virtualisation.</li>
+            </ol>
+            <h3>B. Réseaux informatiques</h3>
+            <ol start="4">
+              <li>Donner la signification de LAN, MAN et WAN, puis citer un exemple pour l’un d’eux.</li>
+              <li>Associer chaque paramètre à son rôle : adresse IP, masque, DNS et adresse MAC.</li>
+              <li>Expliquer la différence entre un switch et un routeur.</li>
+              <li>Comparer les architectures client/serveur et poste à poste.</li>
+            </ol>
+            <h3>C. Internet des objets</h3>
+            <ol start="8">
+              <li>Définir l’Internet des objets (IoT) et donner un exemple d’utilisation.</li>
+              <li>Citer quatre composants d’une solution IoT et préciser le rôle d’un capteur.</li>
+              <li>Décrire le trajet d’une mesure depuis un capteur jusqu’à son affichage sur une plateforme.</li>
+            </ol>
+            <details class="sti-correction"><summary>🔎 Afficher les repères de correction</summary>
+              <ol>
+                <li>Logiciel de base qui gère le matériel et permet l’exécution des applications — par exemple gérer la mémoire et les fichiers.</li>
+                <li>Windows : propriétaire (licence qui définit les droits, code source non librement accessible). Linux : libre (libertés d’utilisation, d’étude, de modification et de redistribution).</li>
+                <li>Elle permet d’installer et d’utiliser un autre système dans une fenêtre, sans remplacer le système principal — VMware ou VirtualBox.</li>
+                <li>LAN : local (salle informatique) ; MAN : une ville ; WAN : plusieurs pays.</li>
+                <li>IP : identifier une interface ; masque : séparer réseau et hôte ; DNS : traduire un nom en adresse IP ; MAC : identifier une interface localement.</li>
+                <li>Le switch relie des appareils d’un même réseau local ; le routeur relie des réseaux différents et dirige les paquets.</li>
+                <li>Client/serveur : services centralisés, panne du serveur = services indisponibles ; poste à poste : partage direct, plus simple, mais sécurité et sauvegarde moins centralisées.</li>
+                <li>Objets physiques capables de collecter, transmettre et échanger des données — par exemple un capteur d’humidité dans une serre.</li>
+                <li>Objet connecté, capteur, connexion réseau, plateforme IoT, application ; le capteur mesure une grandeur.</li>
+                <li>Le capteur mesure ; l’objet récupère et transmet la valeur (HTTP ou MQTT) ; la plateforme la reçoit et la stocke ; l’utilisateur la consulte depuis son téléphone.</li>
+              </ol>
+            </details>
+            <footer class="chapter-footer">
+              <nav aria-label="Navigation du chapitre"><a class="source-link" href="#ch1-se">← Revoir le chapitre 1</a><a class="source-link" href="../cours/html5.html">Partie suivante : le cours HTML5 →</a></nav>
+            </footer>
+          </section>
+
+          <!-- ══════════ LIEN AVEC LE MANUEL ══════════ -->
+          <section class="course-intro-banner" id="manuel">
+            <p class="sti-partie-banner"><strong>LE MANUEL CONNECTÉ · 3ÈME SI</strong> — 81 pages <span class="sti-partie-banner__pages">édition 2026</span></p>
+            <h2 class="course-chapter__title">Ce cours et le manuel, page par page</h2>
+            <p>Les pages 5 à 13 du manuel <em>STI — Le manuel connecté, 3ème SI</em> sont exactement ce cours. Scannez le QR code de l’une de ces pages, ou saisissez son numéro, pour revenir ici au bon chapitre.</p>
+            <div class="table-card">
+              <div class="table-scroll">
+                <table class="course-table">
+                  <caption>Correspondance manuel ↔ cours</caption>
+                  <thead><tr><th scope="col">Pages du manuel</th><th scope="col">Partie du cours</th></tr></thead>
+                  <tbody>
+                    <tr><td>5</td><td><a class="source-link" href="#introduction">Introduction générale</a></td></tr>
+                    <tr><td>6</td><td><a class="source-link" href="#ch1-roles">Rôles et types des systèmes d’exploitation</a></td></tr>
+                    <tr><td>7</td><td><a class="source-link" href="#ch1-vm">Machine virtuelle, sécurité et activités</a></td></tr>
+                    <tr><td>8</td><td><a class="source-link" href="#ch2-parametres">Réseaux : définitions, étendue et paramètres</a></td></tr>
+                    <tr><td>9</td><td><a class="source-link" href="#ch2-architectures">Architectures, protocoles et sécurisation</a></td></tr>
+                    <tr><td>10</td><td><a class="source-link" href="#ch2-activites">Activités d’application — réseaux</a></td></tr>
+                    <tr><td>11</td><td><a class="source-link" href="#ch3-echanges">IoT : composants et échange de données</a></td></tr>
+                    <tr><td>12</td><td><a class="source-link" href="#ch3-activite">Activité de synthèse et fiche de synthèse</a></td></tr>
+                    <tr><td>13</td><td><a class="source-link" href="#evaluation">Évaluation générale</a></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="hero-actions">
+              <a class="btn btn-course-primary" href="../livre-smart.html?livre=3si-2026&amp;page=5">📖 Ouvrir le livre connecté</a>
+              <a class="btn btn-secondary" href="../livre-smart.html?livre=3si-2026&amp;page=13">📝 Aller à l’évaluation du manuel (p. 13)</a>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer"><div class="container source-footer"><div><strong>STI V2.0 · Le web de A à Z</strong><p>Lycée Raféha · 3ème &amp; 4ème SI · Aymen Essouyah</p></div><nav aria-label="Liens utiles"><a href="../index.html">Accueil</a><a href="../livre-smart.html">📖 Livre connecté</a><a href="../cours/html5.html">🌐 Cours HTML5</a></nav></div></footer>
+  <button type="button" id="back-to-top" class="back-to-top-fab" aria-label="Remonter en haut de la page" title="Haut de page">↑</button>
+</body>
+</html>

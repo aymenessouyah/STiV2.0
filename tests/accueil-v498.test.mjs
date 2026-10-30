@@ -169,7 +169,7 @@ test('v498 : les boîtes « en cours » tiennent sur une seule ligne compacte', 
 test('v498 : service worker et manifeste hors ligne connaissent le drapeau et la vidéo', () => {
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
   assert.match(sw, /var UPDATE_ID = "v553-defilement-passif-20261030"/);
-  assert.match(sw, /url: "\.\/index\.html", revision: "etiquette-relief-v572"/);
+  assert.match(sw, /url: "\.\/index\.html", revision: "sti-3si-v573"/);
   assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "classe-nav-v536"/);
   assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "etiquette-relief-v572"/);
   assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "ruban-vert-v517"/);

@@ -1,9 +1,9 @@
 {
   "version": "v553-sti-atelier-v386",
-  "generatedAt": "2026-10-30T22:22:10Z",
+  "generatedAt": "2026-10-30T22:38:48Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 749,
-  "totalBytes": 1059908376,
+  "totalFiles": 751,
+  "totalBytes": 1059954236,
   "files": [
     {
       "path": "404.html",
@@ -62,8 +62,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 62370,
-      "gitSha": "cc73b96de144f44c3eb665284cc70ac22b1d2c98"
+      "bytes": 62457,
+      "gitSha": "be01f22eea866003259120302f7e5c2482ce19f7"
     },
     {
       "path": "admin.html",
@@ -216,6 +216,11 @@
       "gitSha": "7a9b12eb4751bf99c14e8e525d9f264ffe74153a"
     },
     {
+      "path": "assets/css/cours-sti.css",
+      "bytes": 5471,
+      "gitSha": "8411a3d5b231276f7d8c952559cd0d6e33a917ef"
+    },
+    {
       "path": "assets/css/cours.css",
       "bytes": 59235,
       "gitSha": "91d7602bdaefca4117d5a882705b40778c3254b4"
@@ -327,8 +332,8 @@
     },
     {
       "path": "assets/data/smart-book-3si-2026.json",
-      "bytes": 21006,
-      "gitSha": "d76568f4d7fb8332a6b4808f5c339e59171b8886"
+      "bytes": 25616,
+      "gitSha": "d714e2fced62e9ee127e0682495b45ac56ad92f6"
     },
     {
       "path": "assets/fontawesome/LICENSE.txt",
@@ -582,8 +587,8 @@
     },
     {
       "path": "assets/images/smart-books/couverture-3si.jpg",
-      "bytes": 76951,
-      "gitSha": "fe05da5dceb49e19093bd675e98c267e148e90ba"
+      "bytes": 107203,
+      "gitSha": "6db52fbc6b87af289d209718b9fae40ebb35fdd9"
     },
     {
       "path": "assets/images/smart-books/couverture-4si.jpg",
@@ -927,8 +932,8 @@
     },
     {
       "path": "assets/js/smart-book.js",
-      "bytes": 17670,
-      "gitSha": "3ccc9621f3967bde4663805850e7beab92bb2a14"
+      "bytes": 18662,
+      "gitSha": "85639046e6fbe9102f4fd70a20c46e9c3d9bed3e"
     },
     {
       "path": "assets/js/sql-playground.js",
@@ -1337,8 +1342,8 @@
     },
     {
       "path": "cours/html5.html",
-      "bytes": 207433,
-      "gitSha": "de4893e586075857d140a0b730a6f2c378dd7bd1"
+      "bytes": 207681,
+      "gitSha": "fcc79b373ec0cb8a56016e6777a1393b94146c39"
     },
     {
       "path": "cours/javascript.html",
@@ -1374,6 +1379,11 @@
       "path": "cours/sql.html",
       "bytes": 144108,
       "gitSha": "0443cd11a2e01a63fe12fb199b185ee1959acc1c"
+    },
+    {
+      "path": "cours/systemes-technologies-internet.html",
+      "bytes": 55403,
+      "gitSha": "3247605061c639fb41a895cec597649965c87060"
     },
     {
       "path": "cssanimee/cours.js",
@@ -2407,8 +2417,8 @@
     },
     {
       "path": "documents/livre/sti-smart-book-3si-2026.pdf",
-      "bytes": 2761500,
-      "gitSha": "312fe27bd86182c398b64a7c84c0dfa4d85c389a"
+      "bytes": 2707885,
+      "gitSha": "f4746da7dd8ce9ab96cdcaebd62e6ed77cf85aca"
     },
     {
       "path": "documents/sql/Documentation-Construire-Requete-SQL-Guide-Texte.docx",
@@ -3147,13 +3157,13 @@
     },
     {
       "path": "index.html",
-      "bytes": 61336,
-      "gitSha": "7e9a6e909cd51db1cbd57f204d42f2a02b63bc4b"
+      "bytes": 63289,
+      "gitSha": "4e6291a2248baccfacda1500f29bc3618ee2f54e"
     },
     {
       "path": "livre-smart.html",
-      "bytes": 7687,
-      "gitSha": "90b9b9c034b80ee719be0a44abe768f8f938e947"
+      "bytes": 7713,
+      "gitSha": "bab004ecb10f916f7b0aa0bccd0eb74051ddaae8"
     },
     {
       "path": "ma-fiche-revision.html",
@@ -3707,8 +3717,8 @@
     },
     {
       "path": "sitemap.xml",
-      "bytes": 10911,
-      "gitSha": "37bcf8639e998e7a2f84b9dffb04113f13edc609"
+      "bytes": 10970,
+      "gitSha": "70dbd345ea8f8458b9adee563dac7f23db206422"
     },
     {
       "path": "supabase/migrations/20261027_media_prog_monotone_v479.sql",
@@ -3747,8 +3757,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 99122,
-      "gitSha": "5a008374d67db220359a0b56b2147a9e0d51ee16"
+      "bytes": 99496,
+      "gitSha": "913c003c3dac50508e47fff76b60e30058d7d571"
     }
   ]
 }

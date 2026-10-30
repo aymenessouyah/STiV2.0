@@ -29,7 +29,7 @@ Plateforme éducative interactive et **PWA utilisable hors ligne après mise en 
 | Pilier | Détail vérifié dans le dépôt et la base active |
 |---|---|
 | **Cours & multimédia** | HTML5, CSS3, JavaScript, Bases de données / SQL et PHP / MySQLi (`4SI`), **15 vidéos `.mp4` dans le catalogue d’accueil**, plus les autres séries et médias historiques + écoute vocale `.mp3` synchronisée avec Guide-Ligne (`0.85×` / `1×` / `1.15×`) |
-| **Smart Books QR** | **2 manuels PDF connectés** : *3ᵉ SI* (**72 pages**) et *4ᵉ SI* (**100 pages**) reliés page par page via `livre-smart.html` |
+| **Smart Books QR** | **2 manuels PDF connectés** : *3ᵉ SI* (**81 pages**, édition 2026 — la partie « Systèmes, technologies et Internet » précède HTML5) et *4ᵉ SI* (**100 pages**) reliés page par page via `livre-smart.html` |
 | **Exercices & Bac** | Hub `exercices/series-exercices.html`, **41 fiches TP / corrigés**, séries SQL 1 à 6 en vidéo, 37 Défis JS, `bac-pratique.html`, `pieges-bac.html`, `outils-js-bac.html`, `memo-veille-bac.html` |
 | **Banques de quiz** | **5 modules actifs** totalisant **1 244 questions** : HTML5/CSS3 (**187**), JavaScript (**106**), SQL (**140**), PHP (**176**) et Tableaux Smart Books (**635** dans `quiz-banque.json`) |
 | **Suivi élève** | Anneau de couverture sur **124 pages**, révision espacée **J+1 / J+3 / J+7**, fiche imprimable `ma-fiche-revision.html`, mode Rayons X & surligneur |

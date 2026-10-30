@@ -49,6 +49,7 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>./cours/systemes-technologies-internet.html</loc>
     <loc>./cours/html5.html</loc>
     <lastmod>2026-10-07</lastmod>
     <changefreq>weekly</changefreq>

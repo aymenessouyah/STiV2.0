@@ -158,7 +158,7 @@ test('le cache hors-ligne embarque la vidéo sans téléchargement automatique',
   assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "etiquette-relief-v572"/);
   assert.match(delta, /url: "\.\/assets\/js\/protection\.js", revision: "php-chaines-v566"/);
   assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "etiquette-relief-v572"/);
-  assert.ok(sw.includes('var UPDATE_FILES = [') && sw.split('var UPDATE_FILES = [')[1].split('];')[0].split('{ url:').length - 1 <= 262);
+  assert.ok(sw.includes('var UPDATE_FILES = [') && sw.split('var UPDATE_FILES = [')[1].split('];')[0].split('{ url:').length - 1 <= 264);
 });
 
 test('le manifeste complet décrit la vidéo et ses sous-titres', () => {

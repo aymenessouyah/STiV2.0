@@ -106,7 +106,7 @@ test('le lot v550 est publié et versionné', () => {
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
   assert.match(sw, /var UPDATE_ID = "v553-defilement-passif-20261030"/);
   assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "etiquette-relief-v572"/);
-  assert.match(sw, /url: "\.\/index\.html", revision: "etiquette-relief-v572"/);
+  assert.match(sw, /url: "\.\/index\.html", revision: "sti-3si-v573"/);
   assert.match(sw, /url: "\.\/cours\/php\.html", revision: "etiquette-relief-v572"/);
   /* la capsule des boucles reste hors du delta automatique (média lourd) */
   assert.ok(!sw.split('var UPDATE_FILES = [')[1].split('];')[0].includes('BouclePour-v547.mp4'));

@@ -11,12 +11,15 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class SmartBooks(unittest.TestCase):
     def test_indices_et_destinations(self):
-        for name, pages, count in [('smart-book-3si-2026.json', 72, 68), ('smart-book-2026.json', 100, 95)]:
+        for name, pages, count in [('smart-book-3si-2026.json', 81, 77), ('smart-book-2026.json', 100, 95)]:
             data = json.loads((ROOT / 'assets/data' / name).read_text())
             self.assertEqual(data['pages'], pages)
             self.assertEqual(len(data['items']), count)
             self.assertEqual([i['page'] for i in data['items']], list(range(pages-count+1, pages+1)))
-            self.assertEqual([i['fiche'] for i in data['items']], list(range(1, count+1)))
+            # v573 : les fiches numérotées suivent les pages de cours (3e SI).
+            numeros = [i['fiche'] for i in data['items'] if i.get('kind') == 'fiche']
+            if numeros:
+                self.assertEqual(numeros, list(range(1, len(numeros) + 1)))
             for item in data['items']:
                 self.assertTrue(item['url'].startswith('https://aymenessouyah.github.io/STiV2.0/'))
                 if name == 'smart-book-3si-2026.json':

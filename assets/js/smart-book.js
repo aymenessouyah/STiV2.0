@@ -34,8 +34,11 @@
   })();
   let publicBase = new URL('https://aymenessouyah.github.io/STiV2.0/');
   let books = {
-    '4si-2026': { title: '4ème SI — 2026', level: '4ème SI', data: 'assets/data/smart-book-2026.json', pdf: 'documents/livre/sti-smart-book-2026.pdf', pages: 100, fiches: 95, lessons: 77, recapPages: 18, boundary: 'Manuel de 4ème SI : SQL et PHP inclus.' },
-    '3si-2026': { title: '3ème SI — 2026', level: '3ème SI', data: 'assets/data/smart-book-3si-2026.json', pdf: 'documents/livre/sti-smart-book-3si-2026.pdf', pages: 72, fiches: 68, lessons: 53, recapPages: 15, boundary: 'Sans PHP. SQL limité à SELECT sur une table, avec filtres et tri ; sans jointure, sous-requête ni agrégat.' }
+    /* `entries` = nombre de pages repérées dans l'index (une par page utile) ;
+       `fiches` = nombre de fiches numérotées ; `coursPages` = pages de cours
+       (la partie « Systèmes, technologies et Internet » du manuel 3ème SI). */
+    '4si-2026': { title: '4ème SI — 2026', level: '4ème SI', data: 'assets/data/smart-book-2026.json', pdf: 'documents/livre/sti-smart-book-2026.pdf', pages: 100, entries: 95, fiches: 95, lessons: 77, coursPages: 0, recapPages: 18, boundary: 'Manuel de 4ème SI : SQL et PHP inclus.' },
+    '3si-2026': { title: '3ème SI — 2026', level: '3ème SI', data: 'assets/data/smart-book-3si-2026.json', pdf: 'documents/livre/sti-smart-book-3si-2026.pdf', pages: 81, entries: 77, fiches: 53, lessons: 53, coursPages: 9, recapPages: 15, boundary: 'Édition 2026 : la partie « Systèmes, technologies et Internet » (p. 5 à 13) précède HTML5. Sans PHP ; SQL limité à SELECT sur une table.' }
   };
   let bookId = '4si-2026', items = [], cache = {}, ready = false;
   let stream = null, scanning = false, timer = null, generation = 0, loadGeneration = 0;
@@ -60,12 +63,19 @@
     let response = await fetch(books[id].data);
     if (!response.ok) throw new Error('Index indisponible.');
     let data = await response.json(), book = books[id];
-    if (data.pages !== book.pages || !Array.isArray(data.items) || data.items.length !== book.fiches) throw new Error('Index incompatible.');
-    let first = book.pages - book.fiches + 1;
+    if (data.pages !== book.pages || !Array.isArray(data.items) || data.items.length !== book.entries) throw new Error('Index incompatible.');
+    /* Les pages repérées se suivent, de la première page utile à la dernière :
+       page 5 à 81 pour le manuel 3ème SI (cours, fiches puis tableaux). */
+    let first = book.pages - book.entries + 1, numeros = 0;
     data.items.forEach(function (item, index) {
-      if (item.fiche !== index + 1 || item.page !== first + index) throw new Error('Pagination invalide.');
+      if (item.page !== first + index) throw new Error('Pagination invalide.');
+      if (item.kind === 'fiche') {
+        numeros++;
+        if (item.fiche !== numeros) throw new Error('Numérotation des fiches invalide.');
+      }
       localURL(item.url);
     });
+    if (numeros !== book.fiches) throw new Error('Index incompatible.');
     cache[id] = data;
     return data;
   }
@@ -92,7 +102,9 @@
       let a = document.createElement('a'); a.className = 'catalog-item'; a.href = localURL(item.url);
       let badge = document.createElement('span'); badge.className = 'page-badge'; badge.textContent = 'p. ' + item.page;
       let title = document.createElement('span'); title.textContent = item.titre;
-      let sub = document.createElement('small'); sub.textContent = books[bookId].level + (item.kind === 'recap' ? ' · TABLEAU RÉCAPITULATIF' : ' · FICHE ' + String(item.fiche).padStart(2, '0')); title.append(sub);
+      let genre = item.kind === 'recap' ? ' · TABLEAU RÉCAPITULATIF'
+        : item.kind === 'cours' ? ' · PAGE DU COURS' : ' · FICHE ' + String(item.fiche).padStart(2, '0');
+      let sub = document.createElement('small'); sub.textContent = books[bookId].level + genre; title.append(sub);
       let arrow = document.createElement('span'); arrow.className = 'arrow'; arrow.textContent = '↗'; arrow.setAttribute('aria-hidden', 'true');
       a.append(badge, title, arrow); fragment.append(a);
     });
@@ -110,7 +122,10 @@
       bookId = id; items = data.items; let book = books[id];
       $('book-select').value = id; $('page-number').max = String(book.pages); $('page-number').value = '';
       $('search').value = ''; $('book-level').textContent = 'LE MANUEL CONNECTÉ · ' + book.level;
-      $('book-edition').textContent = book.title; $('book-size').textContent = book.pages + ' pages · ' + book.lessons + ' fiches + ' + book.recapPages + ' pages de tableaux';
+      $('book-edition').textContent = book.title;
+      $('book-size').textContent = book.pages + ' pages · ' + book.lessons + ' fiches'
+        + (book.coursPages ? ' + ' + book.coursPages + ' pages de cours' : '')
+        + ' + ' + book.recapPages + ' pages de tableaux';
       $('book-boundary').textContent = book.boundary;
       $('download-book').href = book.pdf;
       $('preview-3si').setAttribute('aria-pressed', String(id === '3si-2026'));
@@ -139,7 +154,8 @@
       message('Saisissez un numéro entier de 1 à ' + books[bookId].pages + ' pour ce manuel.', true); $('result').hidden = true; return false;
     }
     let item = items.find(function (entry) { return entry.page === page; });
-    if (item) showResult(item, 'PAGE ' + item.page + (item.kind === 'recap' ? ' · TABLEAU RÉCAPITULATIF' : ' · FICHE ' + item.fiche));
+    if (item) showResult(item, 'PAGE ' + item.page + (item.kind === 'recap' ? ' · TABLEAU RÉCAPITULATIF'
+      : item.kind === 'cours' ? ' · PAGE DU COURS' : ' · FICHE ' + item.fiche));
     else showResult({ titre: page === 1 ? 'Couverture du manuel' : 'Sommaire et mode d’emploi', url: publicBase.href + 'index.html#cours' }, 'PAGE ' + page + ' · ACCUEIL DES COURS');
     /* v391 : mémorise la dernière page lue par manuel (synchronisée entre appareils par sync-progressions.js) */
     try {
@@ -178,7 +194,7 @@
     if (!peers.length && !generic) return false;
     stopCamera(); if (bookId !== '4si-2026' && !await loadBook('4si-2026')) return false;
     if (generic) showResult({ titre: u.hash === '#modules' ? 'Quiz de la plateforme STI' : 'Les cours de la plateforme STI', url: u.href }, 'PLATEFORME STI');
-    else if (peers.length === 1) showResult(peers[0], 'PAGE ' + peers[0].page + ' · FICHE ' + peers[0].fiche);
+    else if (peers.length === 1) showResult(peers[0], 'PAGE ' + peers[0].page + (peers[0].kind === 'cours' ? ' · PAGE DU COURS' : ' · FICHE ' + peers[0].fiche));
     else showResult({ titre: peers[0].section || ('Section du cours : ' + peers[0].titre), url: u.href }, 'SECTION COMMUNE · PAGES ' + peers.map(function (item) { return item.page; }).join(', '));
     $('scan-status').textContent = 'QR reconnu : ' + $('result-title').textContent;
     return true;

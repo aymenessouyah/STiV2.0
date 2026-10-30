@@ -60,7 +60,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./quiz/php.html'), 'plafond-a-v555');
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
   assert.equal(revisions.get('./assets/js/app.js'), 'etiquette-relief-v572');
-  assert.equal(revisions.get('./index.html'), 'etiquette-relief-v572');
+  assert.equal(revisions.get('./index.html'), 'sti-3si-v573');
   assert.equal(revisions.get('./offline-complete-manifest.json'), 'classe-nav-v536');
   assert.equal(revisions.get('./README.md'), 'xp-jamais-en-recul-v520');
   for (const chemin of ['dashboard.html', 'assets/images/drapeau-tunisie.svg']) {
@@ -73,7 +73,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./admin.html'), 'photo-secours-v562');
   assert.equal(revisions.get('./assets/js/sante.js'), 'tp-transitions-v512');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */
-  assert.equal(revisions.get('./index.html'), 'etiquette-relief-v572');
+  assert.equal(revisions.get('./index.html'), 'sti-3si-v573');
   assert.equal(revisions.get('./assets/js/admin.js'), 'photo-secours-v562');
   assert.equal(revisions.get('./assets/css/cours.css'), 'retrait-fond-cours-v508');
   /* v563 : le cours SQL accueille la convention d'écriture d'un schéma. */
@@ -82,7 +82,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./cours/php.html'), 'etiquette-relief-v572');
   /* v523 : le cours JavaScript reçoit les liens du TP Train. */
   assert.equal(revisions.get('./cours/javascript.html'), 'etiquette-relief-v572');
-  assert.equal(revisions.get('./cours/html5.html'), 'tp-display-v510');
+  assert.equal(revisions.get('./cours/html5.html'), 'sti-3si-v573');
   assert.equal(revisions.get('./cours/css3.html'), 'tp-transitions-v512');
   assert.equal(revisions.get('./assets/js/cours-onglets-mobile.js'), 'onglets-mobile-v493');
   /* v526 : le lecteur commun suit la nouvelle capsule ; les sous-titres restent sur leur lot. */
