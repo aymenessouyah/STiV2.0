@@ -70,6 +70,22 @@ Le test automatisé `tests/photos-bucket-v559.test.mjs` vérifie, côté dépôt
 fichiers décrivent bien ces objets. Il ne peut pas interroger la base : la vérification
 finale reste celle des requêtes ci-dessus.
 
+**v560 — aucune migration à appliquer.** Les photos encore stockées en base64 sont
+désormais basculées par le tableau de bord lui-même : à chaque ouverture par
+l'administrateur connecté et en ligne, jusqu'à 5 photos rejoignent le bucket (dépôt,
+URL signée relue, puis `admin_gerer_photo_eleve('definir')`). Un échec laisse la photo
+intacte. Pour suivre l'avancement, une seule requête suffit :
+
+```sql
+-- Photos encore en base64 (l'objectif est 0)
+select count(*) from public.profiles where photo_url like 'data:image/%';
+-- Fichiers réellement déposés dans le bucket privé
+select count(*) from storage.objects where bucket_id = 'photos-profils';
+```
+
+`migration-photos-bucket.html` reste la solution pour migrer tout d'un coup, après
+sauvegarde JSON, ou pour reprendre une photo récalcitrante.
+
 ---
 
 ## 4. Ordre d'application pour une base neuve

@@ -46,7 +46,10 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
      v558 : le même chargeur passe en ?v=558-perf (Storage mesuré aussi) ;
      v560 : la declaration d'encodage est remontee dans les 1024 premiers octets
      (exigence HTML), comme sur tout le site ; portail.html reflete ce
-     deplacement, le contenu ne change pas. Empreintes réactualisées. */
+     deplacement, le contenu ne change pas.
+     v560 : admin.html charge admin.js?v=560-photos (bascule automatique des
+     photos base64) : seule cette référence change dans la page. Empreintes
+     réactualisées. */
   const originaux = {
     'assets/js/config.js': '4936f1efc5fde33dc2432dd3a9aa4fc33df77f90b842fe2091a2a5ba2f872a7f',
     'assets/js/supabase-umd.js': '2eebfe06b1b5309985dc1526e8981ea3a18b71beeef83e7f38e04c303e142d6d',
@@ -54,7 +57,7 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
     'assets/js/sync-progressions.js': 'c6e36a6f0ebea5e481cfb1b16afb9c0cfefc595ed4de21a1becff5a096d327b6',
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
     'portail.html': 'cde7e9572be7ff369cc3a810c84f68a479b4f1bd8781d22e123b87dd12df37f7',
-    'admin.html': '1590fc89999d6604ab79a8ef462bb522c9b452f78d0163140f31703ee7f7631b',
+    'admin.html': 'a080ca2d5beffbbb4c51215383042731f480f099a95c94cdafe4a29fc4496e5f',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };
@@ -183,8 +186,9 @@ test('commandes d’administration : scripts et fonctions de la barre PC inchang
      v557 : le quota Supabase est lu via la RPC admin_taille_base() (bigint ou
      chaîne numérique) ; empreinte réactualisée.
      v558 : la mesure couvre aussi le Storage (admin_taille_stockage) ;
-     empreinte réactualisée. */
-  assert.equal(sha('assets/js/admin.js'), 'cccb43e33ca97b56b7e63e72f0e3afff0321ee1a40008d0a84bf11f5b479ccc4');
+     v560 : le tableau de bord bascule tout seul les photos restées en base64
+     vers le bucket privé (5 au plus par ouverture) ; empreinte réactualisée. */
+  assert.equal(sha('assets/js/admin.js'), '8d3cd8b3486da30c8d4678ecad4e40036a8c968aaf3c7bf70488d51d81e4dac8');
   assert.equal(sha('assets/js/rayonsx-surligneur.js'), '1b7fe2067629766ef4043fa3060199b71124d8486e36d92aaac0b45bd861847c');
   const protection = lire('assets/js/protection.js');
   const debut = protection.indexOf('  function estAppareilPC()');

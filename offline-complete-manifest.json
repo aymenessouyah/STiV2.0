@@ -3,7 +3,7 @@
   "generatedAt": "2026-10-30T14:12:25Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 742,
-  "totalBytes": 942241980,
+  "totalBytes": 942248646,
   "files": [
     {
       "path": "404.html",
@@ -62,13 +62,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 57417,
-      "gitSha": "7fb03da4896027a4020927b1a878cd1f068dffa7"
+      "bytes": 59204,
+      "gitSha": "6dfedea9934649e34764ddb697c00e3d20719eea"
     },
     {
       "path": "admin.html",
       "bytes": 346065,
-      "gitSha": "2376ef4a6d965b7b9a9cf43c776cb208c8748bc6"
+      "gitSha": "78af65b9d5fb1342d059453fa2d7bc605af590a4"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -682,8 +682,8 @@
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 704518,
-      "gitSha": "31cd7fb5b5ffec7f0dc2dd459f1ab623eade1b6a"
+      "bytes": 709074,
+      "gitSha": "e2061ea89a5c2fcfefaf0633a5b1b73892e6b935"
     },
     {
       "path": "assets/js/analytique.js",
@@ -3142,8 +3142,8 @@
     },
     {
       "path": "migration-photos-bucket.html",
-      "bytes": 11019,
-      "gitSha": "7b3a31410200084eb45b9e58ab72da71ee07c47a"
+      "bytes": 11350,
+      "gitSha": "f5489adb4ecfb458c247b9a23a448cc8b1ad5b65"
     },
     {
       "path": "nouveautes.html",
@@ -3712,8 +3712,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 98877,
-      "gitSha": "11b590795be53daa9ba9aff23de5c9740641b8bf"
+      "bytes": 98869,
+      "gitSha": "61552219dfddbd649680b94b0895751274d60c06"
     }
   ]
 }

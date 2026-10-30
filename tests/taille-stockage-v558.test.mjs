@@ -81,9 +81,11 @@ test('la nouvelle mesure est servie avec un cache-buster et une révision à jou
   const admin = lire('admin.html');
   const sw = lire('sw.js');
 
-  assert.match(admin, /assets\/js\/admin\.js\?v=558-perf/);
-  assert.match(sw, /url: "\.\/admin\.html", revision: "taille-stockage-v558"/);
-  assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "taille-stockage-v558"/);
+  /* v560 : admin.js change encore (bascule automatique des photos base64),
+     le cache-buster et les deux révisions suivent. */
+  assert.match(admin, /assets\/js\/admin\.js\?v=560-perf/);
+  assert.match(sw, /url: "\.\/admin\.html", revision: "photos-auto-v560"/);
+  assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "photos-auto-v560"/);
   /* Rappel : le cache et le lot général ne bougent pas. */
   assert.match(sw, /var UPDATE_ID = "v553-defilement-passif-20261030"/);
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
