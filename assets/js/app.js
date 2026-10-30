@@ -260,7 +260,7 @@
       badgeClasse: "badge-js",
       couleur: "#f7df1e",
       titre: "Les boucles — Pour, Répéter…jusqu'à, Tant que",
-      dureeTexte: "5:41",
+      dureeTexte: "8:43",
       srcPrincipal: "assets/videos/BouclePour.mp4",
       srcSecours: "assets/videos/BouclePour.mp4",
       sousTitres: "assets/subtitles/BouclePour-fr.vtt",

@@ -32,8 +32,10 @@ const ORDRE = [
 /** Le texte des sous-titres, minutages retirés et lignes repliées. */
 function textePlat() {
   return lire(VTT).toLowerCase()
+    .replace(/^webvtt\s*/, '')
     .replace(/^\d+:\d{2}:\d{2}\.\d{3} --> .*$/gm, '')
-    .replace(/\s+/g, ' ');
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /** Durée réelle de la vidéo, lue dans l'en-tête MP4 (aucune dépendance externe). */
@@ -198,7 +200,7 @@ test('les trois blocs finissent côte à côte, chacun avec ses deux écritures'
 
 test('la fabrication compte vingt-six sections, de la voix aux scènes', () => {
   const narration = lire('outils/bouclepour/narration.py');
-  const trouve = [...narration.matchAll(/"([a-z0-9]+)": \{/g)].map((m) => m[1]);
+  const trouve = [...narration.matchAll(/"([a-z0-9_]+)": \{/g)].map((m) => m[1]);
   assert.deepEqual(trouve, ORDRE, 'l\'ordre des vingt-six sections');
 
   const scenes = lire('outils/bouclepour/scenes.py');

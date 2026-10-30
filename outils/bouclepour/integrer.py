@@ -61,6 +61,7 @@ def ecrire_chapitres():
     """Remplace le bloc des chapitres de la capsule dans protection.js."""
     s = open(PROTECTION, encoding="utf-8").read()
     debut = s.index('STI_CHAPITRES_MEDIA["boucle-pour"] = [')
+    debut = s.rindex("\n", 0, debut) + 1          # début de la ligne, indentation comprise
     fin = s.index('      ];', debut) + len("      ];\n")
     nouveau = bloc_chapitres()
     if s[debut:fin] != nouveau:

@@ -1413,19 +1413,34 @@
         { t: 580.6, short: "7 · Média — play() et pause() (36)", label: "9:41 · 7 · Média — play() et pause() (36)" },
         { t: 614.8, short: "★ Récapitulatif — trois réflexes", label: "10:15 · ★ Récapitulatif — trois réflexes" }
       ];
-      /* Repères de la capsule « La boucle Pour » (v541), calés sur la voix off. */
+      /* Repères de la capsule « Les boucles » (v543), calés sur la voix off. */
       STI_CHAPITRES_MEDIA["boucle-pour"] = [
-        { t: 1.2, short: "1 · Le problème et le plan de travail", label: "0:01 · 1 · Le problème et le plan de travail" },
-        { t: 43.163, short: "2 · Une variable : un nom, un contenu", label: "0:43 · 2 · Une variable : un nom, un contenu" },
-        { t: 81.585, short: "3 · Un nom : S, le même jusqu'au bout", label: "1:22 · 3 · Un nom : S, le même jusqu'au bout" },
-        { t: 108.141, short: "4 · S = S + … : lire, ajouter, réécrire", label: "1:48 · 4 · S = S + … : lire, ajouter, réécrire" },
-        { t: 146.981, short: "5 · L'immeuble et l'ascenseur", label: "2:27 · 5 · L'immeuble et l'ascenseur" },
-        { t: 167.012, short: "6 · Étage 0 : S = S + T[0]", label: "2:47 · 6 · Étage 0 : S = S + T[0]" },
-        { t: 189.482, short: "7 · Étages 1, 2, 3 : seul le chiffre change", label: "3:09 · 7 · Étages 1, 2, 3 : seul le chiffre change" },
-        { t: 213.449, short: "8 · Passage à l'algo : T[quelque chose]", label: "3:33 · 8 · Passage à l'algo : T[quelque chose]" },
-        { t: 237.324, short: "9 · Retour au brouillon, stylo rouge", label: "3:57 · 9 · Retour au brouillon, stylo rouge" },
-        { t: 263.799, short: "10 · Combien de répétitions ?", label: "4:24 · 10 · Combien de répétitions ?" },
-        { t: 297.855, short: "11 · La boucle Pour : le bloc", label: "4:58 · 11 · La boucle Pour : le bloc" }
+        { t: 1.200, short: "1 · Bienvenue — l'histoire des boucles", label: "0:01 · 1 · Bienvenue — l'histoire des boucles" },
+        { t: 15.740, short: "2 · Le décor et le problème", label: "0:16 · 2 · Le décor et le problème" },
+        { t: 44.862, short: "3 · Quatre fois le même geste", label: "0:45 · 3 · Quatre fois le même geste" },
+        { t: 69.932, short: "4 · Question 1 : connais-je le nombre de répétitions ?", label: "1:10 · 4 · Question 1 : connais-je le nombre de répétitions ?" },
+        { t: 90.649, short: "5 · Question 2 : une condition d'arrêt ?", label: "1:31 · 5 · Question 2 : une condition d'arrêt ?" },
+        { t: 108.382, short: "6 · Question 3 : au moins une fois ?", label: "1:48 · 6 · Question 3 : au moins une fois ?" },
+        { t: 129.017, short: "7 · La boucle Pour — algorithme", label: "2:09 · 7 · La boucle Pour — algorithme" },
+        { t: 152.276, short: "8 · La boucle Pour — JavaScript", label: "2:32 · 8 · La boucle Pour — JavaScript" },
+        { t: 175.686, short: "9 · La boucle Pour — les quatre tours", label: "2:56 · 9 · La boucle Pour — les quatre tours" },
+        { t: 199.085, short: "10 · Rappel : le tableau des trois boucles", label: "3:19 · 10 · Rappel : le tableau des trois boucles" },
+        { t: 216.098, short: "11 · Chercher X : un nombre de tours inconnu", label: "3:36 · 11 · Chercher X : un nombre de tours inconnu" },
+        { t: 235.711, short: "12 · Chercher X : au moins une fois", label: "3:56 · 12 · Chercher X : au moins une fois" },
+        { t: 254.814, short: "13 · Répéter…jusqu'à — algorithme", label: "4:15 · 13 · Répéter…jusqu'à — algorithme" },
+        { t: 275.542, short: "14 · Répéter…jusqu'à — JavaScript", label: "4:36 · 14 · Répéter…jusqu'à — JavaScript" },
+        { t: 296.003, short: "15 · X = 7 : trouvé au deuxième tour", label: "4:56 · 15 · X = 7 : trouvé au deuxième tour" },
+        { t: 314.758, short: "16 · X = 5 : absent, quatre tours", label: "5:15 · 16 · X = 5 : absent, quatre tours" },
+        { t: 336.832, short: "17 · Rappel : répéter…jusqu'à", label: "5:37 · 17 · Rappel : répéter…jusqu'à" },
+        { t: 351.918, short: "18 · Tant que : le risque de zéro tour", label: "5:52 · 18 · Tant que : le risque de zéro tour" },
+        { t: 375.375, short: "19 · Tant que — algorithme", label: "6:15 · 19 · Tant que — algorithme" },
+        { t: 395.162, short: "20 · Tant que — JavaScript", label: "6:35 · 20 · Tant que — JavaScript" },
+        { t: 410.120, short: "21 · Tant que — trois jetons, puis zéro", label: "6:50 · 21 · Tant que — trois jetons, puis zéro" },
+        { t: 429.304, short: "22 · Rappel : tant que", label: "7:09 · 22 · Rappel : tant que" },
+        { t: 442.347, short: "23 · Le tableau des trois boucles", label: "7:22 · 23 · Le tableau des trois boucles" },
+        { t: 464.468, short: "24 · Comment choisir", label: "7:44 · 24 · Comment choisir" },
+        { t: 484.163, short: "25 · Algorithme et JavaScript : ne pas mélanger", label: "8:04 · 25 · Algorithme et JavaScript : ne pas mélanger" },
+        { t: 505.216, short: "26 · À vous de jouer", label: "8:25 · 26 · À vous de jouer" }
       ];
       STI_CHAPITRES_MEDIA["validation-nom-prenom-js"] = [
         { t: 0, short: "Générique", label: "00:00 · Générique — Projet secrétariat du lycée" },

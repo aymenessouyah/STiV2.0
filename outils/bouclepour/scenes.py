@@ -754,27 +754,50 @@ def scene_algo_js(d, p, t):
     _etat(d, None, "deux langages, une logique")
 
 
-def _colonne_fin(d, x0, x1, nom, couleur, regle, algo, js, p, i):
+def _colonne_fin(d, x0, x1, nom, couleur, regle, algo, js, p, i, bilan):
+    """Une des trois colonnes de la fin : l'algorithme au-dessus, le code dessous."""
     boite_arrondie(d, [x0, 186, x1, 884], rayon=20, fond=FOND_PANNEAU,
                    bord=melange(BORDURE, couleur, 0.55), largeur_bord=2)
-    d.text((x0 + 22, 206), nom, font=police(26, True), fill=couleur, anchor="la")
-    d.text((x0 + 22, 244), regle, font=police(14), fill=TEXTE_2, anchor="la")
-    haut = [x0 + 14, 274, x1 - 14, 566]
-    bas = [x0 + 14, 584, x1 - 14, 866]
+    d.text((x0 + 22, 202), nom, font=police(26, True), fill=couleur, anchor="la")
+    d.text((x0 + 22, 240), regle, font=police(14), fill=TEXTE_2, anchor="la")
+    haut = [x0 + 14, 268, x1 - 14, 486]
+    bas = [x0 + 14, 498, x1 - 14, 700]
     _cadre_ecriture(d, haut, 1, "ALGORITHME", couleur, True, a=0.92)
     _cadre_ecriture(d, bas, 2, "JAVASCRIPT", VERT, True, a=0.92)
-    _code(d, haut, algo, couleur, True, p, seuil=0.20 + 0.06 * i, pas=0.06, taille=14)
-    _code(d, bas, js, VERT, True, p, seuil=0.46 + 0.06 * i, pas=0.06, taille=14)
+    _code(d, haut, algo, couleur, True, p, seuil=0.14 + 0.05 * i, pas=0.05, taille=15)
+    _code(d, bas, js, VERT, True, p, seuil=0.42 + 0.05 * i, pas=0.05, taille=15)
+
+    # le bilan, sous les deux cadres : ce que la boucle a donné
+    k = _apparait(p, 0.72 + 0.05 * i, 0.12)
+    if k > 0:
+        boite_arrondie(d, [x0 + 14, 714, x1 - 14, 866], rayon=14,
+                       fond=melange(FOND_PANNEAU_2, couleur, 0.12 * k),
+                       bord=melange(BORDURE, couleur, 0.55 * k), largeur_bord=2)
+        d.text(((x0 + x1) / 2, 736), "résultat", font=police(13, True),
+               fill=melange(FOND, TEXTE_3, k), anchor="mm")
+        n = len(bilan)
+        pas = 112 / n
+        for j, (haut_txt, bas_txt) in enumerate(bilan):
+            centre = 752 + pas * (j + 0.5)
+            d.text(((x0 + x1) / 2, centre - 12), haut_txt, font=police(20 if n == 1 else 18, True),
+                   fill=melange(FOND, couleur, k), anchor="mm")
+            d.text(((x0 + x1) / 2, centre + 16), bas_txt, font=police(14 if n == 1 else 12),
+                   fill=melange(FOND, TEXTE_2, k), anchor="mm")
 
 
 def scene_fin(d, p, t):
     _entete(d, 26, "26 · Les trois blocs côte à côte")
     _colonne_fin(d, 64, 650, "POUR", C_POUR, "tours connus, pas d'arrêt",
-                 ALGO_POUR, JS_POUR, p, 0)
+                 ALGO_POUR, JS_POUR, p, 0,
+                 [("S = 22", "quatre tours, i vaut 4")])
     _colonne_fin(d, 666, 1252, "RÉPÉTER…JUSQU'À", C_REP, "au moins un tour",
-                 ALGO_REP, JS_REP, p, 1)
+                 ALGO_REP, JS_REP, p, 1,
+                 [("trouvé", "X = 7, arrêt au 2ᵉ tour"),
+                  ("absent", "X = 5, i vaut 4")])
     _colonne_fin(d, 1268, 1854, "TANT QUE", C_TQ, "zéro tour possible",
-                 ALGO_TQ, JS_TQ, p, 2)
+                 ALGO_TQ, JS_TQ, p, 2,
+                 [("3 tours", "trois jetons dans le sac"),
+                  ("0 tour", "boîte vide au départ")])
     _etat(d, None, "à vous de jouer · STI Version 2.0")
 
 
