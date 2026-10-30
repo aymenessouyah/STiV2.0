@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* STI V2.0 — audit complet de la plateforme (v552).
+/* STI V2.0 — audit complet de la plateforme (v553).
    ─────────────────────────────────────────────────────────────────────────
    Un seul passage, sans réseau ni navigateur, sur les huit questions du
    professeur : fluidité, rapidité, sécurité, accès aux cours / vidéos /
@@ -11,7 +11,7 @@
      node outils/audit/audit-plateforme.mjs --strict   → sort en erreur si un
                                                         constat bloquant existe
 
-   Le rapport Markdown est écrit dans RAPPORT-audit-plateforme-v552.md. */
+   Le rapport Markdown est écrit dans RAPPORT-audit-plateforme-v553.md. */
 import { readFileSync, readdirSync, statSync, writeFileSync, existsSync } from 'node:fs';
 import { dirname, extname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -49,6 +49,16 @@ function texte(chemin) {
 }
 
 const balise = (html, motif) => [...html.matchAll(motif)];
+/* Un bloc équilibré (accolades ou parenthèses) : indispensable pour lire une
+   animation écrite sur une seule ligne ou un écouteur dont le corps est long. */
+function blocEquilibre(src, depart, ouvrante = '{', fermante = '}') {
+  let profondeur = 0;
+  for (let i = depart; i < src.length; i += 1) {
+    if (src[i] === ouvrante) profondeur += 1;
+    else if (src[i] === fermante) { profondeur -= 1; if (!profondeur) return src.slice(depart, i + 1); }
+  }
+  return src.slice(depart, Math.min(src.length, depart + 4000));
+}
 const attribut = (baliseBrute, nom) => {
   const m = baliseBrute.match(new RegExp(nom + '\\s*=\\s*"([^"]*)"', 'i')) || baliseBrute.match(new RegExp(nom + "\\s*=\\s*'([^']*)'", 'i'));
   return m ? m[1] : '';
@@ -308,23 +318,32 @@ function verifierFluidite() {
   if (autoplay.length) constat('Fluidité', 'mineur', `${autoplay.length} vidéo(s) démarrent seules`, autoplay.slice(0, 6).map((v) => v.page).join(', '));
 
   const theme = texte(join(RACINE, 'assets/css/theme.css'));
-  const keyframes = [...theme.matchAll(/@keyframes[^{]*\{([\s\S]*?)\n\}/g)].map((m) => m[1]);
-  const animeDisposition = keyframes.filter((k) => /\b(width|height|top|left|margin|padding)\s*:/.test(k));
+  const keyframes = [...theme.matchAll(/@keyframes\s+[\w-]+\s*\{/g)]
+    .map((m) => blocEquilibre(theme, m.index + m[0].length - 1));
+  const animeDisposition = keyframes.filter((bloc) => /(?:^|[;{])\s*(width|height|top|left|margin|padding)\s*:/.test(bloc));
   mesures.keyframes = keyframes.length;
+  mesures.keyframesDisposition = animeDisposition.length;
   if (animeDisposition.length) {
-    constat('Fluidité', 'mineur', `${animeDisposition.length}/${keyframes.length} animations déplacent la mise en page (coût de rendu)`, '');
+    constat('Fluidité', 'mineur', `${animeDisposition.length}/${keyframes.length} animation(s) déplacent la mise en page (coût de rendu)`, animeDisposition.map((bloc) => (bloc.match(/@keyframes\s+([\w-]+)/) || [])[1] || '?').join(', '));
   } else {
     constat('Fluidité', 'ok', `Les ${keyframes.length} animations du thème restent sur transform/opacity`);
   }
   const nonPassifs = [];
+  let ecouteursDefilement = 0;
   for (const fichier of tousFichiers.filter((f) => rel(f).startsWith('assets/js/') && f.endsWith('.js'))) {
     const src = texte(fichier);
-    for (const m of src.matchAll(/addEventListener\(\s*["']scroll["']\s*,([\s\S]{0,220}?)\)\s*;/g)) {
-      if (!/passive\s*:\s*true/.test(m[1])) nonPassifs.push(rel(fichier));
+    for (const m of src.matchAll(/addEventListener\(\s*["']scroll["']/g)) {
+      ecouteursDefilement += 1;
+      const ouvrante = src.lastIndexOf('(', m.index + m[0].length);
+      if (ouvrante === -1) continue;
+      const appel = blocEquilibre(src, ouvrante, '(', ')');
+      if (!/passive\s*:\s*true/.test(appel)) nonPassifs.push(rel(fichier));
     }
   }
-  if (nonPassifs.length) constat('Fluidité', 'mineur', `${nonPassifs.length} écouteur(s) de défilement non passif(s)`, [...new Set(nonPassifs)].slice(0, 10).join(', '));
-  else constat('Fluidité', 'ok', 'Tous les écouteurs de défilement sont passifs');
+  mesures.ecouteursDefilement = ecouteursDefilement;
+  if (nonPassifs.length) constat('Fluidité', nonPassifs.length > 2 ? 'mineur' : 'ok',
+    `${nonPassifs.length} écouteur(s) de défilement non passif(s) sur ${ecouteursDefilement}`, [...new Set(nonPassifs)].slice(0, 10).join(', '));
+  else constat('Fluidité', 'ok', `Les ${ecouteursDefilement} écouteurs de défilement sont passifs`);
   if (!/prefers-reduced-motion/.test(theme)) constat('Fluidité', 'majeur', 'Les animations ne s’effacent pas quand l’élève le demande', '');
   else constat('Fluidité', 'ok', 'prefers-reduced-motion respecté dans le thème et dans la grille des capsules');
 }
@@ -478,7 +497,7 @@ const compte = { bloquant: 0, majeur: 0, mineur: 0, ok: 0 };
 for (const f of findings) compte[f.niveau] += 1;
 
 const lignes = [];
-lignes.push('# Rapport d’audit de la plateforme — v552');
+lignes.push('# Rapport d’audit de la plateforme — v553');
 lignes.push('');
 lignes.push(`**Date** : ${new Date().toISOString().slice(0, 10)} · **Pages auditées** : ${pagesPubliees.length} · ` +
   `**Liens vérifiés** : ${mesures.liens} · **Questions de quiz** : ${mesures.banque}`);
@@ -533,7 +552,7 @@ lignes.push('```bash');
 lignes.push('node outils/audit/audit-plateforme.mjs          # résumé et rapport');
 lignes.push('node outils/audit/audit-plateforme.mjs --strict # échoue si un constat bloquant subsiste');
 lignes.push('```');
-writeFileSync(join(RACINE, 'RAPPORT-audit-plateforme-v552.md'), lignes.join('\n') + '\n', 'utf8');
+writeFileSync(join(RACINE, 'RAPPORT-audit-plateforme-v553.md'), lignes.join('\n') + '\n', 'utf8');
 
 for (const axe of ORDRE) {
   const siens = findings.filter((f) => f.axe === axe);
@@ -542,5 +561,5 @@ for (const axe of ORDRE) {
   for (const f of siens.filter((x) => x.niveau !== 'ok')) console.log(`    ${ICONE[f.niveau]} ${f.titre}`);
 }
 console.log(`\n⛔ ${compte.bloquant} · ⚠️ ${compte.majeur} · ℹ️ ${compte.mineur} · ✅ ${compte.ok}`);
-console.log('Rapport : RAPPORT-audit-plateforme-v552.md');
+console.log('Rapport : RAPPORT-audit-plateforme-v553.md');
 if (process.argv.includes('--strict') && compte.bloquant > 0) process.exitCode = 1;

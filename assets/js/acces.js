@@ -4405,7 +4405,7 @@
     if (window.visualViewport && !window.__stiMsnVvBound) {
       window.__stiMsnVvBound = true;
       window.visualViewport.addEventListener("resize", synchroniserViewportMessengerSite);
-      window.visualViewport.addEventListener("scroll", synchroniserViewportMessengerSite);
+      window.visualViewport.addEventListener("scroll", synchroniserViewportMessengerSite, { passive: true });
       window.addEventListener("resize", synchroniserViewportMessengerSite);
       window.addEventListener("popstate", function () {
         if (window.innerWidth > 768) return;

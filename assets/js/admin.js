@@ -251,7 +251,7 @@
       masquerLoupe();
     }, true);
 
-    window.addEventListener("scroll", masquerLoupe, true);
+    window.addEventListener("scroll", masquerLoupe, { capture: true, passive: true });
     window.addEventListener("mousedown", masquerLoupe, true);
     window.addEventListener("blur", masquerLoupe);
   })();
@@ -10587,7 +10587,7 @@
   /* Adaptation automatique de la hauteur sur mobile lorsque le clavier virtuel s'ouvre */
   if (window.visualViewport) {
     window.visualViewport.addEventListener("resize", synchroniserViewportMessengerAdmin);
-    window.visualViewport.addEventListener("scroll", synchroniserViewportMessengerAdmin);
+    window.visualViewport.addEventListener("scroll", synchroniserViewportMessengerAdmin, { passive: true });
   }
   window.addEventListener("resize", synchroniserViewportMessengerAdmin);
   if (msnChatInp) {

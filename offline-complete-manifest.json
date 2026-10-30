@@ -1,9 +1,9 @@
 {
-  "version": "v552-sti-atelier-v385",
-  "generatedAt": "2026-10-30T13:58:49Z",
+  "version": "v553-sti-atelier-v386",
+  "generatedAt": "2026-10-30T14:12:25Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 740,
-  "totalBytes": 942194308,
+  "totalBytes": 942194470,
   "files": [
     {
       "path": "404.html",
@@ -642,8 +642,8 @@
     },
     {
       "path": "assets/js/acces.js",
-      "bytes": 928524,
-      "gitSha": "41bc81e0a5ebfff21938d93f2a0dbbaa7556d755"
+      "bytes": 928543,
+      "gitSha": "90c93bb49dc23dc87e9316537098efb63f2103ff"
     },
     {
       "path": "assets/js/admin-couverture.js",
@@ -677,8 +677,8 @@
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 701593,
-      "gitSha": "11dbc8d04446d489289210d2ebd6f36f7be20e5b"
+      "bytes": 701640,
+      "gitSha": "1a0116a3c52d046669be49250046c05ba37eca68"
     },
     {
       "path": "assets/js/analytique.js",
@@ -767,8 +767,8 @@
     },
     {
       "path": "assets/js/mobile-nav.js",
-      "bytes": 42834,
-      "gitSha": "382d8bc5de3c2ab4f02ab2c22eb84deefcebaeb3"
+      "bytes": 42853,
+      "gitSha": "0f15f2878ff2f3dc34709e92ac4e87c749151a2e"
     },
     {
       "path": "assets/js/modules/admin-labo-devices.js",
@@ -857,8 +857,8 @@
     },
     {
       "path": "assets/js/rayonsx-surligneur.js",
-      "bytes": 52317,
-      "gitSha": "28f030295a8878da01984458c95304bb53eb5a9e"
+      "bytes": 52345,
+      "gitSha": "3b25baed979977221d295d7fdafa37cb9f26c060"
     },
     {
       "path": "assets/js/reconnexion-profil.js",
@@ -892,8 +892,8 @@
     },
     {
       "path": "assets/js/roue-initiales.js",
-      "bytes": 15673,
-      "gitSha": "72a4f5423c71529a28b4813646d7b74ddfaf77ec"
+      "bytes": 15701,
+      "gitSha": "4181f92b460d687c2144830c79a456eec37589b9"
     },
     {
       "path": "assets/js/roue-nuage.js",
@@ -3702,8 +3702,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 98376,
-      "gitSha": "4b321c175866d948468d48bba410979cbb18665a"
+      "bytes": 98397,
+      "gitSha": "4485bf9f5a14533e220132c5d709547b46eabe3d"
     }
   ]
 }

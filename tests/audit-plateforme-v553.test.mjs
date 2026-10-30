@@ -1,4 +1,4 @@
-/* v552 — l’audit complet de la plateforme tourne avec les tests.
+/* v553 — l’audit complet de la plateforme tourne avec les tests.
    Le script outils/audit/audit-plateforme.mjs vérifie les huit axes demandés
    (fluidité, rapidité, sécurité, accès aux cours/vidéos/exercices, tirage des
    quiz, synchronisation des XP, conformité aux annexes, mobile). --strict le
@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const script = join(root, 'outils', 'audit', 'audit-plateforme.mjs');
-const rapport = join(root, 'RAPPORT-audit-plateforme-v552.md');
+const rapport = join(root, 'RAPPORT-audit-plateforme-v553.md');
 
 function lancer(...args) {
   try {
@@ -35,7 +35,7 @@ test('l’audit ne relève aucun constat bloquant sur la plateforme livrée', ()
 
 test('le rapport est écrit et couvre les huit axes', () => {
   lancer();
-  assert.ok(existsSync(rapport), 'RAPPORT-audit-plateforme-v552.md doit être généré');
+  assert.ok(existsSync(rapport), 'RAPPORT-audit-plateforme-v553.md doit être généré');
   const texte = readFileSync(rapport, 'utf8');
   for (const mot of ['Accès', 'Quiz', 'XP', 'Annexes', 'Mobile', 'Rapidité', 'Sécurité', 'Accessibilité', 'Comment relancer']) {
     assert.ok(texte.includes(mot), mot);

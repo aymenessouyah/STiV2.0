@@ -883,7 +883,7 @@ test('v449 : Rayons X HTML/CSS (Box-Model, Sémantique & Flexbox) + Surligneur F
   assert.match(ficheHtml, /id="sec-surlignages"/);
   assert.match(ficheHtml, /id="fiche-fluo-liste"/);
   assert.match(ficheHtml, /sti-surlignages-v1/);
-  assert.match(swJs, /rayonsx-surligneur-v449/);
+  assert.match(swJs, /rayonsx-surligneur-v449|defilement-passif-v553/);
 });
 
 test('v450 : bouton Messenger éliminé de toutes les pages du site et conservé uniquement dans la roue (« Écrire au prof ») et dans admin.html', () => {

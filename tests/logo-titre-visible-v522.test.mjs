@@ -68,14 +68,14 @@ test('v522 : les sept pages à bandeau portent bien le titre à côté du logo',
 });
 
 test('v522 : le nouveau style de l’en-tête est livré hors ligne et son empreinte est exacte', () => {
-  assert.match(sw, /var UPDATE_ID = "v552-audit-plateforme-20261030"/);
+  assert.match(sw, /var UPDATE_ID = "v553-defilement-passif-20261030"/);
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   assert.match(delta, /url: "\.\/assets\/css\/theme\.css", revision: "classe-nav-v536"/);
   for (const bloc of ['SHELL', 'OFFLINE_LIST']) {
     assert.ok(sw.split('var ' + bloc + ' = [')[1].split('];')[0].includes('"./assets/css/theme.css"'), bloc);
   }
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  assert.equal(manifeste.version, 'v552-sti-atelier-v385');
+  assert.equal(manifeste.version, 'v553-sti-atelier-v386');
   const entree = manifeste.files.find(f => f.path === 'assets/css/theme.css');
   assert.ok(entree, 'theme.css doit figurer dans le manifeste complet');
   const data = readFileSync(resolve(racine, 'assets/css/theme.css'));

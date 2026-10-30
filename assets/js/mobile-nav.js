@@ -684,7 +684,7 @@
       if (cur !== bas + "px") doc.documentElement.style.setProperty("--sti-bnav-bas", bas + "px");
     }
     vv.addEventListener("resize", caler);
-    vv.addEventListener("scroll", caler);
+    vv.addEventListener("scroll", caler, { passive: true });
     window.addEventListener("resize", caler, { passive: true });
     window.addEventListener("orientationchange", function () { setTimeout(caler, 120); });
     caler();
