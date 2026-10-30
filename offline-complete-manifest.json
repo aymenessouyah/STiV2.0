@@ -1,9 +1,9 @@
 {
-  "version": "v553-sti-atelier-v386",
-  "generatedAt": "2026-10-30T22:56:54Z",
+  "version": "v575-sti-atelier-v386",
+  "generatedAt": "2026-10-30T23:12:24Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 751,
-  "totalBytes": 1059997246,
+  "totalBytes": 1059998793,
   "files": [
     {
       "path": "404.html",
@@ -68,7 +68,7 @@
     {
       "path": "admin.html",
       "bytes": 346065,
-      "gitSha": "78af65b9d5fb1342d059453fa2d7bc605af590a4"
+      "gitSha": "fa2936e7fe8d37a2cb7433830a1e0aa514b04737"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -697,8 +697,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 123211,
-      "gitSha": "4e1ad09990fc4b8fe1e65e7cf0d2d7dd24d96051"
+      "bytes": 123999,
+      "gitSha": "7edf97cb2d7bed38864964c043b88232946c0680"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -932,8 +932,8 @@
     },
     {
       "path": "assets/js/smart-book.js",
-      "bytes": 18662,
-      "gitSha": "85639046e6fbe9102f4fd70a20c46e9c3d9bed3e"
+      "bytes": 19294,
+      "gitSha": "2d07487653f4318a85b42ccf90e11e3024fda089"
     },
     {
       "path": "assets/js/sql-playground.js",
@@ -1362,8 +1362,8 @@
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
-      "bytes": 35127,
-      "gitSha": "19c9b223ac3e5a06c013ae48553fb00ed5f32f4c"
+      "bytes": 35139,
+      "gitSha": "8f8833570e935286813d5dd6377adf03a3706fa5"
     },
     {
       "path": "cours/sql-contraintes.html",
@@ -3157,13 +3157,13 @@
     },
     {
       "path": "index.html",
-      "bytes": 63516,
-      "gitSha": "ea7c414e56ef5fc1072aec70710fc26ea27986d3"
+      "bytes": 63533,
+      "gitSha": "f5ae85e098089326adfa49c3642152c440ced837"
     },
     {
       "path": "livre-smart.html",
-      "bytes": 7713,
-      "gitSha": "bab004ecb10f916f7b0aa0bccd0eb74051ddaae8"
+      "bytes": 7731,
+      "gitSha": "042cb279dcb8d09fe6cbbb30dd0749fc6460b9d3"
     },
     {
       "path": "ma-fiche-revision.html",
@@ -3757,8 +3757,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 99501,
-      "gitSha": "cb962b21e5df49fd774871209e2db442b11344be"
+      "bytes": 99581,
+      "gitSha": "f7d756ed9c69328f59309eab45c15b283790f6a2"
     }
   ]
 }

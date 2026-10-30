@@ -452,7 +452,7 @@ test('reconnexion-profil fusionne aussi les compteurs de vues', () => {
 
 test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »', () => {
   const sw = lire('sw.js');
-  assert.match(sw, /var UPDATE_ID = "v553-defilement-passif-20261030"/);
+  assert.match(sw, /var UPDATE_ID = "v575-livre-accueil-20261031"/);
   /* Le manifeste a suivi la v533 : il porte sa propre révision. */
   /* sync-progressions.js est reparti au lot v534 (pastille de synchro) : cinq fichiers restent. */
   /* admin-vues-videos.js repart au lot v549 (capsule PHP au catalogue du coin).
@@ -483,7 +483,7 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
 
 test('le manifeste hors ligne contient le nouveau module avec son empreinte', () => {
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  assert.equal(manifeste.version, 'v553-sti-atelier-v386');
+  assert.equal(manifeste.version, 'v575-sti-atelier-v386');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((n, f) => n + f.bytes, 0));
   const entree = manifeste.files.find((f) => f.path === MODULE);

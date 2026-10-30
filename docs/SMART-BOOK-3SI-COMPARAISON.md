@@ -1,6 +1,6 @@
 # Manuel de 3ème SI — comparaison et périmètre actuel
 
-Le PDF source de 74 pages a été réorganisé en 50 fiches, avec couverture et sommaire (54 pages), puis complété par 15 pages de tableaux. **Après ajout des trois fiches méthode, la livraison actuelle compte 72 pages.** Il ne s’agit pas d’une reproduction page à page du support initial.
+Le PDF source de 74 pages a été réorganisé en 50 fiches, avec couverture et sommaire (54 pages), puis complété par 15 pages de tableaux. **Après ajout des trois fiches méthode et de la nouvelle partie « Systèmes, technologies et Internet », l’édition 2026 compte 81 pages.** Il ne s’agit pas d’une reproduction page à page du support initial.
 
 Le contenu couvre HTML5, CSS3, JavaScript, notions relationnelles et SQL. Les exemples sont reformulés et modernisés ; les déclarations JavaScript utilisent let. Les tableaux sont manipulés par indices et boucles classiques, sans les méthodes d’ajout exclues par l’enseignant.
 
@@ -18,7 +18,7 @@ Voir `SMART-BOOK-VERIFICATION.md` pour les contrôles et les pages de début des
 Les deux livres utilisent les accès par indices demandés et des boucles classiques. Les instructions exclues ne sont plus actives. Le 4SI ajoute une fiche sur les erreurs PHP et sépare les fonctions de validation du formulaire pour conserver la lisibilité. Les signets PDF sont regroupés par familles.
 
 ### Fiches méthode ajoutées
-Le livre 3SI comprend maintenant 53 fiches et 15 pages de tableaux, soit 72 pages avec couverture et sommaire. Le livre 4SI atteint 100 pages. Aucun ajout au périmètre SQL de 3SI et aucune réintroduction des méthodes exclues.
+Le livre 3SI comprend maintenant 9 pages de cours, 53 fiches et 15 pages de tableaux, soit 81 pages avec couverture et sommaire. Le livre 4SI atteint 100 pages. Aucun ajout au périmètre SQL de 3SI et aucune réintroduction des méthodes exclues.
 
 ### Aperçu des deux manuels
 La page scanner présente maintenant les deux vraies couvertures simultanément en éventail, avec sélection de l’édition au clic, y compris sur mobile. Aucun changement aux contenus des PDF.

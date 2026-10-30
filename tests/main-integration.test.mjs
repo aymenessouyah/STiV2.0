@@ -16,7 +16,7 @@ const revisions = new Map(entrees.map(m => [m[1], m[2]]));
 /* Le résolveur conserve à la fois les correctifs de main et les ressources de la refonte. */
 test('fusion du service worker : cache inédit, révisions XP/médias et refonte conservées', () => {
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
-  assert.match(sw, /var UPDATE_ID = "v553-defilement-passif-20261030"/);
+  assert.match(sw, /var UPDATE_ID = "v575-livre-accueil-20261031"/);
   assert.equal(entrees.length, revisions.size, 'aucune URL de mise à jour en double');
   /* v520 : profil.js porte le plancher anti-recul des XP. */
   assert.equal(revisions.get('./assets/js/profil.js'), 'xp-jamais-en-recul-v520');
@@ -128,7 +128,7 @@ test('les scripts historiques sont chargés une seule fois et dans l’ordre req
 });
 
 test('manifeste hors ligne fusionné : toutes les empreintes et les deux migrations sont exactes', () => {
-  assert.equal(manifeste.version, 'v553-sti-atelier-v386');
+  assert.equal(manifeste.version, 'v575-sti-atelier-v386');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.ok(manifeste.files.some(f => f.path === 'assets/js/xp-plancher.js'), 'le garde-fou XP est livré hors ligne');
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((total, f) => total + f.bytes, 0));
