@@ -82,7 +82,9 @@ def _legende(d, x, y, contenu, taille=19, couleur=TEXTE_3, ancre="mm"):
 def _formule(d, cx, cy, gauche="S", operateur="=", droite="S + T[0]",
              taille=44, accent_gauche=ORANGE, accent_droit=BLEU, echelle=1.0):
     """Écrit `S = S + T[0]` en colorant les deux S différemment."""
-    f = police(int(taille * echelle), True, mono=True)
+    if echelle <= 0.02:
+        return
+    f = police(max(8, int(taille * echelle)), True, mono=True)
     larg_g = f.getlength(gauche)
     larg_o = f.getlength(" " + operateur + " ")
     larg_d = f.getlength(droite)

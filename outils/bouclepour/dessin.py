@@ -411,10 +411,11 @@ def _porte(d: ImageDraw.ImageDraw, box, ouverture: float):
     d.rounded_rectangle([x0, y0, x1, y1], radius=4, fill=(16, 22, 34),
                         outline=(70, 96, 136), width=2)
     reste = max(0.0, 1.0 - k)
-    if reste > 0.02:
-        d.rectangle([x0 + 1, y0 + 1, x0 + largeur * reste, y1 - 1],
+    largeur_reste = largeur * reste
+    if largeur_reste >= 3:      # un battant de moins de 3 px ne se dessine pas
+        d.rectangle([x0 + 1, y0 + 1, x0 + largeur_reste, y1 - 1],
                     fill=(64, 92, 134), outline=(104, 134, 176), width=1)
-        d.rectangle([x1 - largeur * reste, y0 + 1, x1 - 1, y1 - 1],
+        d.rectangle([x1 - largeur_reste, y0 + 1, x1 - 1, y1 - 1],
                     fill=(64, 92, 134), outline=(104, 134, 176), width=1)
 
 
