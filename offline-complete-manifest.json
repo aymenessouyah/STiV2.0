@@ -3,7 +3,7 @@
   "generatedAt": "2026-10-30T14:12:25Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 741,
-  "totalBytes": 942216069,
+  "totalBytes": 942217767,
   "files": [
     {
       "path": "404.html",
@@ -62,13 +62,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 53128,
-      "gitSha": "bf65f5a98b15fbb3861ba29c42300f95c58d0a92"
+      "bytes": 54577,
+      "gitSha": "708214bd191064db155eaf5267a1c75c61eedfa6"
     },
     {
       "path": "admin.html",
       "bytes": 346024,
-      "gitSha": "63ac8935150298bb22515ce0f019ab68314b56be"
+      "gitSha": "2f132a67817881046ac679e19ec73a17458f0768"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -682,8 +682,8 @@
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 701640,
-      "gitSha": "1a0116a3c52d046669be49250046c05ba37eca68"
+      "bytes": 701895,
+      "gitSha": "4839a376c3945aca8ef1cd63548623fd1626d590"
     },
     {
       "path": "assets/js/analytique.js",
@@ -3707,8 +3707,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 98875,
-      "gitSha": "f8cc4ae8adfd8d7062cc7917e89f8f92f5e5722d"
+      "bytes": 98869,
+      "gitSha": "4d18622a8fd89ba8ac60c0d82cdf321e4cbebad8"
     }
   ]
 }

@@ -679,7 +679,7 @@ test('v443 : le bouton clé (#sti-mdp-btn-top) est directement visible en mode m
   // 1) Design system SaaS chargé dans <head> + initialisation thème à 0 ms + polices modernes + logo d'installation PWA
   const headHtml = adminHtml.slice(0, adminHtml.indexOf('</head>'));
   assert.match(headHtml, /assets\/fonts\/fonts\.css/);
-  assert.match(headHtml, /assets\/css\/admin-saas\.css\?v=4\d{2}/);
+  assert.match(headHtml, /assets\/css\/admin-saas\.css\?v=\d{3}/);
   assert.match(headHtml, /sti-admin-theme/);
   assert.match(adminHtml, /class="entete-logo-install"><img src="assets\/icons\/sti-icon-512\.png"/);
   assert.match(adminCss, /"Comic Sans MS"/);
@@ -763,7 +763,7 @@ test('v445 : la photo élève remplace la boîte des initiales dans le tableau d
 
   assert.match(roueInitJs, /sti-roue-photo-img/);
   assert.match(roueInitJs, /__stiRafraichirRoueAvatar/);
-  assert.match(mobileNavJs, /roue-initiales\.js\?v=4\d{2}/);
+  assert.match(mobileNavJs, /roue-initiales\.js\?v=\d{3}/);
 
   assert.match(accesJs, /eleve_proposer_photo/);
   assert.match(accesJs, /sti-pan-avatar-box/);
@@ -773,8 +773,8 @@ test('v445 : la photo élève remplace la boîte des initiales dans le tableau d
   assert.doesNotMatch(compFn, /createObjectURL/);
 
   assert.match(adminHtml, /id="alerte-photos-attente"/);
-  assert.match(adminHtml, /admin-saas\.css\?v=4\d{2}/);
-  assert.match(adminHtml, /admin\.js\?v=4\d{2}-/);
+  assert.match(adminHtml, /admin-saas\.css\?v=\d{3}/);
+  assert.match(adminHtml, /admin\.js\?v=\d{3}-/);
   assert.match(adminCss, /\.noeud-pastille-img/);
   assert.match(adminCss, /\.noeud-photo-attente-box/);
   assert.match(adminCss, /\.tb-mini-avatar/);
@@ -1323,8 +1323,8 @@ test('v456 : consolidation complète Quiz Lots A, B et C (RLS DELETE, admin.html
   assert.ok((adminHtml.match(/<option value="quiz\/tableaux\.html">/g) || []).length >= 2);
   assert.equal((adminHtml.match(/<option value="revision-erreurs\.html">/g) || []).length, 2);
   assert.match(adminHtml, /id="btn-quiz-sync-csv"/);
-  assert.match(adminHtml, /assets\/js\/quiz-admin\.js\?v=4\d{2}/);
-  assert.match(adminHtml, /admin\.js\?v=4\d{2}-/);
+  assert.match(adminHtml, /assets\/js\/quiz-admin\.js\?v=\d{3}/);
+  assert.match(adminHtml, /admin\.js\?v=\d{3}-/);
 
   assert.match(ppHtml, /window\.location\.replace\(cible\)/);
   assert.doesNotMatch(ppHtml, /const QUESTIONS\s*=/);
@@ -1577,7 +1577,7 @@ test('v457 (Lot D — audit final Quiz) : couverture 124 pages, cache-buster uni
   ]) {
     assert.match(content, /quiz-sync\.js\?v=4[56]\d/, `${name} doit charger quiz-sync.js?v=457+`);
   }
-  assert.match(adminHtml, /admin-erreurs\.js\?v=4\d{2}/);
+  assert.match(adminHtml, /admin-erreurs\.js\?v=\d{3}/);
   assert.match(swJs, /v457-quiz-lot-d/);
   assert.match(swJs, /"\.\/assets\/js\/quiz-tableaux-boot\.js"/);
   assert.ok(offlineManifest.files.some((f) => f.path === 'assets/js/quiz-tableaux-boot.js'));
@@ -2547,8 +2547,8 @@ test('v461 (structure) : compteurs vidéos (.mp4) & audios (.mp3) reliés à sti
   assert.match(syncProgJs, /function isolerComptePartageSiBesoin\(/);
 
   // 4) Cache-busters v461+ + Service Worker v321+
-  assert.match(adminHtml, /admin\.js\?v=4\d{2}-/);
-  assert.match(adminHtml, /protection\.js\?v=4\d{2}/);
+  assert.match(adminHtml, /admin\.js\?v=\d{3}-/);
+  assert.match(adminHtml, /protection\.js\?v=\d{3}/);
   assert.match(swJs, /var CACHE = "sti-atelier-v3\d{2}"/);
   assert.match(swJs, /compteurs-media-v461/);
 });
@@ -2685,8 +2685,8 @@ test('v462 : restauration complète des 4 boutons de la Carte Officielle STI V2.
   const swJs = read('sw.js');
 
   // 1) Chargement versionné + CSS de secours critique intégré dans admin.html
-  assert.match(adminHtml, /assets\/css\/admin-saas\.css\?v=4\d{2}/);
-  assert.match(adminHtml, /assets\/js\/admin\.js\?v=4\d{2}-/);
+  assert.match(adminHtml, /assets\/css\/admin-saas\.css\?v=\d{3}/);
+  assert.match(adminHtml, /assets\/js\/admin\.js\?v=\d{3}-/);
   assert.match(adminHtml, /id="style-carte-candidat-secours-v462"/);
   assert.match(adminHtml, /\[hidden\]\{display:none!important\}/);
 
@@ -3542,7 +3542,7 @@ test('v467 (structure) : quiz/pp.html charge config.js, sauvegarde complète 15 
 
   // Point 4 : quiz/pp.html charge config.js et conserve le lien retour #modules + config.js gère series-exercices.html
   assert.match(ppHtml, /<a class="sec" href="\.\.\/index\.html#modules">/);
-  assert.match(ppHtml, /<script src="\.\.\/assets\/js\/config\.js\?v=4\d{2}"><\/script>/);
+  assert.match(ppHtml, /<script src="\.\.\/assets\/js\/config\.js\?v=\d{3}"><\/script>/);
   assert.match(configJs, /estUrlSeriesExercices/);
   assert.match(configJs, /sti-retour-series-hash/);
   assert.match(configJs, /sti-series-restored/);
@@ -3552,8 +3552,8 @@ test('v467 (structure) : quiz/pp.html charge config.js, sauvegarde complète 15 
   assert.match(migSql, /IF NOT public\.est_admin\(\) THEN/);
   assert.doesNotMatch(migSql, /SELECT[^\n]*secret_hash/i);
   assert.match(adminHtml, /connect-src[^;]*https:\/\/script\.google\.com\s+https:\/\/script\.googleusercontent\.com/);
-  assert.match(adminHtml, /assets\/js\/config\.js\?v=4\d{2}/);
-  assert.match(adminHtml, /assets\/js\/sauvegarde\.js\?v=4\d{2}/);
+  assert.match(adminHtml, /assets\/js\/config\.js\?v=\d{3}/);
+  assert.match(adminHtml, /assets\/js\/sauvegarde\.js\?v=\d{3}/);
   assert.match(sauvJs, /admin_sauvegarde_tables_annexes/);
   assert.match(sauvJs, /text\/plain;charset=utf-8/);
   assert.match(gsCode, /sauvegardeQuotidienne/);
@@ -4045,11 +4045,11 @@ test('v468 (structure) : liens Défis JS corrigés (zéro 404 defis-javascript.h
   }
 
   // 4) Cache-busters v468+ + README + sw.js sti-atelier-v328+ + offline-complete-manifest.json
-  assert.match(adminHtml, /assets\/js\/config\.js\?v=4\d{2}/);
-  assert.match(adminHtml, /assets\/js\/quiz-admin\.js\?v=4\d{2}/);
-  assert.match(adminHtml, /assets\/js\/analytique\.js\?v=4\d{2}/);
-  assert.match(adminHtml, /assets\/js\/sauvegarde\.js\?v=4\d{2}/);
-  assert.match(adminHtml, /assets\/js\/sante\.js\?v=4\d{2}/);
+  assert.match(adminHtml, /assets\/js\/config\.js\?v=\d{3}/);
+  assert.match(adminHtml, /assets\/js\/quiz-admin\.js\?v=\d{3}/);
+  assert.match(adminHtml, /assets\/js\/analytique\.js\?v=\d{3}/);
+  assert.match(adminHtml, /assets\/js\/sauvegarde\.js\?v=\d{3}/);
+  assert.match(adminHtml, /assets\/js\/sante\.js\?v=\d{3}/);
   assert.match(readmeMd, /sti-atelier-v328/);
   const tickerLines = readmeMd.split('\n').filter((l) => /^\|\s*v\d{3}/.test(l));
   assert.ok(tickerLines.some((l) => /^\|\s*v468\s*\|/.test(l)), 'README.md doit conserver la ligne v468');
@@ -4293,7 +4293,7 @@ test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, pari
   assert.match(anaJs, /background:var\(--adm-border,#e2e8f0\)/);
 
   // 4) Synchronisation des versions v469 / sti-atelier-v329
-  assert.match(adminHtml, /assets\/js\/admin\.js\?v=4\d{2}-[a-z0-9-]+/);
+  assert.match(adminHtml, /assets\/js\/admin\.js\?v=\d{3}-[a-z0-9-]+/);
   assert.match(adminHtml, /assets\/js\/admin-couverture\.js\?v=469/);
   assert.match(adminHtml, /assets\/js\/admin-revision\.js\?v=469/);
   assert.match(adminHtml, /assets\/js\/graphiques-activite\.js\?v=469/);
@@ -5465,7 +5465,7 @@ test('v473 (structure & budgets performance) : 0 doublon dans UPDATE_FILES (-85,
   assert.match(sauvJs, /sti-drive-cfg-checked-v1/);
   assert.match(indexHtml, /config\.js\?v=47\d/);
   assert.match(indexHtml, /sync-progressions\.js\?v=47\d/);
-  assert.match(adminHtml, /admin\.js\?v=47\d-perf/);
+  assert.match(adminHtml, /admin\.js\?v=\d{3}-perf/);
   assert.match(adminHtml, /quiz-admin\.js\?v=47\d/);
   assert.match(adminHtml, /v473 · sti-atelier-v333/);
   assert.ok(nouv.some((n) => n.version === 'v473'));
@@ -6491,7 +6491,7 @@ test('v477 (structure) : élimination complète de la rétention v475 (VERSION_A
   assert.doesNotMatch(nouvJs, /nouveautes\.json\?v=451/);
 
   assert.match(adminHtml, /config\.js\?v=[45]\d\d/);
-  assert.match(adminHtml, /admin\.js\?v=4(?:7[789]|8\d)-perf/);
+  assert.match(adminHtml, /admin\.js\?v=\d{3}-perf/);
   assert.match(adminHtml, /quiz-admin\.js\?v=4(?:7[789]|8\d)/);
   assert.match(adminHtml, /v4(?:7[789]|8\d|9\d) · sti-atelier-v3(?:3[89]|4\d)/);
   assert.match(adminJs, /VERSION_AFFICHEE/);

@@ -455,14 +455,18 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
   assert.match(sw, /var UPDATE_ID = "v553-defilement-passif-20261030"/);
   /* Le manifeste a suivi la v533 : il porte sa propre révision. */
   /* sync-progressions.js est reparti au lot v534 (pastille de synchro) : cinq fichiers restent. */
-  /* admin-vues-videos.js repart au lot v549 (capsule PHP au catalogue du coin). */
-  assert.equal((sw.match(new RegExp('revision: "' + REV + '"', 'g')) || []).length, 3, 'trois fichiers restent au lot v531');
+  /* admin-vues-videos.js repart au lot v549 (capsule PHP au catalogue du coin).
+     v557 : admin.html repart à son tour (cache-buster admin.js en ?v=557-perf) :
+     deux fichiers restent au lot v531. */
+  assert.equal((sw.match(new RegExp('revision: "' + REV + '"', 'g')) || []).length, 2, 'deux fichiers restent au lot v531');
   assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "suivi-video-repare-v554"/, 'le lecteur repart au lot v545');
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   for (const chemin of ['assets/js/reconnexion-profil.js',
-    'assets/js/reprendre.js', 'admin.html']) {
+    'assets/js/reprendre.js']) {
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${REV}"`), chemin);
   }
+  assert.ok(delta.includes('url: "./admin.html", revision: "taille-base-v557"'),
+    'la page d’administration repart au lot v557');
   assert.ok(delta.includes('url: "./assets/js/admin-vues-videos.js", revision: "php-variables-v549"'),
     'le coin des vues repart au lot v549');
   assert.match(delta, /url: "\.\/assets\/js\/sync-progressions\.js", revision: "pastille-sync-v534"/);

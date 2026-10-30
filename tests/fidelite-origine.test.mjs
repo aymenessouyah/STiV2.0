@@ -32,7 +32,9 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
      v534 : sync-progressions.js n'affiche plus la pastille de synchro à vie : deux
      secondes à chaque changement d'état ; empreinte réactualisée.
      v553 : l'écouteur de défilement du visualViewport d'accès devient passif
-     (audit de fluidité) ; empreinte réactualisée. */
+     (audit de fluidité) ; empreinte réactualisée.
+     v557 : admin.html recharge admin.js en ?v=557-perf (quota mesuré en base) ;
+     empreinte réactualisée. */
   const originaux = {
     'assets/js/config.js': '4936f1efc5fde33dc2432dd3a9aa4fc33df77f90b842fe2091a2a5ba2f872a7f',
     'assets/js/supabase-umd.js': '2eebfe06b1b5309985dc1526e8981ea3a18b71beeef83e7f38e04c303e142d6d',
@@ -40,7 +42,7 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
     'assets/js/sync-progressions.js': 'c6e36a6f0ebea5e481cfb1b16afb9c0cfefc595ed4de21a1becff5a096d327b6',
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
     'portail.html': 'f95c5b3422cfda3d5fa75a7b8e20fc41f2d63ab58f24468bd830d187cd722b68',
-    'admin.html': '0a91be4c96370a9b08904016bd9b3fc98118704baf9c7c8b356c3d57fe5bed1c',
+    'admin.html': 'c3b6f4819c1cd8c5b1e3a6f3f083487d8b7d8430bd9e93e76c1686f1d44a51ad',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };
@@ -165,8 +167,10 @@ test('atelier Bac : les scripts historiques ne sont pas coupés par les ajouts',
 
 test('commandes d’administration : scripts et fonctions de la barre PC inchangés', () => {
   /* v553 : les deux écouteurs de défilement de l'administration et celui du
-     surligneur deviennent passifs (audit de fluidité) ; empreintes réactualisées. */
-  assert.equal(sha('assets/js/admin.js'), '98dc18fa9d18cfaf9281524de5afeda02c27e1cbc8ca6328de4f9c3dc1aa67bd');
+     surligneur deviennent passifs (audit de fluidité) ; empreintes réactualisées.
+     v557 : le quota Supabase est lu via la RPC admin_taille_base() (bigint ou
+     chaîne numérique) ; empreinte réactualisée. */
+  assert.equal(sha('assets/js/admin.js'), '4bd44f17e1aea20c91ed17ba087444d4ccbf8649472ef40da4b0b86ffd793038');
   assert.equal(sha('assets/js/rayonsx-surligneur.js'), '1b7fe2067629766ef4043fa3060199b71124d8486e36d92aaac0b45bd861847c');
   const protection = lire('assets/js/protection.js');
   const debut = protection.indexOf('  function estAppareilPC()');
