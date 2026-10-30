@@ -1,22 +1,22 @@
 # Rapport d’audit de la plateforme — v553
 
-**Date** : 2026-10-30 · **Pages auditées** : 131 · **Liens vérifiés** : 1346 · **Questions de quiz** : 635
+**Date** : 2026-10-30 · **Pages auditées** : 131 · **Liens vérifiés** : 1350 · **Questions de quiz** : 635
 
 | Constats | Nombre |
 |---|---|
-| ⛔ Bloquants | 0 |
+| ⛔ Bloquants | 2 |
 | ⚠️ Majeurs | 0 |
 | ℹ️ Mineurs | 5 |
-| ✅ Conformes | 21 |
+| ✅ Conformes | 19 |
 
 ## Réponse aux huit questions
 
 | Question | Verdict | Ce qui a été mesuré |
 |---|---|---|
-| Fluidité | ✅ conforme | preload des vidéos, animations sur transform/opacity, écouteurs passifs, « réduire les animations » — Les 37 vidéos des pages attendent un clic (preload metadata/none) · Les 12 animations du thème restent sur transform/opacity · Les 18 écouteurs de défilement sont passifs · prefers-reduced-motion respecté dans le thème et dans la grille des capsules |
+| Fluidité | ✅ conforme | preload des vidéos, animations sur transform/opacity, écouteurs passifs, « réduire les animations » — Les 38 vidéos des pages attendent un clic (preload metadata/none) · Les 12 animations du thème restent sur transform/opacity · Les 18 écouteurs de défilement sont passifs · prefers-reduced-motion respecté dans le thème et dans la grille des capsules |
 | Rapidité | ✅ conforme (réserves mineures) | poids des pages, scripts bloquants, cache hors-ligne, images différées — 28 page(s) dépassent 1,5 Mo de code · 7 script(s) bloquant(s) dans l’en-tête (petits fichiers, ordre imposé) |
 | Sécurité | ✅ conforme | secrets, RLS, administration, liens _blank, CSP — RLS active sur les 9 tables créées par les migrations · Aucune clé de service (service_role) dans les pages ni les scripts · Aucun eval / new Function hors bac à sable · Tous les liens _blank sont isolés (rel=noopener) · Content-Security-Policy déclarée sur 80/131 pages · admin.js vérifie la session et l’adresse de l’administrateur avant d’afficher quoi que ce soit · Seule la clé publique (sb_publishable_) est exposée côté client |
-| Accès aux cours, vidéos et exercices | ✅ conforme | liens, ancres, vidéos du catalogue, menu — Tous les liens et ancres locaux existent (1346 vérifiés) · Les 23 vidéos du catalogue sont livrées (781 Mo de médias) · 18 pages de cours et 67 pages d’exercices joignables |
+| Accès aux cours, vidéos et exercices | ⛔ à corriger | liens, ancres, vidéos du catalogue, menu — 2 lien(s) pointent vers un fichier absent · 1 vidéo(s) du catalogue absente(s) |
 | Quiz : tirage aléatoire à chaque entrée | ✅ conforme | mélange des questions et de la place de la bonne réponse — Les 5 quiz tirent questions et réponses à chaque partie |
 | XP : synchronisation entre appareils | ✅ conforme | file locale, envoi idempotent, maximum conservé — Scores et réponses passent par une file locale puis un envoi idempotent |
 | Quiz conformes aux annexes | ✅ conforme | vocabulaire des énoncés et des bonnes réponses — Quiz ↔ annexes : 92 % du vocabulaire vient directement de l’annexe, 98 % avec le cours |
@@ -24,19 +24,19 @@
 
 | Axe | Constat | Niveau | Détail |
 |---|---|---|---|
-| Accès | Tous les liens et ancres locaux existent (1346 vérifiés) | ✅ ok |  |
-| Accès | Les 23 vidéos du catalogue sont livrées (781 Mo de médias) | ✅ ok |  |
+| Accès | 2 lien(s) pointent vers un fichier absent | ⛔ bloquant | cours/javascript.html → ../assets/videos/FonctionsChaine-v564.mp4<br>cours/javascript.html → ../assets/subtitles/FonctionsChaine-fr-v564.vtt |
+| Accès | 1 vidéo(s) du catalogue absente(s) | ⛔ bloquant | assets/videos/FonctionsChaine-v564.mp4 |
 | Accès | 18 pages de cours et 67 pages d’exercices joignables | ✅ ok |  |
 | Quiz | Les 5 quiz tirent questions et réponses à chaque partie | ✅ ok | 5 s’appuient sur le module commun STIQuizAlea (crypto.getRandomValues). Redirection ignorée : pp.html. |
 | XP | Scores et réponses passent par une file locale puis un envoi idempotent | ✅ ok |  |
 | Annexes | Quiz ↔ annexes : 92 % du vocabulaire vient directement de l’annexe, 98 % avec le cours | ✅ ok | HTML5 : 126 questions · 92 % dans l’annexe, 92 % avec le cours<br>CSS3 : 137 questions · 87 % dans l’annexe, 98 % avec le cours<br>JAVASCRIPT : 63 questions · 96 % dans l’annexe, 100 % avec le cours<br>SQL : 61 questions · 92 % dans l’annexe, 98 % avec le cours<br>PHP : 82 questions · 94 % dans l’annexe, 98 % avec le cours<br>Seuls écarts (énoncé + bonne réponse) : html5 : alternatives, html5 : picture, html5 : alternatifs, css3 : alternance, css3 : diaires, sql : adddate, php : debut, php : gorienne |
 | Mobile | Les 131 pages déclarent un viewport adapté | ✅ ok |  |
 | Mobile | Menu mobile accessible (aria-expanded) et 29 points de rupture dans le thème | ✅ ok |  |
-| Fluidité | Les 37 vidéos des pages attendent un clic (preload metadata/none) | ✅ ok |  |
+| Fluidité | Les 38 vidéos des pages attendent un clic (preload metadata/none) | ✅ ok |  |
 | Fluidité | Les 12 animations du thème restent sur transform/opacity | ✅ ok |  |
 | Fluidité | Les 18 écouteurs de défilement sont passifs | ✅ ok |  |
 | Fluidité | prefers-reduced-motion respecté dans le thème et dans la grille des capsules | ✅ ok |  |
-| Rapidité | 28 page(s) dépassent 1,5 Mo de code | ℹ️ mineur | Positionnement-animee/index.html — 1610 Ko<br>admin.html — 1892 Ko<br>bac-pratique.html — 1570 Ko<br>cours/PHP-recap.html — 1575 Ko<br>cours/Recap-JavaScript-STI.html — 1639 Ko<br>cours/annexe-fleuriste-html5.html — 1626 Ko<br>cours/courscss3.html — 1704 Ko<br>cours/courshtml5.html — 2054 Ko<br>cours/coursphp.html — 1609 Ko<br>cours/css3.html — 2100 Ko<br>cours/fiche-revision-html5.html — 1676 Ko<br>cours/html5.html — 2072 Ko |
+| Rapidité | 28 page(s) dépassent 1,5 Mo de code | ℹ️ mineur | Positionnement-animee/index.html — 1611 Ko<br>admin.html — 1893 Ko<br>bac-pratique.html — 1571 Ko<br>cours/PHP-recap.html — 1575 Ko<br>cours/Recap-JavaScript-STI.html — 1640 Ko<br>cours/annexe-fleuriste-html5.html — 1626 Ko<br>cours/courscss3.html — 1704 Ko<br>cours/courshtml5.html — 2054 Ko<br>cours/coursphp.html — 1610 Ko<br>cours/css3.html — 2102 Ko<br>cours/fiche-revision-html5.html — 1676 Ko<br>cours/html5.html — 2073 Ko |
 | Rapidité | 7 script(s) bloquant(s) dans l’en-tête (petits fichiers, ordre imposé) | ℹ️ mineur | dashboard.html → assets/js/config.js?v=479<br>index.html → assets/js/config.js?v=479<br>quiz/pp.html → ../assets/js/retour-quiz.js<br>quiz/tableaux.html → ../assets/js/quiz-tableaux-boot.js?v=456<br>revision-erreurs.html → assets/js/config.js?v=476<br>revision-erreurs.html → assets/js/supabase-umd.js<br>revision-erreurs.html → assets/js/quiz-sync.js?v=460 |
 | Rapidité | Service worker prêt : 743 fichiers décrits hors-ligne (v553-sti-atelier-v386) | ✅ ok |  |
 | Rapidité | Chargement différé des images : 117/193 (61 %) | ✅ ok |  |
@@ -53,10 +53,10 @@
 
 ## Chiffres relevés
 
-- **liens** : 1346
+- **liens** : 1350
 - **videos** : 185
 - **poidsVideos** : 819115598
-- **catalogue** : 23
+- **catalogue** : 24
 - **exercices** : 67
 - **cours** : 18
 - **quiz** : 5
@@ -64,7 +64,7 @@
 - **banque** : 635
 - **annexes** : jetons = 354 · tauxAnnexe = 92 · tauxSources = 98 · horsSources = 8
 - **medias** : 29
-- **videosHtml** : 37
+- **videosHtml** : 38
 - **keyframes** : 12
 - **keyframesDisposition** : 0
 - **ecouteursDefilement** : 18

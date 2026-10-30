@@ -286,6 +286,23 @@
       codeApercu: "const notes = [12, 15, 9]; console.log(notes[0]);"
     },
     {
+      /* v564 : capsule « Les chaînes de caractères » — méthodes, conversions et
+         dates (Annexe JS). Même modèle que les capsules précédentes : une voix,
+         deux colonnes, des exercices, des sous-titres et des chapitres. */
+      id: "fonctions-chaine",
+      matiere: "javascript",
+      nomMatiere: "JavaScript",
+      badgeClasse: "badge-js",
+      couleur: "#f7df1e",
+      titre: "Les chaînes de caractères — méthodes, conversions et dates",
+      dureeTexte: "10:30",
+      srcPrincipal: "assets/videos/FonctionsChaine-v564.mp4",
+      srcSecours: "assets/videos/FonctionsChaine-v564.mp4",
+      sousTitres: "assets/subtitles/FonctionsChaine-fr-v564.vtt",
+      urlCours: "cours/javascript.html#videos",
+      codeApercu: 'ch.substring(0, 3) // "Lyc"'
+    },
+    {
       /* v549 : capsule « PHP — les variables, la portée et les types ». */
       id: "php-variables",
       matiere: "php",
@@ -931,7 +948,7 @@
      et chaque carte de la grille reçoit un effet de survol différent. L'indice
      est tiré de l'identifiant : stable d'un chargement à l'autre, et deux cartes
      voisines ne retombent pas sur le même effet. */
-  var CAPSULES_VIDEO = { "boucle-pour": true, "console-variables": true, "php-variables": true };
+  var CAPSULES_VIDEO = { "boucle-pour": true, "console-variables": true, "php-variables": true, "fonctions-chaine": true };
   function estCapsuleVideo(v) {
     var cle = String((v && v.id) || "");
     if (CAPSULES_VIDEO[cle]) return true;
@@ -994,6 +1011,11 @@
           '" data-matiere="' + echapperHtml(v.matiere) +
           '" data-effet="' + effetVideo(v) +
           '" style="--accent:' + echapperHtml(v.couleur || "#38bdf8") + '">' +
+          /* v570 : chaque nœud-capsule de la vidéothèque porte son étiquette
+             verte « Capsule », en haut à gauche — un vrai élément, et non un
+             pseudo-élément : ::before et ::after servent déjà aux effets de
+             survol v550 sur cette même carte. */
+          (estCapsuleVideo(v) ? '<span class="video-card__capsule">Capsule</span>' : "") +
           '<button type="button" class="video-card__thumb" data-play-video="' + echapperHtml(v.id) + '" aria-label="▶ ' + (dejaVue ? '✓ Vue ' : '') + echapperHtml(v.dureeTexte) + ' — Lire la vidéo ' + echapperHtml(v.titre) + '">' +
             '<img src="' + echapperHtml(poster) + '" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" />' +
             '<span class="video-card__play"><span class="video-play-btn" aria-hidden="true">▶</span></span>' +
