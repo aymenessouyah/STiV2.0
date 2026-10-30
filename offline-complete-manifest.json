@@ -1,9 +1,9 @@
 {
   "version": "v553-sti-atelier-v386",
-  "generatedAt": "2026-10-30T22:07:11Z",
+  "generatedAt": "2026-10-30T22:22:10Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 749,
-  "totalBytes": 1059906812,
+  "totalBytes": 1059908376,
   "files": [
     {
       "path": "404.html",
@@ -187,8 +187,8 @@
     },
     {
       "path": "assets/css/capsules-vedettes.css",
-      "bytes": 13174,
-      "gitSha": "248bcf396e9998e49b0dba7a1cf7e3ec36c63894"
+      "bytes": 14742,
+      "gitSha": "d6be589cbdeabbc0e512f966599b77c9c488e059"
     },
     {
       "path": "assets/css/cours-css3.css",
@@ -1343,7 +1343,7 @@
     {
       "path": "cours/javascript.html",
       "bytes": 140848,
-      "gitSha": "c9bb7d61532435b82e242c10ad73319b539a2162"
+      "gitSha": "5a59b8e10c4dd04cc56ad69353e0111aeeefb1c4"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -1353,7 +1353,7 @@
     {
       "path": "cours/php.html",
       "bytes": 205880,
-      "gitSha": "24fd23d6bcb2332af28af7b74a58c9cf323a28b6"
+      "gitSha": "031add37c98b9aaf4327b15ec408a792e5347d33"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -3148,7 +3148,7 @@
     {
       "path": "index.html",
       "bytes": 61336,
-      "gitSha": "c9c5733ca221aae6e98ad6df37a61f49b48502bc"
+      "gitSha": "7e9a6e909cd51db1cbd57f204d42f2a02b63bc4b"
     },
     {
       "path": "livre-smart.html",
@@ -3747,8 +3747,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 99126,
-      "gitSha": "09176d1aa7b9057f913aae4f0028f02cde6c4354"
+      "bytes": 99122,
+      "gitSha": "5a008374d67db220359a0b56b2147a9e0d51ee16"
     }
   ]
 }
