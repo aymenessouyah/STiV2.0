@@ -397,7 +397,8 @@
       pied.textContent = pied.textContent.replace(/^[🟢🔴]\s*/, icone + " ");
     }
     var infoQuota = dernierQuotaInfo
-      ? " · Quota : " + dernierQuotaInfo.pctRestant + " restant (" + dernierQuotaInfo.strQteRestante + ")"
+      ? " · Quota : " + dernierQuotaInfo.pctRestant + " restant (" + dernierQuotaInfo.strQteRestante + ") · " +
+        (dernierQuotaInfo.depuisRpc ? "taille mesurée en base" : "estimation locale, mesure en attente")
       : "";
     var titreEtat = icone + " " + libelle + " — " + detailEtatSupabase + infoQuota;
     [badge, pied].forEach(function (el) {
@@ -499,8 +500,10 @@
     if (navigator.onLine && sb && typeof sb.rpc === "function" && Date.now() - dernierRpcQuotaTs > 600000) {
       dernierRpcQuotaTs = Date.now();
       sb.rpc("admin_taille_base").then(function (r) {
-        if (r && !r.error && typeof r.data === "number" && r.data > 0) {
-          majAffichageQuotaSupabase(r.data, nbP, nbA, true);
+        /* PostgREST renvoie un bigint : on accepte aussi une chaîne numérique. */
+        var octetsMesures = r && !r.error ? Number(r.data) : 0;
+        if (isFinite(octetsMesures) && octetsMesures > 0) {
+          majAffichageQuotaSupabase(octetsMesures, nbP, nbA, true);
         }
       }).catch(function () {});
     }
