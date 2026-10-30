@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="sombre">
+<head>
+<meta charset="utf-8" />
+<meta name="description" content="Moulinette administrateur STI V2.0 — bascule des photos de profil historiques (base64) vers le bucket privé." />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, noai, noimageai" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://vywujxmepvcbgedgmger.supabase.co; connect-src 'self' https://vywujxmepvcbgedgmger.supabase.co wss://vywujxmepvcbgedgmger.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+<title>Migration des photos — STI V2.0</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; padding: 24px 16px 64px; font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+         background: #0f172a; color: #e6edf7; }
+  main { max-width: 860px; margin: 0 auto; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; }
+  p.lede { color: #a9b6cc; margin: 0 0 22px; }
+  .carte { background: #16203a; border: 1px solid #2a3350; border-radius: 14px; padding: 18px; margin-bottom: 18px; }
+  button { font: inherit; font-weight: 700; border-radius: 10px; border: 1px solid #2a3350;
+           background: #223055; color: #e6edf7; padding: 10px 16px; cursor: pointer; margin: 0 8px 8px 0; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.principal { background: #f7df1e; color: #12161f; border-color: #f7df1e; }
+  button.danger { background: #7f1d1d; border-color: #991b1b; }
+  #journal { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .82rem; white-space: pre-wrap;
+             background: #0b1222; border: 1px solid #223055; border-radius: 10px; padding: 12px;
+             max-height: 340px; overflow: auto; }
+  .ok { color: #6ee7b7; } .ko { color: #fca5a5; } .info { color: #93c5fd; }
+  ul { margin: 8px 0 0; padding-left: 20px; color: #a9b6cc; }
+</style>
+</head>
+<body>
+<main>
+  <nav aria-label="Retour" style="margin-bottom:14px;font-size:.9rem">
+    <a href="index.html" style="color:#f7df1e;text-decoration:none;font-weight:700">← Accueil</a>
+    <span style="color:#3a4766">·</span>
+    <a href="admin.html" style="color:#93c5fd;text-decoration:none;font-weight:700">Tableau de bord</a>
+  </nav>
+  <h1>Migration des photos de profil vers le Storage</h1>
+  <p class="lede">
+    Les photos historiques sont stockées en base64 dans <code>profiles.photo_url</code>.
+    Cet outil les copie dans le bucket privé <code>photos-profils</code>, puis remplace la valeur
+    par une URL signée. Les photos déjà migrées ne sont jamais retraitées.
+  </p>
+
+  <div class="carte">
+    <button id="btn-analyser" class="principal" type="button">1 · Analyser</button>
+    <button id="btn-sauvegarde" type="button" disabled>2 · Télécharger la sauvegarde</button>
+    <button id="btn-migrer" class="danger" type="button" disabled>3 · Migrer les photos</button>
+    <ul>
+      <li>La sauvegarde contient les données d’origine : la migration est réversible.</li>
+      <li>Aucune photo n’est supprimée de la base avant que le fichier soit bien déposé et signé.</li>
+      <li>En cas d’échec sur une photo, elle reste intacte et la migration continue.</li>
+    </ul>
+  </div>
+
+  <div class="carte">
+    <div id="journal">Prêt.</div>
+  </div>
+</main>
+
+<script src="assets/js/config.js?v=479"></script>
+<script src="assets/js/supabase-umd.js"></script>
+<script>
+(function () {
+  "use strict";
+  var ADMIN = "aymenessouyah@gmail.com";
+  var BUCKET = "photos-profils";
+  var TTL = 315360000; /* 10 ans */
+
+  var journal = document.getElementById("journal");
+  var btnAnalyser = document.getElementById("btn-analyser");
+  var btnSauvegarde = document.getElementById("btn-sauvegarde");
+  var btnMigrer = document.getElementById("btn-migrer");
+
+  var aMigrer = [];       /* [{id, nom, photo_url}] */
+  var sauvegardePrete = false;
+
+  function dire(t, classe) {
+    var span = document.createElement("span");
+    if (classe) span.className = classe;
+    span.textContent = t + "\n";
+    journal.appendChild(span);
+    journal.scrollTop = journal.scrollHeight;
+  }
+  function vider() { journal.textContent = ""; }
+
+  /* ── garde d'accès : même règle que le tableau de bord ─────────────── */
+  function sessionAdmin() {
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i) || "";
+      if (k.indexOf("sb-") === 0 && k.indexOf("-auth-token") !== -1) {
+        var v = (localStorage.getItem(k) || "").toLowerCase();
+        if (v && v !== "null" && v.indexOf(ADMIN) !== -1) return true;
+      }
+    }
+    try {
+      var c = JSON.parse(localStorage.getItem("sti-session-cache") || "null");
+      if (c && c.isAdmin === true && String(c.email || "").trim().toLowerCase() === ADMIN) return true;
+    } catch (e) {}
+    return false;
+  }
+  if (!sessionAdmin()) {
+    document.querySelector("main").innerHTML =
+      "<h1>Accès refusé</h1><p class='lede'>Cette page est réservée à l’administrateur connecté. " +
+      "Ouvrez le <a href='admin.html' style='color:#f7df1e'>tableau de bord</a>, connectez-vous, puis revenez ici.</p>";
+    return;
+  }
+
+  var cfg = window.STI_AUTH || {};
+  var sb = window.supabase.createClient(cfg.URL, cfg.CLE, {
+    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
+  });
+
+  function estDataUrl(u) { return /^data:image\/(jpeg|jpg|png|webp);base64,/i.test(String(u || "")); }
+  function nomFichier() {
+    var jeton = "";
+    try {
+      var tab = new Uint8Array(16);
+      window.crypto.getRandomValues(tab);
+      for (var i = 0; i < tab.length; i++) jeton += ("0" + tab[i].toString(16)).slice(-2);
+    } catch (e) { jeton = String(Date.now()) + Math.random().toString(16).slice(2, 10); }
+    return jeton;
+  }
+  function dataUrlVersOctets(dataUrl) {
+    var m = /^data:(image\/[a-z0-9.+/-]+);base64,(.+)$/i.exec(dataUrl);
+    if (!m) return null;
+    var bin = atob(m[2]);
+    var octets = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) octets[i] = bin.charCodeAt(i);
+    var type = m[1].toLowerCase();
+    var ext = type.indexOf("png") >= 0 ? "png" : /jpe?g/.test(type) ? "jpg" : "webp";
+    return { octets: octets, type: type, ext: ext };
+  }
+
+  /* ── 1. Analyse ────────────────────────────────────────────────────── */
+  btnAnalyser.addEventListener("click", function () {
+    vider();
+    btnMigrer.disabled = true;
+    btnSauvegarde.disabled = true;
+    sauvegardePrete = false;
+    dire("Lecture des profils…", "info");
+    sb.from("profiles").select("id,nom,prenom,photo_url")
+      .order("nom", { ascending: true })
+      .then(function (r) {
+        if (r && r.error) throw r.error;
+        var lignes = (r && r.data) || [];
+        aMigrer = lignes.filter(function (p) { return estDataUrl(p.photo_url); })
+          .map(function (p) {
+            return {
+              id: p.id,
+              nom: [p.prenom, p.nom].filter(Boolean).join(" ") || p.id,
+              photo_url: p.photo_url
+            };
+          });
+        dire("Profils lus : " + lignes.length, "info");
+        dire("Photos encore en base64 : " + aMigrer.length, aMigrer.length ? "info" : "ok");
+        aMigrer.forEach(function (p) {
+          dire("  · " + p.nom + " — " + Math.round(p.photo_url.length / 1024) + " Ko");
+        });
+        if (!aMigrer.length) { dire("Rien à migrer. Tout est déjà dans le bucket.", "ok"); return; }
+        btnSauvegarde.disabled = false;
+        btnMigrer.disabled = false;
+      })
+      .catch(function (e) {
+        dire("❌ Lecture impossible : " + ((e && e.message) || e), "ko");
+      });
+  });
+
+  /* ── 2. Sauvegarde réversible ──────────────────────────────────────── */
+  btnSauvegarde.addEventListener("click", function () {
+    if (!aMigrer.length) return;
+    var lot = {
+      date: new Date().toISOString(),
+      note: "Sauvegarde avant migration vers le bucket " + BUCKET,
+      photos: aMigrer
+    };
+    var blob = new Blob([JSON.stringify(lot, null, 2)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "sauvegarde-photos-" + new Date().toISOString().slice(0, 10) + ".json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+    sauvegardePrete = true;
+    dire("✅ Sauvegarde téléchargée (" + aMigrer.length + " photos). Gardez ce fichier.", "ok");
+  });
+
+  /* ── 3. Migration ──────────────────────────────────────────────────── */
+  function migrerUne(photo) {
+    var paquet = dataUrlVersOctets(photo.photo_url);
+    if (!paquet) return Promise.reject(new Error("data URL illisible"));
+    var chemin = photo.id + "/" + nomFichier() + "." + paquet.ext;
+    return sb.storage.from(BUCKET)
+      .upload(chemin, paquet.octets, { contentType: paquet.type, upsert: false })
+      .then(function (up) {
+        if (up && up.error) throw up.error;
+        return sb.storage.from(BUCKET).createSignedUrl(chemin, TTL);
+      })
+      .then(function (sg) {
+        if (sg && sg.error) throw sg.error;
+        var d = sg && sg.data;
+        var url = d && (d.signedUrl || d.signedURL);
+        if (!url) throw new Error("URL signée absente");
+        return sb.rpc("admin_gerer_photo_eleve", { p_uid: photo.id, p_action: "definir", p_data_url: url });
+      })
+      .then(function (rpc) {
+        if (rpc && rpc.error) throw rpc.error;
+      });
+  }
+
+  btnMigrer.addEventListener("click", function () {
+    if (!aMigrer.length) return;
+    if (!sauvegardePrete && !confirm("La sauvegarde n’a pas été téléchargée. Continuer quand même ?")) return;
+    if (!confirm("Migrer " + aMigrer.length + " photo(s) vers le bucket privé ?")) return;
+
+    btnMigrer.disabled = true;
+    btnAnalyser.disabled = true;
+    var i = 0, reussies = 0, echecs = 0;
+
+    function suivante() {
+      if (i >= aMigrer.length) {
+        dire("— Terminé : " + reussies + " migrée(s), " + echecs + " échec(s).",
+          echecs ? "ko" : "ok");
+        btnAnalyser.disabled = false;
+        return;
+      }
+      var photo = aMigrer[i++];
+      dire("→ " + photo.nom + "…", "info");
+      migrerUne(photo).then(function () {
+        reussies++;
+        dire("   ✅ migrée", "ok");
+      }).catch(function (e) {
+        echecs++;
+        dire("   ❌ " + ((e && e.message) || e) + " — photo laissée intacte", "ko");
+      }).then(suivante);
+    }
+    suivante();
+  });
+})();
+</script>
+</body>
+</html>

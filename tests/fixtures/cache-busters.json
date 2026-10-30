@@ -1,0 +1,139 @@
+{
+  "_commentaire": "Source de vérité des cache-busters. Chaque entrée liste EXACTEMENT les versions présentes dans les pages, et la plus ancienne sert de plancher : on ne peut plus revenir à une version antérieure. Toute modification doit être reportée ici ; le test cache-busters-v559 le vérifie.",
+  "actifs": {
+    "assets/css/admin-saas.css": [
+      "463"
+    ],
+    "assets/css/capsules-vedettes.css": [
+      "556"
+    ],
+    "assets/css/protection.css": [
+      "193",
+      "227"
+    ],
+    "assets/css/quiz-js-tw.css": [
+      "474"
+    ],
+    "assets/css/quiz-php-tw.css": [
+      "474"
+    ],
+    "assets/css/quiz-sql-tw.css": [
+      "474"
+    ],
+    "assets/js/acces.js": [
+      "453",
+      "479"
+    ],
+    "assets/js/admin-couverture.js": [
+      "469"
+    ],
+    "assets/js/admin-dbsupbase.js": [
+      "466"
+    ],
+    "assets/js/admin-erreurs.js": [
+      "463"
+    ],
+    "assets/js/admin-mdp.js": [
+      "443"
+    ],
+    "assets/js/admin-revision.js": [
+      "469"
+    ],
+    "assets/js/admin-vues-videos.js": [
+      "531"
+    ],
+    "assets/js/admin.js": [
+      "558-perf"
+    ],
+    "assets/js/analytique.js": [
+      "469"
+    ],
+    "assets/js/config.js": [
+      "256",
+      "425",
+      "476",
+      "479"
+    ],
+    "assets/js/graphiques-activite.js": [
+      "469"
+    ],
+    "assets/js/mobile-nav.js": [
+      "532"
+    ],
+    "assets/js/modules/password-recovery.js": [
+      "307"
+    ],
+    "assets/js/news-perso.js": [
+      "498"
+    ],
+    "assets/js/nouveautes.js": [
+      "479"
+    ],
+    "assets/js/portail.js": [
+      "321"
+    ],
+    "assets/js/protection.js": [
+      "193",
+      "227",
+      "288",
+      "291",
+      "302",
+      "474"
+    ],
+    "assets/js/quiz-admin.js": [
+      "479"
+    ],
+    "assets/js/quiz-alea.js": [
+      "555"
+    ],
+    "assets/js/quiz-sync.js": [
+      "460"
+    ],
+    "assets/js/quiz-tableaux-boot.js": [
+      "456"
+    ],
+    "assets/js/quiz-tableaux.js": [
+      "555"
+    ],
+    "assets/js/rayonsx-surligneur.js": [
+      "449"
+    ],
+    "assets/js/reprendre.js": [
+      "479"
+    ],
+    "assets/js/roue-revision.js": [
+      "473"
+    ],
+    "assets/js/sante.js": [
+      "471"
+    ],
+    "assets/js/sauvegarde.js": [
+      "473"
+    ],
+    "assets/js/sql-playground.js": [
+      "396"
+    ],
+    "assets/js/sync-progressions.js": [
+      "463",
+      "476",
+      "478",
+      "479"
+    ],
+    "assets/js/vendor/chart.umd.min.js": [
+      "474"
+    ],
+    "assets/js/vendor/confetti.browser.min.js": [
+      "474"
+    ],
+    "assets/js/vendor/prism-js.min.js": [
+      "474"
+    ],
+    "assets/js/xp-plancher.js": [
+      "520"
+    ],
+    "cours.js": [
+      "227"
+    ]
+  },
+  "plancherGlobal": 193
+}

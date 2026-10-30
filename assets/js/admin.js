@@ -31,8 +31,25 @@
   }
   var esc = echHtml;
 
+  /* v559 : une photo peut désormais venir du bucket privé photos-profils
+     (URL signée) au lieu d'être une data URL base64. Une URL signée expirée
+     renvoie "" : l'avatar retombe sur les initiales, jamais sur une image
+     cassée. La même règle est appliquée dans acces.js et roue-initiales.js. */
+  var RE_PHOTO_BUCKET_ADMIN = /^https:\/\/[a-z0-9]+\.supabase\.co\/storage\/v1\/object\/sign\/photos-profils\/[^?\s]+[?]token=[A-Za-z0-9._%-]+$/i;
+  function jetonPhotoExpire(url) {
+    var m = /[?&]token=([A-Za-z0-9_-]+)\.([A-Za-z0-9_-]+)\.([A-Za-z0-9_-]+)/.exec(String(url || ""));
+    if (!m) return false;
+    try {
+      var b = m[2].replace(/-/g, "+").replace(/_/g, "/");
+      while (b.length % 4) b += "=";
+      var j = JSON.parse(atob(b));
+      return !!(j && typeof j.exp === "number" && j.exp * 1000 <= Date.now());
+    } catch (e) { return false; }
+  }
+
   function dataUrlSureAdmin(u) {
     var s = String(u || "").trim();
+    if (RE_PHOTO_BUCKET_ADMIN.test(s)) return jetonPhotoExpire(s) ? "" : s;
     if (!/^data:[a-z0-9.+/-]+;base64,[a-z0-9+/=\s]+$/i.test(s)) return "";
     if (/^data:(text\/html|image\/svg\+xml|application\/javascript|text\/javascript)/i.test(s)) return "";
     return s;

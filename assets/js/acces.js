@@ -65,8 +65,24 @@
   })();
 
   /* ---------- v445 : Validation et compression carrée légère (144x144 <= 48 Ko) de la photo élève ---------- */
+  /* v559 : deux formes acceptées — l'ancienne data URL base64 (photos déjà
+     enregistrées) et l'URL signée du bucket privé photos-profils. Une URL
+     signée expirée renvoie "" : l'avatar retombe sur les initiales au lieu
+     d'une image cassée. Même règle dans admin.js et roue-initiales.js. */
+  var RE_PHOTO_BUCKET_STI = /^https:\/\/[a-z0-9]+\.supabase\.co\/storage\/v1\/object\/sign\/photos-profils\/[^?\s]+[?]token=[A-Za-z0-9._%-]+$/i;
+  function jetonPhotoExpireSTI(url) {
+    var m = /[?&]token=([A-Za-z0-9_-]+)\.([A-Za-z0-9_-]+)\.([A-Za-z0-9_-]+)/.exec(String(url || ""));
+    if (!m) return false;
+    try {
+      var b = m[2].replace(/-/g, "+").replace(/_/g, "/");
+      while (b.length % 4) b += "=";
+      var j = JSON.parse(atob(b));
+      return !!(j && typeof j.exp === "number" && j.exp * 1000 <= Date.now());
+    } catch (e) { return false; }
+  }
   function photoUrlSureSTI(u) {
     var s = String(u || "").trim();
+    if (RE_PHOTO_BUCKET_STI.test(s)) return jetonPhotoExpireSTI(s) ? "" : s;
     if (!/^data:image\/(jpeg|jpg|png|webp);base64,[A-Za-z0-9+/=\s]+$/i.test(s)) return "";
     s = s.replace(/\s+/g, "");
     if (s.length > 65536) return "";
@@ -2745,19 +2761,71 @@
       window.__stiMajAvatarComptePan = rendreAvatarEtAttente;
       rendreAvatarEtAttente(profil);
 
+      /* v559 : la photo part dans le bucket privé photos-profils et seule son
+         URL signée est conservée en base, au lieu d'un base64 de 65 Ko dans la
+         ligne du profil. Si le bucket est indisponible (réseau, migration non
+         passée, quota), on retombe exactement sur l'ancien chemin base64 :
+         aucune régression possible pour l'élève. */
+      var TTL_PHOTO_BUCKET = 315360000; /* 10 ans */
+      function deposerPhotoBucketSTI(dataUrl) {
+        return new Promise(function (resoudre, rejeter) {
+          try {
+            if (!sb || !sb.storage) return rejeter(new Error("stockage indisponible"));
+            var m = /^data:(image\/[a-z0-9.+/-]+);base64,(.+)$/i.exec(String(dataUrl || ""));
+            if (!m) return rejeter(new Error("format inattendu"));
+            var binaire = atob(m[2]);
+            var octets = new Uint8Array(binaire.length);
+            for (var i = 0; i < binaire.length; i++) octets[i] = binaire.charCodeAt(i);
+            var type = m[1].toLowerCase();
+            var ext = type.indexOf("png") >= 0 ? "png" : /jpe?g/.test(type) ? "jpg" : "webp";
+            sb.auth.getUser().then(function (re) {
+              var uid = re && re.data && re.data.user && re.data.user.id;
+              if (!uid) return rejeter(new Error("session absente"));
+              var jeton = "";
+              try {
+                var tab = new Uint8Array(16);
+                window.crypto.getRandomValues(tab);
+                for (var k = 0; k < tab.length; k++) jeton += ("0" + tab[k].toString(16)).slice(-2);
+              } catch (e) { jeton = String(Date.now()) + Math.random().toString(16).slice(2, 10); }
+              var chemin = uid + "/" + jeton + "." + ext;
+              sb.storage.from("photos-profils")
+                .upload(chemin, octets, { contentType: type, upsert: false, cacheControl: "31536000" })
+                .then(function (up) {
+                  if (up && up.error) return rejeter(up.error);
+                  sb.storage.from("photos-profils").createSignedUrl(chemin, TTL_PHOTO_BUCKET).then(function (sg) {
+                    if (sg && sg.error) return rejeter(sg.error);
+                    var d = sg && sg.data;
+                    var url = d && (d.signedUrl || d.signedURL);
+                    if (!url) return rejeter(new Error("url signée absente"));
+                    resoudre(url);
+                  }, rejeter);
+                }, rejeter);
+            }, rejeter);
+          } catch (e) { rejeter(e); }
+        });
+      }
+
       function envoyerPhotoDataUrlEleve(dataUrl) {
         if (!navigator.onLine) {
           afficherMsgPh("📴 Connexion Internet requise pour envoyer votre photo.", true);
           return;
         }
         afficherMsgPh("⏳ Envoi de la photo recadrée au professeur…", false);
-        sb.rpc("eleve_proposer_photo", { p_data_url: dataUrl }).then(function (r) {
-          if (r && r.error) throw r.error;
-          var cMaj = lireCacheSessionLocal() || {};
-          cMaj.photo_attente = dataUrl;
-          ecrireCacheSessionLocal(cMaj);
-          rendreAvatarEtAttente({ photo_url: cMaj.photo_url || "", photo_attente: dataUrl });
-          afficherMsgPh("✅ Photo envoyée ! Elle s'affichera dès validation par le professeur.", false);
+        function deposer(valeur) {
+          return sb.rpc("eleve_proposer_photo", { p_data_url: valeur }).then(function (r) {
+            if (r && r.error) throw r.error;
+            var cMaj = lireCacheSessionLocal() || {};
+            cMaj.photo_attente = valeur;
+            ecrireCacheSessionLocal(cMaj);
+            rendreAvatarEtAttente({ photo_url: cMaj.photo_url || "", photo_attente: valeur });
+            afficherMsgPh("✅ Photo envoyée ! Elle s'affichera dès validation par le professeur.", false);
+          });
+        }
+        deposerPhotoBucketSTI(dataUrl).then(function (url) {
+          return deposer(url);
+        }).catch(function () {
+          /* Repli muet : le bucket n'a pas répondu, on garde l'ancien stockage. */
+          return deposer(dataUrl);
         }).catch(function (er) {
           afficherMsgPh("❌ Envoi refusé : " + ((er && er.message) || "erreur Supabase"), true);
         });

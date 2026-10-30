@@ -21,8 +21,22 @@
   function cache() {
     try { return JSON.parse(localStorage.getItem("sti-session-cache") || "null") || {}; } catch (e) { return {}; }
   }
+  /* v559 : les photos peuvent venir du bucket privé photos-profils (URL
+     signée). Une URL expirée est traitée comme absente → initiales. */
+  var RE_PHOTO_BUCKET_ROUE = /^https:\/\/[a-z0-9]+\.supabase\.co\/storage\/v1\/object\/sign\/photos-profils\/[^?\s]+[?]token=[A-Za-z0-9._%-]+$/i;
+  function jetonPhotoExpireRoue(url) {
+    var m = /[?&]token=([A-Za-z0-9_-]+)\.([A-Za-z0-9_-]+)\.([A-Za-z0-9_-]+)/.exec(String(url || ""));
+    if (!m) return false;
+    try {
+      var b = m[2].replace(/-/g, "+").replace(/_/g, "/");
+      while (b.length % 4) b += "=";
+      var j = JSON.parse(atob(b));
+      return !!(j && typeof j.exp === "number" && j.exp * 1000 <= Date.now());
+    } catch (e) { return false; }
+  }
   function photoValide(u) {
     var s = String(u || "").trim();
+    if (RE_PHOTO_BUCKET_ROUE.test(s)) return jetonPhotoExpireRoue(s) ? "" : s;
     if (!/^data:image\/(jpeg|jpg|png|webp);base64,[A-Za-z0-9+/=\s]+$/i.test(s)) return "";
     return s.replace(/\s+/g, "");
   }

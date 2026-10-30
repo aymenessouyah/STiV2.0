@@ -15,9 +15,18 @@ const sha = p => createHash('sha256').update(readFileSync(resolve(root, p))).dig
 const DESCRIPTION_V521 = /[ \t]*<meta name="description" content="[^"]*"[ \t]*\/?>\n?/;
 const sansDescription = (texte, chemin) => {
   assert.equal((texte.match(DESCRIPTION_V521) || []).length, 1, chemin + ' : meta description attendue une seule fois');
-  return texte.replace(DESCRIPTION_V521, '');
+  return sansHostImages(texte.replace(DESCRIPTION_V521, ''));
 };
 const shaSansDescription = chemin => createHash('sha256').update(sansDescription(lire(chemin), chemin)).digest('hex');
+
+/* v559 : chaque page autorise désormais le Storage dans sa directive img-src.
+   Ce n'est pas une modification de contenu : l'hôte est retiré avant de
+   comparer les empreintes historiques, comme les autres ajouts neutralisés
+   plus bas (v487, v490, v519, v520, v521). */
+const sansHostImages = (texte) => String(texte).replace(
+  /img-src ([^;]*);/g,
+  (_tout, directives) => "img-src " + directives.replace(/ https:\/\/[a-z0-9]+\.supabase\.co/g, "").replace(/\s+$/, "") + ";"
+);
 
 /* Empreintes du socle de référence 478c912 : aucune dépendance à FETCH_HEAD en CI. */
 test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservés', () => {
@@ -39,7 +48,7 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
   const originaux = {
     'assets/js/config.js': '4936f1efc5fde33dc2432dd3a9aa4fc33df77f90b842fe2091a2a5ba2f872a7f',
     'assets/js/supabase-umd.js': '2eebfe06b1b5309985dc1526e8981ea3a18b71beeef83e7f38e04c303e142d6d',
-    'assets/js/acces.js': '29f49627eed1674e5b2590b496d0ffeac6e9ecf0c3f8cf3161da014135ddd3a5',
+    'assets/js/acces.js': 'f5818327fa1b5fdeb7e33286c406da90d7e476f201d60488ee7b076b7b8a7c56',
     'assets/js/sync-progressions.js': 'c6e36a6f0ebea5e481cfb1b16afb9c0cfefc595ed4de21a1becff5a096d327b6',
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
     'portail.html': 'f95c5b3422cfda3d5fa75a7b8e20fc41f2d63ab58f24468bd830d187cd722b68',
@@ -173,7 +182,7 @@ test('commandes d’administration : scripts et fonctions de la barre PC inchang
      chaîne numérique) ; empreinte réactualisée.
      v558 : la mesure couvre aussi le Storage (admin_taille_stockage) ;
      empreinte réactualisée. */
-  assert.equal(sha('assets/js/admin.js'), 'd7024fdc10189030b4bb2fbcf958ff7ff16ac2b71c58a6d619fc120bc7ed5dd7');
+  assert.equal(sha('assets/js/admin.js'), 'cccb43e33ca97b56b7e63e72f0e3afff0321ee1a40008d0a84bf11f5b479ccc4');
   assert.equal(sha('assets/js/rayonsx-surligneur.js'), '1b7fe2067629766ef4043fa3060199b71124d8486e36d92aaac0b45bd861847c');
   const protection = lire('assets/js/protection.js');
   const debut = protection.indexOf('  function estAppareilPC()');

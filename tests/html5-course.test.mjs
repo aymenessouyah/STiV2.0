@@ -57,7 +57,12 @@ test('exemples, détails target et datalist, médias et exercices restent prése
 
 test('cours : stockage unique, pas de configuration Supabase intégrée, couleurs par jetons', () => {
   assert.doesNotMatch(html + script, /\blocalStorage\s*\./);
-  assert.doesNotMatch(html + script, /supabase\.co|sb_publishable_|vywujxm/i);
+  /* v559 : la CSP autorise désormais les photos de profil servies par le
+     Storage. C'est une autorisation de chargement, pas une configuration :
+     on retire la directive img-src avant de vérifier qu'aucune clé ni
+     initialisation Supabase n'est intégrée à la page. */
+  const sansDirectiveImages = (html + script).replace(/img-src[^;]*;/gi, "");
+  assert.doesNotMatch(sansDirectiveImages, /supabase\.co|sb_publishable_|vywujxm/i);
   assert.doesNotMatch(css, /#[0-9a-f]{3,8}\b/i);
   assert.match(css, /var\(--course-accent\)/);
   assert.match(script, /STIProfil\.enregistrerLecture/);
