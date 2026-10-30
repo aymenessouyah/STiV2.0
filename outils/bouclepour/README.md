@@ -1,6 +1,6 @@
 # Les boucles — Pour, Répéter…jusqu'à, Tant que (vidéo)
 
-Capsule JavaScript de la Série 6. Elle ne montre plus **une** boucle mais les
+Capsule « Les boucles » — JavaScript et PHP. Elle ne montre plus **une** boucle mais les
 **trois**, et surtout **comment choisir**. Le fil conducteur est un **schéma de
 décision** : face à une répétition, je pose trois questions, dans l'ordre.
 
@@ -30,49 +30,52 @@ sac) :
 | --- | --- |
 | **à gauche** | le décor : l'immeuble et son ascenseur, la boîte de jetons, le sac |
 | **au milieu** | le **brouillon**, le **schéma de décision**, le **tableau des trois boucles** |
-| **à droite** | **deux cadres séparés** : ① l'**ALGORITHME** en haut, ② le **JAVASCRIPT** en bas |
+| **à droite** | **trois cadres séparés** : ① l'**ALGORITHME**, ② le **JAVASCRIPT**, ③ le **PHP** |
 
-On écrit **l'algorithme d'abord**, on le traduit ensuite : les deux cadres ne
-sont jamais mélangés, et le cadre qui n'est pas encore écrit affiche ce qu'il
+On écrit **l'algorithme d'abord**, puis on le traduit deux fois — JavaScript,
+puis PHP : les trois cadres ne sont jamais mélangés, et le cadre qui n'est pas encore écrit affiche ce qu'il
 attendra.
 
-## Les 33 étapes
+## Les 36 étapes
 
 | # | Section | Ce que l'on voit |
 | --- | --- | --- |
 | 1 | ouverture | la phrase d'ouverture, la définition, les trois boucles nommées |
 | 2 | introduction | sans boucle / avec boucle, et les trois ingrédients |
 | 3 | probleme | l'immeuble, `T = [4, 7, 2, 9]`, `S = ?` |
-| 4 | immeuble | **le tableau** : un contenu variable, donc un nom, `T` |
-| 5 | ascenseur | **l'ascenseur** = la cabine carrée `[ ]` ; `T[i]` = étage i, portes ouvertes |
-| 6 | scalaire | le compteur de l'ascenseur : un type **scalaire** (successeur, prédécesseur) |
+| 4 | immeuble | le tableau : un contenu variable, donc un nom, `T` |
+| 5 | ascenseur | l'ascenseur = la cabine carrée `[ ]` ; `T[i]` = étage i, portes ouvertes |
+| 6 | scalaire | le compteur de l'ascenseur : un type scalaire |
 | 7 | repetition | quatre lignes identiques : « seul le chiffre change » |
-| 8 | q1 | le schéma s'ouvre : « je connais le nombre ? » → oui (4 étages) |
-| 9 | q2 | « une condition d'arrêt ? » → non (sinon la somme est fausse) |
+| 8 | q1 | « je connais le nombre ? » → oui (4 étages) |
+| 9 | q2 | « une condition d'arrêt ? » → non |
 | 10 | q3 | « au moins une fois ? » → le schéma est complet |
-| 11 | engendrer | `S = S + T[quelque chose]`, et la boucle Pour **l'engendre** × 4 |
-| 12 | pour_algo | `POUR compteur DE 0 À 3 FAIRE`, le trou rempli par le compteur |
+| 11 | engendrer | `S = S + T[quelque chose]`, et la boucle Pour l'engendre × 4 |
+| 12 | pour_algo | `POUR compteur DE 0 À 3 FAIRE` |
 | 13 | pour_js | `for (let i = 0; i < T.length; i++)` : départ, continuité, pas |
-| 14 | pour_trace | les quatre tours, `S = 22`, `4 < 4` est faux |
-| 15 | rappel1 | schéma + tableau des trois boucles, branche POUR allumée |
-| 16 | chercher_quoi | nouveau problème : chercher `X`, tours inconnus |
-| 17 | chercher_q | condition d'arrêt, au moins un tour → RÉPÉTER…JUSQU'À |
-| 18 | repet_algo | `i ← 0`, `RÉPÉTER … JUSQU'À trouvé OU i > 3` |
-| 19 | repet_js | `do { … } while (!trouve && i < 4);` |
-| 20 | repet_trouve | `X = 7` : trouvé au deuxième tour, on sort |
-| 21 | repet_absent | `X = 5` : quatre tours, `i = 4`, « absent » |
-| 22 | rappel2 | branche RÉPÉTER…JUSQU'À allumée |
-| 23 | tantque_quoi | la boîte de jetons : il peut y avoir zéro tour |
-| 24 | tantque_algo | `TANT QUE jetons > 0 FAIRE`, test avant le bloc |
-| 25 | tantque_js | `while (jetons > 0) { jetons--; n++; }` |
-| 26 | tantque_trace | trois jetons → trois tours ; zéro jeton → zéro tour |
-| 27 | rappel3 | branche TANT QUE allumée |
-| 28 | tableau3 | le tableau des trois boucles en grand |
-| 29 | choisir | le schéma complet et les trois exemples en regard |
-| 30 | algo_js | les correspondances : POUR↔for, RÉPÉTER↔do…while, TANT QUE↔while |
-| 31 | bilan | les trois blocs côte à côte, algorithme au-dessus, code dessous |
-| 32 | conclusion | la méthode en trois questions, dans l'ordre |
-| 33 | generique | la carte de fin : STI Version 2.0, Série 6, « à vous jouer » |
+| 14 | **pour_php** | `for ($i = 0; $i < count($T); $i++)` : les `$`, `count` |
+| 15 | pour_trace | les quatre tours, `S = 22`, `4 < 4` est faux |
+| 16 | rappel1 | schéma + tableau, branche POUR allumée |
+| 17 | chercher_quoi | chercher `X`, tours inconnus |
+| 18 | chercher_q | condition d'arrêt, au moins un tour → RÉPÉTER…JUSQU'À |
+| 19 | repet_algo | `RÉPÉTER … JUSQU'À trouvé OU i > 3` |
+| 20 | repet_js | `do { … } while (!trouve && i < 4);` |
+| 21 | **repet_php** | `do { … } while (!$trouve && $i < 4);` — `==`, pas `===` |
+| 22 | repet_trouve | `X = 7` : trouvé au deuxième tour |
+| 23 | repet_absent | `X = 5` : quatre tours, « absent » |
+| 24 | rappel2 | branche RÉPÉTER…JUSQU'À allumée |
+| 25 | tantque_quoi | la boîte de jetons : zéro tour possible |
+| 26 | tantque_algo | `TANT QUE jetons > 0 FAIRE` |
+| 27 | tantque_js | `while (jetons > 0) { jetons--; n++; }` |
+| 28 | **tantque_php** | `while ($jetons > 0) { $jetons--; $n++; }` |
+| 29 | tantque_trace | trois jetons → trois tours ; zéro jeton → zéro tour |
+| 30 | rappel3 | branche TANT QUE allumée |
+| 31 | tableau3 | le tableau des trois boucles en grand |
+| 32 | choisir | le schéma complet et les trois exemples en regard |
+| 33 | algo_js | les correspondances des **trois** langages, côte à côte |
+| 34 | bilan | trois colonnes × trois cadres : algorithme, JavaScript, PHP |
+| 35 | conclusion | la méthode en trois questions |
+| 36 | generique | la carte de fin : STI Version 2.0, « à vous de jouer » |
 
 ## Le tableau, expliqué comme un immeuble
 
@@ -95,11 +98,11 @@ vient **après** l'algorithme, avec ses trois morceaux : `i = 0` (départ),
 ## Mise en page
 
 Trois colonnes fixes : `le décor` (64 → 644), `le raisonnement` (670 → 1250),
-les deux cadres `ALGORITHME` (1276 → 1856, 186 → 566) et `JAVASCRIPT`
-(1276 → 1856, 576 → 884). En bas, le **fil rouge** : les trois boucles, la
+les trois cadres : `ALGORITHME` (1276 → 1856, 186 → 412), `JAVASCRIPT`
+(1276 → 1856, 422 → 648) et `PHP` (1276 → 1856, 658 → 884). En bas, le **fil rouge** : les trois boucles, la
 boucle courante allumée et l'information du moment. Le titre reste le même
 dans toutes les scènes, seul le sous-titre change, et le décompte affiche
-« ÉTAPE n / 33 » avec une barre de progression.
+« ÉTAPE n / 36 » avec une barre de progression.
 
 1920 × 1080, 30 i/s, H.264 + AAC mono, sous-titres `WebVTT` calés sur la voix.
 
@@ -131,10 +134,10 @@ PY
 
 | Fichier | Rôle |
 | --- | --- |
-| `narration.py` | texte de la voix off (33 sections) et sous-titres |
+| `narration.py` | texte de la voix off (36 sections) et sous-titres |
 | `theme.py` | accès au thème commun (`outils/tpvid6/theme.py`, chargé par chemin) |
 | `dessin.py` | primitives : les trois colonnes, l'immeuble + cage, le sac, la boîte de jetons, le papier du brouillon, le crayon, le stylo rouge, le schéma de décision, le tableau des trois boucles |
-| `scenes.py` | les 33 scènes et le bandeau d'état |
+| `scenes.py` | les 36 scènes et le bandeau d'état |
 | `montage.py` | concaténation des clips de `voix/`, `calage.json`, VTT |
 | `render.py` | chronologie calée sur la voix, images, encodage ffmpeg |
 | `integrer.py` | installation dans le site (MP4, VTT, durées, hors-ligne) |

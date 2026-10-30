@@ -1428,26 +1428,29 @@
         { t: 296.322, short: "11 · Du brouillon à la boucle : engendrer", label: "4:56 · 11 · Du brouillon à la boucle : engendrer" },
         { t: 341.292, short: "12 · La boucle Pour — algorithme", label: "5:41 · 12 · La boucle Pour — algorithme" },
         { t: 378.727, short: "13 · La boucle Pour — JavaScript", label: "6:19 · 13 · La boucle Pour — JavaScript" },
-        { t: 440.334, short: "14 · La boucle Pour — les quatre tours", label: "7:20 · 14 · La boucle Pour — les quatre tours" },
-        { t: 479.383, short: "15 · Rappel : où se place Pour", label: "7:59 · 15 · Rappel : où se place Pour" },
-        { t: 496.396, short: "16 · Chercher X : un nombre de tours inconnu", label: "8:16 · 16 · Chercher X : un nombre de tours inconnu" },
-        { t: 516.009, short: "17 · Chercher X : au moins une fois", label: "8:36 · 17 · Chercher X : au moins une fois" },
-        { t: 535.112, short: "18 · Répéter…jusqu'à — algorithme", label: "8:55 · 18 · Répéter…jusqu'à — algorithme" },
-        { t: 555.840, short: "19 · Répéter…jusqu'à — JavaScript", label: "9:16 · 19 · Répéter…jusqu'à — JavaScript" },
-        { t: 576.301, short: "20 · X = 7 : trouvé au deuxième tour", label: "9:36 · 20 · X = 7 : trouvé au deuxième tour" },
-        { t: 595.056, short: "21 · X = 5 : absent, quatre tours", label: "9:55 · 21 · X = 5 : absent, quatre tours" },
-        { t: 617.131, short: "22 · Rappel : où se place Répéter…jusqu'à", label: "10:17 · 22 · Rappel : où se place Répéter…jusqu'à" },
-        { t: 632.216, short: "23 · Tant que : le risque de zéro tour", label: "10:32 · 23 · Tant que : le risque de zéro tour" },
-        { t: 655.673, short: "24 · Tant que — algorithme", label: "10:56 · 24 · Tant que — algorithme" },
-        { t: 679.071, short: "25 · Tant que — JavaScript", label: "11:19 · 25 · Tant que — JavaScript" },
-        { t: 694.923, short: "26 · Tant que — trois jetons, puis zéro", label: "11:35 · 26 · Tant que — trois jetons, puis zéro" },
-        { t: 716.615, short: "27 · Rappel : où se place Tant que", label: "11:57 · 27 · Rappel : où se place Tant que" },
-        { t: 729.657, short: "28 · Le tableau des trois boucles", label: "12:10 · 28 · Le tableau des trois boucles" },
-        { t: 751.779, short: "29 · Comment choisir", label: "12:32 · 29 · Comment choisir" },
-        { t: 771.473, short: "30 · Algorithme et JavaScript : ne pas mélanger", label: "12:51 · 30 · Algorithme et JavaScript : ne pas mélanger" },
-        { t: 792.527, short: "31 · Les trois blocs côte à côte", label: "13:13 · 31 · Les trois blocs côte à côte" },
-        { t: 822.508, short: "32 · La méthode, en trois questions", label: "13:43 · 32 · La méthode, en trois questions" },
-        { t: 840.972, short: "33 · À vous de jouer", label: "14:01 · 33 · À vous de jouer" }
+        { t: 440.334, short: "14 · La boucle Pour — PHP", label: "7:20 · 14 · La boucle Pour — PHP" },
+        { t: 479.940, short: "15 · La boucle Pour — les quatre tours", label: "8:00 · 15 · La boucle Pour — les quatre tours" },
+        { t: 518.989, short: "16 · Rappel : où se place Pour", label: "8:39 · 16 · Rappel : où se place Pour" },
+        { t: 536.002, short: "17 · Chercher X : un nombre de tours inconnu", label: "8:56 · 17 · Chercher X : un nombre de tours inconnu" },
+        { t: 555.615, short: "18 · Chercher X : au moins une fois", label: "9:16 · 18 · Chercher X : au moins une fois" },
+        { t: 574.718, short: "19 · Répéter…jusqu'à — algorithme", label: "9:35 · 19 · Répéter…jusqu'à — algorithme" },
+        { t: 595.446, short: "20 · Répéter…jusqu'à — JavaScript", label: "9:55 · 20 · Répéter…jusqu'à — JavaScript" },
+        { t: 615.907, short: "21 · Répéter…jusqu'à — PHP", label: "10:16 · 21 · Répéter…jusqu'à — PHP" },
+        { t: 650.869, short: "22 · X = 7 : trouvé au deuxième tour", label: "10:51 · 22 · X = 7 : trouvé au deuxième tour" },
+        { t: 669.624, short: "23 · X = 5 : absent, quatre tours", label: "11:10 · 23 · X = 5 : absent, quatre tours" },
+        { t: 691.699, short: "24 · Rappel : où se place Répéter…jusqu'à", label: "11:32 · 24 · Rappel : où se place Répéter…jusqu'à" },
+        { t: 706.784, short: "25 · Tant que : le risque de zéro tour", label: "11:47 · 25 · Tant que : le risque de zéro tour" },
+        { t: 730.241, short: "26 · Tant que — algorithme", label: "12:10 · 26 · Tant que — algorithme" },
+        { t: 753.639, short: "27 · Tant que — JavaScript", label: "12:34 · 27 · Tant que — JavaScript" },
+        { t: 769.491, short: "28 · Tant que — PHP", label: "12:49 · 28 · Tant que — PHP" },
+        { t: 801.307, short: "29 · Tant que — trois jetons, puis zéro", label: "13:21 · 29 · Tant que — trois jetons, puis zéro" },
+        { t: 822.999, short: "30 · Rappel : où se place Tant que", label: "13:43 · 30 · Rappel : où se place Tant que" },
+        { t: 836.041, short: "31 · Le tableau des trois boucles", label: "13:56 · 31 · Le tableau des trois boucles" },
+        { t: 858.162, short: "32 · Comment choisir", label: "14:18 · 32 · Comment choisir" },
+        { t: 877.857, short: "33 · Algorithme, JavaScript et PHP : ne pas mélanger", label: "14:38 · 33 · Algorithme, JavaScript et PHP : ne pas mélanger" },
+        { t: 898.992, short: "34 · Les trois blocs côte à côte", label: "14:59 · 34 · Les trois blocs côte à côte" },
+        { t: 928.973, short: "35 · La méthode, en trois questions", label: "15:29 · 35 · La méthode, en trois questions" },
+        { t: 947.437, short: "36 · À vous de jouer", label: "15:47 · 36 · À vous de jouer" }
       ];
       STI_CHAPITRES_MEDIA["validation-nom-prenom-js"] = [
         { t: 0, short: "Générique", label: "00:00 · Générique — Projet secrétariat du lycée" },
@@ -1460,6 +1463,24 @@
         { t: 672.64, short: "7. Livraison & bilan", label: "11:12 · 7. Livraison finale & méthode d'analyse" }
       ];
       window.STI_CHAPITRES_MEDIA = STI_CHAPITRES_MEDIA;
+
+      /* Le bandeau de chapitres suit la vidéo : le repère actif glisse au centre
+         de la barre pour rester visible, sans jamais faire défiler la page. */
+      function faireDefilerChapitreActifSTI(barre, bouton) {
+        if (!barre || !bouton) return;
+        try {
+          var rb = bouton.getBoundingClientRect();
+          var rc = barre.getBoundingClientRect();
+          if (!rb.width || !rc.width) return;
+          var cible = (barre.scrollLeft || 0) + (rb.left - rc.left) - (rc.width - rb.width) / 2;
+          var maxi = Math.max(0, (barre.scrollWidth || 0) - (barre.clientWidth || 0));
+          cible = Math.max(0, Math.min(maxi, cible));
+          if (Math.abs((barre.scrollLeft || 0) - cible) < 4) return;
+          var doux = !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+          if (barre.scrollTo) barre.scrollTo({ left: cible, behavior: doux ? "smooth" : "auto" });
+          else barre.scrollLeft = cible;
+        } catch (eDefile) {}
+      }
 
       function trouverIndexChapitreActif(chaps, sec) {
         if (!chaps || !chaps.length) return 0;
@@ -2053,7 +2074,7 @@
         } else if (slugVideo === "defis37-tableau-aleas-media") {
           contenu += '<track kind="subtitles" src="' + prefixeAssetsSTI() + 'subtitles/defis37-tableau-aleas-media-fr.vtt" srclang="fr" label="Français" default />';
         } else if (slugVideo === "boucle-pour") {
-          contenu += '<track kind="subtitles" src="' + prefixeAssetsSTI() + 'subtitles/BouclePour-fr-v546.vtt" srclang="fr" label="Français" default />';
+          contenu += '<track kind="subtitles" src="' + prefixeAssetsSTI() + 'subtitles/BouclePour-fr-v547.vtt" srclang="fr" label="Français" default />';
         }
         return contenu;
       }
@@ -2416,7 +2437,7 @@
         var estTpTrain = (sSlug === "tp-train-serie6" || sSlug.indexOf("tp-train-serie6") !== -1);
         /* v527 : capsule « Les 37 Défis » — Tableau, Aléas & Captchas, Média. */
         var estDefis37 = (sSlug === "defis37-tableau-aleas-media" || sSlug.indexOf("defis37") !== -1);
-        /* v542 : capsule « La boucle Pour » (Série 6, les boucles). */
+        /* Capsule « Les boucles » : Pour, Répéter…jusqu'à, Tant que. */
         var estBouclePour = (sSlug === "boucle-pour" || sSlug.indexOf("boucle-pour") !== -1 || sSlug.indexOf("BouclePour") !== -1);
         var estCssDisplay = (!estJsValidation && !estTpTrain && (sSlug === "css3-display" || sSlug.indexOf("displayanim.mp4") !== -1));
         var estPhpSynthese = (!estJsValidation && !estTpTrain && (sSlug === "php-synthese" || sSlug.indexOf("php-synthese.mp4") !== -1));
@@ -2481,7 +2502,7 @@
             return;
           }
         } catch (e) {}
-        var url = estBouclePour ? prefixeAssetsSTI() + "videos/BouclePour-v546.mp4" : estDefis37 ? prefixeAssetsSTI() + "videos/defis37-tableau-aleas-media.mp4" : estTpTrain ? prefixeAssetsSTI() + "videos/tp-train-serie6.mp4" : estTpEvenements ? prefixeAssetsSTI() + "videos/tp-evenements-liens-v2.mp4" : estTpFormulaire ? prefixeAssetsSTI() + "videos/tp-formulaire-tableau-autre.mp4" : estTpDisplay ? prefixeAssetsSTI() + "videos/tp-display-float-position.mp4" : estTpTransitions ? prefixeAssetsSTI() + "videos/tp-transitions-animations.mp4" : estJsValidation ? prefixeAssetsSTI() + "videos/validation-nom-prenom-js.mp4" : estCssDisplay ? prefixeAssetsSTI() + "videos/displayanim.mp4" : estPhpSynthese ? prefixeAssetsSTI() + "videos/php-synthese.mp4" : estSqlInit ? resoudreUrlVideoSqlInit() : (estExploreFloat ? resoudreUrlVideoExploreFloat() : (estExploreFlex ? resoudreUrlVideoExploreFlex() : (estSqlSerie6 ? resoudreUrlVideoSqlSerie6() : (estSqlSerie5 ? resoudreUrlVideoSqlSerie5() : (estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estSqlSerie3 ? resoudreUrlVideoSqlSerie3() : (estSqlSerie2 ? resoudreUrlVideoSqlSerie2() : (estSqlSerie1 ? resoudreUrlVideoSqlSerie1() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet())))))))))))))));
+        var url = estBouclePour ? prefixeAssetsSTI() + "videos/BouclePour-v547.mp4" : estDefis37 ? prefixeAssetsSTI() + "videos/defis37-tableau-aleas-media.mp4" : estTpTrain ? prefixeAssetsSTI() + "videos/tp-train-serie6.mp4" : estTpEvenements ? prefixeAssetsSTI() + "videos/tp-evenements-liens-v2.mp4" : estTpFormulaire ? prefixeAssetsSTI() + "videos/tp-formulaire-tableau-autre.mp4" : estTpDisplay ? prefixeAssetsSTI() + "videos/tp-display-float-position.mp4" : estTpTransitions ? prefixeAssetsSTI() + "videos/tp-transitions-animations.mp4" : estJsValidation ? prefixeAssetsSTI() + "videos/validation-nom-prenom-js.mp4" : estCssDisplay ? prefixeAssetsSTI() + "videos/displayanim.mp4" : estPhpSynthese ? prefixeAssetsSTI() + "videos/php-synthese.mp4" : estSqlInit ? resoudreUrlVideoSqlInit() : (estExploreFloat ? resoudreUrlVideoExploreFloat() : (estExploreFlex ? resoudreUrlVideoExploreFlex() : (estSqlSerie6 ? resoudreUrlVideoSqlSerie6() : (estSqlSerie5 ? resoudreUrlVideoSqlSerie5() : (estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estSqlSerie3 ? resoudreUrlVideoSqlSerie3() : (estSqlSerie2 ? resoudreUrlVideoSqlSerie2() : (estSqlSerie1 ? resoudreUrlVideoSqlSerie1() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet())))))))))))))));
         var css3Qualite = "auto";
         if (estCss3) {
           var prefCss3 = "";
@@ -2536,6 +2557,7 @@
           var mChapPrev = document.getElementById("sti-video-modal-chap-prev");
           var mChapNext = document.getElementById("sti-video-modal-chap-next");
           var mChapPills = document.getElementById("sti-video-modal-chap-pills");
+          var mDernierChapitre = -1;
 
           function sauterChapitreModale(idxCible) {
             var chapsAct = STI_CHAPITRES_MEDIA[overlay.getAttribute("data-slug") || ""] || [];
@@ -2640,6 +2662,10 @@
                   pills[pi].style.color = onP ? "#ffffff" : "#cbd5e1";
                   if (onP) pills[pi].setAttribute("aria-current", "true");
                   else pills[pi].removeAttribute("aria-current");
+                }
+                if (idxAct !== mDernierChapitre) {
+                  mDernierChapitre = idxAct;
+                  faireDefilerChapitreActifSTI(mChapPills, pills[idxAct]);
                 }
               }
             });
@@ -2796,6 +2822,13 @@
             return '<button type="button" data-chap-idx="' + idx + '"' + (idx === 0 ? ' aria-current="true"' : '') + ' title="' + echapperHtmlMediaSTI(c.label) + '" style="flex-shrink:0;padding:4px 10px;border-radius:999px;border:1.5px solid ' + (idx === 0 ? '#86efac' : '#334155') + ';background:' + (idx === 0 ? '#177245' : '#1e293b') + ';color:' + (idx === 0 ? '#ffffff' : '#cbd5e1') + ';font:800 11px/1.1 system-ui,sans-serif;cursor:pointer;white-space:nowrap;">' + echapperHtmlMediaSTI(c.short || c.label) + '</button>';
           }).join("");
           pillsChapEl.style.display = chapsCible.length ? "flex" : "none";
+          /* nouvelle ouverture : le bandeau repart du chapitre où en est la vidéo */
+          mDernierChapitre = -1;
+          var idxOuverture = trouverIndexChapitreActif(
+            chapsCible, document.getElementById("sti-video-modal-player") ?
+              document.getElementById("sti-video-modal-player").currentTime : 0);
+          faireDefilerChapitreActifSTI(pillsChapEl,
+            pillsChapEl.querySelector('button[data-chap-idx="' + idxOuverture + '"]'));
           var pillBtns = pillsChapEl.querySelectorAll("button[data-chap-idx]");
           for (var pb = 0; pb < pillBtns.length; pb++) {
             (function (btnP) {
@@ -2808,6 +2841,7 @@
                 if (vPlayer && chapsCible[idxP]) {
                   try { vPlayer.currentTime = chapsCible[idxP].t; var promesseLecture = vPlayer.play(); if (promesseLecture && promesseLecture.catch) promesseLecture.catch(function () {}); } catch (e) {}
                 }
+                faireDefilerChapitreActifSTI(pillsChapEl, btnP);
               });
             })(pillBtns[pb]);
           }
