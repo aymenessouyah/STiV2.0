@@ -1,0 +1,614 @@
+WEBVTT
+
+00:00:01.200 --> 00:00:03.418
+Bienvenue dans STI Version 2.0.
+
+00:00:03.418 --> 00:00:08.356
+Aujourd'hui, une capsule de JavaScript sur
+les chaînes de caractères.
+
+00:00:08.356 --> 00:00:13.366
+Une chaîne, c'est du texte entre
+guillemets : un nom, une adresse, une
+
+00:00:13.366 --> 00:00:15.155
+réponse tapée au clavier.
+
+00:00:15.155 --> 00:00:19.520
+Tous les exemples de cette capsule
+utilisent la même chaîne :
+
+00:00:19.520 --> 00:00:20.451
+Lycée Rafèha.
+
+00:00:20.451 --> 00:00:26.390
+Trois parties. Partie A : les méthodes des
+chaînes — concaténer, mesurer, chercher,
+
+00:00:26.390 --> 00:00:27.822
+découper, remplacer.
+
+00:00:27.822 --> 00:00:33.761
+Partie B : les conversions — transformer
+du texte en nombre, et un nombre en texte.
+
+00:00:33.761 --> 00:00:37.483
+Partie C : l'objet Date, et sa conversion
+en chaîne.
+
+00:00:37.483 --> 00:00:42.993
+L'écran est coupé en deux : à gauche la
+fiche, la chaîne et ses positions ; à
+
+00:00:42.993 --> 00:00:46.213
+droite le code, et ce que la console
+affiche.
+
+00:00:46.213 --> 00:00:51.437
+Une règle à retenir dès maintenant :
+aucune de ces méthodes ne modifie la
+
+00:00:51.437 --> 00:00:55.302
+chaîne d'origine. Elles renvoient une
+nouvelle valeur.
+
+00:00:55.302 --> 00:00:58.880
+Pour la garder, il faut l'affecter à une
+variable.
+
+00:00:59.430 --> 00:01:04.787
+Commençons par ce qui fait perdre le plus
+de points : les positions.
+
+00:01:04.787 --> 00:01:09.356
+La chaîne s'écrit L, y, c, é, e, espace,
+R, a, f, è, h, a.
+
+00:01:09.356 --> 00:01:15.107
+Chaque caractère occupe une position, et
+la numérotation commence à zéro.
+
+00:01:15.107 --> 00:01:21.488
+Le L est à la position zéro, le y à un, le
+c à deux, le é à trois, le e à quatre.
+
+00:01:21.488 --> 00:01:27.317
+Attention : l'espace compte comme un
+caractère. Il est à la position cinq.
+
+00:01:27.317 --> 00:01:33.226
+Le R est donc à la position six, et le
+dernier a, celui de Rafèha, est à la
+
+00:01:33.226 --> 00:01:34.329
+position onze.
+
+00:01:34.329 --> 00:01:39.292
+La chaîne mesure douze caractères : ch
+point length vaut douze.
+
+00:01:39.292 --> 00:01:45.594
+Et le dernier caractère n'est pas à la
+position douze, mais à la position length
+
+00:01:45.594 --> 00:01:47.169
+moins un, donc onze.
+
+00:01:47.169 --> 00:01:53.393
+Douze caractères, positions de zéro à
+onze : c'est la seule règle à retenir, et
+
+00:01:53.393 --> 00:01:56.150
+elle servira dans toute la capsule.
+
+00:01:56.700 --> 00:02:01.761
+Première méthode : la concaténation, avec
+le signe plus.
+
+00:02:01.761 --> 00:02:08.177
+ch1 plus ch2 colle deux chaînes bout à
+bout, et forme une seule chaîne.
+
+00:02:08.177 --> 00:02:14.142
+Aucun espace n'est ajouté
+automatiquement : si je veux une espace,
+
+00:02:14.142 --> 00:02:18.028
+je l'écris moi-même, entre deux
+guillemets.
+
+00:02:18.028 --> 00:02:22.908
+Regardez à droite : nom vaut Lycée, ville
+vaut Rafèha.
+
+00:02:22.908 --> 00:02:30.228
+let ch égal nom, plus guillemet espace
+guillemet, plus ville : la console affiche
+
+00:02:30.228 --> 00:02:31.403
+Lycée Rafèha.
+
+00:02:31.403 --> 00:02:36.012
+Sans cet espace, on obtiendrait
+LycéeRafèha, collé.
+
+00:02:36.012 --> 00:02:41.886
+Et on peut coller du texte et une chaîne :
+Bienvenue au, plus ch.
+
+00:02:41.886 --> 00:02:48.483
+Deuxième méthode : length. C'est une
+propriété, pas une fonction : pas de
+
+00:02:48.483 --> 00:02:49.568
+parenthèses.
+
+00:02:49.568 --> 00:02:56.798
+ch point length vaut douze : cinq pour
+Lycée, un pour l'espace, six pour Rafèha.
+
+00:02:56.798 --> 00:03:02.220
+Deuxième piège : length compte les
+caractères, pas les mots.
+
+00:03:02.770 --> 00:03:07.027
+Troisième méthode : accéder à un
+caractère, avec des crochets.
+
+00:03:07.027 --> 00:03:10.322
+ch crochet zéro donne L. ch crochet six
+donne R.
+
+00:03:10.322 --> 00:03:14.922
+ch crochet ch point length moins un donne
+le dernier caractère : a.
+
+00:03:14.922 --> 00:03:20.277
+Et si je demande une position qui n'existe
+pas, la position douze par exemple,
+
+00:03:20.277 --> 00:03:23.641
+JavaScript ne proteste pas : il répond
+undefined.
+
+00:03:23.641 --> 00:03:26.799
+Retenez ce mot : undefined, et non une
+erreur.
+
+00:03:26.799 --> 00:03:29.751
+Quatrième et cinquième méthodes :
+chercher.
+
+00:03:29.751 --> 00:03:35.312
+indexOf donne la position de la première
+occurrence : ch point indexOf de a donne
+
+00:03:35.312 --> 00:03:35.655
+sept.
+
+00:03:35.655 --> 00:03:41.079
+Avec un deuxième argument, la recherche
+part de cette position : indexOf de a à
+
+00:03:41.079 --> 00:03:42.864
+partir de huit donne onze.
+
+00:03:42.864 --> 00:03:48.562
+lastIndexOf donne la dernière occurrence :
+lastIndexOf de a donne onze ; en partant
+
+00:03:48.562 --> 00:03:52.407
+de dix et en cherchant vers l'arrière, on
+retrouve sept.
+
+00:03:52.407 --> 00:03:56.526
+Et quand la lettre est absente, les deux
+répondent moins un.
+
+00:03:56.526 --> 00:04:01.332
+Moins un, ce n'est pas zéro : zéro
+voudrait dire trouvé au tout début.
+
+00:04:01.332 --> 00:04:06.344
+Dernier piège : la recherche distingue
+majuscules, minuscules et accents.
+
+00:04:06.344 --> 00:04:11.012
+indexOf de e donne quatre, le e de Lycée ;
+indexOf de é donne trois.
+
+00:04:11.012 --> 00:04:13.690
+e et é sont deux caractères différents.
+
+00:04:14.240 --> 00:04:18.352
+Sixième méthode : substring, pour extraire
+un morceau.
+
+00:04:18.352 --> 00:04:22.235
+Deux indices : le début, inclus, et la
+fin, exclue.
+
+00:04:22.235 --> 00:04:28.478
+ch point substring de zéro à trois donne
+L, y, c : les positions zéro, un et deux,
+
+00:04:28.478 --> 00:04:29.849
+mais pas la trois.
+
+00:04:29.849 --> 00:04:34.112
+Quatre règles, et elles tombent toutes du
+même principe.
+
+00:04:34.112 --> 00:04:38.605
+Si les deux indices sont égaux, on obtient
+une chaîne vide.
+
+00:04:38.605 --> 00:04:43.097
+Si le deuxième est omis, on va jusqu'à la
+fin de la chaîne.
+
+00:04:43.097 --> 00:04:48.807
+Si un indice est négatif, ou n'est pas un
+nombre, il est traité comme zéro.
+
+00:04:48.807 --> 00:04:54.746
+Et si le premier indice est plus grand que
+le second, JavaScript les échange :
+
+00:04:54.746 --> 00:05:00.913
+substring de un à zéro donne exactement la
+même chose que substring de zéro à un.
+
+00:05:00.913 --> 00:05:02.969
+Septième méthode : replace.
+
+00:05:02.969 --> 00:05:07.157
+ch point replace de Lycée par École donne
+École Rafèha.
+
+00:05:07.157 --> 00:05:13.096
+Attention, replace ne remplace que la
+première occurrence : replace de a par A
+
+00:05:13.096 --> 00:05:16.826
+donne Lycée RAfèha, un seul a passe en
+majuscule.
+
+00:05:16.826 --> 00:05:22.080
+Et la chaîne d'origine n'a pas bougé : ch
+vaut toujours Lycée Rafèha.
+
+00:05:22.630 --> 00:05:25.763
+Huitième et neuvième méthodes : changer la
+casse.
+
+00:05:25.763 --> 00:05:28.960
+toLowerCase met tout en minuscules : lycée
+rafèha.
+
+00:05:28.960 --> 00:05:32.156
+toUpperCase met tout en majuscules : LYCÉE
+RAFÈHA.
+
+00:05:32.156 --> 00:05:37.271
+À quoi ça sert ? À comparer deux textes
+sans tenir compte de la casse : un élève
+
+00:05:37.271 --> 00:05:40.404
+qui tape son nom en majuscules doit être
+reconnu.
+
+00:05:40.404 --> 00:05:44.751
+Dixième méthode : trim, qui enlève les
+espaces au début et à la fin.
+
+00:05:44.751 --> 00:05:50.186
+Regardez à droite : la chaîne commence par
+trois espaces et finit par trois espaces ;
+
+00:05:50.186 --> 00:05:52.232
+elle mesure dix-huit caractères.
+
+00:05:52.232 --> 00:05:56.835
+Après trim, elle affiche Lycée Rafèha, et
+trim point length donne douze.
+
+00:05:56.835 --> 00:06:01.502
+Les espaces du milieu, eux, sont
+conservés : trim ne touche qu'aux bords.
+
+00:06:01.502 --> 00:06:06.937
+C'est la méthode à connaître pour nettoyer
+une saisie : un champ de formulaire arrive
+
+00:06:06.937 --> 00:06:09.430
+souvent avec des espaces collés devant.
+
+00:06:09.430 --> 00:06:14.417
+Attention : pour vérifier qu'un champ
+n'est pas vide, testez trim point length
+
+00:06:14.417 --> 00:06:17.550
+égal zéro, et non l'égalité avec une
+chaîne vide.
+
+00:06:18.100 --> 00:06:21.843
+Onzième méthode : charCodeAt, le code d'un
+caractère.
+
+00:06:21.843 --> 00:06:26.504
+Pour l'ordinateur, un caractère, c'est un
+nombre : son code ASCII.
+
+00:06:26.504 --> 00:06:31.730
+ch point charCodeAt de zéro donne
+soixante-seize : le code de L majuscule.
+
+00:06:31.730 --> 00:06:34.343
+De six donne quatre-vingt-deux, le R.
+
+00:06:34.343 --> 00:06:38.015
+De sept donne quatre-vingt-dix-sept, le a
+minuscule.
+
+00:06:38.015 --> 00:06:42.676
+Douzième méthode : String point
+fromCharCode, la fonction inverse.
+
+00:06:42.676 --> 00:06:47.548
+Elle s'écrit avec le préfixe String, et
+non avec le nom de la chaîne.
+
+00:06:47.548 --> 00:06:52.421
+String point fromCharCode de
+quatre-vingt-deux, quatre-vingt-dix-sept
+
+00:06:52.421 --> 00:06:55.528
+et cent-deux donne Raf : le début de
+Rafèha.
+
+00:06:55.528 --> 00:07:01.390
+Et pour les lettres accentuées, les codes
+dépassent cent vingt-sept : charCodeAt de
+
+00:07:01.390 --> 00:07:04.285
+trois donne deux cent trente-trois, le é.
+
+00:07:04.285 --> 00:07:09.652
+À quoi ça sert ? À vérifier le contenu
+d'une saisie : entre soixante-cinq et
+
+00:07:09.652 --> 00:07:15.302
+quatre-vingt-dix pour les majuscules,
+entre quarante-huit et cinquante-sept pour
+
+00:07:15.302 --> 00:07:16.220
+les chiffres.
+
+00:07:16.770 --> 00:07:18.609
+Partie B : les conversions.
+
+00:07:18.609 --> 00:07:23.989
+Tout ce que l'élève tape arrive en texte :
+prompt renvoie du texte, un champ de
+
+00:07:23.989 --> 00:07:25.896
+formulaire renvoie du texte.
+
+00:07:25.896 --> 00:07:28.416
+Avant de calculer, il faut convertir.
+
+00:07:28.416 --> 00:07:33.797
+isNaN, d'abord : elle répond vrai si la
+valeur n'est pas convertible en nombre.
+
+00:07:33.797 --> 00:07:35.635
+NaN veut dire Not a Number.
+
+00:07:35.635 --> 00:07:40.130
+isNaN de vingt-cinq donne faux ; isNaN de
+Lycée Rafèha donne vrai.
+
+00:07:40.130 --> 00:07:45.511
+Piège : isNaN d'une chaîne vide donne
+faux, parce qu'une chaîne vide vaut zéro.
+
+00:07:45.511 --> 00:07:49.052
+Pour un champ obligatoire, testez aussi la
+longueur.
+
+00:07:49.052 --> 00:07:51.164
+Number : la conversion stricte.
+
+00:07:51.164 --> 00:07:56.476
+Number de vingt-cinq donne vingt-cinq ;
+Number de douze point cinq donne douze
+
+00:07:56.476 --> 00:07:57.225
+point cinq.
+
+00:07:57.225 --> 00:08:02.333
+Number de douze élèves donne NaN, parce
+qu'il y a du texte après le nombre.
+
+00:08:02.333 --> 00:08:07.441
+parseFloat : la conversion souple. Elle
+lit le début et s'arrête au premier
+
+00:08:07.441 --> 00:08:13.026
+caractère invalide : parseFloat de douze
+point cinq points donne douze point cinq.
+
+00:08:13.026 --> 00:08:18.338
+parseInt : pareil, mais sans la partie
+décimale, et sans arrondi : parseInt de
+
+00:08:18.338 --> 00:08:20.313
+douze point neuf donne douze.
+
+00:08:20.313 --> 00:08:25.762
+parseInt accepte aussi une base : parseInt
+de mille dix en base deux donne dix ;
+
+00:08:25.762 --> 00:08:29.916
+parseInt de F F en base seize donne deux
+cent cinquante-cinq.
+
+00:08:29.916 --> 00:08:35.160
+Et le piège du programme : vingt plus
+cinq, entre guillemets, c'est deux cent
+
+00:08:35.160 --> 00:08:36.795
+cinq, une concaténation.
+
+00:08:36.795 --> 00:08:41.290
+Number de vingt plus Number de cinq donne
+vingt-cinq : l'addition.
+
+00:08:41.840 --> 00:08:46.729
+Dernière conversion : String, pour
+transformer n'importe quelle valeur en
+
+00:08:46.729 --> 00:08:47.131
+texte.
+
+00:08:47.131 --> 00:08:50.011
+annee vaut deux mille vingt-six, un
+nombre.
+
+00:08:50.011 --> 00:08:54.365
+annee point length donne undefined : un
+nombre n'a pas de length.
+
+00:08:54.365 --> 00:08:57.312
+String de annee, point length, donne
+quatre.
+
+00:08:57.312 --> 00:09:02.603
+Et String de annee, plus Lycée Rafèha,
+donne deux mille vingt-six, tiret, Lycée
+
+00:09:02.603 --> 00:09:03.072
+Rafèha.
+
+00:09:03.072 --> 00:09:08.497
+Pourquoi convertir ? Parce qu'une fois la
+valeur devenue texte, elle a toutes les
+
+00:09:08.497 --> 00:09:11.846
+méthodes des chaînes : length, indexOf,
+substring.
+
+00:09:11.846 --> 00:09:13.453
+Partie C : l'objet Date.
+
+00:09:13.453 --> 00:09:18.677
+new Date crée une date. Ici, la date de la
+rentrée au Lycée Rafèha : le quinze
+
+00:09:18.677 --> 00:09:21.758
+septembre deux mille vingt-six, à huit
+heures.
+
+00:09:21.758 --> 00:09:27.183
+toString la transforme en texte : le jour,
+le mois, l'année, l'heure et le fuseau
+
+00:09:27.183 --> 00:09:27.719
+horaire.
+
+00:09:27.719 --> 00:09:33.010
+Le format exact dépend du navigateur et du
+fuseau : ne le figez jamais dans une
+
+00:09:33.010 --> 00:09:35.153
+réponse d'exercice, affichez-le.
+
+00:09:35.153 --> 00:09:40.378
+Une fois la date convertie en texte, elle
+se traite comme une chaîne : on peut
+
+00:09:40.378 --> 00:09:45.200
+mesurer sa longueur, la découper avec
+substring, et en extraire l'année.
+
+00:09:45.750 --> 00:09:51.579
+Trois exercices pour finir, comme en
+classe : l'énoncé à gauche, la correction
+
+00:09:51.579 --> 00:09:52.998
+détaillée à droite.
+
+00:09:52.998 --> 00:09:59.051
+Exercice un. On dispose de ch, qui vaut
+Lycée Rafèha. Que vaut ch point substring
+
+00:09:59.051 --> 00:10:00.396
+de quatre à sept ?
+
+00:10:00.396 --> 00:10:06.449
+Réponse : le e de Lycée, l'espace, le R.
+Donc e, espace, R : trois caractères. La
+
+00:10:06.449 --> 00:10:09.214
+position sept, le a, n'est pas prise.
+
+00:10:09.214 --> 00:10:15.118
+Exercice deux. Que vaut ch point indexOf
+de a, plus ch point lastIndexOf de a ?
+
+00:10:15.118 --> 00:10:18.107
+Réponse : sept plus onze, donc dix-huit.
+
+00:10:18.107 --> 00:10:22.217
+Attention : ce n'est pas une position,
+c'est une somme.
+
+00:10:22.217 --> 00:10:27.971
+Exercice trois. Un élève tape son prénom
+avec des espaces devant et derrière.
+
+00:10:27.971 --> 00:10:31.707
+Comment obtenir un prénom propre, et sa
+longueur ?
+
+00:10:31.707 --> 00:10:35.219
+Réponse : prénom point trim, puis point
+length.
+
+00:10:35.219 --> 00:10:41.421
+Et pour comparer deux saisies sans tenir
+compte de la casse, on ajoute toLowerCase.
+
+00:10:41.421 --> 00:10:47.325
+À retenir. Un : les méthodes ne modifient
+jamais la chaîne, elles renvoient une
+
+00:10:47.325 --> 00:10:48.520
+nouvelle valeur.
+
+00:10:48.520 --> 00:10:54.648
+Deux : les positions commencent à zéro, et
+le dernier caractère est à length moins
+
+00:10:54.648 --> 00:10:54.872
+un.
+
+00:10:54.872 --> 00:11:00.178
+Trois : les recherches renvoient moins un
+quand elles ne trouvent rien.
+
+00:11:00.178 --> 00:11:05.633
+Quatre : majuscules, minuscules et accents
+sont trois choses différentes.
+
+00:11:05.633 --> 00:11:11.387
+Cinq : ce qui vient d'un prompt est du
+texte ; Number, parseInt ou parseFloat
+
+00:11:11.387 --> 00:11:14.525
+avant de calculer, et isNaN pour vérifier.
+
+00:11:14.525 --> 00:11:18.710
+Bonne révision, et à bientôt dans une
+prochaine capsule.

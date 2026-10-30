@@ -44,3 +44,11 @@ build/
 /outils/phpvariables/voix-off.wav
 /outils/phpvariables/voix/*.wav
 /tests/__pycache__/
+
+# Capsule « Les chaînes de caractères » (outils/fonctionschaine) :
+# les MP3 de la voix off sont livrés avec la fiche, le reste est intermédiaire.
+/outils/fonctionschaine/__pycache__/
+/outils/fonctionschaine/sortie_*.mp4
+/outils/fonctionschaine/voix-off.wav
+/outils/fonctionschaine/voix/*.wav
+/outils/fonctionschaine/rendu.log

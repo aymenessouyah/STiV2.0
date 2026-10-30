@@ -322,10 +322,9 @@ test('le lecteur commun reconnaît la capsule et son fichier compile', () => {
   assert.doesNotThrow(() => new Function(lecteur), 'lecteur-commun.js compile');
 
   assert.match(protection, /var estPhpVariables = \(sSlug === "php-variables"/);
-  assert.ok(protection.includes('!estConsoleVariables && !estPhpVariables) {'),
-    'le garde-fou du lecteur laisse passer la capsule');
-  assert.ok(protection.includes('estConsoleVariables ? "console-variables" : estPhpVariables ? "php-variables"'),
-    'le slug de la capsule est transmis');
+  /* v564 : la garde et la chaîne des slugs s'allongent à chaque capsule. */
+  assert.match(protection, /!estPhpVariables/, 'le garde-fou du lecteur laisse passer la capsule');
+  assert.match(protection, /estPhpVariables \? "php-variables"/, 'le slug de la capsule est transmis');
   assert.ok(protection.includes(`subtitles/PhpVariables-fr-${VERSION_MEDIA}.vtt`),
     'les sous-titres sont attachés au lecteur de la grille');
   assert.ok(protection.includes('🎥 PHP — Les variables, la portée et les types'),
@@ -343,9 +342,9 @@ test('le catalogue du site compte la nouvelle capsule', () => {
   const reelle = Math.round(dureeMp4(VIDEO));
   assert.ok(Math.abs(13 * 60 + 34 - reelle) <= 2, `durée annoncée 13:34 vs réelle ${reelle}`);
 
-  assert.ok(index.includes('data-video-filter="all">Toutes (23)</button>'), 'pastille « Toutes »');
+  assert.ok(index.includes('data-video-filter="all">Toutes (24)</button>'), 'pastille « Toutes »');
   assert.ok(index.includes('data-video-filter="php">PHP (5)</button>'), 'pastille PHP');
-  assert.ok(index.includes('id="videosTotalNombre">23<'), 'compteur des capsules');
+  assert.ok(index.includes('id="videosTotalNombre">24<'), 'compteur des capsules');
 
   const admin = lire('assets/js/admin-vues-videos.js');
   assert.ok(admin.includes(`{ id: "${ID}"`), 'le catalogue du tableau de bord suit');

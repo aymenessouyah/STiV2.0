@@ -138,9 +138,9 @@ test('le cache hors-ligne embarque la vidéo sans téléchargement automatique',
   for (const chemin of [VIDEO, VTT]) assert.ok(offline.includes(`"./${chemin}"`), chemin);
   assert.ok(!delta.includes(`"./${VIDEO}"`), 'la vidéo n’entre jamais dans le delta mobile');
   assert.ok(!delta.includes(`"./${VTT}"`), 'ni ses sous-titres');
-  assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "console-variables-v548"/);
-  assert.match(delta, /url: "\.\/assets\/js\/protection\.js", revision: "suivi-video-repare-v554"/);
-  assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "boucles-et-effets-v550"/);
+  assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "chaines-v564"/);
+  assert.match(delta, /url: "\.\/assets\/js\/protection\.js", revision: "chaines-v564"/);
+  assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "chaines-v564"/);
   const nbDelta = delta.split('{ url:').length - 1;
   assert.ok(nbDelta <= 262, `delta trop long : ${nbDelta}`);
 });
@@ -209,7 +209,8 @@ test('le lecteur commun accepte réellement le slug et lance la capsule', () => 
   const fin = js.indexOf('        /* Couper immédiatement toute voix', debut);
   assert.ok(debut > 0 && fin > debut, 'bloc des slugs repérable');
   const bloc = js.slice(debut, fin);
-  assert.match(bloc, /!estTpTrain && !estDefis37 && !estBouclePour && !estConsoleVariables && !estPhpVariables\) \{/, 'estDefis37 présent dans la garde');
+  /* v564 : la garde s'allonge à chaque capsule ; on vérifie le drapeau attendu. */
+  assert.match(bloc, /!estDefis37/, 'estDefis37 présent dans la garde');
 
   /* 2. exécution réelle du bloc : le slug de la capsule traverse la garde. */
   const fonction = new Function(

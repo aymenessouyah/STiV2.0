@@ -45,6 +45,41 @@
   }
 }
 
+/* v570 · l'étiquette verte « Capsule », en haut à gauche de CHAQUE nœud-capsule
+   de la grille « Vidéos explicatives ». C'est un vrai élément (posé par
+   assets/js/app.js), pas un pseudo-élément : ::before et ::after portent déjà
+   les effets de survol v550 sur cette carte. Vert franc, texte sombre : le
+   contraste dépasse 7:1 même sur une vignette claire. */
+#videosGrid .video-card__capsule {
+  position: absolute;
+  top: 10px;
+  inset-inline-start: 10px;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  line-height: 1.35;
+  color: #052e16;
+  background: #22c55e;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, .35),
+    0 4px 12px -6px rgba(0, 0, 0, .55);
+  pointer-events: none;
+}
+
+/* Le repère « ✓ Vue » occupait le même coin : il passe à droite, sinon les deux
+   pastilles se superposeraient sur les capsules déjà regardées. */
+#videosGrid .video-card--capsule .video-card__seen {
+  inset-inline-start: auto;
+  inset-inline-end: 10px;
+}
+
 /* Survol : la carte se fige et prend la main (l'effet v550 reste visible). */
 #videosGrid .video-card--capsule:hover,
 #videosGrid .video-card--capsule:focus-within {

@@ -496,9 +496,15 @@ test('la capsule se lance depuis la grille de l\'accueil', () => {
 
   /* le lecteur de la modale doit reconnaître la capsule, sinon il sort sans rien ouvrir */
   assert.match(protection, /var estBouclePour = \(sSlug === "boucle-pour"/);
-  assert.ok(protection.includes('!estDefis37 && !estBouclePour && !estConsoleVariables && !estPhpVariables) {'),
-    'le garde-fou du lecteur laisse passer la capsule');
-  assert.ok(protection.includes('var slugCible = estBouclePour ? "boucle-pour"'),
+  /* v564 : la garde s'allonge à chaque capsule — on vérifie l'intention (la
+     boucle Pour y figure) plutôt qu'une fin de ligne figée. */
+  const garde = protection.split('if (!estTpEvenements')[1].split(') {')[0];
+  for (const drapeau of ['!estBouclePour', '!estConsoleVariables', '!estPhpVariables', '!estFonctionsChaine']) {
+    assert.ok(garde.includes(drapeau), 'le garde-fou du lecteur laisse passer la capsule : ' + drapeau);
+  }
+  /* v564 : la chaîne des slugs commence par la capsule des chaînes ; on vérifie
+     que la boucle Pour y a bien son entrée, pas sa place exacte. */
+  assert.match(protection, /estBouclePour \? "boucle-pour"/,
     'le slug de la capsule est transmis');
   assert.ok(protection.includes(`videos/BouclePour-${VERSION_MEDIA}.mp4`),
     'le lecteur ouvre bien le fichier de la capsule');
@@ -540,9 +546,9 @@ test('la capsule se lance depuis la grille de l\'accueil', () => {
 
   /* le service worker sert la nouvelle version du lecteur */
   const sw = lire('sw.js');
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "suivi-video-repare-v554"/);
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "chaines-v564"/);
   /* le lecteur commun n'a pas bougé depuis la v543 : il garde sa révision */
-  assert.match(sw, /url: "\.\/assets\/js\/lecteur-commun\.js", revision: "php-variables-v549"/);
+  assert.match(sw, /url: "\.\/assets\/js\/lecteur-commun\.js", revision: "chaines-v564"/);
 });
 
 test('la carte vidéo est dans l\'onglet Vidéos de JavaScript', () => {
@@ -581,8 +587,8 @@ test('la capsule est dans le paquet hors-ligne complet', () => {
   assert.ok(complet.includes(`"./${VTT}"`), 'VTT hors-ligne');
   assert.ok(!delta.includes(`BouclePour-${VERSION_MEDIA}.mp4`), 'les médias restent hors du delta léger');
   assert.match(sw, /var UPDATE_ID = "v553-defilement-passif-20261030";/);
-  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "boucles-et-effets-v550"/);
-  assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "console-variables-v548"/);
+  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "chaines-v564"/);
+  assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "chaines-v564"/);
 });
 
 test('la fabrique de la capsule reste dans le dépôt', () => {
