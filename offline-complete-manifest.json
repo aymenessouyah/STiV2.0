@@ -3,7 +3,7 @@
   "generatedAt": "2026-10-30T14:12:25Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 743,
-  "totalBytes": 942263640,
+  "totalBytes": 942274144,
   "files": [
     {
       "path": "404.html",
@@ -322,13 +322,13 @@
     },
     {
       "path": "assets/data/smart-book-2026.json",
-      "bytes": 20972,
-      "gitSha": "e28cd827066552577dfcfaaa99db4b990dd2c1be"
+      "bytes": 21022,
+      "gitSha": "7ceee4b4b91319a55f90064db91c92ea708310d6"
     },
     {
       "path": "assets/data/smart-book-3si-2026.json",
-      "bytes": 20956,
-      "gitSha": "00a1633b4fc7e8c6651f531b840926ef520e80f3"
+      "bytes": 21006,
+      "gitSha": "d76568f4d7fb8332a6b4808f5c339e59171b8886"
     },
     {
       "path": "assets/fontawesome/LICENSE.txt",
@@ -1327,8 +1327,8 @@
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
-      "bytes": 32548,
-      "gitSha": "7036759a0511700c6faf7eabae0074823bc6a97c"
+      "bytes": 35127,
+      "gitSha": "19c9b223ac3e5a06c013ae48553fb00ed5f32f4c"
     },
     {
       "path": "cours/sql-contraintes.html",
@@ -1342,8 +1342,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 136288,
-      "gitSha": "7f1a22b5fd92682f8460d0f57fb98ac5481a3637"
+      "bytes": 144108,
+      "gitSha": "0443cd11a2e01a63fe12fb199b185ee1959acc1c"
     },
     {
       "path": "cssanimee/cours.js",
@@ -3717,8 +3717,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 98865,
-      "gitSha": "1b5d163666d6a35c1741982177e1daa3937ff9a5"
+      "bytes": 98870,
+      "gitSha": "f8f2d1ba6fb536c673d89a171715e6e497bbbaf6"
     }
   ]
 }

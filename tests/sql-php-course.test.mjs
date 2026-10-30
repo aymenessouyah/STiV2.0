@@ -28,11 +28,20 @@ test('SQL et PHP : scripts de session dans le bon ordre et verrou 4SI conservé'
 });
 
 test('exemples historiques : 28 blocs SQL et 40 blocs PHP conservés dans le même ordre',()=>{
+  /* v563 : le cours SQL reçoit trois exemples supplémentaires (schéma
+     relationnel, position des cardinalités, traduction en CREATE TABLE).
+     Ils portent la classe « pre-notation-v563 » et sont donc exclus du
+     décompte : les 28 exemples historiques restent identiques, au même
+     emplacement et dans le même ordre, avec la même empreinte. */
   for(const [matiere,n,empreinte] of [['sql',28,'66802e757c45d37855f5288c33cb25bc9a793dd75b5a7c7838ade7eb5d8e48a4'],
     ['php',40,'024614c3a05e762dd79dac2b45ed279d52f7ba4c8fa4a4e867eb6a1e72dad6f3']]){
-    const html=lire(`cours/${matiere}.html`),blocs=[...html.matchAll(/<pre\b[^>]*>([\s\S]*?)<\/pre>/gi)].map(m=>m[1]);
+    const html=lire(`cours/${matiere}.html`),blocs=[...html.matchAll(/<pre\b(?![^>]*pre-notation-v563)[^>]*>([\s\S]*?)<\/pre>/gi)].map(m=>m[1]);
     assert.equal(blocs.length,n);assert.equal(createHash('sha256').update(blocs.join('\0')).digest('hex'),empreinte);
   }
+  /* Les trois nouveaux exemples sont bien là — et seulement au cours SQL. */
+  const sql=lire('cours/sql.html');
+  assert.equal((sql.match(/class="pre-notation-v563"/g)||[]).length,3);
+  assert.equal((lire('cours/php.html').match(/pre-notation-v563/g)||[]).length,0);
 });
 
 test('les liens et médias locaux présents dans les deux pages existent',()=>{

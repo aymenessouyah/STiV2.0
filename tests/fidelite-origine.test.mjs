@@ -164,6 +164,8 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
       : chemin === 'cours/html5.html' ? 'tp-display-v510'
       : chemin === 'cours/javascript.html' ? 'console-variables-v548'
       : chemin === 'cours/php.html' ? 'audit-plateforme-v552'
+      /* v563 : cours/sql.html reçoit la convention d'écriture d'un schéma. */
+      : chemin === 'cours/sql.html' ? 'schema-notation-v563'
       : chemin.startsWith('cours/') ? 'retrait-fond-cours-v508' : 'progression-chapitres-v492';
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${revision}"`), `révision de ${chemin}`);
   }
@@ -202,11 +204,16 @@ test('commandes d’administration : scripts et fonctions de la barre PC inchang
 });
 
 test('banques et données JSON d’origine conservées ; retour de quiz ajouté sans changer les contenus', () => {
+  /* v563 : les fiches 36 (3e SI) et 33 (4e SI) « Notions relationnelles et
+     contraintes » deviennent « … et notation du schéma (1:1 · 1:N · N:N) » et
+     pointent vers le nouvel encadré #intro-notation. Seuls ces deux titres et
+     ces deux URL changent : la pagination, le nombre de fiches et les autres
+     entrées sont inchangés. */
   const json = {
     'assets/data/nouveautes.json': '519ab2b9a8866737bb14a5db189a9dc01ef07c3ccf51482fc85d8b32baf0a520',
     'assets/data/quiz-banque.json': '2696942ae18a009e315239561a576ad6f2ff33db0609990082db418a45796c67',
-    'assets/data/smart-book-2026.json': '1b90da1bc986c0c4a2c97f357a40fe6894f5cd1418d0b1e67aeb45ff675ebca3',
-    'assets/data/smart-book-3si-2026.json': '2a332e4e17cc17c093fac1080a6a226ff8eac13fb76dceb5a521194fe5794f58',
+    'assets/data/smart-book-2026.json': '2d2b3ddcf1d6b345c82de99eac119ab5be301c1e7ebfdaa577c19b2c88196a68',
+    'assets/data/smart-book-3si-2026.json': '0133d892900cf2984bba677cb0604b1f711f6607fc2b13aaeefe2808e804b19b',
     'assets/pages-couverture.json': '46d0a69f3b623adbae31f1dfba54399d1ce922169fe4df989301266ffcb2fe29',
     'manifest.webmanifest': '9803f124c0bb3736f3749ffcf9f0ffd63930a6a2a23e6cafeccfde0d61892e1f'
   };

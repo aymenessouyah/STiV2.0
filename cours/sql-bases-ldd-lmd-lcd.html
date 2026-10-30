@@ -179,6 +179,7 @@
   <a href="#def-bdd">Base de données</a>
   <a href="#def-sql">SQL</a>
   <a href="#comparatif">LDD / LMD / LCD</a>
+  <a href="#schema-relationnel">Schéma &amp; notation</a>
   <a href="#create-table">CREATE TABLE</a>
   <a href="#alter-table">ALTER TABLE</a>
   <a href="#exemple">Exemple complet</a>
@@ -240,6 +241,65 @@
           <tr><td>Fréquence d'usage</td><td>Ponctuel (conception, évolution du schéma)</td><td>Quotidien (exploitation de la base)</td><td>Administration / sécurité</td></tr>
         </tbody>
       </table>
+    </div>
+  </section>
+
+  <section id="schema-relationnel">
+    <h2>Écrire un schéma relationnel : la convention officielle</h2>
+    <p class="muted">Encadré à appliquer dès qu'un schéma est demandé — exercices, devoir surveillé, épreuve de Bac.</p>
+
+    <div class="card">
+      <p>
+        Avant d'écrire la moindre commande <code>CREATE TABLE</code>, il faut
+        savoir présenter le schéma. Le programme impose
+        <strong>deux règles d'écriture</strong> et <strong>trois notations</strong>
+        de cardinalité.
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Élément</th><th>Comment l'écrire</th><th>Exemple</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Clé primaire</strong></td>
+              <td><strong>soulignée</strong></td>
+              <td><code><u>num_emp</u></code></td>
+            </tr>
+            <tr>
+              <td><strong>Clé étrangère</strong></td>
+              <td>suivie du symbole <strong>#</strong></td>
+              <td><code>num_service#</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>Exemple de schéma :</strong></p>
+      <pre><code>Service (<u>num_service</u>, libelle, budget)
+Employe (<u>num_emp</u>, nom_emp, salaire, num_service#)
+Enfant (<u>num_enfant</u>, nom_enfant, date_naiss, num_emp#)</code></pre>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Type de relation</th><th>Notation officielle</th><th>Autre écriture</th><th>Clé étrangère placée dans…</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Un à un</td><td><code>1 : 1</code></td><td><code>1 — 1</code></td><td>l'une des deux tables, avec <code>UNIQUE</code></td></tr>
+            <tr><td>Un à plusieurs</td><td><code>1 : ∞</code></td><td><code>1 : N</code></td><td>la table du côté <b>∞</b></td></tr>
+            <tr><td>Plusieurs à plusieurs</td><td><code>∞ : ∞</code></td><td><code>N : N</code></td><td>une table d'association, clé primaire composée</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        <code>∞</code> se lit « plusieurs » ; <code>N</code> est admis comme
+        synonyme. Le cours détaillé, avec la position des cardinalités sur un
+        dessin et les erreurs à éviter, se trouve dans
+        <a href="sql.html#intro-notation">le cours SQL — « Écrire un schéma relationnel »</a>.
+      </p>
     </div>
   </section>
 
