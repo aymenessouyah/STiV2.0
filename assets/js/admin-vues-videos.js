@@ -54,6 +54,7 @@
     { id: "boucle-pour", titre: "La boucle Pour — le sac", matiere: "javascript", icone: "🔁" },
     { id: "console-variables", titre: "La console, les variables et les types", matiere: "javascript", icone: "🖥️" },
     { id: "fonctions-chaine", titre: "Les chaînes de caractères", matiere: "javascript", icone: "🔤" },
+    { id: "date-js", titre: "L'objet Date", matiere: "javascript", icone: "📅" },
     { id: "php-variables", titre: "PHP — Variables, portée et types", matiere: "php", icone: "🐘" },
     { id: "tp-evenements-liens", titre: "TP — Événements & liens", matiere: "javascript", icone: "⚡" },
     { id: "tp-formulaire-tableau-autre", titre: "TP — Formulaire & tableau", matiere: "javascript", icone: "⚡" },

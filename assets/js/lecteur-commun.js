@@ -17,6 +17,7 @@
     'boucle-pour': ['javascript','Les boucles — Pour, Répéter…jusqu’à, Tant que'],
     'console-variables': ['javascript','La console, les variables et les types'],
     'fonctions-chaine': ['javascript','Les chaînes de caractères — méthodes, conversions et dates'],
+    'date-js': ['javascript','L\'objet Date — le jour, le mois, l\'année'],
     'php-variables': ['php','PHP — Les variables, la portée et les types'],
     'sql-cours': ['sql','Cours SQL'],
     'sql-initiation': ['sql','Construire une requête SQL'],

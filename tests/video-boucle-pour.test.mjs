@@ -546,9 +546,9 @@ test('la capsule se lance depuis la grille de l\'accueil', () => {
 
   /* le service worker sert la nouvelle version du lecteur */
   const sw = lire('sw.js');
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "chaines-v564"/);
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "date-js-v565"/);
   /* le lecteur commun n'a pas bougé depuis la v543 : il garde sa révision */
-  assert.match(sw, /url: "\.\/assets\/js\/lecteur-commun\.js", revision: "chaines-v564"/);
+  assert.match(sw, /url: "\.\/assets\/js\/lecteur-commun\.js", revision: "date-js-v565"/);
 });
 
 test('la carte vidéo est dans l\'onglet Vidéos de JavaScript', () => {
@@ -587,8 +587,8 @@ test('la capsule est dans le paquet hors-ligne complet', () => {
   assert.ok(complet.includes(`"./${VTT}"`), 'VTT hors-ligne');
   assert.ok(!delta.includes(`BouclePour-${VERSION_MEDIA}.mp4`), 'les médias restent hors du delta léger');
   assert.match(sw, /var UPDATE_ID = "v553-defilement-passif-20261030";/);
-  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "chaines-v564"/);
-  assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "chaines-v564"/);
+  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "date-js-v565"/);
+  assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "date-js-v565"/);
 });
 
 test('la fabrique de la capsule reste dans le dépôt', () => {

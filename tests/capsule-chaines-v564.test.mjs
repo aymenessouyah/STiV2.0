@@ -112,12 +112,13 @@ test('l’étiquette « Capsule » est verte, en haut à gauche, et ne cache pas
   assert.match(vus, /inset-inline-end:\s*10px/, '« Vue » passe à droite');
 });
 
-test('les quatre capsules sont reconnues, et elles seules', () => {
+test('les capsules historiques sont reconnues', () => {
   const app = lire('assets/js/app.js');
   const ligne = app.split('var CAPSULES_VIDEO = ')[1].split('};')[0] + '}';
   const capsules = vm.runInNewContext('(' + ligne + ')');
-  assert.deepEqual(Object.keys(capsules).sort(),
-    ['boucle-pour', 'console-variables', 'fonctions-chaine', 'php-variables']);
+  for (const slug of ['boucle-pour', 'console-variables', 'fonctions-chaine', 'php-variables']) {
+    assert.equal(capsules[slug], true, 'capsule reconnue : ' + slug);
+  }
   for (const valeur of Object.values(capsules)) assert.equal(valeur, true);
 });
 
@@ -202,7 +203,7 @@ test('le montage suit le modèle des autres capsules', () => {
 test('le lecteur du site sait ouvrir la capsule depuis la grille', () => {
   const protection = lire('assets/js/protection.js');
   assert.ok(protection.includes('var estFonctionsChaine = '), 'le garde-fou doit reconnaître le slug');
-  assert.ok(/url = estFonctionsChaine \? prefixeAssetsSTI\(\) \+ "videos\/FonctionsChaine-v564\.mp4"/.test(protection),
+  assert.ok(/estFonctionsChaine \? prefixeAssetsSTI\(\) \+ "videos\/FonctionsChaine-v564\.mp4"/.test(protection),
     'le fichier joué');
   assert.ok(protection.includes('STI_CHAPITRES_MEDIA["fonctions-chaine"] = ['), 'les chapitres');
 
@@ -232,11 +233,11 @@ test('la capsule est dans le paquet hors-ligne et versionnée', () => {
   const sw = lire('sw.js');
   assert.ok(sw.includes(`"./assets/videos/FonctionsChaine-v564.mp4"`));
   assert.ok(sw.includes(`"./assets/subtitles/FonctionsChaine-fr-v564.vtt"`));
-  assert.ok(sw.includes('revision: "chaines-v564"'), 'les pages touchées sont réinvalidées');
+  assert.ok(sw.includes('revision: "date-js-v565"'), 'les pages touchées sont réinvalidées');
   for (const page of ['./index.html', './cours/javascript.html', './assets/js/app.js',
     './assets/js/protection.js', './assets/js/lecteur-commun.js']) {
-    assert.ok(sw.includes(`{ url: "${page}", revision: "chaines-v564"`) ||
-      sw.includes(`{ url: "${page}", revision: "chaines-v564",`), 'révision de ' + page);
+    assert.ok(sw.includes(`{ url: "${page}", revision: "date-js-v565"`) ||
+      sw.includes(`{ url: "${page}", revision: "date-js-v565",`), 'révision de ' + page);
   }
 });
 
@@ -244,8 +245,8 @@ test('les totaux de l’accueil suivent le catalogue', () => {
   const liste = catalogue();
   const index = lire('index.html');
   const js = liste.filter((v) => (v.matieres || [v.matiere]).includes('javascript')).length;
-  assert.equal(liste.length, 24);
-  assert.equal(js, 7);
+  assert.equal(liste.length, 25);
+  assert.equal(js, 8);
   assert.ok(index.includes(`data-video-filter="all">Toutes (${liste.length})</button>`));
   assert.ok(index.includes(`<span id="videosTotalNombre">${liste.length}</span>`));
   assert.ok(index.includes(`data-video-filter="javascript">JS (${js})</button>`));

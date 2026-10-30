@@ -52,3 +52,11 @@ build/
 /outils/fonctionschaine/voix-off.wav
 /outils/fonctionschaine/voix/*.wav
 /outils/fonctionschaine/rendu.log
+
+# Capsule « L'objet Date » (outils/datejs) :
+# les MP3 de la voix off sont livrés avec la fiche, le reste est intermédiaire.
+/outils/datejs/__pycache__/
+/outils/datejs/sortie_*.mp4
+/outils/datejs/voix-off.wav
+/outils/datejs/voix/*.wav
+/outils/datejs/rendu.log

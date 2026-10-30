@@ -1,0 +1,26 @@
+{
+  "durees": {
+    "ouverture": 57.92,
+    "date_courante": 48.72,
+    "date_chaine": 62.76,
+    "getdate": 45.04,
+    "getmonth": 63.2,
+    "getfullyear": 42.12,
+    "tostring": 56.52,
+    "exemple_complet": 70.32,
+    "exercices": 96.76
+  },
+  "debuts": {
+    "ouverture": 1.2,
+    "date_courante": 59.67,
+    "date_chaine": 108.94,
+    "getdate": 172.25,
+    "getmonth": 217.84,
+    "getfullyear": 281.59,
+    "tostring": 324.26,
+    "exemple_complet": 381.33,
+    "exercices": 452.2
+  },
+  "total": 550.76,
+  "debit": 14.24
+}
