@@ -198,6 +198,63 @@ test('le cheminement est inscrit dans la fabrication (11 sections)', () => {
   }
 });
 
+test('la capsule se lance depuis la grille de l\'accueil', () => {
+  const app = lire('assets/js/app.js');
+  const protection = lire('assets/js/protection.js');
+  const lecteur = lire('assets/js/lecteur-commun.js');
+
+  /* la carte de la grille porte l'identifiant du catalogue */
+  assert.match(app, /function ouvrirModaleVideo\(idVideo, tempsDepart\)/);
+  assert.ok(app.includes('global.ouvrirVideoPasAPasSTI(meta.id, meta.titre'),
+    'la grille passe l\'identifiant au lecteur commun');
+
+  /* le lecteur de la modale doit reconnaître la capsule, sinon il sort sans rien ouvrir */
+  assert.match(protection, /var estBouclePour = \(sSlug === "boucle-pour"/);
+  assert.ok(protection.includes('!estDefis37 && !estBouclePour) {'),
+    'le garde-fou du lecteur laisse passer la capsule');
+  assert.ok(protection.includes('var slugCible = estBouclePour ? "boucle-pour"'),
+    'le slug de la capsule est transmis');
+  assert.ok(protection.includes('videos/BouclePour.mp4'),
+    'le lecteur ouvre bien le fichier de la capsule');
+  assert.ok(protection.includes('🎥 La boucle Pour — de la variable à la boucle'),
+    'le titre affiché dans la modale');
+
+  /* les sous-titres suivent la vidéo dans la modale */
+  assert.ok(protection.includes('subtitles/BouclePour-fr.vtt'),
+    'les sous-titres sont attachés au lecteur de la grille');
+
+  /* les onze repères de chapitre, calés sur la voix off */
+  const chapitres = protection.slice(protection.indexOf('STI_CHAPITRES_MEDIA["boucle-pour"]'),
+    protection.indexOf('STI_CHAPITRES_MEDIA["validation-nom-prenom-js"]'));
+  assert.equal((chapitres.match(/\{ t:/g) || []).length, 11, 'onze chapitres');
+  assert.ok(chapitres.includes('4:58 · 11 · La boucle Pour : le bloc'), 'dernier repère');
+
+  /* la reprise de lecture sait à quelle matière et quel titre rattacher la capsule */
+  assert.ok(lecteur.includes("'boucle-pour': ['javascript','La boucle Pour — de la variable à la boucle']"),
+    'la capsule est connue du lecteur commun');
+
+  /* exécution réelle : le slug de la capsule traverse la garde du lecteur */
+  const debut = protection.indexOf('        var estTpEvenements =');
+  const fin = protection.indexOf('        /* Couper immédiatement toute voix', debut);
+  assert.ok(debut > 0 && fin > debut, 'bloc des slugs repérable');
+  const bloc = protection.slice(debut, fin);
+  const fonction = new Function(
+    'sSlug', 'estPageHtml5', 'estPageCss3', 'estPageJs', 'estPagePhpCours',
+    'estPageSql', 'estPageCssDeco', 'estPageCssPos', 'estPageGuichet',
+    bloc.replace('return;', 'return true;') + '\nreturn false;');
+  const traverse = (slug) => fonction(slug, false, false, false, false, false, false, false, false);
+  assert.equal(traverse('boucle-pour'), false, 'la capsule ouvre le lecteur');
+  assert.equal(traverse('BouclePour.mp4'), false, 'le nom du fichier aussi');
+  assert.equal(traverse('tp-train-serie6'), false, 'le TP Train continue de fonctionner');
+  assert.equal(traverse('defis37-tableau-aleas-media'), false, 'les 37 Défis continuent');
+  assert.equal(traverse('slug-inconnu'), true, 'un slug inconnu reste refusé');
+
+  /* le service worker sert la nouvelle version du lecteur */
+  const sw = lire('sw.js');
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "boucle-grille-v542"/);
+  assert.match(sw, /url: "\.\/assets\/js\/lecteur-commun\.js", revision: "boucle-grille-v542"/);
+});
+
 test('la carte vidéo est dans l\'onglet Vidéos de JavaScript', () => {
   const page = lire('cours/javascript.html');
   assert.ok(page.includes(`data-video-id="${ID}"`), 'identifiant du lecteur');
@@ -231,7 +288,7 @@ test('la capsule est dans le paquet hors-ligne complet', () => {
   assert.ok(complet.includes(`"./${VIDEO}"`), 'MP4 hors-ligne');
   assert.ok(complet.includes(`"./${VTT}"`), 'VTT hors-ligne');
   assert.ok(!delta.includes('BouclePour.mp4'), 'les médias restent hors du delta léger');
-  assert.match(sw, /var UPDATE_ID = "v541-boucle-pour-brouillon-20261030";/);
+  assert.match(sw, /var UPDATE_ID = "v542-boucle-pour-grille-20261030";/);
   assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "boucle-pour-v541"/);
   assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "boucle-pour-v541"/);
 });
