@@ -1,9 +1,9 @@
 {
-  "version": "v547-sti-atelier-v380",
-  "generatedAt": "2026-10-30T12:08:32Z",
+  "version": "v548-sti-atelier-v381",
+  "generatedAt": "2026-10-30T12:41:56Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 736,
-  "totalBytes": 867870120,
+  "totalFiles": 738,
+  "totalBytes": 901780026,
   "files": [
     {
       "path": "404.html",
@@ -672,8 +672,8 @@
     },
     {
       "path": "assets/js/admin-vues-videos.js",
-      "bytes": 29337,
-      "gitSha": "b810e34b6ec64a4f08d023d1ce90d4f8ea841f0f"
+      "bytes": 29460,
+      "gitSha": "01c299e156cb57bbca62516b089804cd055c5e3e"
     },
     {
       "path": "assets/js/admin.js",
@@ -687,8 +687,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 117914,
-      "gitSha": "96e32b39d5cde585513db0580e4e45f2d5394753"
+      "bytes": 118540,
+      "gitSha": "84221ea3aa5dd6488bdcce866ab9817b3820bd0f"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -762,8 +762,8 @@
     },
     {
       "path": "assets/js/lecteur-commun.js",
-      "bytes": 13904,
-      "gitSha": "11b4038ee87136ed6bd228b31ea6b55fb2b80ed9"
+      "bytes": 13988,
+      "gitSha": "6dbb0032a73d5bcb22ea6cea926b9e809a455261"
     },
     {
       "path": "assets/js/mobile-nav.js",
@@ -822,8 +822,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 229814,
-      "gitSha": "6a2de0d45395587e14747225f6b22c2472345a92"
+      "bytes": 231870,
+      "gitSha": "390bee45e1b480173fccc75294137d29e7021494"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -1026,6 +1026,11 @@
       "gitSha": "5d5e070b4f8e99ba97f3ba81336e6f1e598627e1"
     },
     {
+      "path": "assets/subtitles/ConsoleVariables-fr-v548.vtt",
+      "bytes": 15555,
+      "gitSha": "adc00b86c8f890a1b603899afd0a0ea3f81935e8"
+    },
+    {
       "path": "assets/subtitles/css3-cours-v9-sync-fr.vtt",
       "bytes": 16293,
       "gitSha": "f7e40b42612b1dabb22876cc2f5be2a1bfa61c21"
@@ -1094,6 +1099,11 @@
       "path": "assets/videos/BouclePour-v547.mp4",
       "bytes": 51018341,
       "gitSha": "84a188ce8678dddbdc8c7ca428561a0ff7b5dd83"
+    },
+    {
+      "path": "assets/videos/ConsoleVariables-v548.mp4",
+      "bytes": 33889151,
+      "gitSha": "33aca5a190d9b0e51e48e6c5a6427b41efaa5e80"
     },
     {
       "path": "assets/videos/css-animee.mp4",
@@ -1287,8 +1297,8 @@
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 133591,
-      "gitSha": "51a25b074391e18c95bbc315e61b8d779517d1a8"
+      "bytes": 135756,
+      "gitSha": "e5046ebcaa2d0ba9bf4487efc8e4652ebea665df"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -3093,7 +3103,7 @@
     {
       "path": "index.html",
       "bytes": 57703,
-      "gitSha": "52e6a720ef517a827452ee1e151e8b4b6ddb84a5"
+      "gitSha": "b6940172eefbb0f7ccce2874f70b6a0ad07c737d"
     },
     {
       "path": "livre-smart.html",
@@ -3682,8 +3692,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 98129,
-      "gitSha": "74730997014be3937cccf1ae762707ffafb4a9cc"
+      "bytes": 98275,
+      "gitSha": "da1f63bc5814c390c8e52b057a9a56525679b38f"
     }
   ]
 }

@@ -1,0 +1,648 @@
+WEBVTT
+
+00:00:01.200 --> 00:00:03.152
+Bienvenue dans STI Version 2.0.
+
+00:00:03.152 --> 00:00:06.930
+Aujourd'hui, une capsule de JavaScript
+pour bien commencer :
+
+00:00:06.930 --> 00:00:09.449
+la console, les variables, et les types.
+
+00:00:09.449 --> 00:00:11.087
+L'écran est coupé en deux.
+
+00:00:11.087 --> 00:00:15.935
+À gauche, le cours et ses analogies ; à
+droite, le code, et rien que le code.
+
+00:00:15.935 --> 00:00:21.036
+Et à la fin, des exercices : l'énoncé à
+gauche, la correction détaillée à droite.
+
+00:00:21.036 --> 00:00:25.507
+On commence par l'outil que tout
+programmeur utilise tout le temps : la
+
+00:00:25.507 --> 00:00:26.011
+console.
+
+00:00:26.561 --> 00:00:29.933
+La console, c'est le carnet de bord du
+programme.
+
+00:00:29.933 --> 00:00:35.645
+C'est un endroit où j'écris des valeurs,
+et où je les lis, une ligne après l'autre.
+
+00:00:35.645 --> 00:00:38.674
+À quoi ça sert, concrètement ? Trois
+choses.
+
+00:00:38.674 --> 00:00:42.941
+Un : voir ce que contient une variable, au
+lieu de le deviner.
+
+00:00:42.941 --> 00:00:47.620
+Deux : tester une petite idée en trois
+secondes, sans créer de page.
+
+00:00:47.620 --> 00:00:50.924
+Trois : lire l'erreur quand quelque chose
+casse.
+
+00:00:50.924 --> 00:00:56.085
+Parce qu'une erreur, c'est un cadeau :
+JavaScript vous donne le fichier, la
+
+00:00:56.085 --> 00:00:57.944
+ligne, et le type d'erreur.
+
+00:00:57.944 --> 00:01:02.968
+Pour l'ouvrir : F12, ou contrôle,
+majuscule, J, selon le navigateur, puis
+
+00:01:02.968 --> 00:01:04.138
+l'onglet Console.
+
+00:01:04.138 --> 00:01:08.680
+J'écris console point log, entre
+parenthèses, ce que je veux voir.
+
+00:01:08.680 --> 00:01:14.117
+console point log, c'est la fonction que
+j'utiliserai dans toute cette capsule.
+
+00:01:14.117 --> 00:01:19.691
+Et il y a deux cousines utiles : console
+point error pour signaler une erreur, et
+
+00:01:19.691 --> 00:01:23.545
+console point table pour afficher un
+tableau proprement.
+
+00:01:23.545 --> 00:01:27.537
+Une console ouverte, et vous ne devinez
+plus : vous voyez.
+
+00:01:28.086 --> 00:01:29.959
+Maintenant, les variables.
+
+00:01:29.959 --> 00:01:33.130
+Une variable, c'est un espace mémoire
+nommé.
+
+00:01:33.130 --> 00:01:39.038
+Autrement dit : une case dans la mémoire
+de l'ordinateur, et une étiquette dessus.
+
+00:01:39.038 --> 00:01:43.865
+Je mets une valeur dans la case, et je
+parle à la case par son nom.
+
+00:01:43.865 --> 00:01:47.756
+En JavaScript, trois mots-clés permettent
+de déclarer.
+
+00:01:47.756 --> 00:01:52.943
+var : la plus ancienne. Sa portée est la
+fonction entière, et on peut la
+
+00:01:52.943 --> 00:01:53.736
+redéclarer.
+
+00:01:53.736 --> 00:01:58.780
+let : la moderne, quand la valeur doit
+changer. Sa portée est le bloc.
+
+00:01:58.780 --> 00:02:02.886
+const : la moderne, quand la valeur ne
+doit plus changer.
+
+00:02:02.886 --> 00:02:08.867
+Pour choisir, une seule règle : const par
+défaut, let si la valeur doit changer, et
+
+00:02:08.867 --> 00:02:10.019
+var, on l'évite.
+
+00:02:10.019 --> 00:02:15.135
+Regardez le code à droite : let age égal
+seize. Puis age égal dix-sept.
+
+00:02:15.135 --> 00:02:20.683
+La variable est créée une fois, avec let,
+et ensuite je peux lui redonner une
+
+00:02:20.683 --> 00:02:21.187
+valeur.
+
+00:02:21.187 --> 00:02:26.519
+Et pour voir le résultat, console point
+log : la console affiche dix-sept.
+
+00:02:27.069 --> 00:02:31.634
+La portée, en anglais scope, c'est la zone
+du programme où une variable existe.
+
+00:02:31.634 --> 00:02:34.754
+En dehors de cette zone, JavaScript ne la
+connaît pas.
+
+00:02:34.754 --> 00:02:36.834
+Pour la comprendre, pensez au lycée.
+
+00:02:36.834 --> 00:02:40.070
+La portée, c'est la distance que la voix
+peut atteindre.
+
+00:02:40.070 --> 00:02:44.288
+L'annonce au haut-parleur est entendue
+dans toutes les salles : c'est une
+
+00:02:44.288 --> 00:02:45.270
+variable globale.
+
+00:02:45.270 --> 00:02:49.603
+Ce que l'enseignant dit dans la salle
+douze n'est entendu que dans la salle
+
+00:02:49.603 --> 00:02:52.666
+douze : c'est une variable locale, dans
+une fonction.
+
+00:02:52.666 --> 00:02:56.941
+Ce qu'un groupe de travail dit à
+l'intérieur de la salle n'est entendu que
+
+00:02:56.941 --> 00:03:00.755
+par ce groupe : c'est une variable de
+bloc, et c'est let et const.
+
+00:03:00.755 --> 00:03:05.435
+Avec var, il n'y a pas de groupes : tout
+ce qui est dit est entendu dans toute la
+
+00:03:05.435 --> 00:03:05.782
+salle.
+
+00:03:05.782 --> 00:03:10.173
+Un élève de la salle douze entend
+l'annonce générale, mais le reste du lycée
+
+00:03:10.173 --> 00:03:12.889
+n'entend pas ce qui se dit dans la salle
+douze.
+
+00:03:12.889 --> 00:03:17.453
+Dans le code à droite, le bloc entre
+accolades redéclare x avec let : c'est une
+
+00:03:17.453 --> 00:03:20.169
+autre variable, et le x du dehors reste
+intact.
+
+00:03:20.169 --> 00:03:24.676
+Une fonction accède aux variables de ses
+fonctions parentes, jamais l'inverse.
+
+00:03:25.226 --> 00:03:26.184
+let, d'abord.
+
+00:03:26.184 --> 00:03:31.858
+On peut réaffecter : let age égal seize,
+puis age égal dix-sept, sans erreur.
+
+00:03:31.858 --> 00:03:37.532
+Mais on ne peut pas redéclarer dans le
+même bloc : deux fois let x, c'est une
+
+00:03:37.532 --> 00:03:38.858
+erreur de syntaxe.
+
+00:03:38.858 --> 00:03:42.027
+Et il y a la zone morte temporelle, la
+TDZ.
+
+00:03:42.027 --> 00:03:46.817
+Regardez à droite : console point log de
+n, puis let n égal cinq.
+
+00:03:46.817 --> 00:03:52.491
+La variable existe, mais elle n'est pas
+encore utilisable : JavaScript répond
+
+00:03:52.491 --> 00:03:53.596
+ReferenceError.
+
+00:03:53.596 --> 00:03:56.396
+Zéro ligne avant sa déclaration, donc.
+
+00:03:56.396 --> 00:03:57.649
+Maintenant const.
+
+00:03:57.649 --> 00:04:03.692
+const PI égal trois virgule quatorze. PI
+égal trois virgule quinze : TypeError, on
+
+00:04:03.692 --> 00:04:05.976
+ne réaffecte pas une constante.
+
+00:04:05.976 --> 00:04:11.429
+Et const sans valeur, c'est aussi une
+erreur : il faut initialiser tout de
+
+00:04:11.429 --> 00:04:11.871
+suite.
+
+00:04:11.871 --> 00:04:17.250
+Attention, et c'est le piège du
+programme : la liaison est constante, pas
+
+00:04:17.250 --> 00:04:18.061
+le contenu.
+
+00:04:18.061 --> 00:04:23.661
+const notes égal un tableau : notes
+crochet zéro égal quatorze est autorisé,
+
+00:04:23.661 --> 00:04:27.051
+parce qu'on modifie une case, pas la
+variable.
+
+00:04:27.051 --> 00:04:30.735
+Mais notes égal un autre tableau, c'est
+TypeError.
+
+00:04:30.735 --> 00:04:36.999
+Et const est possible dans for point point
+point of, mais pas dans un for à compteur.
+
+00:04:37.549 --> 00:04:39.840
+Le hoisting, en français la remontée.
+
+00:04:39.840 --> 00:04:44.483
+Avant d'exécuter le code, JavaScript
+parcourt tout le programme et note les
+
+00:04:44.483 --> 00:04:49.499
+déclarations de variables, comme si elles
+étaient remontées en haut de leur zone.
+
+00:04:49.499 --> 00:04:53.151
+Seule la déclaration remonte, pas la
+valeur donnée ensuite.
+
+00:04:53.151 --> 00:04:58.043
+L'analogie de la classe : avant le début
+du cours, le surveillant lit la liste.
+
+00:04:58.043 --> 00:05:02.872
+Tous les noms sont connus dès le départ,
+même si les élèves ne sont pas encore
+
+00:05:02.872 --> 00:05:03.367
+arrivés.
+
+00:05:03.367 --> 00:05:07.949
+Avec var : l'élève est déjà assis à sa
+place, mais son sac est vide. Si on
+
+00:05:07.949 --> 00:05:09.868
+l'appelle, il répond undefined.
+
+00:05:09.868 --> 00:05:14.760
+Avec let et const : l'élève est inscrit,
+mais il attend encore dans le couloir.
+
+00:05:14.760 --> 00:05:18.908
+L'appeler avant son arrivée provoque une
+erreur, un ReferenceError.
+
+00:05:18.908 --> 00:05:23.799
+Il devient utilisable à la ligne où la
+variable est déclarée : c'est son entrée
+
+00:05:23.799 --> 00:05:24.418
+en classe.
+
+00:05:24.418 --> 00:05:29.062
+Regardez à droite : les deux appels se
+ressemblent, les deux résultats non.
+
+00:05:29.612 --> 00:05:33.241
+Dernier chapitre avant les exercices : les
+types.
+
+00:05:33.241 --> 00:05:38.943
+JavaScript est à typage dynamique : le
+type est attaché à la valeur, pas à la
+
+00:05:38.943 --> 00:05:39.610
+variable.
+
+00:05:39.610 --> 00:05:45.386
+let x égal dix, puis x égal le mot dix
+entre guillemets : autorisé, et le type
+
+00:05:45.386 --> 00:05:47.015
+change avec la valeur.
+
+00:05:47.015 --> 00:05:51.384
+Il y a sept types primitifs, et tout le
+reste est un objet.
+
+00:05:51.384 --> 00:05:56.939
+Primitif vient du latin primitivus,
+premier, de base : une valeur simple et
+
+00:05:56.939 --> 00:06:00.049
+indivisible, qui ne contient rien d'autre.
+
+00:06:00.049 --> 00:06:05.529
+L'analogie de la cuisine : un ingrédient
+est primitif ; un gâteau, fait de
+
+00:06:05.529 --> 00:06:08.195
+plusieurs ingrédients, est un objet.
+
+00:06:08.195 --> 00:06:13.971
+Les sept : string pour le texte, number
+pour les nombres, boolean pour vrai et
+
+00:06:13.971 --> 00:06:19.451
+faux, undefined quand il n'y a pas encore
+de valeur, null pour une absence
+
+00:06:19.451 --> 00:06:25.228
+volontaire, bigint pour les très grands
+entiers, et symbol pour un identifiant
+
+00:06:25.228 --> 00:06:25.746
+unique.
+
+00:06:25.746 --> 00:06:31.448
+Pour connaître le type d'une valeur,
+j'utilise typeof : string pour un texte,
+
+00:06:31.448 --> 00:06:34.781
+number pour quarante-deux, boolean pour
+true.
+
+00:06:34.781 --> 00:06:40.409
+Trois pièges : typeof de null donne
+object, c'est un bug historique ; typeof
+
+00:06:40.409 --> 00:06:46.704
+d'un tableau donne object aussi, donc pour
+un tableau j'utilise Array point isArray ;
+
+00:06:46.704 --> 00:06:51.295
+et typeof de NaN donne number, car NaN est
+un nombre invalide.
+
+00:06:51.295 --> 00:06:53.665
+Valeur ou référence, maintenant.
+
+00:06:53.665 --> 00:06:59.367
+Deux primitifs se copient par valeur :
+deux sacs de farine sont indépendants,
+
+00:06:59.367 --> 00:07:01.663
+vider l'un ne vide pas l'autre.
+
+00:07:01.663 --> 00:07:07.365
+Un tableau, lui, se copie par référence :
+deux noms, un seul et même tableau.
+
+00:07:07.365 --> 00:07:13.142
+Enfin les conversions : explicites avec
+Number, parseInt, String, Boolean ; ou
+
+00:07:13.142 --> 00:07:18.770
+implicites, comme cinq entre guillemets
+plus deux, qui donne cinquante-deux.
+
+00:07:19.320 --> 00:07:24.758
+Maintenant, deux apartés. Ils sont hors
+programme, mais c'est bien de les
+
+00:07:24.758 --> 00:07:25.503
+connaître.
+
+00:07:25.503 --> 00:07:27.961
+Premier aparté : falsy et truthy.
+
+00:07:27.961 --> 00:07:32.580
+Dans un test, JavaScript transforme la
+valeur en vrai ou faux.
+
+00:07:32.580 --> 00:07:38.316
+Falsy, c'est-à-dire faux pour JavaScript :
+false, zéro, la chaîne vide, null,
+
+00:07:38.316 --> 00:07:39.582
+undefined et NaN.
+
+00:07:39.582 --> 00:07:45.244
+Tout le reste est truthy, y compris la
+chaîne zéro, et même un tableau vide.
+
+00:07:45.244 --> 00:07:47.851
+Deuxième aparté : les comparaisons.
+
+00:07:47.851 --> 00:07:53.811
+cinq égal égal cinq entre guillemets donne
+true, parce que JavaScript convertit.
+
+00:07:53.811 --> 00:07:59.323
+cinq égal égal égal cinq entre guillemets
+donne false, parce que les types
+
+00:07:59.323 --> 00:08:00.068
+diffèrent.
+
+00:08:00.068 --> 00:08:03.272
+La règle : utilisez trois égales.
+Toujours.
+
+00:08:03.272 --> 00:08:09.157
+Ces deux apartés sont hors programme :
+retenez-les pour plus tard, mais le cœur
+
+00:08:09.157 --> 00:08:11.019
+du cours, c'est le reste.
+
+00:08:11.569 --> 00:08:18.248
+Passons aux exercices. Même écran, coupé
+en deux : l'énoncé à gauche, la correction
+
+00:08:18.248 --> 00:08:18.972
+à droite.
+
+00:08:18.972 --> 00:08:25.249
+Exercice un : que s'affiche-t-il ? Pour
+chaque extrait, donner ce qui apparaît
+
+00:08:25.249 --> 00:08:28.307
+dans la console, ou l'erreur produite.
+
+00:08:28.307 --> 00:08:34.744
+Extrait a : var a égal un, puis un bloc
+qui refait var a égal deux, puis console
+
+00:08:34.744 --> 00:08:35.951
+point log de a.
+
+00:08:35.951 --> 00:08:41.584
+Correction : var ignore le bloc, et
+redéclare la même variable : deux.
+
+00:08:41.584 --> 00:08:47.781
+Extrait b : let b égal un, un bloc qui
+refait let b égal deux, puis log de b.
+
+00:08:47.781 --> 00:08:54.299
+Correction : le let du bloc est une autre
+variable, elle meurt à la fin du bloc :
+
+00:08:54.299 --> 00:08:54.540
+un.
+
+00:08:54.540 --> 00:08:59.127
+Extrait c : console point log de c, puis
+var c égal cinq.
+
+00:08:59.127 --> 00:09:05.082
+Correction : hoisting de var, la
+déclaration remonte, mais pas la valeur :
+
+00:09:05.082 --> 00:09:05.886
+undefined.
+
+00:09:05.886 --> 00:09:10.473
+Extrait d : console point log de d, puis
+let d égal cinq.
+
+00:09:10.473 --> 00:09:15.784
+Correction : d est dans la zone morte
+temporelle : ReferenceError.
+
+00:09:15.784 --> 00:09:19.647
+Extrait e : const e égal dix, puis e égal
+vingt.
+
+00:09:19.647 --> 00:09:23.831
+Correction : on réaffecte une constante :
+TypeError.
+
+00:09:23.831 --> 00:09:29.223
+Extrait f : const f égal un tableau, puis
+f crochet zéro égal cinq.
+
+00:09:29.223 --> 00:09:35.580
+Correction : on modifie une case, pas la
+liaison : le tableau affiché est cinq,
+
+00:09:35.580 --> 00:09:35.982
+deux.
+
+00:09:35.982 --> 00:09:42.581
+Et voilà les deux idées de l'exercice : la
+portée change tout, et const protège la
+
+00:09:42.581 --> 00:09:44.512
+liaison, pas le contenu.
+
+00:09:45.062 --> 00:09:48.415
+Dernier exercice, et c'est de la
+programmation.
+
+00:09:48.415 --> 00:09:54.409
+Écrire une fonction moyenne qui reçoit un
+tableau de notes et retourne leur moyenne.
+
+00:09:54.409 --> 00:10:00.117
+Contraintes : utiliser const ou let selon
+le cas, une boucle for, et ne déclarer
+
+00:10:00.117 --> 00:10:03.898
+aucune variable globale à l'intérieur de
+la fonction.
+
+00:10:03.898 --> 00:10:06.609
+Lisons la correction, ligne par ligne.
+
+00:10:06.609 --> 00:10:12.032
+Ligne un : function moyenne, entre
+parenthèses notes. Le paramètre est local
+
+00:10:12.032 --> 00:10:13.031
+à la fonction.
+
+00:10:13.031 --> 00:10:18.596
+Ligne deux : let somme égal zéro. let,
+parce que la valeur va changer ; et pas
+
+00:10:18.596 --> 00:10:22.020
+var, parce que la portée reste dans la
+fonction.
+
+00:10:22.020 --> 00:10:28.085
+Ligne trois : for, let i égal zéro, i plus
+petit que notes point length, i plus plus.
+
+00:10:28.085 --> 00:10:33.079
+Ligne quatre : somme plus égal notes
+crochet i : j'ajoute chaque note.
+
+00:10:33.079 --> 00:10:38.217
+Ligne six, après la boucle : return somme
+divisé par notes point length.
+
+00:10:38.217 --> 00:10:41.927
+La moyenne : le total divisé par le nombre
+de notes.
+
+00:10:41.927 --> 00:10:47.064
+À l'appel : log de moyenne, avec le
+tableau douze, quinze, neuf, affiche
+
+00:10:47.064 --> 00:10:47.492
+douze.
+
+00:10:47.492 --> 00:10:53.342
+Vérifions : douze plus quinze plus neuf
+fait trente-six ; divisé par trois, douze.
+
+00:10:53.342 --> 00:10:58.765
+Ce qu'il faut retenir. const par défaut,
+let si réaffectation, var à éviter.
+
+00:10:58.765 --> 00:11:03.474
+let et const ont une portée de bloc, et
+une zone morte temporelle.
+
+00:11:03.474 --> 00:11:08.896
+const empêche la réaffectation, pas la
+modification du contenu d'un tableau.
+
+00:11:08.896 --> 00:11:12.392
+Sept types primitifs, tout le reste est un
+objet.
+
+00:11:12.392 --> 00:11:17.815
+typeof de null et typeof d'un tableau
+valent object : deux cas particuliers.
+
+00:11:17.815 --> 00:11:22.809
+Et la console, c'est votre carnet de
+bord : ouvrez-la, écrivez, lisez.
+
+00:11:22.809 --> 00:11:28.731
+À vous de jouer, dans STI Version 2.0. La
+capsule de la console et des variables. À
+
+00:11:28.731 --> 00:11:29.302
+bientôt.
