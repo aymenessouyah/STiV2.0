@@ -11,6 +11,10 @@ var UPDATE_ID = "v553-defilement-passif-20261030";
    Manifeste cumulatif dédupliqué : une révision déjà appliquée est ignorée localement,
    et aucun fichier non présent dans le cache local n'est pré-téléchargé inutilement à l'installation. */
 var UPDATE_FILES = [
+  /* v556 — assets/css/capsules-vedettes.css est un FICHIER NEUF : rien de périmé à
+     invalider, et le delta reste plafonné à 262 entrées. Il est déclaré dans SHELL,
+     OFFLINE_LIST et NOYAU_RAPIDE_RECHARGEMENT ; NOUVEAUTES_NOYAU le télécharge à
+     l'installation sur les appareils déjà équipés. */
   { url: "./assets/js/cours-onglets-mobile.js", revision: "onglets-mobile-v493", refreshIfCached: true },
   { url: "./assets/js/appel-quiz.js", revision: "retour-quiz-intelligent-v494" },
   { url: "./assets/js/suivi-profil.js", revision: "suivi-contextes-v491" },
@@ -572,6 +576,7 @@ var SHELL = [
   "./projets/sti0/ressources-projet-sti0.zip",
   "./dashboard.html",
   "./assets/css/theme.css",
+  "./assets/css/capsules-vedettes.css",
   "./assets/css/cours.css",
   "./assets/js/app.js",
   "./assets/js/profil.js",
@@ -1169,6 +1174,7 @@ var OFFLINE_LIST = [
   "./sitemap.xml",
   "./dashboard.html",
   "./assets/css/theme.css",
+  "./assets/css/capsules-vedettes.css",
   "./assets/css/cours.css",
   "./assets/js/app.js",
   "./assets/js/profil.js",
@@ -1257,6 +1263,7 @@ var NOYAU_RAPIDE_RECHARGEMENT = {
   "./assets/icons/matieres.svg": 1,
   "./index.html": 1,
   "./assets/css/theme.css": 1,
+  "./assets/css/capsules-vedettes.css": 1,
   "./assets/js/app.js": 1,
   "./assets/js/profil.js": 1,
   "./portail.html": 1,
@@ -1291,6 +1298,7 @@ var NOUVEAUTES_NOYAU = {
   "./assets/js/visionneuse-exercices.js": 1,
   "./assets/icons/matieres.svg": 1,
   "./projets/carte-bancaire/demo.js": 1,
+  "./assets/css/capsules-vedettes.css": 1
 };
 
 /* Une taille identique ne prouve pas qu'un fichier est inchangé. */

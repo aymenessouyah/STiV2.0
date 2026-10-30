@@ -2,8 +2,8 @@
   "version": "v553-sti-atelier-v386",
   "generatedAt": "2026-10-30T14:12:25Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 740,
-  "totalBytes": 942204967,
+  "totalFiles": 741,
+  "totalBytes": 942216069,
   "files": [
     {
       "path": "404.html",
@@ -62,8 +62,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 51780,
-      "gitSha": "0b717bda9a2f74884e2a1022415a7acd98b6a8e3"
+      "bytes": 53128,
+      "gitSha": "bf65f5a98b15fbb3861ba29c42300f95c58d0a92"
     },
     {
       "path": "admin.html",
@@ -184,6 +184,11 @@
       "path": "assets/css/badge-compte.css",
       "bytes": 7719,
       "gitSha": "618f99e232430ae06b9607cdceb5cbe584b8338b"
+    },
+    {
+      "path": "assets/css/capsules-vedettes.css",
+      "bytes": 8837,
+      "gitSha": "1194d76133831707dec1ac2e55d5f679be61287b"
     },
     {
       "path": "assets/css/cours-css3.css",
@@ -1307,8 +1312,8 @@
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 135756,
-      "gitSha": "e5046ebcaa2d0ba9bf4487efc8e4652ebea665df"
+      "bytes": 135937,
+      "gitSha": "1f9bf6bc29bc5da0afd3e57beac0e54a4543eef5"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -1317,8 +1322,8 @@
     },
     {
       "path": "cours/php.html",
-      "bytes": 204136,
-      "gitSha": "f253e991b57faa55aba1c1fd0177fef0de380e76"
+      "bytes": 204310,
+      "gitSha": "952d82913346359b6495838f9a59e03ccbe66c2d"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -3112,8 +3117,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 61221,
-      "gitSha": "9cd24487cb07fc7b240ce2383a289b923ce7dc5c"
+      "bytes": 61295,
+      "gitSha": "1c57386765b1cd584ad5423746a018eb1f808d55"
     },
     {
       "path": "livre-smart.html",
@@ -3702,8 +3707,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 98387,
-      "gitSha": "57df4417651f06ff3b8f4c49ff7fee37ae6b3eeb"
+      "bytes": 98875,
+      "gitSha": "f8cc4ae8adfd8d7062cc7917e89f8f92f5e5722d"
     }
   ]
 }
