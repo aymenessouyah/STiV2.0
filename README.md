@@ -56,7 +56,7 @@ Plateforme éducative interactive et **PWA utilisable hors ligne après mise en 
   - Les **annexes officielles** (`documents/annexes/`) conservent le code hors programme indispensable **barré en rouge** (`.hp`), sans suppression.
 - **Séries d'exercices & préparation Bac** :
   - Hub unifié `exercices/series-exercices.html` (`#css3`, `#javascript`, `#bdd`, `#php`) avec aperçu intégré, ouverture plein écran et corrigés détaillés ;
-  - Fiches transversales : **Atelier Bac Pratique** (`bac-pratique.html`), **25 pièges du Bac** (`pieges-bac.html`), **10 fonctions JS clés** (`outils-js-bac.html`), **Mémo veille du Bac** (`memo-veille-bac.html`) et **Glossaire bilingue FR/AR** (`glossaire.html`).
+  - Fiches transversales : **Atelier Bac Pratique** (`bac-pratique.html`), **25 pièges du Bac** (`pieges-bac.html`), **10 fonctions JS clés** (`outils-js-bac.html`), **Mémo veille du Bac** (`memo-veille-bac.html`) et **Glossaire trilingue FR/EN/AR** (`glossaire.html`) — web **et** systèmes/réseaux/IoT (3e SI).
 
 ---
 

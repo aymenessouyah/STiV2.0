@@ -1,9 +1,9 @@
 {
   "version": "v553-sti-atelier-v386",
-  "generatedAt": "2026-10-30T22:38:48Z",
+  "generatedAt": "2026-10-30T22:56:54Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 751,
-  "totalBytes": 1059954236,
+  "totalBytes": 1059997246,
   "files": [
     {
       "path": "404.html",
@@ -62,8 +62,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 62457,
-      "gitSha": "be01f22eea866003259120302f7e5c2482ce19f7"
+      "bytes": 62507,
+      "gitSha": "eae18bc69a90aaec78daba83f56c183cb58cf625"
     },
     {
       "path": "admin.html",
@@ -652,8 +652,8 @@
     },
     {
       "path": "assets/js/acces.js",
-      "bytes": 934476,
-      "gitSha": "0fc72822a271e5f7a2618f6c2986a1a77c54755b"
+      "bytes": 965016,
+      "gitSha": "a22cc13791c9354a7e1d1ec2afd7c97bcc71584c"
     },
     {
       "path": "assets/js/admin-couverture.js",
@@ -3152,13 +3152,13 @@
     },
     {
       "path": "glossaire.html",
-      "bytes": 26545,
-      "gitSha": "e68e41e496131089635db0ddf3572f184e107b5e"
+      "bytes": 38733,
+      "gitSha": "9dc738b30dfca8c08b58d820a28123587f286362"
     },
     {
       "path": "index.html",
-      "bytes": 63289,
-      "gitSha": "4e6291a2248baccfacda1500f29bc3618ee2f54e"
+      "bytes": 63516,
+      "gitSha": "ea7c414e56ef5fc1072aec70710fc26ea27986d3"
     },
     {
       "path": "livre-smart.html",
@@ -3757,8 +3757,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 99496,
-      "gitSha": "913c003c3dac50508e47fff76b60e30058d7d571"
+      "bytes": 99501,
+      "gitSha": "cb962b21e5df49fd774871209e2db442b11344be"
     }
   ]
 }

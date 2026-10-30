@@ -61,7 +61,7 @@
   } catch (e) {}
 })();
 </script>
-<meta name="description" content="Glossaire STI français · anglais · arabe : tous les termes du programme HTML5, CSS3, JavaScript, SQL et PHP, expliqués simplement.">
+<meta name="description" content="Glossaire STI français · anglais · arabe : tous les termes du programme — Systèmes d’exploitation, réseaux et Internet des objets (3e SI), HTML5, CSS3, JavaScript, SQL et PHP, expliqués simplement.">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex, noai, noimageai" />
 <title>Glossaire FR · EN · AR — STI by AE V2.0</title>
@@ -101,12 +101,14 @@
   .carte { background:var(--card); border:2px solid var(--edge); border-radius:14px; padding:14px 15px; box-shadow:5px 5px 0 rgba(16,23,40,.16) }
   .carte .fr { font-size:16.5px; font-weight:800; display:flex; align-items:center; justify-content:space-between; gap:8px }
   .module { flex:none; font-size:10px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; padding:3px 8px; border-radius:999px; color:#fff; background:#d84315 }
-  .module.css3 { background:#0284c7 } .module.javascript { background:#b47d09 } .module.sql { background:#177245 } .module.php { background:#0f766e }
+  .module.css3 { background:#0284c7 } .module.javascript { background:#b47d09 } .module.sql { background:#177245 } .module.php { background:#0f766e } .module.sti { background:#6d28d9 }
   .en { font-size:13.5px; font-weight:700; color:var(--en); margin-top:5px }
   .en-badge { display:inline-block; background:#0369a1; color:#fff; font-size:9.5px; font-weight:800; letter-spacing:.06em; padding:2px 6px; border-radius:5px; vertical-align:2px; margin-right:3px }
   .ar { direction:rtl; text-align:right; font-size:20px; font-weight:700; color:var(--teal); margin:7px 0 6px; line-height:1.5 }
   .def { font-size:13px; line-height:1.55; color:var(--def) }
   .def code { background:var(--code-bg); border:1px solid var(--code-brd); border-radius:5px; padding:0 5px; font-size:12px; color:var(--code-ink) }
+  .src { display:inline-block; margin-top:8px; font-size:12px; font-weight:800; color:var(--teal); text-decoration:none; border-bottom:2px dotted var(--teal) }
+  .src:hover { color:var(--accent); border-bottom-color:var(--accent) }
   .vide { display:none; text-align:center; padding:34px 12px; font-weight:700; color:var(--muted) }
   .pied { text-align:center; margin-top:30px }
   @media print { .barre,.recherche,.filtres,.pied,#sti-roue-wrap,#sti-bnav,#sti-pc-win-tools { display:none!important } body { background:#fff!important; color:#000!important } .carte { background:#fff!important; color:#000!important; box-shadow:none; break-inside:avoid } }
@@ -121,7 +123,7 @@
     <img class="barre-logo" src="assets/icons/sti-icon-512.png" alt="Logo officiel STI V2.0" width="40" height="40">
     <div>
       <h1>📖 Glossaire FR · EN · AR — Termes techniques STI</h1>
-      <div class="nb">HTML5 · CSS3 · JavaScript · SQL · PHP — Cherchez en français, en anglais ou en arabe</div>
+      <div class="nb">Systèmes · Réseaux · IoT · HTML5 · CSS3 · JavaScript · SQL · PHP — Cherchez en français, en anglais ou en arabe</div>
     </div>
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -136,6 +138,7 @@
   </div>
   <div class="filtres" role="group" aria-label="Filtrer par module">
     <button type="button" class="filtre actif" data-m="tous">Tous</button>
+    <button type="button" class="filtre" data-m="sti">🖥️ Systèmes &amp; Internet</button>
     <button type="button" class="filtre" data-m="html5">🌐 HTML5</button>
     <button type="button" class="filtre" data-m="css3">🎨 CSS3</button>
     <button type="button" class="filtre" data-m="javascript">📜 JavaScript</button>
@@ -148,6 +151,45 @@
 </main>
 <script>
 var TERMES = [
+  /* ═══ SYSTÈMES, TECHNOLOGIES ET INTERNET (3e SI — manuel p. 5 à 13) ═══ */
+  { m:"sti", fr:"Système d’exploitation", ar:"نظام التشغيل", en:"Operating system (OS)", d:"Logiciel de base qui gère le matériel et permet l’exécution des applications : Windows, Linux, Android…", src:"cours/systemes-technologies-internet.html#ch1-se", srcTxt:"Chapitre 1 · 1.1 Définition" },
+  { m:"sti", fr:"Matériel (hardware)", ar:"العتاد", en:"Hardware", d:"Partie physique de l’ordinateur : écran, clavier, souris, processeur, mémoire vive, disque.", src:"cours/systemes-technologies-internet.html#ch1-se", srcTxt:"Chapitre 1 · 1.1 Définition" },
+  { m:"sti", fr:"Logiciel (software)", ar:"البرمجيات", en:"Software", d:"Ensemble des programmes utilisés par l’utilisateur, du système d’exploitation aux applications.", src:"cours/systemes-technologies-internet.html#ch1-se", srcTxt:"Chapitre 1 · 1.1 Définition" },
+  { m:"sti", fr:"Gestion des processus", ar:"إدارة العمليات", en:"Process management", d:"Rôle du système d’exploitation qui organise l’exécution des programmes : navigateur et lecteur vidéo ouverts en même temps.", src:"cours/systemes-technologies-internet.html#ch1-roles", srcTxt:"Chapitre 1 · 1.2 Rôles" },
+  { m:"sti", fr:"Gestion des utilisateurs", ar:"إدارة المستخدمين", en:"User management", d:"Rôle du système d’exploitation qui contrôle les comptes et les autorisations (compte administrateur, compte limité).", src:"cours/systemes-technologies-internet.html#ch1-roles", srcTxt:"Chapitre 1 · 1.2 Rôles" },
+  { m:"sti", fr:"Système embarqué", ar:"نظام مدمج", en:"Embedded system", d:"Système d’exploitation intégré dans un appareil spécialisé qui réalise des fonctions précises : montre, téléviseur, automobile.", src:"cours/systemes-technologies-internet.html#ch1-types", srcTxt:"Chapitre 1 · 1.3 Types" },
+  { m:"sti", fr:"Logiciel propriétaire", ar:"برنامج احتكاري", en:"Proprietary software", d:"Logiciel dont la licence définit les droits d’utilisation et dont le code source n’est généralement pas accessible (Windows).", src:"cours/systemes-technologies-internet.html#ch1-licences", srcTxt:"Chapitre 1 · 1.4 Licences" },
+  { m:"sti", fr:"Logiciel libre", ar:"برنامج حر", en:"Free software", d:"Logiciel dont la licence garantit les libertés d’utilisation, d’étude, de modification et de redistribution (GNU/Linux). Libre ne veut pas dire gratuit.", src:"cours/systemes-technologies-internet.html#ch1-licences", srcTxt:"Chapitre 1 · 1.4 Licences" },
+  { m:"sti", fr:"Déployer un système", ar:"نشر نظام", en:"Deploy a system", d:"Mettre en place un système d’exploitation en trois temps : installer, configurer, mettre à jour.", src:"cours/systemes-technologies-internet.html#ch1-deploiement", srcTxt:"Chapitre 1 · 1.5 Déploiement" },
+  { m:"sti", fr:"Machine virtuelle", ar:"آلة افتراضية", en:"Virtual machine", d:"Ordinateur simulé par un logiciel : on installe un système dans une fenêtre sans remplacer le système principal (VMware, VirtualBox).", src:"cours/systemes-technologies-internet.html#ch1-vm", srcTxt:"Chapitre 1 · La machine virtuelle" },
+  { m:"sti", fr:"Antivirus", ar:"مضاد الفيروسات", en:"Antivirus", d:"Logiciel qui détecte et traite les logiciels malveillants ; il ne remplace ni le pare-feu, ni les mises à jour, ni les mots de passe.", src:"cours/systemes-technologies-internet.html#ch1-securite", srcTxt:"Chapitre 1 · 1.6 Sécurité" },
+  { m:"sti", fr:"Réseau informatique", ar:"شبكة حاسوبية", en:"Computer network", d:"Ensemble d’équipements informatiques reliés entre eux afin d’échanger des données et de partager des ressources.", src:"cours/systemes-technologies-internet.html#ch2-definition", srcTxt:"Chapitre 2 · 2.1 Définition" },
+  { m:"sti", fr:"LAN", ar:"شبكة محلية", en:"LAN (Local Area Network)", d:"Réseau local, limité à un bâtiment : réseau d’un lycée ou d’une salle informatique.", src:"cours/systemes-technologies-internet.html#ch2-classes", srcTxt:"Chapitre 2 · 2.2 Étendue" },
+  { m:"sti", fr:"MAN", ar:"شبكة حضرية", en:"MAN (Metropolitan Area Network)", d:"Réseau à l’échelle d’une ville ou d’une zone métropolitaine, reliant plusieurs établissements.", src:"cours/systemes-technologies-internet.html#ch2-classes", srcTxt:"Chapitre 2 · 2.2 Étendue" },
+  { m:"sti", fr:"WAN", ar:"شبكة واسعة", en:"WAN (Wide Area Network)", d:"Réseau de très grande étendue, reliant des sites situés dans plusieurs pays.", src:"cours/systemes-technologies-internet.html#ch2-classes", srcTxt:"Chapitre 2 · 2.2 Étendue" },
+  { m:"sti", fr:"Carte réseau", ar:"بطاقة الشبكة", en:"Network interface card (NIC)", d:"Équipement qui permet à un appareil de se connecter à un réseau.", src:"cours/systemes-technologies-internet.html#ch2-equipements", srcTxt:"Chapitre 2 · 2.3 Équipements" },
+  { m:"sti", fr:"Switch (commutateur)", ar:"مبدّل", en:"Switch", d:"Équipement qui relie plusieurs appareils à l’intérieur d’un même réseau local.", src:"cours/systemes-technologies-internet.html#ch2-equipements", srcTxt:"Chapitre 2 · 2.3 Équipements" },
+  { m:"sti", fr:"Routeur", ar:"موجّه", en:"Router", d:"Équipement qui relie différents réseaux entre eux et dirige les paquets vers leur destination.", src:"cours/systemes-technologies-internet.html#ch2-equipements", srcTxt:"Chapitre 2 · 2.3 Équipements" },
+  { m:"sti", fr:"Point d’accès Wi-Fi", ar:"نقطة وصول لاسلكية", en:"Wireless access point", d:"Équipement qui permet une connexion sans fil au réseau.", src:"cours/systemes-technologies-internet.html#ch2-equipements", srcTxt:"Chapitre 2 · 2.3 Équipements" },
+  { m:"sti", fr:"Adresse IP", ar:"عنوان IP", en:"IP address", d:"Identifie une interface réseau dans un réseau IP. IPv4 : quatre nombres de 0 à 255 séparés par des points, ex. <code>192.168.1.20</code>.", src:"cours/systemes-technologies-internet.html#ch2-parametres", srcTxt:"Chapitre 2 · 2.4 A. Adresse IP" },
+  { m:"sti", fr:"Masque réseau", ar:"قناع الشبكة", en:"Subnet mask", d:"Indique la partie réseau et la partie hôte d’une adresse IPv4 : avec <code>255.255.255.0</code>, l’adresse réseau de <code>192.168.1.20</code> est <code>192.168.1.0</code>.", src:"cours/systemes-technologies-internet.html#ch2-parametres", srcTxt:"Chapitre 2 · 2.4 B. Masque réseau" },
+  { m:"sti", fr:"Adresse réseau", ar:"عنوان الشبكة", en:"Network address", d:"Adresse qui désigne le réseau lui-même, obtenue en combinant l’adresse IP et le masque réseau.", src:"cours/systemes-technologies-internet.html#ch2-parametres", srcTxt:"Chapitre 2 · 2.4 B. Masque réseau" },
+  { m:"sti", fr:"Serveur DNS", ar:"خادم DNS", en:"DNS server", d:"Domain Name System : traduit un nom de domaine (<code>www.example.com</code>) en adresse IP.", src:"cours/systemes-technologies-internet.html#ch2-parametres", srcTxt:"Chapitre 2 · 2.4 C. DNS" },
+  { m:"sti", fr:"Adresse MAC", ar:"عنوان MAC", en:"MAC address", d:"Adresse associée à une interface réseau, utilisée pour l’identifier dans un réseau local. Format : <code>A4-B1-C1-2D-3E-4F</code>.", src:"cours/systemes-technologies-internet.html#ch2-parametres", srcTxt:"Chapitre 2 · 2.4 D. Adresse MAC" },
+  { m:"sti", fr:"Architecture client / serveur", ar:"بنية عميل / خادم", en:"Client / server architecture", d:"Un ordinateur client demande un service à un ordinateur serveur qui le fournit : données centralisées, mais service indisponible si le serveur tombe en panne.", src:"cours/systemes-technologies-internet.html#ch2-architectures", srcTxt:"Chapitre 2 · 2.5 Client / serveur" },
+  { m:"sti", fr:"Poste à poste (peer-to-peer)", ar:"ند للند", en:"Peer-to-peer", d:"Les ordinateurs communiquent directement entre eux et partagent leurs ressources sans serveur central obligatoire.", src:"cours/systemes-technologies-internet.html#ch2-architectures", srcTxt:"Chapitre 2 · 2.5 Poste à poste" },
+  { m:"sti", fr:"Protocole", ar:"بروتوكول", en:"Protocol", d:"Ensemble de règles qui permet aux équipements de communiquer entre eux.", src:"cours/systemes-technologies-internet.html#ch2-protocoles", srcTxt:"Chapitre 2 · 2.6 Protocoles" },
+  { m:"sti", fr:"TCP/IP", ar:"TCP/IP", en:"TCP/IP", d:"Suite de protocoles des réseaux : IP assure l’adressage et l’acheminement, TCP une transmission fiable et ordonnée.", src:"cours/systemes-technologies-internet.html#ch2-protocoles", srcTxt:"Chapitre 2 · 2.6 Protocoles" },
+  { m:"sti", fr:"HTTP", ar:"HTTP", en:"HTTP", d:"HyperText Transfer Protocol : échange de ressources entre un client et un serveur Web.", src:"cours/systemes-technologies-internet.html#ch2-protocoles", srcTxt:"Chapitre 2 · 2.6 Protocoles" },
+  { m:"sti", fr:"HTTPS", ar:"HTTPS", en:"HTTPS", d:"Version sécurisée de HTTP utilisant TLS : échange Web chiffré, avec authentification du serveur.", src:"cours/systemes-technologies-internet.html#ch2-protocoles", srcTxt:"Chapitre 2 · 2.6 Protocoles" },
+  { m:"sti", fr:"MQTT", ar:"MQTT", en:"MQTT", d:"Message Queuing Telemetry Transport : messagerie légère fondée sur publication / abonnement, adaptée aux objets connectés.", src:"cours/systemes-technologies-internet.html#ch2-protocoles", srcTxt:"Chapitre 2 · 2.6 Protocoles" },
+  { m:"sti", fr:"Broker", ar:"الوسيط", en:"Broker", d:"Serveur de messages MQTT qui reçoit les publications et les distribue aux abonnés (subscribers).", src:"cours/systemes-technologies-internet.html#ch3-echanges", srcTxt:"Chapitre 3 · 3.4 Échanges" },
+  { m:"sti", fr:"Pare-feu (firewall)", ar:"جدار ناري", en:"Firewall", d:"Dispositif qui contrôle les communications réseau selon des règles de sécurité.", src:"cours/systemes-technologies-internet.html#ch2-securite", srcTxt:"Chapitre 2 · 2.7 Sécurité" },
+  { m:"sti", fr:"Liste de contrôle d’accès (ACL)", ar:"قائمة التحكم في الوصول", en:"Access control list (ACL)", d:"Ensemble de règles qui autorisent ou interdisent certains accès ou certaines communications.", src:"cours/systemes-technologies-internet.html#ch2-securite", srcTxt:"Chapitre 2 · 2.7 Sécurité" },
+  { m:"sti", fr:"Internet des objets (IoT)", ar:"إنترنت الأشياء", en:"Internet of Things (IoT)", d:"Ensemble des objets physiques capables de collecter, transmettre et échanger des données grâce à une connexion réseau.", src:"cours/systemes-technologies-internet.html#ch3-definition", srcTxt:"Chapitre 3 · 3.1 Définition" },
+  { m:"sti", fr:"Objet connecté", ar:"كائن متصل", en:"Connected object", d:"Équipement capable de collecter ou d’utiliser des données et de les transmettre par le réseau.", src:"cours/systemes-technologies-internet.html#ch3-composants", srcTxt:"Chapitre 3 · 3.2 Composants" },
+  { m:"sti", fr:"Capteur", ar:"مستشعر", en:"Sensor", d:"Élément qui mesure une grandeur physique : température, humidité du sol, luminosité.", src:"cours/systemes-technologies-internet.html#ch3-composants", srcTxt:"Chapitre 3 · 3.2 Composants" },
+  { m:"sti", fr:"Plateforme IoT", ar:"منصة إنترنت الأشياء", en:"IoT platform", d:"Serveur distant qui reçoit et stocke les données envoyées par les objets connectés, consultées ensuite par une application.", src:"cours/systemes-technologies-internet.html#ch3-composants", srcTxt:"Chapitre 3 · 3.2 Composants" },
   /* ═══ HTML5 ═══ */
   { m:"html5", fr:"Balise", ar:"وسم", en:"Tag", d:"Mot-clé entre <code>&lt; &gt;</code> qui décrit un élément de la page : <code>&lt;p&gt;</code>, <code>&lt;h1&gt;</code>…" },
   { m:"html5", fr:"Élément", ar:"عنصر", en:"Element", d:"Ensemble formé par la balise ouvrante, le contenu et la balise fermante." },
@@ -230,7 +272,7 @@ var TERMES = [
   { m:"php", fr:"MySQLi", ar:"امتداد الاتصال بقاعدة MySQL", en:"MySQLi extension", d:"Extension PHP qui dialogue avec MySQL : connexion, requêtes, résultats (procédural ou objet)." }
 ];
 
-var NOMS_MODULES = { html5:"HTML5", css3:"CSS3", javascript:"JavaScript", sql:"SQL", php:"PHP" };
+var NOMS_MODULES = { sti:"Systèmes & Internet", html5:"HTML5", css3:"CSS3", javascript:"JavaScript", sql:"SQL", php:"PHP" };
 var grille = document.getElementById("grille");
 var compteur = document.getElementById("compteur");
 var vide = document.getElementById("vide");
@@ -248,7 +290,8 @@ function afficher() {
     if (q && cible.indexOf(q) === -1 && normaliser(t.ar).indexOf(q) === -1 && t.ar.indexOf(document.getElementById("q").value.trim()) === -1) return;
     n++;
     html += '<article class="carte"><div class="fr"><span>' + t.fr + '</span><span class="module ' + t.m + '">' + NOMS_MODULES[t.m] + '</span></div>' +
-      '<div class="en"><span class="en-badge">EN</span> ' + t.en + '</div><div class="ar" lang="ar">' + t.ar + '</div><p class="def">' + t.d + '</p></article>';
+      '<div class="en"><span class="en-badge">EN</span> ' + t.en + '</div><div class="ar" lang="ar">' + t.ar + '</div><p class="def">' + t.d + '</p>' +
+      (t.src ? '<a class="src" href="' + t.src + '">→ ' + t.srcTxt + '</a>' : '') + '</article>';
   });
   grille.innerHTML = html;
   compteur.textContent = n + " terme" + (n > 1 ? "s" : "") + " affiché" + (n > 1 ? "s" : "");

@@ -101,7 +101,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   for (const chemin of ['assets/css/theme-patrimoine.css']) {
     assert.equal(revisions.get('./' + chemin), 'fidelite-origine-v481', chemin);
   }
-  assert.equal(revisions.get('./assets/js/acces.js'), 'photo-secours-v562');
+  assert.equal(revisions.get('./assets/js/acces.js'), 'sti-glossaire-v574');
   /* v529 : masquer la reprise ne doit pas effacer le compteur de vues vidéo. */
   assert.equal(revisions.get('./assets/js/reprendre.js'), 'vues-videos-v531');
   assert.equal(revisions.get('./assets/js/config.js'), 'barre-mobile-v532');

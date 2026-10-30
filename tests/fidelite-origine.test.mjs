@@ -55,7 +55,7 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
   const originaux = {
     'assets/js/config.js': '4936f1efc5fde33dc2432dd3a9aa4fc33df77f90b842fe2091a2a5ba2f872a7f',
     'assets/js/supabase-umd.js': '2eebfe06b1b5309985dc1526e8981ea3a18b71beeef83e7f38e04c303e142d6d',
-    'assets/js/acces.js': 'f8eabe23fedd01e4258660e0d7df20d8fdd4d9d4d4ef02979cd3126abc8bc838',
+    'assets/js/acces.js': 'a127d66572e4a59c036fefbf2975178fea5cce6f518a7014fdd0424d970630cc',
     'assets/js/sync-progressions.js': 'c6e36a6f0ebea5e481cfb1b16afb9c0cfefc595ed4de21a1becff5a096d327b6',
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
     'portail.html': 'cde7e9572be7ff369cc3a810c84f68a479b4f1bd8781d22e123b87dd12df37f7',
