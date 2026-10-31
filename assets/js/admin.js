@@ -6416,6 +6416,168 @@
     });
   }
 
+  /* ══════════════════════════════════════════════════════════════════════════
+     🔎 v605 — « pourquoi ce candidat affiche-t-il 00 partout ? »
+
+     Les trois mini-instruments d'une carte (Connexions · Durée · Accès 24 h)
+     ne sont pas lus dans la base : ils sont calculés sur le journal `acces`
+     **chargé dans la page**. Or le tableau de bord ne lit d'abord que les
+     100 dernières lignes, puis complète en arrière-plan jusqu'à 5 000. Un
+     élève dont l'activité tombe hors de cette fenêtre — ou dont le navigateur
+     n'arrive pas à écrire son journal — apparaît donc avec « 00 » alors qu'il
+     travaille, et « En ligne » reste vert (la présence passe par le direct,
+     pas par la base).
+
+     Ce diagnostic interroge la base pour cet élève précis et compare avec ce
+     que la page a en mémoire. Le premier chiffre qui tombe à zéro désigne la
+     panne : côté élève (journal non écrit), côté chargement (fenêtre trop
+     courte, filtre) ou côté affichage.
+     ══════════════════════════════════════════════════════════════════════════ */
+  var STYLE_BTN_DIAG = "border:2px solid #23201a;border-radius:10px;padding:6px 12px;font:900 12px/1.1 system-ui,'Segoe UI',sans-serif;cursor:pointer;box-shadow:2px 2px 0 #23201a;background:#fffdf7;color:#23201a;";
+
+  function afficherRapportDiag(titre, lignes) {
+    var ancien = document.getElementById("sti-diag-fond");
+    if (ancien && ancien.parentNode) ancien.parentNode.removeChild(ancien);
+    var fond = document.createElement("div");
+    fond.id = "sti-diag-fond";
+    fond.style.cssText = "position:fixed;inset:0;z-index:2147483000;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:16px;";
+    var boite = document.createElement("div");
+    boite.setAttribute("role", "dialog");
+    boite.setAttribute("aria-modal", "true");
+    boite.setAttribute("aria-label", titre);
+    boite.style.cssText = "background:#fffdf7;color:#23201a;border:2.5px solid #23201a;border-radius:18px;box-shadow:6px 6px 0 #23201a;max-width:min(680px,96vw);max-height:86vh;overflow:auto;padding:18px 20px;font:600 13px/1.5 system-ui,'Segoe UI',sans-serif;";
+    var h = document.createElement("h3");
+    h.textContent = titre;
+    h.style.cssText = "margin:0 0 10px;font-size:15px;font-weight:900;";
+    var pre = document.createElement("pre");
+    pre.textContent = lignes.join("\n");
+    pre.style.cssText = "margin:0;white-space:pre-wrap;word-break:break-word;background:#f6f2e8;border:1.5px solid #d8d0bd;border-radius:10px;padding:12px;font:600 12px/1.55 ui-monospace,Consolas,monospace;";
+    var barre = document.createElement("div");
+    barre.style.cssText = "display:flex;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap;";
+    var bCop = document.createElement("button");
+    bCop.type = "button";
+    bCop.textContent = "📋 Copier le rapport";
+    bCop.style.cssText = STYLE_BTN_DIAG;
+    bCop.addEventListener("click", function () {
+      var txt = lignes.join("\n");
+      function fait() { bCop.textContent = "✅ Copié"; setTimeout(function () { bCop.textContent = "📋 Copier le rapport"; }, 2000); }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt).then(fait).catch(function () { msg("Copie impossible : sélectionnez le texte à la main.", "err"); });
+      } else {
+        msg("Copie automatique indisponible : sélectionnez le texte à la main.", "err");
+      }
+    });
+    var bFerm = document.createElement("button");
+    bFerm.type = "button";
+    bFerm.textContent = "Fermer";
+    bFerm.style.cssText = STYLE_BTN_DIAG + "background:#23201a;color:#fffdf7;";
+    bFerm.addEventListener("click", function () { if (fond.parentNode) fond.parentNode.removeChild(fond); });
+    fond.addEventListener("click", function (ev) { if (ev.target === fond && fond.parentNode) fond.parentNode.removeChild(fond); });
+    document.addEventListener("keydown", function (evK) {
+      if (evK.key === "Escape" && fond.parentNode) fond.parentNode.removeChild(fond);
+    }, { once: true });
+    barre.append(bCop, bFerm);
+    boite.append(h, pre, barre);
+    fond.appendChild(boite);
+    document.body.appendChild(fond);
+    bFerm.focus();
+  }
+
+  function diagCompteursAbonne(p) {
+    if (!p || !p.id) return;
+    var nom = nomPrenomTexte(p) || contact(p);
+    var seuil24 = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
+    function compterBase(filtre) {
+      var q = sb.from("acces").select("id", { count: "exact", head: true }).eq("user_id", p.id);
+      if (filtre) q = filtre(q);
+      return q.then(function (r) {
+        if (r && r.error) return -1;
+        return r && typeof r.count === "number" ? r.count : 0;
+      }).catch(function () { return -1; });
+    }
+    var lignes = ["Diagnostic des compteurs — " + nom + " (" + (p.classe || "—") + ")", ""];
+    Promise.all([
+      compterBase(null),
+      compterBase(function (q) { return q.neq("page", "PROG_MEDIA"); }),
+      compterBase(function (q) { return q.gte("debut", seuil24); }),
+      sb.from("acces").select("page,debut,fin,duree_sec").eq("user_id", p.id)
+        .order("id", { ascending: false }).limit(5)
+        .then(function (r) { return r && !r.error ? (r.data || []) : null; })
+        .catch(function () { return null; })
+    ]).then(function (res) {
+      var totalBase = res[0], sansProg = res[1], sur24 = res[2], dernieres = res[3];
+      var chargees = 0;
+      acces.forEach(function (a) { if (a && a.user_id === p.id) chargees++; });
+      var file = 0, fileEleve = 0;
+      try {
+        var qFile = JSON.parse(localStorage.getItem("sti-offline-queue") || "[]");
+        if (Array.isArray(qFile)) {
+          file = qFile.length;
+          qFile.forEach(function (it) { if (it && String(it.user_id || "") === String(p.id)) fileEleve++; });
+        }
+      } catch (e) {}
+      lignes.push("1. Ce que la BASE contient pour cet élève");
+      if (totalBase < 0) {
+        lignes.push("   ❌ lecture impossible (droits ou connexion) — la base n'a pas répondu.");
+      } else {
+        lignes.push("   • activités au total ......... " + totalBase);
+        lignes.push("   • hors « PROG_MEDIA » ....... " + (sansProg < 0 ? "?" : sansProg));
+        lignes.push("   • depuis 24 h ............... " + (sur24 < 0 ? "?" : sur24));
+        if (dernieres && dernieres.length) {
+          lignes.push("   • 5 dernières lignes :");
+          dernieres.forEach(function (a) {
+            var quand = a.debut ? new Date(a.debut).toLocaleString("fr-FR") : "—";
+            lignes.push("       " + quand + " · " + String(a.page || "—").slice(0, 46) + " · " + (a.duree_sec != null ? a.duree_sec + " s" : "durée vide"));
+          });
+        } else if (dernieres) {
+          lignes.push("   • aucune ligne lisible pour cet élève.");
+        }
+      }
+      lignes.push("");
+      lignes.push("2. Ce que le TABLEAU DE BORD a chargé");
+      lignes.push("   • journal en mémoire ........ " + acces.length + " ligne(s)");
+      lignes.push("   • total annoncé par la base . " + (Number(window.__stiCountAcces) || 0));
+      lignes.push("   • lignes de cet élève ....... " + chargees);
+      lignes.push("   • file hors-ligne locale .... " + file + " événement(s), dont " + fileEleve + " pour cet élève");
+      lignes.push("");
+      lignes.push("3. Ce que la carte affiche");
+      lignes.push("   • Connexions ................ " + (counts[p.id] || 0));
+      lignes.push("   • Durée ..................... " + Math.round((dureesTotales[p.id] || 0) / 60) + " min");
+      var nb24aff = 0;
+      var seuilAff = Date.now() - 24 * 3600 * 1000;
+      acces.forEach(function (a) {
+        if (!a || a.user_id !== p.id) return;
+        var t = new Date(a.fin || a.debut).getTime();
+        if (!isNaN(t) && t >= seuilAff) nb24aff++;
+      });
+      lignes.push("   • Accès 24 h ................ " + nb24aff);
+      lignes.push("");
+      lignes.push("4. Conclusion");
+      if (totalBase === 0) {
+        lignes.push("   → L'élève n'a AUCUNE ligne dans la base : son navigateur n'arrive pas à écrire le journal.");
+        lignes.push("     Vérifiez avec lui qu'il a bien accepté la connexion, puis rechargez la page sur son appareil.");
+        if (fileEleve > 0) lignes.push("     " + fileEleve + " événement(s) attendent sur SON appareil (file hors-ligne).");
+      } else if (totalBase > 0 && chargees === 0) {
+        lignes.push("   → Les lignes existent en base, mais la page n'en a chargé aucune pour lui :");
+        lignes.push("     le journal affiché ne couvre que les dernières activités de tout le monde.");
+        lignes.push("     Cliquez sur « Connexions » plus tard (le chargement continue en arrière-plan),");
+        lignes.push("     ou vérifiez un filtre de période / une purge de mois.");
+      } else if (chargees > 0) {
+        lignes.push("   → Les lignes sont chargées : le compteur affiché devrait suivre.");
+        lignes.push("     Si la carte reste à 00, rechargez le tableau de bord (Ctrl+F5).");
+      }
+      afficherRapportDiag("🔎 Compteurs de " + nom, lignes);
+    }).catch(function (err) {
+      afficherRapportDiag("🔎 Compteurs de " + nom, [
+        "Le diagnostic n'a pas pu aboutir :",
+        "   " + ((err && err.message) || "erreur inconnue"),
+        "",
+        "Vérifiez la connexion au serveur puis réessayez."
+      ]);
+    });
+  }
+  window.__stiDiagCompteurs = diagCompteursAbonne;
+
   function rendAbonnes() {
     /* v582 : l'en-tête de la colonne suit la période choisie (cumul par défaut). */
     var thDureeAbonnes = document.querySelector("#wrap-table-abonnes thead th:nth-child(6)");
@@ -6582,10 +6744,26 @@
 
         var instrumentsNd = document.createElement("div");
         instrumentsNd.className = "noeud-instruments";
-        function ajouterMiniInstrumentNoeud(libelle, valeur, classeCss, titre) {
+        function ajouterMiniInstrumentNoeud(libelle, valeur, classeCss, titre, auClic) {
           var mini = document.createElement("div");
           mini.className = "noeud-mini-instrument" + (classeCss ? " " + classeCss : "");
           if (titre) mini.title = titre;
+          /* v605 : chaque compteur s'explique. Un « 00 » peut vouloir dire « aucune
+             activité » ou « journal non chargé » : le clic interroge la base. */
+          if (auClic) {
+            mini.style.cursor = "zoom-in";
+            mini.setAttribute("role", "button");
+            mini.tabIndex = 0;
+            if (titre) mini.title = titre + " — cliquer pour vérifier ce compteur";
+            mini.addEventListener("click", function (evMini) { evMini.stopPropagation(); auClic(); });
+            mini.addEventListener("keydown", function (evTouche) {
+              if (evTouche.key === "Enter" || evTouche.key === " ") {
+                evTouche.preventDefault();
+                evTouche.stopPropagation();
+                auClic();
+              }
+            });
+          }
           var lbl = document.createElement("small");
           lbl.textContent = libelle;
           var val = document.createElement("strong");
@@ -6596,9 +6774,10 @@
         var nbConnexionsNd = counts[p.id] || 0;
         var dureeNdSec = dureePourAbonne(p.id);
         var nbAcces24Nd = acces24hParUser[p.id] || 0;
-        ajouterMiniInstrumentNoeud("Connexions", formatCompteurClasse(nbConnexionsNd), "", nbConnexionsNd + " connexion(s) enregistrée(s)");
-        ajouterMiniInstrumentNoeud("Durée", formatDureeInstrumentNoeud(dureeNdSec), "", "Durée de la période sélectionnée : " + fmtDuree(dureeNdSec));
-        ajouterMiniInstrumentNoeud("Accès 24 h", formatCompteurClasse(nbAcces24Nd), "nd-mini-24h", nbAcces24Nd + " accès durant les dernières 24 heures");
+        var verifierNd = function () { diagCompteursAbonne(p); };
+        ajouterMiniInstrumentNoeud("Connexions", formatCompteurClasse(nbConnexionsNd), "", nbConnexionsNd + " connexion(s) enregistrée(s)", verifierNd);
+        ajouterMiniInstrumentNoeud("Durée", formatDureeInstrumentNoeud(dureeNdSec), "", "Durée de la période sélectionnée : " + fmtDuree(dureeNdSec), verifierNd);
+        ajouterMiniInstrumentNoeud("Accès 24 h", formatCompteurClasse(nbAcces24Nd), "nd-mini-24h", nbAcces24Nd + " accès durant les dernières 24 heures", verifierNd);
 
         var meta = document.createElement("div");
         meta.className = "noeud-meta";
