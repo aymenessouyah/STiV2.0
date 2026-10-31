@@ -36,7 +36,7 @@ test('v587 : la publication affichée est déclarée dans sw.js, pas déduite du
   const sw = lire('sw.js');
   const mVersion = sw.match(/var VERSION_PUBLIEE = "v(\d+)";/);
   assert.ok(mVersion, 'VERSION_PUBLIEE doit être déclaré');
-  assert.equal(Number(mVersion[1]), 599, 'la plateforme est en v599');
+  assert.equal(Number(mVersion[1]), 600, 'la plateforme est en v600');
 
   const mDate = sw.match(/var PUBLIEE_LE = "([^"]+)";/);
   assert.ok(mDate, 'PUBLIEE_LE doit être déclaré');

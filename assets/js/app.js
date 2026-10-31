@@ -2586,7 +2586,9 @@
     var focusId = lienActif && zone.contains(lienActif) ? lienActif.getAttribute("data-welcome-course") : "";
     zone.innerHTML = cartes.map(function (c) {
       var matiere = MATIERES[c.id] || {};
-      return '<a class="welcome-course welcome-course--' + c.id + '" data-welcome-course="' + c.id + '" href="' + c.href + '">' +
+      return '<a class="welcome-course welcome-course--' + c.id + '" data-welcome-course="' + c.id + '" href="' + c.href + '"' +
+        ' title="' + echapperHtml(c.titre) + ' — ' + c.consultes + ' / ' + c.total + ' chapitres consultés"' +
+        ' aria-label="' + echapperHtml(c.titre) + ', cours : ' + c.consultes + ' chapitre' + (c.consultes > 1 ? 's' : '') + ' consulté' + (c.consultes > 1 ? 's' : '') + ' sur ' + c.total + '">' +
         '<span class="welcome-course__cover"><span class="welcome-course__icon" aria-hidden="true">' +
           iconeMatiere(c.id, matiere.icone, 20, pref) + '</span></span>' +
         '<span class="welcome-course__body"><strong class="welcome-course__title">' + echapperHtml(c.titre) + '</strong>' +

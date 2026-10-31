@@ -160,7 +160,7 @@ test('v597 : la vitrine est branchée sur l’accueil, le service worker et le s
 
   /* 2. Service worker : la page est connue du hors-ligne et le delta reste borné. */
   const sw = lire('sw.js');
-  assert.match(sw, /var VERSION_PUBLIEE = "v59\d"/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v6\d\d"/);
   assert.ok(sw.includes('{ url: "./projets/index.html", revision: "galerie-projets-v597"'));
   assert.ok(sw.includes('{ url: "./assets/css/projets-galerie.css", revision: "galerie-projets-v597"'));
 

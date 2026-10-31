@@ -38,24 +38,14 @@ function blocMobileCartes() {
   return CSS.slice(marque, fin);
 }
 
-test('v599 : sur téléphone, les cours récents s’empilent au lieu de défiler', () => {
+test('v599 : sur téléphone, la bande de cours reste dans l’écran', () => {
   const bloc = blocMobileCartes();
   assert.match(bloc, /\.welcome-return__courses\s*\{[^}]*flex-wrap:\s*wrap/,
-    'la bande de cours passe à la ligne');
+    'la bande de cours passe à la ligne au lieu de défiler');
   assert.match(bloc, /\.welcome-return__courses\s*\{[^}]*overflow-x:\s*visible/,
     'plus de ruban horizontal à faire défiler');
-  assert.match(bloc, /\.welcome-course\s*\{[^}]*min-width:\s*min\(210px,\s*100%\)/,
-    'une carte ne dépasse jamais la largeur de l’écran');
-  assert.match(bloc, /\.welcome-course\s*\{[^}]*max-width:\s*100%/,
-    'aucune carte plus large que son conteneur');
-});
-
-test('v599 : les titres et l’état des cartes ne sont plus coupés', () => {
-  const bloc = blocMobileCartes();
-  assert.match(bloc, /\.welcome-course__title,\s*\.welcome-course__details\s*\{[^}]*white-space:\s*normal/,
-    'les libellés reviennent à la ligne au lieu d’être tronqués');
-  assert.match(bloc, /text-overflow:\s*clip/, 'plus de points de suspension en plein mot');
-  assert.match(bloc, /overflow-wrap:\s*anywhere/, 'un mot long se coupe proprement');
+  assert.match(bloc, /\.welcome-return__courses\s*\{[^}]*scroll-snap-type:\s*none/,
+    'plus d’aimantation horizontale');
 });
 
 test('v599 : la page reprend toute la largeur quand aucun panneau PC n’est ouvert', () => {
@@ -88,10 +78,10 @@ test('v599 : le garde-fou JS efface une largeur ou un zoom orphelins', () => {
   }
 });
 
-test('v599 : l’accueil garde ses repères et le service worker saute de version', () => {
+test('v599 : l’accueil garde ses repères et le service worker suit la livraison', () => {
   assert.match(ACCUEIL, /<section class="welcome-return" id="welcomeReturn"/);
   assert.match(ACCUEIL, /id="welcomeCourses"/);
   assert.match(ACCUEIL, /id="resumeBanner"/);
-  assert.match(SW, /var VERSION_PUBLIEE = "v599";/, 'la version publiée passe à v599');
-  assert.match(SW, /accueil-mobile-v599/, 'le lot de mise à jour est déclaré');
+  assert.match(SW, /var VERSION_PUBLIEE = "v6\d\d";/, 'la version publiée suit la livraison courante');
+  assert.match(SW, /pastilles-cours-v600/, 'le lot de mise à jour est déclaré');
 });

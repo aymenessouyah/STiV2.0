@@ -159,7 +159,10 @@ test('v498 : les boîtes « en cours » tiennent sur une seule ligne compacte', 
   assert.match(cover, /width: 56px;/);
   assert.match(cover, /min-height: 58px;/);
   assert.doesNotMatch(cover, /min-height: 100px/);
-  assert.doesNotMatch(css, /\.welcome-course__state \{\s*position: absolute;/);
+  /* v600 : le texte passe hors du flux visuel uniquement dans le bloc mobile. */
+  const cssBureau = css.slice(0, css.indexOf('le bloc « Bonjour » tient dans la largeur du téléphone'));
+  assert.doesNotMatch(cssBureau, /\.welcome-course__state \{\s*position: absolute;/,
+    'sur ordinateur, l’état reste dans la ligne de la carte');
 
   /* Le balisage généré place l'état dans la ligne, pas en surimpression. */
   assert.match(app, /class="welcome-course__state">'\s*\+\s*\(c\.revises \? c\.revises \+ " \/ " \+ c\.total \+ " révisés" : "Consulté"\)/);
@@ -170,8 +173,8 @@ test('v498 : service worker et manifeste hors ligne connaissent le drapeau et la
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);
   assert.match(sw, /url: "\.\/index\.html", revision: "cours-sti-v596"/);
-  assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "accueil-mobile-v599"/);
-  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "accueil-mobile-v599"/);
+  assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "pastilles-cours-v600"/);
+  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "pastilles-cours-v600"/);
   assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "ruban-vert-v517"/);
   assert.match(sw, /url: "\.\/assets\/images\/drapeau-tunisie\.svg", revision: "accueil-lycee-v503"/);
   const shell = sw.split('var SHELL = [')[1].split('];')[0];
