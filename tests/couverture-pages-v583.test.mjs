@@ -111,11 +111,11 @@ test('v583 : le repli hors-ligne de la roue reflète le manifeste et le Service 
   );
 
   const sw = read('sw.js');
-  /* v584 : admin.js repart au lot « videos-admin-v590 » (fouille du navigateur),
+  /* v592 : admin.js repart au lot « connexions-gz-v592 » (lecture des archives .gz),
      les autres fichiers du décompte restent au lot v583. */
   const revisionsAttendues = {
     './assets/pages-couverture.json': 'couverture-v583',
-    './assets/js/admin.js': 'videos-admin-v590',
+    './assets/js/admin.js': 'connexions-gz-v592',
     './assets/js/analytique.js': 'couverture-v583',
     './assets/js/admin-couverture.js': 'couverture-v583',
     './assets/js/roue-couverture.js': 'couverture-v586',
