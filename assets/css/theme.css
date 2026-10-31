@@ -1268,6 +1268,10 @@ body.sti-v2 .welcome-return__empty { font-size: .9rem; }
 .video-card {
   display: flex;
   flex-direction: column;
+  /* v587 : l'étiquette « Capsule » (position absolue) se pose sur la carte la plus
+     proche qui sert de repère. Sans cette ligne, elle s'échappait de la vignette et
+     allait se coller au coin du conteneur — le défaut signalé. */
+  position: relative;
   border-radius: var(--radius-lg);
   background: var(--surface);
   border: 1px solid var(--border);

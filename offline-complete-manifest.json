@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-10-31T10:12:38Z",
+  "generatedAt": "2026-10-31T10:32:57Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 757,
-  "totalBytes": 1110708752,
+  "totalBytes": 1110714505,
   "files": [
     {
       "path": "404.html",
@@ -67,8 +67,8 @@
     },
     {
       "path": "admin.html",
-      "bytes": 346065,
-      "gitSha": "bac44d332b2268753410d830bbf14faf7e04fd46"
+      "bytes": 346570,
+      "gitSha": "ec8675f85caed9c8250dfb1e048fac322925bfb4"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -187,8 +187,8 @@
     },
     {
       "path": "assets/css/capsules-vedettes.css",
-      "bytes": 14742,
-      "gitSha": "d6be589cbdeabbc0e512f966599b77c9c488e059"
+      "bytes": 15892,
+      "gitSha": "e0bb6bd19e02ae07e8a7000efa26b257c01f1909"
     },
     {
       "path": "assets/css/cours-css3.css",
@@ -307,8 +307,8 @@
     },
     {
       "path": "assets/css/theme.css",
-      "bytes": 80485,
-      "gitSha": "6ebabc00468fb45f71b40a04cf78185f47471878"
+      "bytes": 80752,
+      "gitSha": "9d481af31f256a1c9769af392b974e43429bc09b"
     },
     {
       "path": "assets/css/visionneuse-exercices.css",
@@ -692,8 +692,8 @@
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 761387,
-      "gitSha": "3b96c38e91a8c6cc4f18cb0729d24de1181c2b88"
+      "bytes": 764442,
+      "gitSha": "7fbab25871f094122aecb9b8fc30eaff65d6c8b4"
     },
     {
       "path": "assets/js/analytique.js",
@@ -1373,7 +1373,7 @@
     {
       "path": "cours/javascript.html",
       "bytes": 140848,
-      "gitSha": "5a59b8e10c4dd04cc56ad69353e0111aeeefb1c4"
+      "gitSha": "bd8b1a1fb00380226a5eb65ecfd5dd354123785d"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -1383,7 +1383,7 @@
     {
       "path": "cours/php.html",
       "bytes": 205880,
-      "gitSha": "031add37c98b9aaf4327b15ec408a792e5347d33"
+      "gitSha": "e90243796258bb0d5b7a60f1c57de1d77221d618"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -3183,7 +3183,7 @@
     {
       "path": "index.html",
       "bytes": 64532,
-      "gitSha": "4fc406480117d9c04dbc66ed6d1cfff84fe7f2df"
+      "gitSha": "bfa1408fbb1a42ef2c5cef1f5646da1357b6a584"
     },
     {
       "path": "livre-smart.html",
@@ -3787,8 +3787,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 100229,
-      "gitSha": "1d5517d916b14aecf3698a8d197186f015cb8f56"
+      "bytes": 101005,
+      "gitSha": "9aca27a1cfb1a21a4629f7ba6b30d27cda95c047"
     }
   ]
 }

@@ -111,15 +111,15 @@ test('v583 : le repli hors-ligne de la roue reflète le manifeste et le Service 
   );
 
   const sw = read('sw.js');
-  /* v584 : admin.js repart au lot « recherche-connexions-v584 » (fouille du navigateur),
+  /* v584 : admin.js repart au lot « publication-v587 » (fouille du navigateur),
      les autres fichiers du décompte restent au lot v583. */
   const revisionsAttendues = {
     './assets/pages-couverture.json': 'couverture-v583',
-    './assets/js/admin.js': 'recherche-connexions-v584',
+    './assets/js/admin.js': 'publication-v587',
     './assets/js/analytique.js': 'couverture-v583',
     './assets/js/admin-couverture.js': 'couverture-v583',
     './assets/js/roue-couverture.js': 'couverture-v586',
-    './admin.html': 'livre-3si-81p-v585'
+    './admin.html': 'publication-v587'
   };
   for (const [url, revision] of Object.entries(revisionsAttendues)) {
     const ligne = sw.split('\n').find((l) => l.includes('url: "' + url + '"'));

@@ -155,10 +155,10 @@ test('le cache hors-ligne embarque la vidéo sans téléchargement automatique',
   for (const chemin of [VIDEO, VTT]) assert.ok(offline.includes(`"./${chemin}"`), chemin);
   assert.ok(!delta.includes(`"./${VIDEO}"`), 'la vidéo n’entre jamais dans le delta mobile');
   assert.ok(!delta.includes(`"./${VTT}"`), 'ni ses sous-titres');
-  assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "etiquette-relief-v572"/);
+  assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "etiquette-capsule-v587"/);
   assert.match(delta, /url: "\.\/assets\/js\/protection\.js", revision: "cours-sti-v578"/);
-  assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "vitrine-sti-v579"/);
-  assert.ok(sw.includes('var UPDATE_FILES = [') && sw.split('var UPDATE_FILES = [')[1].split('];')[0].split('{ url:').length - 1 <= 268);
+  assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "etiquette-capsule-v587"/);
+  assert.ok(sw.includes('var UPDATE_FILES = [') && sw.split('var UPDATE_FILES = [')[1].split('];')[0].split('{ url:').length - 1 <= 272);
 });
 
 test('le manifeste complet décrit la vidéo et ses sous-titres', () => {

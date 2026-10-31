@@ -51,10 +51,12 @@ test('v585 : le lecteur de livre et le README concordent', () => {
 
 test('v585 : le Service Worker sert les deux pages corrigées', () => {
   const sw = read('sw.js');
-  for (const url of ['./dashboard.html', './admin.html']) {
+  /* v587 : admin.html repart au lot « publication-v587 » (version + date de mise à
+     jour dans le badge) ; le tableau de bord élève reste au lot v585. */
+  for (const [url, revision] of [['./dashboard.html', 'livre-3si-81p-v585'], ['./admin.html', 'publication-v587']]) {
     const ligne = sw.split('\n').find((l) => l.includes('url: "' + url + '"'));
     assert.ok(ligne, 'entrée sw.js absente : ' + url);
-    assert.match(ligne, /revision: "livre-3si-81p-v585"/, 'révision à jour attendue pour ' + url);
+    assert.ok(ligne.includes('revision: "' + revision + '"'), 'révision à jour attendue pour ' + url + ' (' + revision + ')');
   }
   /* Toujours pas de re-téléchargement massif : cache et identifiant de publication figés. */
   assert.match(sw, /var CACHE = "sti-atelier-v386";/);

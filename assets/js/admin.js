@@ -460,11 +460,61 @@
 
     var elBadgeVer = document.getElementById("badge-version-admin");
     var elPiedVer = document.getElementById("pied-version-admin");
-    function majTexteVersion(v) {
-      if (elBadgeVer) elBadgeVer.textContent = "🏷️ Version V2.0 · " + v;
-      if (elPiedVer) elPiedVer.textContent = "🏷️ Version active : STI V2.0 (" + v + ")";
+    /* v587 : à côté du numéro, la date et l'heure de la dernière mise à jour de la
+       plateforme — uniquement dans le tableau de bord. Format court, heure locale du
+       poste (jj/mm/aaaa hh:mm), sans secondes : le badge doit rester lisible. */
+    function formaterMajPublicationAdm(iso) {
+      var d = new Date(iso);
+      if (!iso || isNaN(d.getTime())) return "";
+      function deux(n) { n = Number(n) || 0; return (n < 10 ? "0" : "") + n; }
+      return deux(d.getDate()) + "/" + deux(d.getMonth() + 1) + "/" + d.getFullYear() +
+        " " + deux(d.getHours()) + ":" + deux(d.getMinutes());
+    }
+    function majTexteVersion(v, dateIso) {
+      var quand = formaterMajPublicationAdm(dateIso);
+      if (elBadgeVer) {
+        /* v587 : le texte vit dans son propre élément ; écrire dans la pastille
+           elle-même effacerait la date qui la suit. */
+        var elTexteVer = document.getElementById("badge-version-texte-admin");
+        if (elTexteVer) elTexteVer.textContent = "🏷️ Version V2.0 · " + v;
+        else elBadgeVer.textContent = "🏷️ Version V2.0 · " + v;
+        var elDateVer = document.getElementById("badge-version-date-admin");
+        if (elDateVer) elDateVer.textContent = quand ? "· " + quand : "";
+        elBadgeVer.title = quand
+          ? "Dernière mise à jour de la plateforme : " + quand +
+            " — cliquer pour vérifier les mises à jour"
+          : "Cliquer pour vérifier les mises à jour de la plateforme";
+      }
+      if (elPiedVer) {
+        elPiedVer.textContent = "🏷️ Version active : STI V2.0 (" + v + ")" +
+          (quand ? " · mise à jour du " + quand : "");
+      }
     }
     majTexteVersion(versionDefaut);
+
+    /* v587 : la publication déclarée dans sw.js (VERSION_PUBLIEE + PUBLIEE_LE) prime
+       sur le numéro tiré du jeton de cache UPDATE_ID. Ce jeton ne bouge plus d'une
+       livraison à l'autre (il sert au delta hors ligne) : c'est lui qui faisait
+       afficher « v582 » alors que la plateforme était déjà en v586. */
+    var PUBLICATION_ADM = { num: 0, date: "" };
+    function appliquerPublicationAdm(num, iso) {
+      if (!(num > 0)) return;
+      PUBLICATION_ADM.num = num;
+      PUBLICATION_ADM.date = iso || "";
+      try {
+        localStorage.setItem("sti-version-publiee", String(num));
+        if (iso) localStorage.setItem("sti-version-publiee-le", iso);
+      } catch (ePub) {}
+      majTexteVersion("v" + num, PUBLICATION_ADM.date);
+    }
+    try {
+      var numPubMemo = parseInt(localStorage.getItem("sti-version-publiee") || "0", 10) || 0;
+      if (numPubMemo > 0) {
+        PUBLICATION_ADM.num = numPubMemo;
+        PUBLICATION_ADM.date = localStorage.getItem("sti-version-publiee-le") || "";
+        majTexteVersion("v" + numPubMemo, PUBLICATION_ADM.date);
+      }
+    } catch (ePubMemo) {}
     /* v350 / v477 : le numero AFFICHE suit UPDATE_ID de sw.js (et ne descend jamais sous cfg.VERSION_AFFICHEE) */
     var versionAfficheePrioritaire = numBaseAdm > 0;
     function interrogerVersionSwAdmin(forcerReloadSiNouvelle) {
@@ -477,6 +527,12 @@
           if (nCacheSw > 0) {
             try { localStorage.setItem("sti-version-installee", String(nCacheSw)); } catch (eCI) {}
           }
+          /* v587 : la publication est lue avant le jeton, et elle seule sert au texte. */
+          var mPub = String(txt || "").match(/VERSION_PUBLIEE\s*=\s*"v?(\d+)/i);
+          if (mPub && mPub[1]) {
+            var mPubLe = String(txt || "").match(/PUBLIEE_LE\s*=\s*"([^"]+)"/i);
+            appliquerPublicationAdm(parseInt(mPub[1], 10) || 0, mPubLe ? mPubLe[1] : "");
+          }
           var mUpd = String(txt || "").match(/UPDATE_ID\s*=\s*"v(\d+)/i);
           if (mUpd && mUpd[1]) {
             var nUpdAdm = Math.max(parseInt(mUpd[1], 10) || 0, numBaseAdm);
@@ -485,7 +541,7 @@
               sessionStorage.setItem("sti-sw-upd-ver-sess", String(nUpdAdm));
               localStorage.setItem("sti-version-affichee", String(nUpdAdm));
             } catch (eSA2) {}
-            majTexteVersion("v" + nUpdAdm);
+            if (!PUBLICATION_ADM.num) majTexteVersion("v" + nUpdAdm);
             if (forcerReloadSiNouvelle && parseInt(mUpd[1], 10) > numBaseAdm) {
               setTimeout(function () { location.reload(); }, 350);
             }
@@ -499,7 +555,7 @@
     var verSessAdm = "";
     try { verSessAdm = sessionStorage.getItem("sti-sw-upd-ver-sess") || ""; } catch (eSA) {}
     var verSessNumAdm = parseInt(verSessAdm || "0", 10) || 0;
-    if (!estReloadAdm && verSessNumAdm > 0 && verSessNumAdm >= numBaseAdm) {
+    if (!PUBLICATION_ADM.num && !estReloadAdm && verSessNumAdm > 0 && verSessNumAdm >= numBaseAdm) {
       versionAfficheePrioritaire = true;
       majTexteVersion("v" + verSessNumAdm);
     } else {
@@ -507,7 +563,7 @@
     }
     if (window.caches && caches.keys) {
       caches.keys().then(function (cles) {
-        if (versionAfficheePrioritaire) return;
+        if (versionAfficheePrioritaire || PUBLICATION_ADM.num) return;
         var nums = [];
         (cles || []).forEach(function (k) {
           var m = String(k).match(/sti-atelier-v(\d+)/i);

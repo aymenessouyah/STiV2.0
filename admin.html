@@ -158,7 +158,15 @@
     padding: 3px 10px; font-size: 11px; font-weight: 900;
     box-shadow: 1.5px 1.5px 0 #f4511e;
     letter-spacing: .2px; cursor: pointer;
+    white-space: nowrap;
   }
+  /* v587 · date et heure de la dernière mise à jour, juste après le numéro.
+     Discret mais lisible, et jamais coupé en deux lignes. */
+  .badge-version-date {
+    font-weight: 700; font-size: .92em; opacity: .84;
+    white-space: nowrap; letter-spacing: .1px;
+  }
+  .badge-version-date:empty { display: none; }
   .badge-version:hover {
     background: #f4511e; color: #fff;
   }
@@ -953,6 +961,7 @@
     .badge-temoin-examen { font-size: 10px; padding: 2px 7px; }
     .badge-admin-gold { font-size: 10px; padding: 2px 7px; }
     .badge-version { font-size: 10px; padding: 2px 7px; }
+    .badge-version-date { font-size: .9em; }
     .badge-supabase { font-size: 10px; padding: 2px 40px 2px 7px; }
     .badge-supabase::after { width: 28px; height: 28px; right: 4px; border-radius: 7px; }
     #titre-tb-admin { min-height: 20px; padding: 2px 8px; }
@@ -2010,7 +2019,7 @@
           <span id="titre-tb-admin" title="🟢 En ligne">Tableau de bord STI V2.0</span>
           <span class="badge-temoin-examen" id="badge-temoin-examen" role="button" tabindex="0" title="🟢 Accès aux cours ouvert — Cliquer pour ouvrir le Centre de Sécurité / Mode Examen">● Accès ouvert</span>
           <span class="badge-admin-gold">👑 Admin Gold</span>
-          <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">Version V2.0</span>
+          <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme"><span id="badge-version-texte-admin">Version V2.0</span><span class="badge-version-date" id="badge-version-date-admin"></span></span>
           <span class="badge-supabase deconnecte" id="badge-supabase-quota" title="🔴 Supabase déconnectée — vérification en cours"><span id="sb-etat-icone" aria-hidden="true">🔴</span> Supabase : <b id="sb-pct-restant">99,8 %</b> (<span id="sb-qte-restante">499,2 Mo / 500 Mo</span>)<span class="jauge-sb-mini" aria-hidden="true"><i id="sb-jauge-barre" style="width:99.8%"></i></span></span>
         </h1>
         <div class="sous">Pilotage pédagogique, suivi temps réel des classes et administration sécurisée</div>

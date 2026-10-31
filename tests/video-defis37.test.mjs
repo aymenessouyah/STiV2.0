@@ -138,12 +138,14 @@ test('le cache hors-ligne embarque la vidéo sans téléchargement automatique',
   for (const chemin of [VIDEO, VTT]) assert.ok(offline.includes(`"./${chemin}"`), chemin);
   assert.ok(!delta.includes(`"./${VIDEO}"`), 'la vidéo n’entre jamais dans le delta mobile');
   assert.ok(!delta.includes(`"./${VTT}"`), 'ni ses sous-titres');
-  assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "etiquette-relief-v572"/);
+  assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "etiquette-capsule-v587"/);
   assert.match(delta, /url: "\.\/assets\/js\/protection\.js", revision: "cours-sti-v578"/);
-  assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "vitrine-sti-v579"/);
+  assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "etiquette-capsule-v587"/);
   const nbDelta = delta.split('{ url:').length - 1;
-  /* v580 : le quiz STI ajoute 4 entrées au delta (268). */
-  assert.ok(nbDelta <= 268, `delta trop long : ${nbDelta}`);
+  /* v580 : le quiz STI ajoute 4 entrées au delta (268).
+     v587 : capsules-vedettes.css, jusqu'ici sans révision propre, entre dans le
+     delta (269) ; le plafond passe à 272 — une feuille de 12 Ko, pas un média. */
+  assert.ok(nbDelta <= 272, `delta trop long : ${nbDelta}`);
 });
 
 test('le manifeste complet décrit la vidéo et ses sous-titres', () => {
