@@ -16,7 +16,7 @@
 | Fluidité | ✅ conforme | preload des vidéos, animations sur transform/opacity, écouteurs passifs, « réduire les animations » — Les 39 vidéos des pages attendent un clic (preload metadata/none) · Les 12 animations du thème restent sur transform/opacity · Les 18 écouteurs de défilement sont passifs · prefers-reduced-motion respecté dans le thème et dans la grille des capsules |
 | Rapidité | ✅ conforme (réserves mineures) | poids des pages, scripts bloquants, cache hors-ligne, images différées — 42 page(s) dépassent 1,5 Mo de code · 7 script(s) bloquant(s) dans l’en-tête (petits fichiers, ordre imposé) |
 | Sécurité | ✅ conforme | secrets, RLS, administration, liens _blank, CSP — RLS active sur les 9 tables créées par les migrations · Aucune clé de service (service_role) dans les pages ni les scripts · Aucun eval / new Function hors bac à sable · Tous les liens _blank sont isolés (rel=noopener) · Content-Security-Policy déclarée sur 81/132 pages · admin.js vérifie la session et l’adresse de l’administrateur avant d’afficher quoi que ce soit · Seule la clé publique (sb_publishable_) est exposée côté client |
-| Accès aux cours, vidéos et exercices | ✅ conforme | liens, ancres, vidéos du catalogue, menu — Tous les liens et ancres locaux existent (1398 vérifiés) · Les 26 vidéos du catalogue sont livrées (1002 Mo de médias) · 19 pages de cours et 67 pages d’exercices joignables |
+| Accès aux cours, vidéos et exercices | ✅ conforme | liens, ancres, vidéos du catalogue, menu — Tous les liens et ancres locaux existent (1398 vérifiés) · Les 27 vidéos du catalogue sont livrées (954 Mo de médias) · 19 pages de cours et 67 pages d’exercices joignables |
 | Quiz : tirage aléatoire à chaque entrée | ✅ conforme | mélange des questions et de la place de la bonne réponse — Les 5 quiz tirent questions et réponses à chaque partie |
 | XP : synchronisation entre appareils | ✅ conforme | file locale, envoi idempotent, maximum conservé — Scores et réponses passent par une file locale puis un envoi idempotent |
 | Quiz conformes aux annexes | ✅ conforme | vocabulaire des énoncés et des bonnes réponses — Quiz ↔ annexes : 92 % du vocabulaire vient directement de l’annexe, 98 % avec le cours |
@@ -25,7 +25,7 @@
 | Axe | Constat | Niveau | Détail |
 |---|---|---|---|
 | Accès | Tous les liens et ancres locaux existent (1398 vérifiés) | ✅ ok |  |
-| Accès | Les 26 vidéos du catalogue sont livrées (1002 Mo de médias) | ✅ ok |  |
+| Accès | Les 27 vidéos du catalogue sont livrées (954 Mo de médias) | ✅ ok |  |
 | Accès | 19 pages de cours et 67 pages d’exercices joignables | ✅ ok |  |
 | Quiz | Les 5 quiz tirent questions et réponses à chaque partie | ✅ ok | 5 s’appuient sur le module commun STIQuizAlea (crypto.getRandomValues). Redirection ignorée : pp.html. |
 | XP | Scores et réponses passent par une file locale puis un envoi idempotent | ✅ ok |  |
@@ -36,9 +36,9 @@
 | Fluidité | Les 12 animations du thème restent sur transform/opacity | ✅ ok |  |
 | Fluidité | Les 18 écouteurs de défilement sont passifs | ✅ ok |  |
 | Fluidité | prefers-reduced-motion respecté dans le thème et dans la grille des capsules | ✅ ok |  |
-| Rapidité | 42 page(s) dépassent 1,5 Mo de code | ℹ️ mineur | Positionnement-animee/index.html — 1648 Ko<br>admin.html — 1901 Ko<br>bac-pratique.html — 1608 Ko<br>cours/PHP-recap.html — 1612 Ko<br>cours/Recap-JavaScript-STI.html — 1677 Ko<br>cours/annexe-fleuriste-html5.html — 1663 Ko<br>cours/courscss3.html — 1742 Ko<br>cours/courshtml5.html — 2091 Ko<br>cours/coursphp.html — 1647 Ko<br>cours/css3.html — 2142 Ko<br>cours/fiche-revision-html5.html — 1713 Ko<br>cours/html5.html — 2113 Ko |
+| Rapidité | 42 page(s) dépassent 1,5 Mo de code | ℹ️ mineur | Positionnement-animee/index.html — 1648 Ko<br>admin.html — 1901 Ko<br>bac-pratique.html — 1608 Ko<br>cours/PHP-recap.html — 1613 Ko<br>cours/Recap-JavaScript-STI.html — 1677 Ko<br>cours/annexe-fleuriste-html5.html — 1664 Ko<br>cours/courscss3.html — 1742 Ko<br>cours/courshtml5.html — 2092 Ko<br>cours/coursphp.html — 1647 Ko<br>cours/css3.html — 2144 Ko<br>cours/fiche-revision-html5.html — 1714 Ko<br>cours/html5.html — 2115 Ko |
 | Rapidité | 7 script(s) bloquant(s) dans l’en-tête (petits fichiers, ordre imposé) | ℹ️ mineur | dashboard.html → assets/js/config.js?v=479<br>index.html → assets/js/config.js?v=479<br>quiz/pp.html → ../assets/js/retour-quiz.js<br>quiz/tableaux.html → ../assets/js/quiz-tableaux-boot.js?v=456<br>revision-erreurs.html → assets/js/config.js?v=476<br>revision-erreurs.html → assets/js/supabase-umd.js<br>revision-erreurs.html → assets/js/quiz-sync.js?v=460 |
-| Rapidité | Service worker prêt : 753 fichiers décrits hors-ligne (v578-sti-atelier-v386) | ✅ ok |  |
+| Rapidité | Service worker prêt : 753 fichiers décrits hors-ligne (v579-sti-atelier-v386) | ✅ ok |  |
 | Rapidité | Chargement différé des images : 119/196 (61 %) | ✅ ok |  |
 | Sécurité | RLS active sur les 9 tables créées par les migrations | ✅ ok |  |
 | Sécurité | Aucune clé de service (service_role) dans les pages ni les scripts | ✅ ok |  |
@@ -54,9 +54,9 @@
 ## Chiffres relevés
 
 - **liens** : 1398
-- **videos** : 231
-- **poidsVideos** : 1050599904
-- **catalogue** : 26
+- **videos** : 230
+- **poidsVideos** : 1000042241
+- **catalogue** : 27
 - **exercices** : 67
 - **cours** : 19
 - **quiz** : 5

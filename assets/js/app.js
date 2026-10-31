@@ -183,12 +183,32 @@
   };
 
   /**
-   * Les 18 vidéos présentées ici (.mp4), et non tous les médias du site :
-   * HTML5 (4) · CSS3 (8) · JavaScript (2) · SQL (4, dont 2 Bac) · PHP (3 Bac).
+   * Les vidéos présentées ici (.mp4), et non tous les médias du site. Le total
+   * n'est jamais recopié : les pastilles, la tuile de l'accueil et le compteur
+   * de la section se calculent sur ce tableau (27 entrées en v579, dont le
+   * cours « Systèmes, technologies et Internet » qui ouvre la vitrine).
    * Les variantes mobiles, autres séries et leçons interactives ne sont pas comptées.
    * Noms et durées correspondent aux fichiers présents dans le dépôt.
    */
   var CATALOGUE_VIDEOS = [
+    {
+      /* v579 : le cours de la partie 1 du manuel 3ᵉ SI (systèmes, réseaux, IoT)
+         ouvre la vitrine : c'est la première chose que voit un élève de 3ᵉ.
+         Sa matière « sti » n'est pas une des cinq matières du programme, d'où
+         sa place à part dans le tri (voir MATIERES_EN_TETE_VIDEOS). */
+      id: "cours-sti",
+      matiere: "sti",
+      nomMatiere: "Systèmes & Internet",
+      badgeClasse: "badge-gold",
+      couleur: "#facc15",
+      titre: "Cours — Systèmes, technologies et Internet (3ᵉ SI)",
+      dureeTexte: "13:03",
+      srcPrincipal: "assets/videos/CoursSystemesInternet-v578.mp4",
+      srcSecours: "assets/videos/CoursSystemesInternet-v578.mp4",
+      sousTitres: "assets/subtitles/CoursSystemesInternet-fr-v578.vtt",
+      urlCours: "cours/systemes-technologies-internet.html#video-cours",
+      codeApercu: "'système d'exploitation', 'LAN', 'MQTT'"
+    },
     {
       id: "html5-cours",
       matiere: "html5",
@@ -890,6 +910,8 @@
   function choisirVideoALaUne() {
     var eligibles = CATALOGUE_VIDEOS.filter(function (v) {
       if (v.reserve4si) return false;
+      /* v579 : le cours STI n'est pas une capsule — il ne prend pas la une. */
+      if (v.id === "cours-sti") return false;
       return dureeEnSecondesHms(v.dureeTexte) >= 60;
     });
     if (!eligibles.length) eligibles = CATALOGUE_VIDEOS.filter(function (v) { return !v.reserve4si; });
@@ -992,12 +1014,20 @@
      HTML5, CSS3, JavaScript, SQL, puis PHP. Le tri est stable : à l'intérieur
      d'une matière, l'ordre du catalogue est conservé. */
   var ORDRE_MATIERES_VIDEOS = ["html5", "css3", "javascript", "sql", "php"];
+  /* v579 : le cours « Systèmes, technologies et Internet » ouvre la vitrine.
+     Il passe avant les cinq matières du programme sans toucher à leur ordre
+     imposé : « sti » n'est pas une matière du programme, c'est le cours d'entrée. */
+  var MATIERES_EN_TETE_VIDEOS = ["sti"];
+  function rangMatiereVideo(matiere) {
+    var enTete = MATIERES_EN_TETE_VIDEOS.indexOf(matiere);
+    if (enTete !== -1) return enTete - MATIERES_EN_TETE_VIDEOS.length;
+    var rang = ORDRE_MATIERES_VIDEOS.indexOf(matiere);
+    return rang < 0 ? ORDRE_MATIERES_VIDEOS.length : rang;
+  }
   function trierVideosParMatiere(liste) {
     return liste.map(function (v, position) { return { v: v, p: position }; })
       .sort(function (a, b) {
-        var ra = ORDRE_MATIERES_VIDEOS.indexOf(a.v.matiere), rb = ORDRE_MATIERES_VIDEOS.indexOf(b.v.matiere);
-        if (ra < 0) ra = ORDRE_MATIERES_VIDEOS.length;
-        if (rb < 0) rb = ORDRE_MATIERES_VIDEOS.length;
+        var ra = rangMatiereVideo(a.v.matiere), rb = rangMatiereVideo(b.v.matiere);
         return ra === rb ? a.p - b.p : ra - rb;
       })
       .map(function (x) { return x.v; });
@@ -1017,7 +1047,7 @@
     var vues = (profil.videos && profil.videos.vues) || [];
     var ok4 = estAutorise4SI();
 
-    var libellesFiltres = { html5: "HTML5", css3: "CSS3", javascript: "JS", sql: "SQL", php: "PHP" };
+    var libellesFiltres = { sti: "STI", html5: "HTML5", css3: "CSS3", javascript: "JS", sql: "SQL", php: "PHP" };
     /* Le total est calculé, jamais recopié : il suit le catalogue à chaque ajout. */
     var accessibles = CATALOGUE_VIDEOS.filter(function (v) { return !v.reserve4si || ok4; }).length;
     var pastilleToutes = document.querySelector('[data-video-filter="all"]');

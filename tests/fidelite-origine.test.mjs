@@ -52,14 +52,16 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
      photos base64) : seule cette référence change dans la page.
      v562 : une photo dont le fichier a disparu du bucket est remplacée par les
      initiales (écoute « error » déléguée) dans admin.js, acces.js et
-     roue-initiales.js ; empreintes réactualisées. */
+     roue-initiales.js ; empreintes réactualisées.
+     v579 : config.js et portail.html refusent la barre mobile sur la page du
+     portail (captcha Cloudflare) ; empreintes réactualisées. */
   const originaux = {
-    'assets/js/config.js': '4936f1efc5fde33dc2432dd3a9aa4fc33df77f90b842fe2091a2a5ba2f872a7f',
+    'assets/js/config.js': 'dbe14a6d66e869a2431d2184d7ce597385c75292bb6c5f7862a63a0131a1dad4',
     'assets/js/supabase-umd.js': '2eebfe06b1b5309985dc1526e8981ea3a18b71beeef83e7f38e04c303e142d6d',
     'assets/js/acces.js': 'a127d66572e4a59c036fefbf2975178fea5cce6f518a7014fdd0424d970630cc',
     'assets/js/sync-progressions.js': 'c6e36a6f0ebea5e481cfb1b16afb9c0cfefc595ed4de21a1becff5a096d327b6',
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
-    'portail.html': 'cde7e9572be7ff369cc3a810c84f68a479b4f1bd8781d22e123b87dd12df37f7',
+    'portail.html': '7ea8179bed2a6eac89f6852352c224d83b34d2215cfb6f6acf9d01b657a03ad1',
     'admin.html': 'e7c872d0e0cc3e948cfdca86613b5bdbc32c9dec1df42ade524a0119b7e30d29',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
@@ -112,14 +114,14 @@ function dureeMp4(path) {
   } finally { closeSync(fd); }
 }
 
-test('catalogue : fichiers réels, 26 entrées distinctes, durées MP4 et restrictions', () => {
+test('catalogue : fichiers réels, 27 entrées distinctes, durées MP4 et restrictions', () => {
   const js = lire('assets/js/app.js');
   const texte = js.split('var CATALOGUE_VIDEOS = ')[1].split('\n  ];')[0] + '\n  ]';
   const catalogue = vm.runInNewContext('(' + texte + ')');
-  assert.equal(catalogue.length, 26);
+  assert.equal(catalogue.length, 27);
   assert.equal(new Set(catalogue.map(v => v.id)).size, catalogue.length);
   const comptes = {}; for (const v of catalogue) comptes[v.matiere] = (comptes[v.matiere] || 0) + 1;
-  assert.deepEqual(comptes, { html5:4, css3:5, javascript:8, sql:4, php:5 });
+  assert.deepEqual(comptes, { sti:1, html5:4, css3:5, javascript:8, sql:4, php:5 });
   assert.ok(catalogue.some(v => v.id === 'tp-evenements-liens'
     && v.matieres.join() === 'html5,css3'
     && v.srcPrincipal === 'assets/videos/tp-evenements-liens-v2.mp4'
@@ -159,7 +161,7 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
   }
   assert.doesNotMatch(delta, /"\.\/[^"\n]+\.(?:mp4|mp3|pdf|wasm)"/i);
   for (const chemin of ['assets/css/cours.css','assets/js/app.js','assets/js/cours-matieres.js','cours/html5.html','cours/css3.html','cours/javascript.html','cours/sql.html','cours/php.html']) {
-    const revision = chemin === 'assets/js/app.js' ? 'etiquette-relief-v572'
+    const revision = chemin === 'assets/js/app.js' ? 'vitrine-sti-v579'
       : chemin === 'assets/css/cours.css' ? 'retrait-fond-cours-v508'
       : chemin === 'cours/css3.html' ? 'tp-transitions-v512'
       : chemin === 'cours/html5.html' ? 'sti-3si-v573'
@@ -372,8 +374,8 @@ test('v513 : les totaux de vidéos de l’accueil suivent le catalogue', () => {
   const index = lire('index.html');
   const compter = (cle) => catalogue.filter((v) => ((v.matieres || [v.matiere]).indexOf(cle) !== -1)).length;
   const total = catalogue.length;
-  /* Une seule source de vérité : 26 capsules aujourd'hui (dont les 37 Défis, la boucle Pour, la console, les chaînes, l'objet Date et PHP). */
-  assert.equal(total, 26);
+  /* Une seule source de vérité : 27 entrées aujourd'hui (dont le cours STI) (dont les 37 Défis, la boucle Pour, la console, les chaînes, l'objet Date et PHP). */
+  assert.equal(total, 27);
   assert.ok(index.includes(`data-video-filter="all">Toutes (${total})</button>`), 'pastille « Toutes »');
   assert.match(index, new RegExp(`id="videosTotalNombre">${total}</span>`));
   /* Les pastilles par matière, les cartes de cours et le pied de page disent la même chose. */

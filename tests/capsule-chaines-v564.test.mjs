@@ -275,8 +275,8 @@ test('la capsule est dans le paquet hors-ligne et versionnée', () => {
   assert.ok(sw.includes(`"./assets/subtitles/FonctionsChaine-fr-v564.vtt"`));
   assert.ok(sw.includes('revision: "etiquette-relief-v572"'), 'les pages touchées sont réinvalidées');
   /* v573 : l'accueil et le livre connecté repartent au lot « 3ème SI 2026 ». */
-  const REV_PAGES = { './index.html': 'sti-3si-v573', './cours/javascript.html': 'etiquette-relief-v572',
-    './cours/php.html': 'etiquette-relief-v572', './assets/js/app.js': 'etiquette-relief-v572' };
+  const REV_PAGES = { './index.html': 'vitrine-sti-v579', './cours/javascript.html': 'etiquette-relief-v572',
+    './cours/php.html': 'etiquette-relief-v572', './assets/js/app.js': 'vitrine-sti-v579' };
   const attendu = (page) => REV_PAGES[page] || 'cours-sti-v578';
   for (const page of ['./index.html', './cours/javascript.html', './assets/js/app.js',
     './assets/js/protection.js', './assets/js/lecteur-commun.js']) {
@@ -289,7 +289,8 @@ test('les totaux de l’accueil suivent le catalogue', () => {
   const liste = catalogue();
   const index = lire('index.html');
   const js = liste.filter((v) => (v.matieres || [v.matiere]).includes('javascript')).length;
-  assert.equal(liste.length, 26);
+  /* v579 : le cours STI ouvre la vitrine — 27 cartes. */
+  assert.equal(liste.length, 27);
   assert.equal(js, 8);
   assert.ok(index.includes(`data-video-filter="all">Toutes (${liste.length})</button>`));
   assert.ok(index.includes(`<span id="videosTotalNombre">${liste.length}</span>`));

@@ -16,7 +16,7 @@ const revisions = new Map(entrees.map(m => [m[1], m[2]]));
 /* Le résolveur conserve à la fois les correctifs de main et les ressources de la refonte. */
 test('fusion du service worker : cache inédit, révisions XP/médias et refonte conservées', () => {
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
-  assert.match(sw, /var UPDATE_ID = "v578-video-cours-sti-visuels-20261031"/);
+  assert.match(sw, /var UPDATE_ID = "v579-vitrine-sti-portail"/);
   assert.equal(entrees.length, revisions.size, 'aucune URL de mise à jour en double');
   /* v520 : profil.js porte le plancher anti-recul des XP. */
   assert.equal(revisions.get('./assets/js/profil.js'), 'xp-jamais-en-recul-v520');
@@ -59,8 +59,8 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   }
   assert.equal(revisions.get('./quiz/php.html'), 'plafond-a-v555');
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
-  assert.equal(revisions.get('./assets/js/app.js'), 'etiquette-relief-v572');
-  assert.equal(revisions.get('./index.html'), 'sti-3si-v573');
+  assert.equal(revisions.get('./assets/js/app.js'), 'vitrine-sti-v579');
+  assert.equal(revisions.get('./index.html'), 'vitrine-sti-v579');
   assert.equal(revisions.get('./offline-complete-manifest.json'), 'classe-nav-v536');
   assert.equal(revisions.get('./README.md'), 'xp-jamais-en-recul-v520');
   for (const chemin of ['dashboard.html', 'assets/images/drapeau-tunisie.svg']) {
@@ -73,7 +73,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./admin.html'), 'photo-secours-v562');
   assert.equal(revisions.get('./assets/js/sante.js'), 'tp-transitions-v512');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */
-  assert.equal(revisions.get('./index.html'), 'sti-3si-v573');
+  assert.equal(revisions.get('./index.html'), 'vitrine-sti-v579');
   assert.equal(revisions.get('./assets/js/admin.js'), 'photo-secours-v562');
   assert.equal(revisions.get('./assets/css/cours.css'), 'retrait-fond-cours-v508');
   /* v563 : le cours SQL accueille la convention d'écriture d'un schéma. */
@@ -92,7 +92,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   for (const chemin of ['package.json', 'package-lock.json']) {
     assert.equal(revisions.get('./' + chemin), 'xp-operations-v487', chemin);
   }
-  assert.equal(revisions.get('./assets/js/mobile-nav.js'), 'defilement-passif-v553');
+  assert.equal(revisions.get('./assets/js/mobile-nav.js'), 'portail-sans-barre-v579');
   for (const chemin of ['assets/css/badge-compte.css', 'assets/images/badge-compte-vierge.png']) {
     assert.equal(revisions.get('./' + chemin), 'badge-image-v488', chemin);
   }
@@ -104,7 +104,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./assets/js/acces.js'), 'sti-glossaire-v574');
   /* v529 : masquer la reprise ne doit pas effacer le compteur de vues vidéo. */
   assert.equal(revisions.get('./assets/js/reprendre.js'), 'vues-videos-v531');
-  assert.equal(revisions.get('./assets/js/config.js'), 'barre-mobile-v532');
+  assert.equal(revisions.get('./assets/js/config.js'), 'portail-sans-barre-v579');
   assert.equal(revisions.get('./assets/js/sync-progressions.js'), 'pastille-sync-v534');
   for (const chemin of ['assets/css/cours-matieres.css', 'assets/js/cours-matieres.js', 'assets/js/cours-sql-worker.js', 'assets/js/profil.js', 'assets/js/app.js']) {
     assert.ok(revisions.has('./' + chemin), chemin);
@@ -128,7 +128,7 @@ test('les scripts historiques sont chargés une seule fois et dans l’ordre req
 });
 
 test('manifeste hors ligne fusionné : toutes les empreintes et les deux migrations sont exactes', () => {
-  assert.equal(manifeste.version, 'v578-sti-atelier-v386');
+  assert.equal(manifeste.version, 'v579-sti-atelier-v386');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.ok(manifeste.files.some(f => f.path === 'assets/js/xp-plancher.js'), 'le garde-fou XP est livré hors ligne');
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((total, f) => total + f.bytes, 0));

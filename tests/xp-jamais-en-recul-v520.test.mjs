@@ -126,7 +126,7 @@ test('v520 : le garde-fou est livré, préchargé et hors ligne sur toutes les p
   }
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
   assert.ok(manifeste.files.some(f => f.path === 'assets/js/xp-plancher.js'));
-  assert.match(sw, /var UPDATE_ID = "v578-video-cours-sti-visuels-20261031"/); /* lot v521 : meta descriptions */
+  assert.match(sw, /var UPDATE_ID = "v579-vitrine-sti-portail"/); /* lot v521 : meta descriptions */
 });
 
 test('v520 : profil.js et quiz-sync.js refusent aussi une baisse avant écriture', () => {

@@ -87,6 +87,6 @@ test('la nouvelle mesure est servie avec un cache-buster et une révision à jou
   assert.match(sw, /url: "\.\/admin\.html", revision: "photo-secours-v562"/);
   assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "photo-secours-v562"/);
   /* Rappel : le cache et le lot général ne bougent pas. */
-  assert.match(sw, /var UPDATE_ID = "v578-video-cours-sti-visuels-20261031"/);
+  assert.match(sw, /var UPDATE_ID = "v579-vitrine-sti-portail"/);
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
 });

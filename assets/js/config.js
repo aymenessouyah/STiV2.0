@@ -55,6 +55,8 @@ window.STI_AUTH = {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
     if (window.__STI_BNAV || document.getElementById("sti-bnav")) return;
+    /* v579 : le portail (connexion, abonnement, captcha Cloudflare) reste nu. */
+    if (/(^|\/)portail(\.html)?$/i.test(String(location.pathname || "").replace(/\/$/, ""))) return;
     var s = document.createElement("script");
     var base = "./";
     try {
@@ -62,7 +64,7 @@ window.STI_AUTH = {
       var m = pn.match(/^(.*?)\/(?:cours|exercices|projets|documents|annexes|quiz|cssanimee|Positionnement-animee|tests)\//);
       base = m ? location.origin + m[1] + "/" : location.origin + pn.slice(0, pn.lastIndexOf("/") + 1);
     } catch (e) {}
-    s.src = base + "assets/js/mobile-nav.js?v=532";
+    s.src = base + "assets/js/mobile-nav.js?v=579";
     s.async = true;
     (document.head || document.documentElement).appendChild(s);
   } catch (e) {}
@@ -86,6 +88,8 @@ window.STI_AUTH = {
     var pn = location.pathname;
     if (pn.indexOf("/tests/") !== -1) return;
     if (/(^|\/)admin(\.html)?$/i.test(pn.replace(/\/$/, ""))) return;
+    /* v579 : aucune esquisse de barre sur le portail non plus. */
+    if (/(^|\/)portail(\.html)?$/i.test(pn.replace(/\/$/, ""))) return;
     var d = JSON.parse(localStorage.getItem("sti-bnav-skel") || "null");
     if (!d || !d.h || typeof d.f !== "string" || !/^#[0-9a-f]{3,8}$|^rgba?\(/i.test(d.f)) return;
     if (Date.now() - (d.t || 0) > 45 * 24 * 3600 * 1000) return;

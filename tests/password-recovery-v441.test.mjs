@@ -3038,9 +3038,9 @@ test('v464 : correctifs issus du test fonctionnel E2E (purges quota sans Referen
   assert.match(adminJs, /d\["sti-reading-bookmarks"\]/);
   assert.match(admCouvJs, /d\["sti-reading-bookmarks"\]/);
 
-  // 4) config.js protège contre les URLs se terminant par .html/ et charge mobile-nav.js?v=532
+  // 4) config.js protège contre les URLs se terminant par .html/ et charge mobile-nav.js?v=579
   assert.match(configJs, /replace\(\/\(\\\.html\?\)\\\/\+\$\/i,\s*"\$1"\)/);
-  assert.match(configJs, /mobile-nav\.js\?v=532/);
+  assert.match(configJs, /mobile-nav\.js\?v=579/);
 
   // 5) sauvegarde.js : fallback RPC admin_labo_devices_list + mobile-diagnostics.js window.confirm
   assert.match(sauvJs, /admin_labo_devices_list/);
