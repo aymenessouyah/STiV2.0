@@ -75,7 +75,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./assets/js/sante.js'), 'tp-transitions-v512');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */
   assert.equal(revisions.get('./index.html'), 'etiquette-capsule-v587');
-  assert.equal(revisions.get('./assets/js/admin.js'), 'videos-admin-v587');
+  assert.equal(revisions.get('./assets/js/admin.js'), 'videos-admin-v589');
   assert.equal(revisions.get('./assets/css/cours.css'), 'retrait-fond-cours-v508');
   /* v563 : le cours SQL accueille la convention d'écriture d'un schéma. */
   assert.equal(revisions.get('./cours/sql.html'), 'schema-notation-v563');
@@ -102,7 +102,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   for (const chemin of ['assets/css/theme-patrimoine.css']) {
     assert.equal(revisions.get('./' + chemin), 'fidelite-origine-v481', chemin);
   }
-  assert.equal(revisions.get('./assets/js/acces.js'), 'videos-admin-v587');
+  assert.equal(revisions.get('./assets/js/acces.js'), 'videos-admin-v589');
   /* v529 : masquer la reprise ne doit pas effacer le compteur de vues vidéo. */
   assert.equal(revisions.get('./assets/js/reprendre.js'), 'vues-videos-v531');
   assert.equal(revisions.get('./assets/js/config.js'), 'portail-sans-barre-v579');

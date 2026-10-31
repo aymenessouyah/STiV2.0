@@ -138,9 +138,9 @@ test('v574 : les nouveaux termes sont aussi cherchables en Ctrl+K', () => {
 });
 
 test('v574 : les versions hors-ligne suivent la mise à jour', () => {
-  assert.match(sw, /url: "\.\/assets\/js\/acces\.js", revision: "videos-admin-v587"/);
+  assert.match(sw, /url: "\.\/assets\/js\/acces\.js", revision: "videos-admin-v589"/);
   assert.match(sw, /url: "\.\/glossaire\.html", revision: "glossaire-sti-v578"/);
   assert.match(sw, /url: "\.\/cours\/systemes-technologies-internet\.html", revision: "sti-sections-v580"/);
   /* v578 : les révisions du glossaire et du cours STI suivent le lot de la vidéo. */
-  assert.match(lire('tests/main-integration.test.mjs'), /assert\.equal\(revisions\.get\('\.\/assets\/js\/acces\.js'\), 'videos-admin-v587'\);/);
+  assert.match(lire('tests/main-integration.test.mjs'), /assert\.equal\(revisions\.get\('\.\/assets\/js\/acces\.js'\), 'videos-admin-v589'\);/);
 });

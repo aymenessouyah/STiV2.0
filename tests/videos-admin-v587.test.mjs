@@ -41,6 +41,16 @@ function catalogueAdmin() {
   return JSON.parse(JSON.stringify(vm.runInNewContext(src.slice(debut + 'var CATALOGUE_VIDEOS_ADMIN = '.length, fin + 4))));
 }
 
+/* L'inventaire complet utilisé par le panneau « Vues des vidéos » (v529) :
+   27 capsules de la vitrine + 6 vidéos des pages de cours. */
+function catalogueVuesVideos() {
+  const src = lire('assets/js/admin-vues-videos.js');
+  const debut = src.indexOf('var CATALOGUE = [');
+  assert.ok(debut > 0, 'CATALOGUE introuvable dans admin-vues-videos.js');
+  const fin = src.indexOf('\n  ];', debut);
+  return JSON.parse(JSON.stringify(vm.runInNewContext(src.slice(debut + 'var CATALOGUE = '.length, fin + 4))));
+}
+
 /* Même harnais que les tests v461 : on isole la chaîne de calcul du bilan. */
 function contexteBilan() {
   const adminJs = lire('assets/js/admin.js');
@@ -57,28 +67,33 @@ function contexteBilan() {
   return ctx;
 }
 
-test('v587 : le catalogue du tableau de bord couvre exactement les vidéos de la vitrine', () => {
+test('v589 : le catalogue du tableau de bord couvre toutes les vidéos suivies', () => {
   const vitrine = catalogueVitrine();
   const admin = catalogueAdmin();
+  const vues = catalogueVuesVideos();
 
-  assert.equal(vitrine.length, 27, '27 vidéos dans la vitrine');
-  assert.equal(admin.length, 27, 'le tableau de bord doit en compter autant');
+  assert.equal(vitrine.length, 27, '27 capsules sur la vitrine');
+  assert.equal(vues.length, 33, 'panneau des vues : 27 capsules + 6 vidéos des pages de cours');
+  assert.equal(admin.length, 33, 'le bilan du tableau de bord suit le même inventaire');
 
-  const idsVitrine = vitrine.map((v) => 'video:' + v.id).sort();
-  const idsAdmin = admin.map((v) => v.key).sort();
-  assert.deepEqual(idsAdmin, idsVitrine,
-    'chaque vidéo de la vitrine (capsules comprises) est suivie par le professeur');
+  /* Parité avec la vitrine : chaque capsule publique est suivie. */
+  const idsVitrine = vitrine.map((v) => 'video:' + v.id);
+  const idsAdmin = admin.map((v) => v.key);
+  idsVitrine.forEach((id) => assert.ok(idsAdmin.includes(id), id + ' manque dans le bilan'));
+  /* Parité avec le panneau « Vues des vidéos » : aucune des deux listes ne dérive. */
+  assert.deepEqual(idsAdmin.slice().sort(), vues.map((v) => 'video:' + v.id).sort(),
+    'bilan et panneau des vues doivent lister exactement les mêmes vidéos');
 
   /* Niveaux : les vidéos réservées à la 4ᵉ SI restent réservées. */
   const quatre = vitrine.filter((v) => v.reserve4si).map((v) => 'video:' + v.id).sort();
   const niveau4 = admin.filter((v) => v.niveau === '4si').map((v) => v.key).sort();
   assert.deepEqual(niveau4, quatre, 'mêmes vidéos réservées à la 4ᵉ SI des deux côtés');
-  assert.equal(admin.filter((v) => v.niveau === 'tous').length, 20);
+  assert.equal(admin.filter((v) => v.niveau === 'tous').length, 26);
 });
 
 test('v587 : aucune vidéo de décor dans le catalogue ni dans les libellés', () => {
   const admin = catalogueAdmin();
-  const decoratives = admin.filter((v) => /^video:(drapeau|stivideofficiel|flower|ambient)/i.test(v.key));
+  const decoratives = admin.filter((v) => /^video:(drapeau|stivideoofficiel|flower|ambient)/i.test(v.key));
   assert.deepEqual(decoratives, [], 'drapeau animé, bandeau et présentation ne sont pas des cours');
   for (const v of admin) assert.ok(v.label && typeof v.label === 'string', v.key);
 });
@@ -90,17 +105,17 @@ test('v587 : le total des vidéos ne dépend plus de ce que l’élève a ouvert
 
   /* Rien n'a été ouvert : le total est quand même complet. */
   const vide4 = ctx.window.__stiBilanProgressionMediaUser(eleve4);
-  assert.equal(vide4.totVid, 27, '4ᵉ SI : 20 vidéos communes + 7 réservées');
+  assert.equal(vide4.totVid, 33, '4ᵉ SI : 26 vidéos communes + 7 réservées');
   const vide3 = ctx.window.__stiBilanProgressionMediaUser(eleve3);
-  assert.equal(vide3.totVid, 20, '3ᵉ SI : les 20 vidéos communes');
+  assert.equal(vide3.totVid, 26, '3ᵉ SI : les 26 vidéos communes');
   assert.equal(vide3.nbVidDone, 0);
 
   /* Un élève qui a vu deux capsules garde le même dénominateur. */
   ctx.progMediaParUser['u-4si'] = { 'video:fonctions-chaine': 100, 'video:boucle-pour': 100 };
   const avec4 = ctx.window.__stiBilanProgressionMediaUser(eleve4);
   assert.equal(avec4.nbVidDone, 2);
-  assert.equal(avec4.totVid, 27, 'le total ne bouge pas avec les visionnages');
-  assert.match(avec4.resumeEnteteVid, /^2\/27/);
+  assert.equal(avec4.totVid, 33, 'le total ne bouge pas avec les visionnages');
+  assert.match(avec4.resumeEnteteVid, /^2\/33/);
 });
 
 test('v587 : les vidéos de décor ne sont jamais comptées', () => {
@@ -117,13 +132,32 @@ test('v587 : les vidéos de décor ne sont jamais comptées', () => {
   const bil = ctx.window.__stiBilanProgressionMediaUser(eleve);
   const cles = bil.catVideos.map((v) => v.key);
   assert.equal(bil.nbVidDone, 1, 'seul le cours HTML5 compte');
-  assert.equal(bil.totVid, 27);
+  assert.equal(bil.totVid, 33);
   for (const k of cles) {
     assert.doesNotMatch(k, /^video:drapeau/i, 'aucune vidéo de drapeau dans la liste');
     assert.doesNotMatch(k, /^video:(stivideoofficiel|flower|ambient)$/i);
   }
   const libelles = bil.catVideos.map((v) => v.label).join(' | ');
   assert.doesNotMatch(libelles, /drapeau/i, 'aucun libellé « Vidéo drapeau … »');
+});
+
+test('v589 : les anciennes clés de capsule sont ramenées sur la clé officielle', () => {
+  const ctx = contexteBilan();
+  const eleve = { id: 'u-alias', nom: 'TRABELSI', prenom: 'Nour', classe: '4eme SI1' };
+  ctx.progMediaParUser['u-alias'] = {
+    'video:bouclepour': 100,
+    'video:php-guichet-v10': 40,
+    'video:drapeau-sti-vent': 100,
+  };
+  const bil = ctx.window.__stiBilanProgressionMediaUser(eleve);
+  const cles = bil.catVideos.map((v) => v.key);
+  assert.ok(!cles.includes('video:bouclepour'), 'l’ancienne clé ne crée pas une deuxième ligne');
+  assert.ok(!cles.includes('video:php-guichet-v10'));
+  assert.ok(bil.listV.includes('Les boucles (✅ 100%)'), 'la boucle Pour reste vue');
+  assert.ok(bil.listV.includes('Guichet PHP/MySQLi (⏳ 40%)'), 'le Guichet garde son avancement');
+  assert.equal(bil.totVid, 33, 'aucune vidéo en double : le total ne bouge pas');
+  assert.equal(bil.nbVidDone, 1);
+  assert.equal(bil.nbVidEnCours, 1);
 });
 
 test('v587 : le temps réel applique le même filtre que les données du cloud', () => {

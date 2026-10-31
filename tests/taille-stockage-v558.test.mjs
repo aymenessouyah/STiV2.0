@@ -85,7 +85,7 @@ test('la nouvelle mesure est servie avec un cache-buster et une révision à jou
      le cache-buster et les deux révisions suivent. */
   assert.match(admin, /assets\/js\/admin\.js\?v=575-perf/);
   assert.match(sw, /url: "\.\/admin\.html", revision: "publication-v587"/);
-  assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "videos-admin-v587"/);
+  assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "videos-admin-v589"/);
   /* Rappel : le cache et le lot général ne bougent pas. */
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);

@@ -221,8 +221,11 @@ test('commandes d’administration : scripts et fonctions de la barre PC inchang
      v588 : badge passé à v588 (même date lue depuis sw.js).
      v588 : admin.js compte les vidéos depuis le catalogue complet (27 capsules, 20 en 3e SI)
      et acces.js ignore les vidéos décoratives (drapeaux, fleurs, ambiance) ; empreintes de
-     admin.js et d'acces.js réactualisées. */
-  assert.equal(sha('assets/js/admin.js'), 'b997bb95ac91a610926c3490b05f5666ddd0c8beb85f6ffc344d97708b540713');
+     admin.js et d'acces.js réactualisées.
+     v589 : le bilan vidéo suit l'inventaire complet (27 capsules + 6 vidéos de cours) et
+     ramène les anciennes clés (bouclepour, php-guichet-v10) sur la clé officielle ;
+     empreinte d'admin.js réactualisée. */
+  assert.equal(sha('assets/js/admin.js'), 'cdeab5fd1983901031e2ca5834a15b84921ed78425cdf2cf65e30c7aec69c2ca');
   assert.equal(sha('assets/js/rayonsx-surligneur.js'), '1b7fe2067629766ef4043fa3060199b71124d8486e36d92aaac0b45bd861847c');
   const protection = lire('assets/js/protection.js');
   const debut = protection.indexOf('  function estAppareilPC()');

@@ -6117,6 +6117,13 @@
      aucun travail de l'élève, et elles gonflaient artificiellement le compteur.
      Toute clé qui commence par « drapeau » est donc ignorée, ici comme dans les
      données venues du cloud (MEDIAS_DECORATIFS_ADMIN, v581). */
+  /* v589 : inventaire complet des vidéos du site = les 27 capsules de l'accueil
+     (mêmes identifiants que CATALOGUE_VIDEOS de app.js) + les 6 vidéos des pages
+     de cours (séries SQL 1 à 3 et 6, Explore Tunisie Flex/Float) déjà recensées
+     par admin-vues-videos.js. Ordre imposé : cours STI, HTML5, CSS3, JavaScript,
+     SQL, puis PHP. Les vidéos de décor (drapeaux, bandeau, présentation) n'y sont
+     pas : ce ne sont pas des capsules. Un test vérifie la parité avec
+     admin-vues-videos.js pour que les deux listes ne divergent jamais. */
   var CATALOGUE_VIDEOS_ADMIN = [
     { key: "video:cours-sti", label: "Cours Systèmes & Internet", niveau: "tous" },
     { key: "video:html5-cours", label: "Cours HTML5", niveau: "tous" },
@@ -6128,6 +6135,8 @@
     { key: "video:css-positionnement", label: "CSS Positionnement", niveau: "tous" },
     { key: "video:css-animee", label: "CSS Décoration", niveau: "tous" },
     { key: "video:tp-transitions-animations", label: "TP transitions et animations", niveau: "tous" },
+    { key: "video:explore-tunisie-flex", label: "Explore Tunisie — Flex", niveau: "tous", horsCatalogue: true },
+    { key: "video:explore-tunisie-float", label: "Explore Tunisie — Float", niveau: "tous", horsCatalogue: true },
     { key: "video:javascript-cours", label: "Cours JS", niveau: "tous" },
     { key: "video:console-variables", label: "La console, les variables et les types", niveau: "tous" },
     { key: "video:fonctions-chaine", label: "Les chaînes de caractères", niveau: "tous" },
@@ -6138,6 +6147,10 @@
     { key: "video:defis37-tableau-aleas-media", label: "Les 37 Défis", niveau: "tous" },
     { key: "video:sql-cours", label: "Cours SQL", niveau: "tous" },
     { key: "video:sql-initiation", label: "Construire une requête SQL", niveau: "tous" },
+    { key: "video:sql-serie1", label: "SQL Série 1 (création de tables)", niveau: "tous", horsCatalogue: true },
+    { key: "video:sql-serie2", label: "SQL Série 2 (SELECT et filtres)", niveau: "tous", horsCatalogue: true },
+    { key: "video:sql-serie3", label: "SQL Série 3 (requêtes avancées)", niveau: "tous", horsCatalogue: true },
+    { key: "video:sql-serie6", label: "SQL Série 6", niveau: "tous", horsCatalogue: true },
     { key: "video:php-cours", label: "Cours PHP", niveau: "4si" },
     { key: "video:php-variables", label: "PHP — variables et types", niveau: "4si" },
     { key: "video:php-chaines", label: "PHP — chaînes et date/heure", niveau: "4si" },
@@ -6146,6 +6159,23 @@
     { key: "video:sql-serie4", label: "SQL Série 4 (jointures)", niveau: "4si" },
     { key: "video:sql-serie5", label: "SQL Série 5 (dates)", niveau: "4si" }
   ];
+
+  /* v589 : deux anciennes clés désignent la même capsule (renommage passé). On les
+     ramène sur la clé officielle — le pourcentage le plus avancé gagne — pour que la
+     vidéo ne soit ni comptée deux fois ni perdue. */
+  var ALIAS_MEDIAS_ADMIN = {
+    "video:bouclepour": "video:boucle-pour",
+    "video:php-guichet-v10": "video:php-guichet"
+  };
+  function normaliserAliasMediasAdmin(pm) {
+    Object.keys(ALIAS_MEDIAS_ADMIN).forEach(function (vieux) {
+      if (pm[vieux] == null) return;
+      var neuf = ALIAS_MEDIAS_ADMIN[vieux];
+      pm[neuf] = Math.max(Number(pm[vieux]) || 0, Number(pm[neuf]) || 0);
+      delete pm[vieux];
+    });
+    return pm;
+  }
 
   /* Une clé de média décoratif n'est jamais un travail d'élève. Même règle que
      MEDIAS_DECORATIFS_ADMIN (v581), répétée ici en autonome pour que le calcul
@@ -6177,7 +6207,7 @@
   function bilanProgressionMediaUser(p) {
     var uid = p ? p.id : "";
     var pmBrut = (uid && progMediaParUser[uid]) ? progMediaParUser[uid] : {};
-    var pm = Object.assign({}, pmBrut);
+    var pm = normaliserAliasMediasAdmin(Object.assign({}, pmBrut));
     if (pm["audio:guichet-etapes"] && (!pm["audio:php-guichet"] || pm["audio:guichet-etapes"] > pm["audio:php-guichet"])) {
       pm["audio:php-guichet"] = pm["audio:guichet-etapes"];
     }
