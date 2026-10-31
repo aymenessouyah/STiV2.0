@@ -214,7 +214,7 @@ test('la capsule est dans le paquet hors-ligne et versionnée', () => {
   assert.ok(sw.includes(`"./assets/subtitles/PhpChaines-fr-v566.vtt"`), 'VTT hors-ligne');
   /* v573 : l'accueil et le livre connecté repartent au lot « 3ème SI 2026 ». */
   const REV_PAGES = { './index.html': 'cours-sti-v596', './cours/javascript.html': 'cours-sti-v595',
-    './cours/php.html': 'cours-sti-v595', './assets/js/app.js': 'pastilles-cours-v600' };
+    './cours/php.html': 'cours-sti-v595', './assets/js/app.js': 'pastilles-ligne-v601' };
   const attendu = (page) => REV_PAGES[page] || 'cours-sti-v578';
   for (const page of ['./index.html', './cours/php.html', './assets/js/app.js',
     './assets/js/protection.js', './assets/js/lecteur-commun.js',

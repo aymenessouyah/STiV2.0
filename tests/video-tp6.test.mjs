@@ -157,7 +157,7 @@ test('le cache hors-ligne embarque la vidéo sans téléchargement automatique',
   assert.ok(!delta.includes(`"./${VTT}"`), 'ni ses sous-titres');
   assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "cours-sti-v595"/);
   assert.match(delta, /url: "\.\/assets\/js\/protection\.js", revision: "cours-sti-v578"/);
-  assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "pastilles-cours-v600"/);
+  assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "pastilles-ligne-v601"/);
   assert.ok(sw.includes('var UPDATE_FILES = [') && sw.split('var UPDATE_FILES = [')[1].split('];')[0].split('{ url:').length - 1 <= 278);
 });
 
