@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-10-31T10:40:52Z",
+  "generatedAt": "2026-10-31T10:52:52Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 757,
-  "totalBytes": 1110715150,
+  "totalBytes": 1110720263,
   "files": [
     {
       "path": "404.html",
@@ -657,8 +657,8 @@
     },
     {
       "path": "assets/js/acces.js",
-      "bytes": 966687,
-      "gitSha": "acf07928c86155e460b8d8907d767dd927b563ab"
+      "bytes": 967135,
+      "gitSha": "54668e27bea68bb15142a86cda27537e93773bb7"
     },
     {
       "path": "assets/js/admin-couverture.js",
@@ -692,8 +692,8 @@
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 764442,
-      "gitSha": "7fbab25871f094122aecb9b8fc30eaff65d6c8b4"
+      "bytes": 768861,
+      "gitSha": "de77eda42479a327eac2a48c9c8f338d84e552d6"
     },
     {
       "path": "assets/js/analytique.js",
@@ -947,8 +947,8 @@
     },
     {
       "path": "assets/js/smart-book.js",
-      "bytes": 19622,
-      "gitSha": "87252b5beae67dfb947fb6a7365e8174780381e0"
+      "bytes": 19880,
+      "gitSha": "bfc3ca2830a4931dddc0fab836fd1f08859b8ea0"
     },
     {
       "path": "assets/js/sql-playground.js",
@@ -3188,7 +3188,7 @@
     {
       "path": "livre-smart.html",
       "bytes": 7761,
-      "gitSha": "967bc2beea99b12bf2de55bf09efac95ea877da6"
+      "gitSha": "93f98331e3edf8333fbf98237bede47f2d0e60f7"
     },
     {
       "path": "ma-fiche-revision.html",
@@ -3787,8 +3787,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 101005,
-      "gitSha": "9aca27a1cfb1a21a4629f7ba6b30d27cda95c047"
+      "bytes": 100993,
+      "gitSha": "b282040935436a4ae7a5a3121cd486f4ee6b5855"
     }
   ]
 }

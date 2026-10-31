@@ -35,7 +35,7 @@
   let publicBase = new URL('https://aymenessouyah.github.io/STiV2.0/');
   /* v575 : même version que les feuilles et couvertures du livre, pour que le PDF
      téléchargé et les images de couverture ne restent jamais sur l'édition précédente. */
-  let REVUE_LIVRE = '575';
+  let REVUE_LIVRE = '587';
   let books = {
     /* `entries` = nombre de pages repérées dans l'index (une par page utile) ;
        `fiches` = nombre de fiches numérotées ; `coursPages` = pages de cours
@@ -63,7 +63,10 @@
   async function getIndex(id) {
     if (!Object.hasOwn(books, id)) throw new Error('Manuel inconnu.');
     if (cache[id]) return cache[id];
-    let response = await fetch(books[id].data);
+    /* v587 : l'index des pages est demandé avec la révision de la livraison.
+       Sans cela, un appareil qui gardait l'index de l'ancienne édition (72 pages)
+       continuait d'afficher l'ancien manuel malgré le nouveau PDF. */
+    let response = await fetch(books[id].data + '?v=' + REVUE_LIVRE);
     if (!response.ok) throw new Error('Index indisponible.');
     let data = await response.json(), book = books[id];
     if (data.pages !== book.pages || !Array.isArray(data.items) || data.items.length !== book.entries) throw new Error('Index incompatible.');

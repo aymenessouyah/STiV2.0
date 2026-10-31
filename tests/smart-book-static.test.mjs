@@ -12,6 +12,6 @@ test('chaque destination a un fichier et une ancre existante',()=>{
 });
 test('bibliothèque QR locale et licence présentes',()=>{assert.ok(read('assets/vendor/jsqr/jsQR.js').includes('jsQR'));assert.ok(read('assets/vendor/jsqr/LICENSE').includes('Copyright'));});
 test('pas de dépendance distante sur le scanner',()=>{let html=read('livre-smart.html');assert.ok(!/<script[^>]+src=["']https?:/.test(html));assert.ok(html.includes('object-src \'none\''));});
-test('aucun envoi de photo implémenté',()=>{let js=read('assets/js/smart-book.js');assert.ok(!js.includes('FormData'));assert.ok(!js.includes('XMLHttpRequest'));assert.ok(js.includes("'assets/data/smart-book-2026.json'"));assert.ok(js.includes('fetch(books[id].data)'));});
+test('aucun envoi de photo implémenté',()=>{let js=read('assets/js/smart-book.js');assert.ok(!js.includes('FormData'));assert.ok(!js.includes('XMLHttpRequest'));assert.ok(js.includes("'assets/data/smart-book-2026.json'"));assert.match(js, /fetch\(books\[id\]\.data \+ '\?v=' \+ REVUE_LIVRE\)/);});
 test('liaisons de navigation et manifeste incrémental',()=>{assert.ok(read('index.html').includes('href="livre-smart.html"'));assert.ok(read('sw.js').includes('smart-book-v330'));assert.ok(read('sitemap.xml').includes('./livre-smart.html'));});
 test('PDF publié valide et non vide',()=>{let bytes=fs.readFileSync(new URL('../documents/livre/sti-smart-book-2026.pdf',import.meta.url));assert.equal(bytes.subarray(0,5).toString(),'%PDF-');assert.ok(bytes.length>100000);});

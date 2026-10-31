@@ -61,7 +61,7 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
   const originaux = {
     'assets/js/config.js': 'dbe14a6d66e869a2431d2184d7ce597385c75292bb6c5f7862a63a0131a1dad4',
     'assets/js/supabase-umd.js': '2eebfe06b1b5309985dc1526e8981ea3a18b71beeef83e7f38e04c303e142d6d',
-    'assets/js/acces.js': '8f16495b58d4413477fb137f998095239498ff478f9d72a5bb6f2c8f4d1da137',
+    'assets/js/acces.js': '560e57a45e3efd365b9c278dcc4826aca11d262d832bb20843d5e75e8cd7550a',
     'assets/js/sync-progressions.js': 'c6e36a6f0ebea5e481cfb1b16afb9c0cfefc595ed4de21a1becff5a096d327b6',
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
     'portail.html': '7ea8179bed2a6eac89f6852352c224d83b34d2215cfb6f6acf9d01b657a03ad1',
@@ -217,8 +217,12 @@ test('commandes d’administration : scripts et fonctions de la barre PC inchang
      v585 : le guide du tableau de bord annonce le Smart Book 3ᵉ SI à 81 pages (édition 2026)
      au lieu de l'ancienne édition de 72 pages ; empreinte d'admin.html réactualisée.
      v587 : badge « Version V2.0 · v587 · 31/10/2026 11:31 » (VERSION_PUBLIEE + PUBLIEE_LE
-     de sw.js, la date s'affichant à côté du numéro) ; empreinte d'admin.js réactualisée. */
-  assert.equal(sha('assets/js/admin.js'), '35e827325eaff0760856032fe578ff16ee80a50c72d90526ecba93b31a396693');
+     de sw.js, la date s'affichant à côté du numéro) ; empreinte d'admin.js réactualisée.
+     v588 : badge passé à v588 (même date lue depuis sw.js).
+     v588 : admin.js compte les vidéos depuis le catalogue complet (27 capsules, 20 en 3e SI)
+     et acces.js ignore les vidéos décoratives (drapeaux, fleurs, ambiance) ; empreintes de
+     admin.js et d'acces.js réactualisées. */
+  assert.equal(sha('assets/js/admin.js'), 'b997bb95ac91a610926c3490b05f5666ddd0c8beb85f6ffc344d97708b540713');
   assert.equal(sha('assets/js/rayonsx-surligneur.js'), '1b7fe2067629766ef4043fa3060199b71124d8486e36d92aaac0b45bd861847c');
   const protection = lire('assets/js/protection.js');
   const debut = protection.indexOf('  function estAppareilPC()');

@@ -12,8 +12,8 @@ var UPDATE_ID = "v582-journal-connexions";
    à chaque livraison, avec la date et l'heure UTC du commit de fusion.
    Ce n'est PAS le jeton de cache : UPDATE_ID et CACHE restent volontairement stables,
    sinon les 778 entrées de chaîne du delta seraient re-téléchargées en entier. */
-var VERSION_PUBLIEE = "v587";
-var PUBLIEE_LE = "2026-10-31T10:31:00Z";
+var VERSION_PUBLIEE = "v588";
+var PUBLIEE_LE = "2026-10-31T10:52:51Z";
 /* Historique caches : sti-atelier-v379, sti-atelier-v373, sti-atelier-v372, sti-atelier-v371, sti-atelier-v370, sti-atelier-v369, sti-atelier-v368, sti-atelier-v367, sti-atelier-v366, sti-atelier-v365, sti-atelier-v364, sti-atelier-v363, sti-atelier-v362, sti-atelier-v361, sti-atelier-v360, sti-atelier-v359, sti-atelier-v358, sti-atelier-v357, sti-atelier-v356, sti-atelier-v355, sti-atelier-v354, sti-atelier-v353, sti-atelier-v352, sti-atelier-v351, sti-atelier-v350, sti-atelier-v349, sti-atelier-v348, sti-atelier-v347, sti-atelier-v346, sti-atelier-v345, sti-atelier-v344, sti-atelier-v343, sti-atelier-v342, sti-atelier-v341, sti-atelier-v340, sti-atelier-v339, sti-atelier-v338, sti-atelier-v337, sti-atelier-v336, sti-atelier-v335, sti-atelier-v334, sti-atelier-v333, sti-atelier-v332, sti-atelier-v331, sti-atelier-v330, sti-atelier-v329, sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v547-boucles-php-20261030, v546-boucles-tableau-20261030, v545-boucles-media-20261030, v544-boucles-intro-fin-20261030, v543-boucles-trois-20261030, v542-boucle-pour-grille-20261030, v541-boucle-pour-brouillon-20261030, v540-boucle-pour-variable-20261030, v537-boucle-pour-20261029, v536-classe-nav-active-20261029, v535-volet-sans-fiches-20261029, v534-pastille-sync-2s-20261029, v533-tableau-de-bord-mobile-20261029, v532-barre-mobile-moderne-20261029, v531-vues-videos-periode-20261029, v530-vues-videos-classe-20261029, v529-vues-videos-20261029, v519-tirage-xp-rapide-20261029, v513-compteurs-videos-20261029, v512-tp-transitions-20261028, v511-tp-display-lecteur-20261028, v510-tp-display-20261028, v509-drapeau-vent-20261028, v508-retrait-fond-cours-20261028, v507-accueil-video-fond-20261028, v506-fond-cours-20261028, v505-tp-formulaire-long-20261028, v504-tp-capsules-longues-20261028, v503-accueil-lycee-20261028, v502-tp-formulaire-20261028, v501-tp-voix-20261028, v500-tp-evenements-liens-20261028, v499-ruban-orange-20261028, v498-accueil-drapeau-ruban-20261028, v497-news-niveaux-20261028, v496-news-perso-20261028, v495-video-alea-xp-20261028, v494-retour-quiz-intelligent-20261028, v493-onglets-mobile-20261028, v492-progression-chapitres-20261028, v491-suivi-contextes-20261028, v490-xp-parties-pwa-20261028, v489-reconnexion-delta-20261028, v488-badge-image-20261028, v486-cours-retour-xp-20261027, v485-video-js-validation-20261027, v484-navigation-videos-mobile-20261027, v479-compteur-media-monotone, v478-refonte-sql-php-20261027, v478-xp-quiz-monotone, xp-quiz-monotone-v478, v477-maj-version-cache-direct, maj-version-v477, v476-retour-accueil-quiz-exo, retour-quiz-v476, v476-retour-exercices-accueil, retour-exo-v476, v475-nav-fluide-instant, nav-fluide-v475, v474-perf-quiz-php, perf-quiz-php-v474, v473-perf-fluide, perf-fluide-v473, v472-test-plateforme-complet, v471-tester-tout-e2e, v470-audit-fonctionnel-readme, v469-pagination-integrale, v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, compteurs-media-v461, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, quiz-lots-abc-v456, revision-quiz-v455, retrait-nav-conseils-v454, unif-acces-themes-v453, conseil-classe-nouveautes-marque-v451, messenger-roue-admin-only-v450, rayonsx-surligneur-v449, trombi-carte-recadrage-v448, zoom-photo-v447, ruban-modes-v446, student-photos-v445, v358-quiz-sync
    Manifeste cumulatif dédupliqué : une révision déjà appliquée est ignorée localement,
    et aucun fichier non présent dans le cache local n'est pré-téléchargé inutilement à l'installation. */
@@ -168,7 +168,7 @@ var UPDATE_FILES = [
   { url: "./package-lock.json", revision: "xp-operations-v487" },
   { url: "./assets/data/nouveautes.json", revision: "compteur-media-v479" },
   { url: "./assets/js/config.js", revision: "portail-sans-barre-v579" },
-  { url: "./assets/js/acces.js", revision: "sti-glossaire-v574" },
+  { url: "./assets/js/acces.js", revision: "videos-admin-v587" },
   { url: "./assets/js/protection.js", revision: "cours-sti-v578" },
   { url: "./assets/js/mobile-nav.js", revision: "portail-sans-barre-v579" },
   { url: "./assets/js/roue-nuage.js", revision: "pastille-sync-v534" },
@@ -212,7 +212,7 @@ var UPDATE_FILES = [
   { url: "./assets/js/roue-plan.js", revision: "perf-fluide-v473" },
   { url: "./assets/js/sync-progressions.js", revision: "pastille-sync-v534" },
   { url: "./assets/js/xp-plancher.js", revision: "xp-jamais-en-recul-v520" },
-  { url: "./assets/js/admin.js", revision: "publication-v587" },
+  { url: "./assets/js/admin.js", revision: "videos-admin-v587" },
   { url: "./assets/js/quiz-admin.js", revision: "nav-fluide-v475" },
   { url: "./assets/js/sauvegarde.js", revision: "perf-fluide-v473" },
   { url: "./assets/js/reprendre.js", revision: "vues-videos-v531" },
@@ -276,21 +276,21 @@ var UPDATE_FILES = [
   { url: "./cours/html5.html", revision: "sti-3si-v573", refreshIfCached: true },
   { url: "./cours/courshtml5.html", revision: "audit-plateforme-v552", refreshIfCached: true },
   { url: "./assets/js/sql-playground.js", revision: "moteur-sql-local-v396" },
-  { url: "./livre-smart.html", revision: "livre-smart-v576" },
+  { url: "./livre-smart.html", revision: "livre-3si-v587" },
   { url: "./assets/js/retour-livre-smart.js", revision: "retour-intelligent-v380" },
   { url: "./assets/css/sombre-universel-v372.css", revision: "sombre-site-v372" },
   { url: "./assets/css/smart-book-fan-v341.css", revision: "smart-books-v341" },
   { url: "./assets/css/smart-book-fan-v340.css", revision: "smart-books-v341" },
-  { url: "./assets/images/smart-books/couverture-3si.jpg", revision: "livre-smart-v575" },
-  { url: "./assets/images/smart-books/couverture-4si.jpg", revision: "livre-smart-v575" },
-  { url: "./assets/data/smart-book-3si-2026.json", revision: "livre-smart-v575" },
+  { url: "./assets/images/smart-books/couverture-3si.jpg", revision: "livre-3si-v587" },
+  { url: "./assets/images/smart-books/couverture-4si.jpg", revision: "livre-3si-v587" },
+  { url: "./assets/data/smart-book-3si-2026.json", revision: "livre-3si-v587" },
   /* v573 : nouveau cours 3ème SI « Systèmes, technologies et Internet ». */
   { url: "./cours/systemes-technologies-internet.html", revision: "sti-sections-v580", refreshIfCached: true },
   { url: "./assets/css/cours-sti.css", revision: "sti-sections-v580" },
   { url: "./cours/sql-bases-ldd-lmd-lcd.html", revision: "schema-notation-v563", refreshIfCached: true },
   { url: "./assets/css/smart-book.css", revision: "smart-books-v341" },
-  { url: "./assets/js/smart-book.js", revision: "livre-smart-v576" },
-  { url: "./assets/data/smart-book-2026.json", revision: "livre-smart-v575" },
+  { url: "./assets/js/smart-book.js", revision: "livre-3si-v587" },
+  { url: "./assets/data/smart-book-2026.json", revision: "livre-3si-v587" },
   { url: "./assets/vendor/jsqr/jsQR.js", revision: "smart-book-v330" },
   { url: "./assets/css/admin-v19.css", revision: "admin-airbus-cockpit-v316-24" },
   { url: "./assets/icons/sti-logo-complet.png", revision: "official-full-logo-v316-20" },
