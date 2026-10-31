@@ -1087,20 +1087,30 @@ body.sti-v2 .welcome-return__empty { font-size: .9rem; }
    Sur téléphone, les grandes cartes rectangulaires laissaient dépasser les
    pastilles flottantes (roue, éclair, écran, boîte) par-dessus les badges
    « Consulté ». Chaque cours n'est plus qu'un cercle de la couleur de sa
-   matière, avec son seul logo au centre : six cours tiennent en deux rangées,
-   sans texte tronqué ni défilement latéral. Le nom du cours et la progression
+   matière, avec son seul logo au centre. Le nom du cours et la progression
    restent dans la page pour les lecteurs d'écran et dans l'infobulle (title). */
 @media (max-width: 700px) {
-  .welcome-return__courses { gap: var(--space-3); row-gap: var(--space-3); }
+  /* v601 : une seule rangée, sans défilement. Les pastilles se partagent la
+     largeur disponible et peuvent descendre jusqu'à la MOITIÉ de leur taille
+     d'origine (64 px → 32 px) pour que tous les cours restent sur la ligne. */
+  .welcome-return__courses {
+    flex-wrap: nowrap;
+    overflow-x: hidden;
+    align-items: flex-start;
+    gap: var(--space-2);
+    row-gap: 0;
+  }
   .welcome-course {
     position: relative;
-    flex: 0 0 auto;
-    width: 64px;
-    min-width: 64px;
+    flex: 1 1 0;
+    width: auto;
+    min-width: 32px;
     max-width: 64px;
-    height: 64px;
+    height: auto;
+    aspect-ratio: 1 / 1;
     padding: 0;
     justify-content: center;
+    align-self: flex-start;
     border-radius: var(--radius-full);
     scroll-snap-align: none;
   }
@@ -1110,8 +1120,10 @@ body.sti-v2 .welcome-return__empty { font-size: .9rem; }
     min-height: 0;
     border-radius: var(--radius-full);
   }
-  .welcome-course__icon { width: 38px; height: 38px; }
-  .welcome-course__icon svg { width: 22px; height: 22px; }
+  /* Le logo suit la taille du cercle : il occupe 60 % de sa largeur, donc il
+     devient lui aussi deux fois plus petit quand la pastille est réduite. */
+  .welcome-course__icon { width: 60%; height: 60%; min-width: 0; min-height: 0; }
+  .welcome-course__icon svg { width: 58%; height: 58%; }
   /* Le texte n'est plus affiché, mais il reste lu par les lecteurs d'écran. */
   .welcome-course__body,
   .welcome-course__state {

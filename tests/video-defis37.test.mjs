@@ -140,7 +140,7 @@ test('le cache hors-ligne embarque la vidéo sans téléchargement automatique',
   assert.ok(!delta.includes(`"./${VTT}"`), 'ni ses sous-titres');
   assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "cours-sti-v595"/);
   assert.match(delta, /url: "\.\/assets\/js\/protection\.js", revision: "cours-sti-v578"/);
-  assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "pastilles-cours-v600"/);
+  assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "pastilles-ligne-v601"/);
   const nbDelta = delta.split('{ url:').length - 1;
   /* v580 : le quiz STI ajoute 4 entrées au delta (268).
      v587 : capsules-vedettes.css, jusqu'ici sans révision propre, entre dans le

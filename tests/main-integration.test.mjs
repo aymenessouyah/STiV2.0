@@ -58,9 +58,9 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   }
   assert.equal(revisions.get('./quiz/php.html'), 'plafond-a-v555');
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
-  assert.equal(revisions.get('./assets/js/app.js'), 'pastilles-cours-v600');
+  assert.equal(revisions.get('./assets/js/app.js'), 'pastilles-ligne-v601');
   assert.equal(revisions.get('./index.html'), 'cours-sti-v596');
-  assert.equal(revisions.get('./offline-complete-manifest.json'), 'pastilles-cours-v600');
+  assert.equal(revisions.get('./offline-complete-manifest.json'), 'pastilles-ligne-v601');
   assert.equal(revisions.get('./README.md'), 'couverture-v583');
   /* v585 : le tableau de bord annonce le Smart Book 3ᵉ SI à 81 pages ; le drapeau reste au lot v503. */
   assert.equal(revisions.get('./dashboard.html'), 'livre-3si-81p-v585');
@@ -68,7 +68,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v517 : le ruban lit mieux la classe — la 4e SI passe au vert. */
   assert.equal(revisions.get('./assets/js/news-perso.js'), 'ruban-vert-v517');
   /* v507 : ruban sans logo et compteurs de vidéos. */
-  assert.equal(revisions.get('./assets/css/theme.css'), 'pastilles-cours-v600');
+  assert.equal(revisions.get('./assets/css/theme.css'), 'pastilles-ligne-v601');
   assert.equal(revisions.get('./admin.html'), 'secours-plateforme-v598');
   assert.equal(revisions.get('./assets/js/sante.js'), 'tp-transitions-v512');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */

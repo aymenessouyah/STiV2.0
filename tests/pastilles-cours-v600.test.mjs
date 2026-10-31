@@ -32,15 +32,13 @@ function blocPastilles() {
   return CSS.slice(marque, fin);
 }
 
-test('v600 : chaque cours devient un cercle de 64 px', () => {
+test('v600 : chaque cours devient un cercle', () => {
   const bloc = blocPastilles();
   assert.match(bloc, /\.welcome-return__courses\s*\{[^}]*gap:/, 'les pastilles sont espacées régulièrement');
   const carte = bloc.match(/\.welcome-course\s*\{([^}]*)\}/);
   assert.ok(carte, 'la règle .welcome-course existe dans le bloc mobile');
-  assert.match(carte[1], /width:\s*64px/, 'largeur fixe de pastille');
-  assert.match(carte[1], /height:\s*64px/, 'hauteur fixe : le cercle reste rond');
-  assert.match(carte[1], /min-width:\s*64px/, 'aucune pastille ne se rétracte');
-  assert.match(carte[1], /max-width:\s*64px/, 'aucune pastille ne s’étire');
+  assert.match(carte[1], /max-width:\s*64px/, 'la pastille ne dépasse pas sa taille d’origine');
+  assert.match(carte[1], /aspect-ratio:\s*1/, 'la largeur impose la hauteur : le cercle reste rond');
   assert.match(carte[1], /padding:\s*0/, 'le cercle n’a pas de rembourrage interne');
   assert.match(carte[1], /border-radius:\s*var\(--radius-full\)/, 'la forme est un cercle');
 });
@@ -51,8 +49,8 @@ test('v600 : le cercle ne contient que le logo du cours', () => {
   assert.ok(couverture, 'la pastille colore son fond avec la couverture');
   assert.match(couverture[1], /border-radius:\s*var\(--radius-full\)/, 'la couverture est ronde elle aussi');
   assert.match(couverture[1], /width:\s*100%/, 'le fond occupe tout le cercle');
-  assert.match(bloc, /\.welcome-course__icon\s*\{[^}]*width:\s*38px/, 'le logo garde une taille lisible');
-  assert.match(bloc, /\.welcome-course__icon svg\s*\{[^}]*width:\s*22px/, 'le dessin du logo est agrandi');
+  assert.match(bloc, /\.welcome-course__icon\s*\{[^}]*width:\s*60%/, 'le logo suit la taille du cercle');
+  assert.match(bloc, /\.welcome-course__icon svg\s*\{[^}]*width:\s*58%/, 'le dessin du logo suit son cadre');
 
   /* Le texte reste dans le document, simplement invisible à l'écran. */
   const texte = bloc.match(/\.welcome-course__body,\s*\n?\s*\.welcome-course__state\s*\{([^}]*)\}/);
@@ -84,7 +82,7 @@ test('v600 : l’ordinateur garde ses cartes complètes', () => {
 });
 
 test('v600 : la version publiée et le cache avancent', () => {
-  assert.match(SW, /var VERSION_PUBLIEE = "v600";/, 'la version publiée passe à v600');
-  assert.match(SW, /url: "\.\/assets\/css\/theme\.css", revision: "pastilles-cours-v600"/);
-  assert.match(SW, /url: "\.\/assets\/js\/app\.js", revision: "pastilles-cours-v600"/);
+  assert.match(SW, /var VERSION_PUBLIEE = "v601";/, 'la version publiée passe à v600');
+  assert.match(SW, /url: "\.\/assets\/css\/theme\.css", revision: "pastilles-ligne-v601"/);
+  assert.match(SW, /url: "\.\/assets\/js\/app\.js", revision: "pastilles-ligne-v601"/);
 });
