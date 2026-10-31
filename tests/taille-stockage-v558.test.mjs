@@ -84,7 +84,7 @@ test('la nouvelle mesure est servie avec un cache-buster et une révision à jou
   /* v560 : admin.js change encore (bascule automatique des photos base64),
      le cache-buster et les deux révisions suivent. */
   assert.match(admin, /assets\/js\/admin\.js\?v=605-perf/);
-  assert.match(sw, /url: "\.\/admin\.html", revision: "compteurs-diag-v605"/);
+  assert.match(sw, /url: "\.\/admin\.html", revision: "export-trouvable-v606"/);
   assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "compteurs-diag-v605"/);
   /* Rappel : le cache et le lot général ne bougent pas. */
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);

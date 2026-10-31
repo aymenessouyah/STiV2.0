@@ -121,7 +121,7 @@ test('v583 : le repli hors-ligne de la roue reflète le manifeste et le Service 
     './assets/js/analytique.js': 'secours-plateforme-v598',
     './assets/js/admin-couverture.js': 'couverture-v583',
     './assets/js/roue-couverture.js': 'couverture-v598',
-    './admin.html': 'compteurs-diag-v605'
+    './admin.html': 'export-trouvable-v606'
   };
   for (const [url, revision] of Object.entries(revisionsAttendues)) {
     const ligne = sw.split('\n').find((l) => l.includes('url: "' + url + '"'));
