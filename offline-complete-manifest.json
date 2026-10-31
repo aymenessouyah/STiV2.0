@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-01T13:10:00Z",
+  "generatedAt": "2026-11-01T14:40:00Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 772,
-  "totalBytes": 1114023226,
+  "totalFiles": 773,
+  "totalBytes": 1114042160,
   "files": [
     {
       "path": "404.html",
@@ -67,8 +67,8 @@
     },
     {
       "path": "admin.html",
-      "bytes": 346703,
-      "gitSha": "aebf613e0144ed5bc3dd8501df965101b0e1bd1a"
+      "bytes": 346767,
+      "gitSha": "b15f1208db2bd5a91fa6d9b78213d0ff7d885a92"
     },
     {
       "path": "assets/audio/cours-sti-ch1.mp3",
@@ -816,6 +816,11 @@
       "gitSha": "8025118f32ee220a7dd4ec5fefa3ca378ed774e1"
     },
     {
+      "path": "assets/js/export-drive.js",
+      "bytes": 16586,
+      "gitSha": "9fb20cdaded149290814a9bd8924fbf9f4ce2f00"
+    },
+    {
       "path": "assets/js/graphiques-activite.js",
       "bytes": 11398,
       "gitSha": "b2b1d1b0a19846cb3495ff924bb3b3a170e9ac87"
@@ -987,8 +992,8 @@
     },
     {
       "path": "assets/js/sauvegarde.js",
-      "bytes": 33303,
-      "gitSha": "8bedc482b35caa96777ed6a3818d0a7e88cb58b6"
+      "bytes": 35492,
+      "gitSha": "1fdc0a6fec008bd9fa7176a6afb3e737d4300ca8"
     },
     {
       "path": "assets/js/smart-book.js",
@@ -3862,8 +3867,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 103065,
-      "gitSha": "70a9d3027afedd3fc8cce3f852356ad33c8ae737"
+      "bytes": 103160,
+      "gitSha": "3838ce576bf513bd933a4801af9b341c3a1e3d2c"
     }
   ]
 }

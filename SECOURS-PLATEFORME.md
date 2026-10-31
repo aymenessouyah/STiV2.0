@@ -67,6 +67,29 @@ avec `--sortie /chemin/vers/dossier`.
 
 ## Comment l'envoyer sur Drive
 
+### En un clic : le bouton « 📦 Export vers Drive » du tableau de bord
+
+Dans `admin.html` → **💾 Sauvegarde complète** → **📦 Export vers Drive**.
+
+Ce bouton réunit dans **un seul fichier** déposé dans « STI — Sauvegardes
+base » :
+
+| Ce qui part | Pourquoi |
+|---|---|
+| les 18 tables Supabase | les données des élèves |
+| le schéma complet de la base (schéma initial + toutes les migrations, dans l'ordre) | pour recréer la base sans le dépôt |
+| le code du site (HTML, CSS, JS, JSON, SVG, SQL), jusqu'à 8 Mo | pour relire une page sans GitHub |
+| le manifeste des 773 fichiers (chemin, taille, empreinte) | pour savoir ce qu'il reste à récupérer |
+| le mode d'emploi de restauration, en clair | pour que quelqu'un d'autre puisse tout remonter |
+
+Il passe par le **même Web App Apps Script** que « Sauvegarder vers Drive » :
+aucun nouveau déploiement n'est nécessaire, et le fichier du jour
+(`sti-sauvegarde-AAAA-MM-JJ.json.gz`) contient désormais tout. La case
+« Inclure le code du site » peut être décochée pour n'envoyer que le schéma et
+les données (archive plus légère).
+
+### Les archives lourdes, à la main (une fois par mois)
+
 1. Ouvrir le Google Drive du professeur ;
 2. aller dans le dossier **« STI — Sauvegardes base »** (celui qui reçoit déjà
    les `.json.gz` de la nuit) ;

@@ -66,6 +66,9 @@
     "assets/js/exercices-sti.js": [
       "595"
     ],
+    "assets/js/export-drive.js": [
+      "603"
+    ],
     "assets/js/graphiques-activite.js": [
       "469"
     ],
@@ -126,7 +129,7 @@
       "471"
     ],
     "assets/js/sauvegarde.js": [
-      "473"
+      "603"
     ],
     "assets/js/sql-playground.js": [
       "396"

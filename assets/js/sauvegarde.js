@@ -554,6 +554,13 @@
       + '    <button type="button" id="sti-sauv-drive-statut" style="padding:7px 12px;border-radius:9px;border:2px solid var(--adm-border-strong,#1a1a2e);background:var(--adm-surface,#fff);color:var(--adm-text,#1a1a2e);font-weight:800;cursor:pointer">🔄 État Drive</button>'
       + '  </div>'
       + '</div>'
+      + '<div style="background:#eef6ff;border:2px dashed #1d4ed8;border-radius:13px;padding:11px 13px;margin-bottom:11px;font-size:12.6px;color:var(--adm-text,#1a1a2e)">'
+      + '  <div style="font-weight:900;margin-bottom:5px">📦 Export vers Drive — sauvegarde de secours de toute la plateforme</div>'
+      + '  <p style="margin:0 0 8px;line-height:1.45">Un seul fichier déposé dans « STI — Sauvegardes base » : les <b>18 tables</b>, le <b>schéma complet de la base</b> (schéma initial + migrations), le <b>code du site</b> et le <b>mode d’emploi de restauration</b>. À lancer une fois par mois.</p>'
+      + '  <label style="display:flex;align-items:center;gap:7px;margin-bottom:9px;font-weight:800;cursor:pointer"><input type="checkbox" id="sti-sauv-export-code" checked> Inclure le code du site (jusqu’à 8 Mo ; décoché = schéma + données seuls)</label>'
+      + '  <button type="button" id="sti-sauv-drive-export" style="padding:10px 16px;border-radius:10px;border:2.5px solid #1d4ed8;background:linear-gradient(120deg,#1d4ed8,#0f766e);color:#fff;font-weight:800;cursor:pointer">📦 Export vers Drive</button>'
+      + '  <div id="sti-sauv-export-etat" style="margin-top:8px"></div>'
+      + '</div>'
       + '<p style="margin:0 0 8px;font-size:12.8px">Restaurer les préférences locales depuis une archive (<code>.json</code> ou <code>.json.gz</code>) : <input type="file" id="sti-sauv-fichier" accept=".json,.gz,application/json,application/gzip"></p>'
       + '<div id="sti-sauv-zone" style="font-size:13px"></div>';
     document.body.appendChild(ov);
@@ -615,6 +622,24 @@
       });
     });
 
+    var btnExportDrive = document.getElementById("sti-sauv-drive-export");
+    if (btnExportDrive) btnExportDrive.addEventListener("click", function () {
+      var caseCode = document.getElementById("sti-sauv-export-code");
+      if (!window.STIExportDrive) {
+        zone.innerHTML = "<p>⚠️ Module <code>export-drive.js</code> absent : rechargez la page.</p>";
+        return;
+      }
+      var jeton = tokenAdmin();
+      var urlSaisie = inpUrl && estUrlWebAppDriveValide(inpUrl.value) ? String(inpUrl.value).trim() : lireUrlWebAppDrive();
+      btnExportDrive.disabled = true;
+      var rendre = function () { btnExportDrive.disabled = false; };
+      window.STIExportDrive.exporter({
+        urlDrive: urlSaisie,
+        jeton: jeton,
+        collecterDonnees: function () { return collecterToutCloud(jeton); },
+        memoriser: memoriserResultatDrive
+      }, { avecCode: !caseCode || caseCode.checked, zone: zone }).then(rendre, rendre);
+    });
     document.getElementById("sti-sauv-drive-statut").addEventListener("click", function () {
       var val = String((inpUrl && inpUrl.value) || "").trim();
       zone.innerHTML = "<p>⏳ Lecture du dossier Google Drive <code>STI — Sauvegardes base</code>…</p>";
