@@ -164,9 +164,9 @@ test('v580 : la page, le moteur et la banque sont hors-ligne et versionnés', ()
     assert.ok(delta.includes(`"./${chemin}"`), 'delta : ' + chemin);
     assert.ok(complet.includes(`"./${chemin}"`), 'paquet complet : ' + chemin);
   }
-  assert.match(sw, /var UPDATE_ID = "v580-quiz-systemes"/);
+  assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  assert.match(manifeste.version, /^v580/);
+  assert.match(manifeste.version, /^v\d+-sti-atelier-v\d+$/);
   for (const chemin of [PAGE, MOTEUR, BOOT, BANQUE]) {
     assert.ok(manifeste.files.some((f) => f.path === chemin), 'manifeste : ' + chemin);
   }

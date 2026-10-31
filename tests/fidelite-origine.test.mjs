@@ -202,8 +202,11 @@ test('commandes d’administration : scripts et fonctions de la barre PC inchang
      disparu du bucket ; empreinte réactualisée.
      v581 : audit du tableau de bord (durées plafonnées à 3 h par session,
      vidéos décoratives écartées du compteur, quiz ramenés à un seul nom et
-     notes toujours affichées sur 20) ; empreinte réactualisée. */
-  assert.equal(sha('assets/js/admin.js'), '8b2b2dd147c362b81a6c03ba9b85bf73ce154a096de9bcb9ba12f051af1e3236');
+     notes toujours affichées sur 20) ; empreinte réactualisée.
+     v582 : le journal des connexions annonce sa date de départ, la période par
+     défaut devient le cumul, un instantané local peut être réimporté et toute
+     suppression est précédée d'une copie ; empreinte réactualisée. */
+  assert.equal(sha('assets/js/admin.js'), '66a538adffb972a01000e7421da6659fa2466886d6704e2ac7b82b51fc598ff4');
   assert.equal(sha('assets/js/rayonsx-surligneur.js'), '1b7fe2067629766ef4043fa3060199b71124d8486e36d92aaac0b45bd861847c');
   const protection = lire('assets/js/protection.js');
   const debut = protection.indexOf('  function estAppareilPC()');
