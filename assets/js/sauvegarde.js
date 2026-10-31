@@ -1,9 +1,15 @@
-/* ═══ STI SAUVEGARDE (v467) — Export paginé complet 15 tables (.json & .json.gz) + Sync Google Drive ═══
-   Exporte l'intégralité des 15 tables public Supabase (profiles, acces, sti_progressions,
+/* ═══ STI SAUVEGARDE (v467) — Export paginé complet 18 tables (.json & .json.gz) + Sync Google Drive ═══
+   Exporte l'intégralité des 18 tables public Supabase (profiles, acces, sti_progressions,
    sti_quiz_parties, sti_quiz_reponses, sti_quiz_sessions, sti_quiz_vus, sti_diagnostics,
    sti_observations, labo_devices, labo_device_sessions, labo_device_messages, badges_labo,
    app_config_public, push_subscriptions) avec tri déterministe multi-colonnes par tranches de 1 000 lignes
-   + préférences locales sti-* + synchronisation quotidienne Google Drive (STISauvegardeSupbase). */
+   + préférences locales sti-* + synchronisation quotidienne Google Drive (STISauvegardeSupbase).
+
+   v590 : trois tables manquaient à l'appel — le journal et les compteurs des XP
+   (`sti_quiz_xp_compteurs`, `sti_quiz_xp_operations`, réservés aux RPC) et les
+   copies du journal de connexions (`acces_sauvegardes`, métadonnées seules).
+   Elles passent par la RPC `admin_sauvegarde_tables_annexes()` comme les autres
+   tables que le navigateur n'a pas le droit de lire directement. */
 (function () {
   "use strict";
   var cfg = window.STI_AUTH || {
@@ -37,7 +43,12 @@
     { nom: "labo_device_messages", ordre: "id" },
     { nom: "badges_labo",          ordre: "code_hash",  viaRpcAnnexe: true },
     { nom: "app_config_public",    ordre: "id" },
-    { nom: "push_subscriptions",   ordre: "id",         viaRpcAnnexe: true }
+    { nom: "push_subscriptions",   ordre: "id",         viaRpcAnnexe: true },
+    /* v590 : sans ces trois lignes, les XP et les copies du journal de connexions
+       n'étaient sauvegardés nulle part (tables fermées au navigateur). */
+    { nom: "sti_quiz_xp_compteurs", ordre: "user_id, cle",              viaRpcAnnexe: true },
+    { nom: "sti_quiz_xp_operations", ordre: "user_id, cree_le, operation_id", viaRpcAnnexe: true },
+    { nom: "acces_sauvegardes",      ordre: "id",                      viaRpcAnnexe: true }
   ];
 
   function ech(s) {
@@ -255,7 +266,7 @@
       if (zone) zone.innerHTML = "<p>⚠️ Connectez-vous en administrateur d'abord.</p>";
       return Promise.resolve(null);
     }
-    if (zone) zone.innerHTML = "<p>⏳ Collecte paginée des <b>15 tables Supabase</b> en cours…</p>";
+    if (zone) zone.innerHTML = "<p>⏳ Collecte paginée des <b>18 tables Supabase</b> en cours…</p>";
     return collecterToutCloud(token).then(function (sortie) {
       var dateJour = new Date().toISOString().slice(0, 10);
       var baseNom = "sti-sauvegarde-" + dateJour + ".json";
@@ -338,7 +349,7 @@
       ts: Date.now(),
       fichier: res.fichier || "",
       taille_octets: res.taille_octets || 0,
-      nb_tables: res.nb_tables || 15,
+      nb_tables: res.nb_tables || TABLES_CLOUD.length,
       total_lignes: res.total_lignes || 0,
       cree_le: res.cree_le || new Date().toISOString()
     };
@@ -451,7 +462,7 @@
       var mem = JSON.parse(localStorage.getItem(CLE_DERNIERE_SYNC_DRIVE) || "null");
       if (!mem || !mem.fichier) return "Aucune synchronisation Web App enregistrée sur ce navigateur (le déclencheur quotidien Apps Script tourne à 02 h).";
       var ko = Math.max(1, Math.round((mem.taille_octets || 0) / 1024));
-      return "Dernière archive Drive : <b>" + ech(mem.fichier) + "</b> (" + ko + " Ko · " + (mem.nb_tables || 15) + " tables · " + (mem.total_lignes || 0) + " lignes).";
+      return "Dernière archive Drive : <b>" + ech(mem.fichier) + "</b> (" + ko + " Ko · " + (mem.nb_tables || TABLES_CLOUD.length) + " tables · " + (mem.total_lignes || 0) + " lignes).";
     } catch (e) {
       return "";
     }
@@ -478,7 +489,7 @@
         if (zone) {
           zone.innerHTML = "<p>✅ <b>Script v467 copié dans le presse-papiers !</b><br>"
             + "1️⃣ Ouvrez votre projet Google Apps Script <code>STISauvegardeSupbase</code> et remplacez le contenu de <code>Code.gs</code>.<br>"
-            + "2️⃣ Exécutez une seule fois la fonction <b><code>installer</code></b> pour activer la sauvegarde quotidienne automatique à 02 h sur les <b>15 tables</b>.</p>";
+            + "2️⃣ Exécutez une seule fois la fonction <b><code>installer</code></b> pour activer la sauvegarde quotidienne automatique à 02 h sur les <b>18 tables</b>.</p>";
         }
       })
       .catch(function (e) {
@@ -526,8 +537,8 @@
     ov.setAttribute("style", 'position:fixed;inset:auto 4% 4% 4%;max-height:86vh;overflow-y:auto;z-index:100000;background:var(--adm-surface,#fffdf7);border:3px solid var(--adm-border-strong,#1a1a2e);border-radius:18px;box-shadow:8px 8px 0 rgba(15,23,42,.35);padding:20px 24px;font-family:"Comic Sans MS","Comic Sans","Comic Neue","Chalkboard SE",cursive,sans-serif;color:var(--adm-text,#1a1a2e);');
     var urlActuelle = lireUrlWebAppDrive();
     ov.innerHTML = '<button type="button" id="sti-sauv-fermer" style="float:right;padding:7px 13px;border-radius:10px;border:2px solid var(--adm-border-strong,#1a1a2e);background:var(--adm-surface-2,#fff);color:var(--adm-text,#1a1a2e);font-weight:800;cursor:pointer">✕ Fermer</button>'
-      + '<h2 style="margin:0 0 8px;font-size:19px">💾 Sauvegarde complète (15 tables Supabase + Google Drive)</h2>'
-      + '<p style="margin:0 0 10px;font-size:13.2px;line-height:1.45">Exporte l\'intégralité des <b>15 tables <code>public</code></b> (profils, connexions, progressions, parties/réponses/sessions/vus quiz, diagnostics, observations, postes/sessions/messages Labo 3, badges labo, configuration publique, notifications) avec pagination par tranches de 1 000 lignes + préférences locales.</p>'
+      + '<h2 style="margin:0 0 8px;font-size:19px">💾 Sauvegarde complète (18 tables Supabase + Google Drive)</h2>'
+      + '<p style="margin:0 0 10px;font-size:13.2px;line-height:1.45">Exporte l\'intégralité des <b>18 tables <code>public</code></b> (profils, connexions, progressions, parties/réponses/sessions/vus quiz, diagnostics, observations, postes/sessions/messages Labo 3, badges labo, configuration publique, notifications, journal et compteurs XP, métadonnées des copies du journal de connexions) avec pagination par tranches de 1 000 lignes + préférences locales.</p>'
       + '<div style="display:flex;flex-wrap:wrap;gap:9px;margin-bottom:12px">'
       + '  <button type="button" id="sti-sauv-export-gz" style="padding:10px 16px;border-radius:10px;border:2.5px solid var(--adm-border-strong,#1a1a2e);background:linear-gradient(120deg,#15803d,#0f766e);color:#fff;font-weight:800;cursor:pointer">⬇️ Exporter .json.gz (format Drive)</button>'
       + '  <button type="button" id="sti-sauv-export" style="padding:10px 16px;border-radius:10px;border:2.5px solid var(--adm-border-strong,#1a1a2e);background:#0f766e;color:#fff;font-weight:800;cursor:pointer">⬇️ Exporter .json complet</button>'
@@ -590,7 +601,7 @@
         localStorage.setItem(CLE_WEBAPP_DRIVE, val);
         pousserConfigDriveAdmin(val);
       }
-      zone.innerHTML = "<p>⏳ Sauvegarde des 15 tables vers Google Drive en cours…</p>";
+      zone.innerHTML = "<p>⏳ Sauvegarde des 18 tables vers Google Drive en cours…</p>";
       appelerWebAppDrive("sauvegarder", val).then(function (res) {
         if (!res || !res.ok) {
           zone.innerHTML = "<p>⚠️ Réponse Drive : " + ech((res && (res.erreur || res.message)) || "échec") + "</p>";

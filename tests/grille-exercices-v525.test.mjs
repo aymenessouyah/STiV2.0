@@ -57,7 +57,7 @@ test('v525 : la grille est livrée hors ligne et son empreinte est exacte', () =
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   assert.match(delta, /url: "\.\/assets\/css\/cours-javascript\.css", revision: "barre-mobile-v532"/);
-  assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "etiquette-capsule-v587", refreshIfCached: true/);
+  assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "quiz-sauvegarde-v590", refreshIfCached: true/);
   for (const bloc of ['SHELL', 'OFFLINE_LIST']) {
     const contenu = sw.split('var ' + bloc + ' = [')[1].split('];')[0];
     assert.ok(contenu.includes('"./assets/css/cours-javascript.css"'), bloc + ' : feuille de style');

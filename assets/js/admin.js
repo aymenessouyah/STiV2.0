@@ -6135,8 +6135,8 @@
     { key: "video:css-positionnement", label: "CSS Positionnement", niveau: "tous" },
     { key: "video:css-animee", label: "CSS Décoration", niveau: "tous" },
     { key: "video:tp-transitions-animations", label: "TP transitions et animations", niveau: "tous" },
-    { key: "video:explore-tunisie-flex", label: "Explore Tunisie — Flex", niveau: "tous", horsCatalogue: true },
-    { key: "video:explore-tunisie-float", label: "Explore Tunisie — Float", niveau: "tous", horsCatalogue: true },
+    { key: "video:explore-tunisie-flex", label: "Explore Tunisie — Flex", niveau: "tous", horsCatalogue: true, horsBilan: true },
+    { key: "video:explore-tunisie-float", label: "Explore Tunisie — Float", niveau: "tous", horsCatalogue: true, horsBilan: true },
     { key: "video:javascript-cours", label: "Cours JS", niveau: "tous" },
     { key: "video:console-variables", label: "La console, les variables et les types", niveau: "tous" },
     { key: "video:fonctions-chaine", label: "Les chaînes de caractères", niveau: "tous" },
@@ -6147,10 +6147,10 @@
     { key: "video:defis37-tableau-aleas-media", label: "Les 37 Défis", niveau: "tous" },
     { key: "video:sql-cours", label: "Cours SQL", niveau: "tous" },
     { key: "video:sql-initiation", label: "Construire une requête SQL", niveau: "tous" },
-    { key: "video:sql-serie1", label: "SQL Série 1 (création de tables)", niveau: "tous", horsCatalogue: true },
-    { key: "video:sql-serie2", label: "SQL Série 2 (SELECT et filtres)", niveau: "tous", horsCatalogue: true },
-    { key: "video:sql-serie3", label: "SQL Série 3 (requêtes avancées)", niveau: "tous", horsCatalogue: true },
-    { key: "video:sql-serie6", label: "SQL Série 6", niveau: "tous", horsCatalogue: true },
+    { key: "video:sql-serie1", label: "SQL Série 1 (création de tables)", niveau: "tous", horsCatalogue: true, horsBilan: true },
+    { key: "video:sql-serie2", label: "SQL Série 2 (SELECT et filtres)", niveau: "tous", horsCatalogue: true, horsBilan: true },
+    { key: "video:sql-serie3", label: "SQL Série 3 (requêtes avancées)", niveau: "tous", horsCatalogue: true, horsBilan: true },
+    { key: "video:sql-serie6", label: "SQL Série 6", niveau: "tous", horsCatalogue: true, horsBilan: true },
     { key: "video:php-cours", label: "Cours PHP", niveau: "4si" },
     { key: "video:php-variables", label: "PHP — variables et types", niveau: "4si" },
     { key: "video:php-chaines", label: "PHP — chaînes et date/heure", niveau: "4si" },
@@ -6212,24 +6212,14 @@
       pm["audio:php-guichet"] = pm["audio:guichet-etapes"];
     }
     var ok4 = estProfil4SIAdmin(p);
-    /* v587 : le total vient du catalogue (fixe), et non plus des vidéos déjà
-       ouvertes : toutes les capsules comptent, même à 0 %, et les deux élèves
-       d'un même niveau ont le même dénominateur. La 4ᵉ SI ajoute ses vidéos. */
+    /* v590 : le bilan ne compte QUE les capsules de la vitrine (27 au total,
+       20 en 3ᵉ SI). Les vidéos des pages de cours (séries SQL 1 à 3 et 6,
+       Explore Tunisie) restent suivies par le panneau « Vues des vidéos », mais
+       elles ne font plus partie du travail attendu : le dénominateur reste donc
+       identique pour tous les élèves d'un même niveau. */
     var catVideos = CATALOGUE_VIDEOS_ADMIN
-      .filter(function (v) { return v.niveau !== "4si" || ok4; })
+      .filter(function (v) { return !v.horsBilan && (v.niveau !== "4si" || ok4); })
       .map(function (v) { return { key: v.key, label: v.label }; });
-    var mapDejaVid = {};
-    catVideos.forEach(function (v) { mapDejaVid[v.key] = true; });
-    Object.keys(pm).forEach(function (k) {
-      if (k.indexOf("video:") !== 0 || mapDejaVid[k]) return;
-      /* v587 : les vidéos de décor de l'accueil (drapeau animé, bandeau du lycée,
-         présentation) ne sont pas un travail : jamais comptées. */
-      if (estMediaDecoratifAdminFiche(k)) return;
-      if ((Number(pm[k]) || 0) < 1) return;
-      mapDejaVid[k] = true;
-      var lblV = LIBELLES_VIDEOS_SUPP_ADMIN[k] || ("Vidéo " + k.slice(6).replace(/-/g, " "));
-      catVideos.push({ key: k, label: lblV });
-    });
 
     var catAudios = [
       { key: "audio:html5-cours", label: "Audio HTML5" },

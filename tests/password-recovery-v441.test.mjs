@@ -1573,7 +1573,7 @@ test('v457 (Lot D — audit final Quiz) : couverture des pages du site, cache-bu
   );
 
   // 5) Accueil #modules actualisé (1 244 / 886 questions, 66 Défis JS & HTML, plus de mention erronée "sans compte")
-  assert.match(indexHtml, /Cinq quiz &amp; révision ciblée \(1 244 questions\)/);
+  assert.match(indexHtml, /Cinq quiz &amp; révision ciblée \(1 269 questions\)/);
   assert.match(indexHtml, /Quatre quiz &amp; révision ciblée \(886 questions\)/);
   assert.match(indexHtml, /des 66 Défis JS &amp; HTML/);
   assert.ok(!indexHtml.includes('des 37 Défis JavaScript'));
@@ -1804,8 +1804,8 @@ test('v458 : révision approfondie Quiz Phase 2 — assainissement intégral qui
   const swJs = read('sw.js');
 
   // 1) quiz-banque.json : 635 questions, 635 IDs uniques, 0 caractère PUA, 0 guillemets vides, 0 en-tête de section comme réponse, 0 giveaway de longueur
-  assert.equal(qb.questions.length, 635);
-  assert.equal(new Set(qb.questions.map((q) => q.id)).size, 635, 'Tous les 635 IDs historiques sont préservés');
+  assert.equal(qb.questions.length, 660);
+  assert.equal(new Set(qb.questions.map((q) => q.id)).size, 660, 'Tous les 660 IDs sont uniques (635 historiques + 25 SQL v590)');
   assert.doesNotMatch(qbRaw, /[\uE000-\uF8FF]/, 'Aucun caractère PUA corrompu dans quiz-banque.json');
   qb.questions.forEach((q, idx) => {
     assert.equal(q.choix_faux.length, 3, `QB[${idx}] doit avoir 3 distracteurs`);
@@ -2627,6 +2627,10 @@ test('v461 (comportemental VM) : ABED Ala (4eme SI2) remonte 1/8 vidéo (73%) de
       maj: '2026-10-25T08:05:00Z',
       donnees: {
         'sti-media-prog-v1': JSON.stringify({
+          /* v590 : les vidéos des pages de cours ne font plus partie du bilan ;
+             on ajoute donc une capsule de la vitrine pour vérifier la remontée
+             de la progression depuis sti_progressions après purge d'acces. */
+          'video:css3-cours': { pct: 77, maxPct: 77, sec: 223, dur: 290, done: false, ts: 1792530100000 },
           'video:explore-tunisie-flex': { pct: 77, maxPct: 77, sec: 223, dur: 290, done: false, ts: 1792530100000 },
           'audio:css-positionnement': { pct: 6, maxPct: 6, sec: 18, dur: 300, done: false, ts: 1792530200000 },
           'audio:sql-cours': { pct: 100, maxPct: 100, sec: 0, dur: 622, done: true, ts: 1792530300000 },
@@ -2641,20 +2645,20 @@ test('v461 (comportemental VM) : ABED Ala (4eme SI2) remonte 1/8 vidéo (73%) de
 
   const bilAla = ctxAdmin.window.__stiBilanProgressionMediaUser(abedAla);
   assert.equal(bilAla.ok4, true);
-  assert.equal(bilAla.totVid, 33, 'Un élève de 4eme SI2 a 33 vidéos au socle (inventaire complet, vidéos de cours comprises)');
+  assert.equal(bilAla.totVid, 27, 'Un élève de 4eme SI2 a 27 vidéos au socle (les capsules de la vitrine)');
   assert.equal(bilAla.totAud, 5, 'Un élève de 4eme SI2 a 5 audios de base (incluant Audio PHP)');
   assert.equal(bilAla.nbVidVues, 1, 'Le compteur vidéo d’ABED Ala doit afficher 1 vidéo consultée (et non 0)');
   assert.equal(bilAla.nbVidEnCours, 1);
   assert.equal(bilAla.nbVidDone, 0);
-  assert.equal(bilAla.resumeCourtVid, '1/33 ⏳');
-  assert.equal(bilAla.resumeEnteteVid, '1/33 · 1 ⏳ en cours');
+  assert.equal(bilAla.resumeCourtVid, '1/27 ⏳');
+  assert.equal(bilAla.resumeEnteteVid, '1/27 · 1 ⏳ en cours');
   assert.ok(Array.from(bilAla.catVideos, (v) => v.key).includes('video:cours-sti'),
     'Le cours « Systèmes, technologies et Internet » compte dans le socle de tous');
   assert.ok(Array.from(bilAla.listV).includes('Cours PHP (⏳ 73%)'));
 
   const bil3SI = ctxAdmin.window.__stiBilanProgressionMediaUser(eleve3SI);
   assert.equal(bil3SI.ok4, false);
-  assert.equal(bil3SI.nbVidVues, 1, 'TP Tunisie Flex (77%) doit être comptabilisé dans les vidéos vues');
+  assert.equal(bil3SI.nbVidVues, 1, 'Cours CSS3 (77%) doit être comptabilisé dans les vidéos vues');
   assert.equal(bil3SI.nbAudVues, 2, 'Audio SQL (100%) + Audio Positionnement (6% < 10%) doivent tous deux être comptabilisés');
   assert.equal(bil3SI.nbAudDone, 1);
   assert.equal(bil3SI.nbAudEnCours, 1);
@@ -3783,11 +3787,12 @@ test('v467 (comportemental VM) : retour bfcache 0 ms vers series-exercices.html 
           }
           return { getResponseCode: () => 401, getContentText: () => '{}' };
         }
-        const m = url.match(/\/rest\/v1\/([a-z_]+)\?select=\*&order=([^&]+)&limit=1000&offset=(\d+)/);
+        /* v590 : les colonnes peuvent être restreintes (copies du journal de connexions). */
+        const m = url.match(/\/rest\/v1\/([a-z_]+)\?select=([^&]+)&order=([^&]+)&limit=1000&offset=(\d+)/);
         assert.ok(m, 'URL PostgREST attendue : ' + url);
         const tbl = m[1];
-        const ord = decodeURIComponent(m[2]);
-        const offset = Number(m[3]);
+        const ord = decodeURIComponent(m[3]);
+        const offset = Number(m[4]);
         if (tbl === 'sti_quiz_sessions') assert.equal(ord, 'user_id.asc,quiz.asc,mode.asc');
         if (tbl === 'sti_quiz_vus') assert.equal(ord, 'user_id.asc,module.asc,question_id.asc');
         if (tbl === 'sti_quiz_reponses' && offset === 0) {
@@ -3877,15 +3882,15 @@ test('v467 (comportemental VM) : retour bfcache 0 ms vers series-exercices.html 
     },
   };
   vm.runInNewContext(gsCode, gsCtx);
-  assert.equal(Array.from(gsCtx.TABLES_SAUVEGARDE).length, 15);
+  assert.equal(Array.from(gsCtx.TABLES_SAUVEGARDE).length, 18);
 
   const denied = JSON.parse(gsCtx.doPost({ postData: { contents: JSON.stringify({ action: 'sauvegarder', access_token: 'bad' }) } }).getContent());
   assert.equal(denied.ok, false);
 
   const synced = JSON.parse(gsCtx.doPost({ postData: { contents: JSON.stringify({ action: 'sauvegarder', access_token: 'valid-admin-jwt-token-1234567890' }) } }).getContent());
   assert.equal(synced.ok, true);
-  assert.equal(synced.nb_tables, 15);
-  assert.equal(synced.total_lignes, 1002 + 14); // 1002 sur sti_quiz_reponses + 1 ligne sur chacune des 14 autres tables
+  assert.equal(synced.nb_tables, 18);
+  assert.equal(synced.total_lignes, 1002 + 17); // 1002 sur sti_quiz_reponses + 1 ligne sur chacune des 17 autres tables
   assert.equal(driveFiles.find((f) => f.id === 'old-same-day').trashed, true, 'L’archive du même jour doit être remplacée sans doublon');
   assert.equal(createdBlobs[0].json.tables.sti_quiz_reponses.length, 1002);
 
@@ -3913,7 +3918,7 @@ test('v467 (comportemental VM) : retour bfcache 0 ms vers series-exercices.html 
           ok: true,
           fichier: 'sti-sauvegarde-2026-10-26.json.gz',
           taille_octets: 28672,
-          nb_tables: 15,
+          nb_tables: 18,
           total_lignes: 318,
           cree_le: '2026-10-26T12:00:00.000Z',
         }),
@@ -3974,15 +3979,15 @@ test('v467 (comportemental VM) : retour bfcache 0 ms vers series-exercices.html 
   vm.runInNewContext(sauvJs, sauvCtx);
 
   const api = sauvCtx.STI_SAUVEGARDE;
-  assert.equal(Array.from(api.TABLES_CLOUD).length, 15);
+  assert.equal(Array.from(api.TABLES_CLOUD).length, 18);
   const archive = await api.collecterToutCloud('admin-jwt-browser-token');
-  assert.equal(archive.nb_tables, 15);
+  assert.equal(archive.nb_tables, 18);
   assert.equal(Object.keys(archive.erreurs).length, 0);
   assert.equal(archive.tables.labo_devices.length, 1);
   assert.equal(archive.tables.labo_device_sessions.length, 1);
   assert.equal(Array.isArray(archive.tables.badges_labo), true);
   assert.equal(Array.isArray(archive.tables.push_subscriptions), true);
-  assert.equal(archive.total_lignes, 11 + 2);
+  assert.equal(archive.total_lignes, 11 + 5);
 
   // Round-trip compression / décompression GZIP (.json.gz)
   const gzBlob = await api.compresserGzip(JSON.stringify(archive));
@@ -3991,7 +3996,7 @@ test('v467 (comportemental VM) : retour bfcache 0 ms vers series-exercices.html 
   const decompressedTxt = await api.lireTexteFichierSauvegarde(gzBlob);
   const parsedBack = JSON.parse(decompressedTxt);
   assert.equal(parsedBack.version, 'v467');
-  assert.equal(parsedBack.nb_tables, 15);
+  assert.equal(parsedBack.nb_tables, 18);
 
   // Synchronisation Google Drive via Web App sans préflight CORS (text/plain;charset=utf-8)
   const syncRes = await api.appelerWebAppDrive('sauvegarder');
@@ -4585,9 +4590,9 @@ test('v470 : audit fonctionnel intégral en 9 points (quiz CSPRNG, Mes erreurs, 
   assert.ok(nouv.some((n) => n.version === 'v470'), 'nouveautes.json doit conserver v470');
   assert.match(readmeMd, /sti-atelier-v3\d{2}/);
   assert.match(readmeMd, /\|\s*v470\s*\|/);
-  assert.match(readmeMd, /1 244 questions/);
+  assert.match(readmeMd, /1 269 questions/);
   assert.match(adminHtml, /v470 · sti-atelier-v330/);
-  assert.match(adminHtml, /1 244 questions/);
+  assert.match(adminHtml, /1 269 questions/);
 });
 
 test('v470 (comportemental VM) : isolation multi-élèves quiz, tirage neuf connexion, reprise Tableaux, bfcache opener & secours Drive', async () => {
@@ -5030,7 +5035,7 @@ test('v470 (comportemental VM) : isolation multi-élèves quiz, tirage neuf conn
   assert.equal(autoRes.mode, 'televerser');
   assert.equal(uploadedFiles.length, 1);
   assert.equal(uploadedFiles[0].name, 'sti-sauvegarde-2026-10-26.json.gz');
-  assert.equal(Object.keys(uploadedFiles[0].json.tables).length, 15);
+  assert.equal(Object.keys(uploadedFiles[0].json.tables).length, 18);
 });
 
 test('v471 (structure) : 145/145 chemins Git exacts dans roue-revision.js (zéro 404 casse Linux), reprendre.js multi-matières, 43 contrôles sante.js & sw.js sti-atelier-v331', () => {
@@ -5259,7 +5264,7 @@ test('v471 (comportemental VM) : roue-revision.js résout les 48 pages mixtes + 
   assert.deepEqual(resSql[0].values, [['4SI1', 2, 16.5]]);
 });
 
-test('v472 (structure) : 0 balise HTML avalée sur les 1 244 questions des 5 quiz, formatage SQL resReview, masquage zéro-flash php-recap.html et sw.js sti-atelier-v332', async () => {
+test('v472 (structure) : 0 balise HTML avalée sur les 1 269 questions des 5 quiz, formatage SQL resReview, masquage zéro-flash php-recap.html et sw.js sti-atelier-v332', async () => {
   const vm = await import('node:vm');
   const phpHtml = read('quiz/php.html');
   const sqlHtml = read('quiz/sql.html');

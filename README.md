@@ -1,10 +1,10 @@
 # 📚 STI By A'e — Plateforme Pédagogique STI V2.0 (3ᵉ & 4ᵉ SI)
 
-Plateforme éducative interactive et **PWA utilisable hors ligne après mise en cache des ressources nécessaires** dédiée aux **Sciences et Technologies de l'Informatique** (**3SI** et **4SI**, programme officiel du Baccalauréat Tunisien) : cours multimédias avec **15 vidéos `.mp4` sélectionnées dans le catalogue d’accueil** (dont les ressources réservées 4SI), d’autres séries vidéo et une écoute vocale synchronisée, **2 livres connectés (Smart Books) par QR codes**, laboratoire **SQLite WASM**, **41 fiches d'exercices et séries corrigées**, **5 modules de quiz CSPRNG (1 244 questions au total)** avec tirage neuf à chaque connexion et possibilité de reprise d’une partie encore active, hub **« Mes erreurs »**, révision espacée **J+1 / J+3 / J+7**, couverture sur **145 pages**, **retour par `bfcache` lorsque le navigateur le permet**, sauvegarde automatique quotidienne des **15 tables Supabase** vers **Google Drive** et tableau de bord enseignant complet.
+Plateforme éducative interactive et **PWA utilisable hors ligne après mise en cache des ressources nécessaires** dédiée aux **Sciences et Technologies de l'Informatique** (**3SI** et **4SI**, programme officiel du Baccalauréat Tunisien) : cours multimédias avec **15 vidéos `.mp4` sélectionnées dans le catalogue d’accueil** (dont les ressources réservées 4SI), d’autres séries vidéo et une écoute vocale synchronisée, **2 livres connectés (Smart Books) par QR codes**, laboratoire **SQLite WASM**, **41 fiches d'exercices et séries corrigées**, **5 modules de quiz CSPRNG (1 269 questions au total)** avec tirage neuf à chaque connexion et possibilité de reprise d’une partie encore active, hub **« Mes erreurs »**, révision espacée **J+1 / J+3 / J+7**, couverture sur **145 pages**, **retour par `bfcache` lorsque le navigateur le permet**, sauvegarde automatique quotidienne des **18 tables Supabase** vers **Google Drive** et tableau de bord enseignant complet.
 
 > 🌐 **Plateforme en ligne** : https://aymenessouyah.github.io/STiV2.0/
 > 👨‍🏫 **Auteur** : M. Aymen Essouyah — Lycée Rafèha
-> 🏗️ **Architecture** : Frontend statique GitHub Pages + Supabase PostgreSQL (15 tables historiques et deux tables techniques XP protégées par RLS) + Service Worker incrémental (`sw.js`, cache courant `sti-atelier-v386`, identifiant de publication `v553-defilement-passif-20261030` ; l'historique complet des caches est tenu à jour dans `sw.js`)
+> 🏗️ **Architecture** : Frontend statique GitHub Pages + Supabase PostgreSQL (18 tables, dont le journal de connexions, ses copies et les deux tables techniques XP protégées par RLS) + Service Worker incrémental (`sw.js`, cache courant `sti-atelier-v386`, identifiant de publication `v553-defilement-passif-20261030` ; l'historique complet des caches est tenu à jour dans `sw.js`)
 > 📌 **Version du code** : **v553** (`sti-atelier-v386` — `UPDATE_ID` `v553-defilement-passif-20261030`, 30 octobre 2026). La version effective est toujours lue depuis le Service Worker ; la configuration d'accès protégée conserve son socle historique v479 (`sti-atelier-v340`).
 
 ---
@@ -18,7 +18,7 @@ Plateforme éducative interactive et **PWA utilisable hors ligne après mise en 
 5. [Comptes, accès laboratoire, PWA & suivi multi-appareils](#-comptes-accès-laboratoire-pwa--suivi-multi-appareils)
 6. [Tableau de bord administrateur (`admin.html`)](#-tableau-de-bord-administrateur-adminhtml)
 7. [Sécurité de la plateforme & protection des données](#-sécurité-de-la-plateforme--protection-des-données)
-8. [Base Supabase (15 tables) & Sauvegarde automatique Google Drive](#-base-supabase-15-tables--sauvegarde-automatique-google-drive)
+8. [Base Supabase (18 tables) & Sauvegarde automatique Google Drive](#-base-supabase-18-tables--sauvegarde-automatique-google-drive)
 9. [Maintenance, tests automatisés & conventions Bac STI](#-maintenance-tests-automatisés--conventions-bac-sti)
 10. [Historique des versions](#-historique-des-versions)
 
@@ -31,9 +31,9 @@ Plateforme éducative interactive et **PWA utilisable hors ligne après mise en 
 | **Cours & multimédia** | HTML5, CSS3, JavaScript, Bases de données / SQL et PHP / MySQLi (`4SI`), **15 vidéos `.mp4` dans le catalogue d’accueil**, plus les autres séries et médias historiques + écoute vocale `.mp3` synchronisée avec Guide-Ligne (`0.85×` / `1×` / `1.15×`) |
 | **Smart Books QR** | **2 manuels PDF connectés** : *3ᵉ SI* (**81 pages**, édition 2026 — la partie « Systèmes, technologies et Internet » précède HTML5) et *4ᵉ SI* (**100 pages**) reliés page par page via `livre-smart.html` |
 | **Exercices & Bac** | Hub `exercices/series-exercices.html`, **41 fiches TP / corrigés**, séries SQL 1 à 6 en vidéo, 37 Défis JS, `bac-pratique.html`, `pieges-bac.html`, `outils-js-bac.html`, `memo-veille-bac.html` |
-| **Banques de quiz** | **5 modules actifs** totalisant **1 244 questions** : HTML5/CSS3 (**187**), JavaScript (**106**), SQL (**140**), PHP (**176**) et Tableaux Smart Books (**635** dans `quiz-banque.json`) |
+| **Banques de quiz** | **5 modules actifs** totalisant **1 269 questions** : HTML5/CSS3 (**187**), JavaScript (**106**), SQL (**140**), PHP (**176**) et Tableaux Smart Books (**660** dans `quiz-banque.json`) |
 | **Suivi élève** | Anneau de couverture sur **145 pages**, révision espacée **J+1 / J+3 / J+7**, fiche imprimable `ma-fiche-revision.html`, mode Rayons X & surligneur |
-| **Cloud & sauvegarde** | **15 tables `public`** sous RLS stricte (`vywujxmepvcbgedgmger`), pagination déterministe `> 1 000` lignes et export automatique quotidien `.json.gz` vers **Google Drive** |
+| **Cloud & sauvegarde** | **18 tables `public`** sous RLS stricte (`vywujxmepvcbgedgmger`), pagination déterministe `> 1 000` lignes et export automatique quotidien `.json.gz` vers **Google Drive** |
 
 ---
 
@@ -78,7 +78,7 @@ Plateforme éducative interactive et **PWA utilisable hors ligne après mise en 
 - **Carte d'Évaluation Officielle STI V2.0 (`v459`)** en fin de quiz : bilan détaillé, points à réviser, un conseil ciblé par faute, export PNG HD et impression.
 - **Badge d'abonné (`v488`)** : un seul fond local précompose le logo et le QR STI ; la photo ou les initiales, le nom, le prénom et la classe restent propres au compte. Le QR est masqué sur mobile et agrandi au survol ou au focus sur ordinateur ; le QR original reste disponible dans la fenêtre Contact.
 - **Gains XP multi-appareils (`v490`)** : chaque nouvelle partie reçoit un identifiant conservé lors de sa reprise. Pour les quatre quiz à XP, `sti_appliquer_gain_partie_quiz` enregistre une seule fois le gain cumulatif maximal de cette partie, y compris après une réponse perdue ou une finalisation partielle suivie d'une reprise ; les gains de parties distinctes restent additifs. L'historique des cinq quiz utilise également cet identifiant. La file locale reste isolée par compte et retentée à la reconnexion ; ne pas effacer les données locales avant synchronisation. Pour une ancienne session sans identifiant, la compatibilité repose sur l'empreinte de son tirage ; des gains déjà enregistrés par un ancien client sans identité ne peuvent pas être dédupliqués rétroactivement avec certitude.
-- **Déploiement et sauvegarde XP** : appliquer, dans l'ordre, `supabase/migrations/20261027_xp_quiz_sync_v485.sql`, `supabase/migrations/20261027_xp_quiz_operations_v487.sql` puis `supabase/migrations/20261028_xp_parties_idempotentes_v490.sql`, **avant** de publier ce frontend. Les modifications v490 ne sont pas automatiquement appliquées à la base par la publication statique. Les deux tables techniques ont RLS et ne sont accessibles qu'aux RPC ; les archives Drive existantes couvrent les 15 tables historiques, pas ces deux tables. Prévoir une sauvegarde PostgreSQL/Supabase incluant le journal et les compteurs XP pour conserver l'idempotence lors d'une restauration.
+- **Déploiement et sauvegarde XP** : appliquer, dans l'ordre, `supabase/migrations/20261027_xp_quiz_sync_v485.sql`, `supabase/migrations/20261027_xp_quiz_operations_v487.sql` puis `supabase/migrations/20261028_xp_parties_idempotentes_v490.sql`, **avant** de publier ce frontend. Les modifications v490 ne sont pas automatiquement appliquées à la base par la publication statique. Les deux tables techniques ont RLS et ne sont accessibles qu'aux RPC ; **depuis la v590 elles font partie de l'export quotidien** (RPC `admin_sauvegarde_tables_annexes()`), avec les métadonnées des copies du journal de connexions.
 - **Photos dans le Storage (`v559`)** : appliquer `supabase/migrations/20261101_photos_bucket_v559.sql`. Les nouvelles photos de profil partent dans le bucket privé `photos-profils` (`<uid>/<aléatoire>.webp`) et seule une URL signée à 10 ans est conservée dans `profiles` ; l'ancien stockage base64 reste accepté, donc aucune photo existante ne disparaît. Les deux RPC (`eleve_proposer_photo`, `admin_gerer_photo_eleve`) passent par `sti_photo_url_valide()`, qui vérifie le dossier **et** l'existence réelle du fichier. La bascule des anciennes photos se fait depuis `migration-photos-bucket.html`, réservé à l'administrateur, avec sauvegarde JSON préalable. Voir aussi `supabase/migrations/LISEZ-MOI.md` pour l'état réel du registre de migrations.
 - **Bascule automatique des photos (`v560`)** : aucune migration SQL supplémentaire. À l'ouverture du tableau de bord, l'administrateur connecté et en ligne voit jusqu'à **5** photos historiques encore en base64 déposées dans le bucket privé puis remplacées par leur URL signée, une à une. L'ancienne valeur n'est remplacée qu'après un dépôt réussi **et** une URL signée relue, et la RPC `admin_gerer_photo_eleve('definir')` vérifie en base que le fichier existe : un échec laisse la photo intacte et n'interrompt pas les suivantes. Les photos en attente de validation (`photo_attente`) ne sont jamais touchées, et `migration-photos-bucket.html` reste disponible pour vérifier l'état et révoquer des URL.
 - **Contraintes photo élargies (`v561`, obligatoire)** : appliquer `supabase/migrations/20261102_photos_contraintes_v561.sql`. Les contraintes v445 n'acceptaient que l'image en base64 ; depuis la v559 la base doit aussi stocker l'URL signée du bucket privé, sinon **chaque écriture est rejetée** et tout retombe silencieusement en base64 (fichiers déposés dans le bucket, aucun profil pointant dessus). La migration remplace les deux règles (base64 **ou** URL signée, borne de 64 Ko conservée) et aligne `sti_photo_url_valide()` sur le même motif que les validateurs d'affichage.
@@ -161,9 +161,9 @@ Interface Bento/Spotlight en police **Comic**, ornée du logo officiel (`assets/
 
 ---
 
-## 🗄️ Base Supabase (15 tables) & Sauvegarde automatique Google Drive
+## 🗄️ Base Supabase (18 tables) & Sauvegarde automatique Google Drive
 
-### Les 15 tables `public` sauvegardées avec tri déterministe
+### Les 18 tables `public` sauvegardées avec tri déterministe
 
 | Table `public` | Ordre d'export | Contenu |
 |---|---|---|
@@ -182,18 +182,21 @@ Interface Bento/Spotlight en police **Comic**, ornée du logo officiel (`assets/
 | `badges_labo` | `code_hash` | Badges d'accès rapide au laboratoire (6 caractères) |
 | `app_config_public` | `id` | Configuration publique (`ecoles`, bandeau d'actualités `ticker_news`) |
 | `push_subscriptions` | `id` | Abonnements Web Push enregistrés |
+| `sti_quiz_xp_compteurs` | `user_id, cle` | Base et cumul des XP par élève et par compteur (v487) — couvert depuis la v590 |
+| `sti_quiz_xp_operations` | `user_id, cree_le` | Journal des gains XP (idempotence entre appareils) — couvert depuis la v590 |
+| `acces_sauvegardes` | `id` | Copies du journal de connexions : **métadonnées seules** (`motif`, `mois`, `nb_lignes`, `cree_le`) — v590 |
 
 ### ☁️ Envoi automatique des données vers Google Drive (`v467` + `v470`)
 
 Deux mécanismes complémentaires garantissent la continuité des sauvegardes dans le dossier Drive **`STI — Sauvegardes base`** au format compressé **`sti-sauvegarde-YYYY-MM-DD.json.gz`** :
 
 1. **Déclencheur autonome Google Apps Script (`documents/sql/sauvegarde-auto-drive.gs` — projet `STISauvegardeSupbase`)** :
-   - Exécute chaque nuit vers **02 h (heure de Tunis)** (`installer()` / `installerQuotidien()` → `everyDays(1).atHour(2)`) la lecture paginée par tranches de 1 000 lignes des **15 tables**, compresse l'archive en `.json.gz`, remplace sans doublon toute archive du même jour et purge automatiquement les archives dépassant `RETENTION_MOIS` (6 mois par défaut) ou `RETENTION_JOURS`.
+   - Exécute chaque nuit vers **02 h (heure de Tunis)** (`installer()` / `installerQuotidien()` → `everyDays(1).atHour(2)`) la lecture paginée par tranches de 1 000 lignes des **18 tables**, compresse l'archive en `.json.gz`, remplace sans doublon toute archive du même jour et purge automatiquement les archives dépassant `RETENTION_MOIS` (6 mois par défaut) ou `RETENTION_JOURS`.
    - Détecte automatiquement le dossier Drive `STI — Sauvegardes base` même si `DRIVE_FOLDER_ID` est omis, et vérifie cryptographiquement le jeton JWT administrateur auprès de `/auth/v1/user` (avec repli sur la clé publique Supabase si `SUPABASE_SERVICE_KEY` n'est pas encore renseignée).
 2. **Synchronisation automatique depuis `admin.html` (`assets/js/sauvegarde.js`)** :
    - Dès l'ouverture du tableau de bord, puis **toutes les 30 minutes**, au **retour en ligne (`online`)** et au **réveil de l'onglet (`visibilitychange`)**, `verifierSyncAutoDrive()` déclenche automatiquement une sauvegarde vers Google Drive dès que la dernière archive a plus de **24 h** (`text/plain;charset=utf-8` sans préflight CORS).
    - L'URL Web App configurée est **synchronisée automatiquement entre tous les appareils de l'administrateur** via sa ligne privée `sti_progressions` (tout en restant exclue des fichiers `.json`/`.json.gz` exportés via `NON_RESTAURABLES`).
-   - En cas d'absence de `SUPABASE_SERVICE_KEY` côté Apps Script, `sauvegarde.js` bascule automatiquement en mode **`televerser`** : collecte locale des 15 tables via la session admin + RPC `admin_sauvegarde_tables_annexes()` et envoi direct de l'archive vers Drive.
+   - En cas d'absence de `SUPABASE_SERVICE_KEY` côté Apps Script, `sauvegarde.js` bascule automatiquement en mode **`televerser`** : collecte locale des 18 tables via la session admin + RPC `admin_sauvegarde_tables_annexes()` et envoi direct de l'archive vers Drive.
 
 ---
 

@@ -587,8 +587,8 @@ test('la capsule est dans le paquet hors-ligne complet', () => {
   assert.ok(complet.includes(`"./${VTT}"`), 'VTT hors-ligne');
   assert.ok(!delta.includes(`BouclePour-${VERSION_MEDIA}.mp4`), 'les médias restent hors du delta léger');
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions";/);
-  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "etiquette-capsule-v587"/);
-  assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "etiquette-capsule-v587"/);
+  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "quiz-sauvegarde-v590"/);
+  assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "quiz-sauvegarde-v590"/);
 });
 
 test('la fabrique de la capsule reste dans le dépôt', () => {
