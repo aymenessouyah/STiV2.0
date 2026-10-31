@@ -1,5 +1,15 @@
 [
   {
+    "version": "v595",
+    "date": "2026-10-31",
+    "categorie": "Exercices",
+    "icone": "✏️",
+    "titre": "Quatre ateliers d’exercices pour « Systèmes, technologies et Internet »",
+    "resume": "La partie 3ᵉ SI du manuel avait son cours, sa vidéo, ses audios, son quiz et son glossaire, mais aucun exercice — alors que les quatre autres matières en comptent 67 pages. Quatre ateliers corrigés comblent ce trou : les systèmes d’exploitation (définition, six rôles, familles, licences, déploiement, sécurité), les réseaux (LAN/MAN/WAN, équipements, IP, masque, DNS, MAC, architectures, protocoles, ACL), la machine virtuelle (schéma, intérêt au laboratoire, protocole d’installation) et les objets connectés (composants, trajet d’une mesure, HTTP et MQTT, serre intelligente, diagnostic de pannes). 23 exercices, un corrigé dépliable pour chacun, des questions à choix unique corrigées immédiatement, une progression enregistrée par élève et une feuille imprimable pour rendre le travail.",
+    "lien": "exercices/systemes/index.html",
+    "libelleLien": "Ouvrir les quatre ateliers"
+  },
+  {
     "version": "v580",
     "date": "2026-10-31",
     "categorie": "Quiz & évaluation",

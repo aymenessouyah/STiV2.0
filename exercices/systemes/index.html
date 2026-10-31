@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="sombre" data-taille-texte="normale" class="sti-theme-wait">
+<head>
+  <meta charset="UTF-8">
+  <style>html.sti-theme-wait body { visibility: hidden; }</style>
+  <noscript><style>html.sti-theme-wait body { visibility: visible; }</style></noscript>
+  <script>setTimeout(function () { document.documentElement.classList.remove("sti-theme-wait"); }, 3000);</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Quatre ateliers corrigés pour la partie « Systèmes, technologies et Internet » du programme 3ᵉ SI : systèmes d’exploitation, réseaux, machine virtuelle et objets connectés.">
+  <meta name="author" content="Aymen Essouyah">
+  <meta name="robots" content="noai, noimageai">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https://vywujxmepvcbgedgmger.supabase.co; media-src 'self' blob:; connect-src 'self' https: wss:; frame-src 'self' https://www.youtube.com https://example.com; form-action 'self' https://www.google.com; worker-src 'self'; object-src 'none'; base-uri 'self'">
+  <title>Exercices — Systèmes, technologies et Internet · STI V2.0</title>
+  <link rel="icon" href="../../assets/icons/STI_by_AE.ico">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="stylesheet" href="../../assets/css/theme.css">
+  <link rel="stylesheet" href="../../assets/css/cours.css">
+  <link rel="stylesheet" href="../../assets/css/cours-sti.css?v=595">
+  <link rel="stylesheet" href="../../assets/css/exercices-sti.css?v=595">
+  <link rel="stylesheet" href="../../assets/css/protection.css?v=227">
+  <script src="../../assets/js/config.js?v=479" defer></script>
+  <script src="../../assets/js/supabase-umd.js" defer></script>
+  <script src="../../assets/js/acces.js?v=479" defer></script>
+  <script src="../../assets/js/sync-progressions.js?v=479" defer></script>
+  <script src="../../assets/js/profil.js" defer></script>
+  <script src="../../assets/js/app.js" defer></script>
+  <script src="../../assets/js/suivi-profil.js" defer></script>
+  <script src="../../assets/js/reconnexion-profil.js" defer></script>
+  <script src="../../assets/js/appel-quiz.js" defer></script>
+  <script src="../../assets/js/cours-onglets-mobile.js" defer></script>
+  <script src="../../assets/js/protection.js?v=227&amp;rev=479" defer></script>
+  <script src="../../assets/js/exercices-sti.js?v=595" defer></script>
+</head>
+<body class="sti-v2 course-page course-page--sti exercices-sti">
+  <a class="skip-link" href="#contenu-principal">Aller au contenu principal</a>
+  <div class="reading-progress" id="readingProgressBar" aria-hidden="true"></div>
+  <header class="site-header" role="banner">
+    <div class="container site-header__inner">
+      <a class="brand-logo" href="../../index.html" aria-label="STI V2.0 Lycée Raféha · 3e &amp; 4e SI — Retour à l’accueil">
+        <img class="brand-logo__drapeau" src="../../assets/images/drapeau-tunisie.svg" alt="Drapeau tunisien" width="40" height="40" loading="lazy">
+        <span class="brand-logo__mark" aria-hidden="true"><img src="../../assets/icons/sti-icon-192.png" alt="" width="40" height="40"></span>
+        <span class="brand-logo__text">
+          <span class="brand-logo__title">STI V2.0</span>
+          <span class="brand-logo__sub">Lycée Raféha · 3e &amp; 4e SI</span>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="Navigation principale">
+        <a class="site-nav__link" href="../../index.html#videos">Vidéos</a>
+        <a class="site-nav__link" href="../../index.html#cours">Cours</a>
+        <a class="site-nav__link" href="../../index.html#smart-book">Scanner mon livre</a>
+        <a class="site-nav__link" href="../../index.html#outils-bac">Outils Bac</a>
+        <a class="site-nav__link" href="../../index.html#quiz">Quiz</a>
+        <a class="site-nav__link" href="../../glossaire.html">Glossaire</a>
+      </nav>
+      <div class="header-actions">
+        <button type="button" class="search-trigger" data-open-search="" aria-label="Rechercher… Ctrl K — Ouvrir la recherche rapide">
+          <span aria-hidden="true">🔎</span><span class="search-trigger__label">Rechercher…</span><kbd>Ctrl K</kbd>
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" id="installBtn" hidden="" title="Installer l'application STI V2.0 hors-ligne">📲 Installer</button>
+        <div class="theme-switcher" role="group" aria-label="Choisir le mode d'affichage">
+          <button type="button" class="theme-switcher__btn" data-set-theme="clair" aria-pressed="false" title="Mode clair">☀️</button>
+          <button type="button" class="theme-switcher__btn" data-set-theme="intermediaire" aria-pressed="false" title="Mode intermédiaire">🌗</button>
+          <button type="button" class="theme-switcher__btn" data-set-theme="sombre" aria-pressed="true" title="Mode sombre">🌙</button>
+        </div>
+        <div data-subscriber-slot=""></div>
+        <button type="button" class="burger-btn" id="stiBurgerBtn" aria-label="Ouvrir le menu mobile" aria-expanded="false" aria-controls="stiMobileNav">☰</button>
+      </div>
+    </div>
+    <nav class="mobile-nav-drawer container" id="stiMobileNav" aria-label="Navigation mobile">
+      <a class="site-nav__link" href="../../index.html#videos">🎥 Vidéos explicatives</a>
+      <a class="site-nav__link" href="../../index.html#cours">📚 Cours &amp; Matières</a>
+      <a class="site-nav__link" href="../../index.html#outils-bac">🛠️ Ateliers &amp; Outils Bac</a>
+      <a class="site-nav__link" href="../../index.html#quiz">🎯 Quiz &amp; Mes erreurs</a>
+      <a class="site-nav__link" href="../../glossaire.html">🌍 Glossaire FR · EN · AR</a>
+      <a class="site-nav__link" href="../../dashboard.html">📊 Mon tableau de bord</a>
+    </nav>
+  </header>
+  <main id="contenu-principal">
+    <section class="course-hero" aria-labelledby="titre-page">
+      <div class="container">
+        <nav class="course-breadcrumb" aria-label="Fil d’Ariane"><a href="../../index.html">Accueil</a><span aria-hidden="true">›</span><a href="../../index.html#cours">Cours</a><span aria-hidden="true">›</span><a href="../../cours/systemes-technologies-internet.html">Systèmes, technologies et Internet</a><span aria-hidden="true">›</span><span class="course-breadcrumb__current" aria-current="page">Exercices</span></nav>
+        <div class="course-hero__grid">
+          <div class="course-hero__copy">
+            <div class="course-eyebrow"><span class="badge" style="background:var(--accent-gold-soft);border:1px solid var(--accent-gold-border);color:var(--accent-gold)"><img src="../../assets/images/systemes-technologies-internet-96.png" alt="" width="20" height="20" style="border-radius:5px;background:#fff;object-fit:cover;vertical-align:-4px;margin-right:6px">Exercices · 3ᵉ SI</span><span class="course-eyebrow__meta">4 ATELIERS · 23 EXERCICES CORRIGÉS</span></div>
+            <h1 class="course-hero__title" id="titre-page">S’entraîner <span>sur la machine, pas seulement la lire.</span></h1>
+            <p class="course-hero__lead">Quatre ateliers progressifs sur la partie du manuel qui précède HTML5 : systèmes d’exploitation, réseaux, machine virtuelle et objets connectés. Chaque exercice a son corrigé, et votre progression se garde d’un appareil à l’autre.</p>
+            <div class="hero-actions">
+              <a class="btn btn-course-primary" href="atelier-1-systemes-exploitation.html">✏️ Commencer par l’atelier 1</a>
+              <a class="btn btn-secondary" href="../../cours/systemes-technologies-internet.html">📖 Revoir le cours</a>
+              <a class="btn btn-secondary" href="../../quiz/systemes-internet.html">🎯 Passer au quiz</a>
+            </div>
+          </div>
+          <aside class="course-overview" aria-label="Votre progression">
+            <div class="course-lesson">
+              <h2>Ma progression</h2>
+              <p class="exo-progress__texte" data-atelier-compteur>0 / 4 ateliers terminés</p>
+              <div class="exo-progress__barre" role="progressbar" aria-label="Ateliers terminés" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span data-atelier-barre></span></div>
+              <p style="font-size:.85rem;margin-top:12px">Un atelier se termine quand vous appuyez sur « Marquer l’atelier comme terminé » en bas de sa page. La progression est liée à votre profil.</p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+    <section class="section" id="ateliers">
+      <div class="container">
+        <div class="section-header"><div><span class="section-kicker">Choisissez votre atelier</span><h2>Quatre ateliers, du rappel à la situation d’évaluation</h2></div></div>
+        <div class="exo-sommaire">
+          <a class="exo-carte" href="atelier-1-systemes-exploitation.html" data-atelier-carte="atelier-1"><span class="exo-carte__num">Atelier 01</span><h3>Les systèmes d’exploitation</h3><p>Définition, six rôles, familles, licences, déploiement et sécurité.</p><span class="exo-carte__meta">6 exercices · corrigés</span></a><a class="exo-carte" href="atelier-2-reseaux.html" data-atelier-carte="atelier-2"><span class="exo-carte__num">Atelier 02</span><h3>Les réseaux informatiques</h3><p>LAN / MAN / WAN, équipements, IP · masque · DNS · MAC, protocoles et ACL.</p><span class="exo-carte__meta">6 exercices · corrigés</span></a><a class="exo-carte" href="atelier-3-machine-virtuelle.html" data-atelier-carte="atelier-3"><span class="exo-carte__num">Atelier 03</span><h3>La machine virtuelle</h3><p>Simulation d’un ordinateur, intérêt au laboratoire, protocole d’installation.</p><span class="exo-carte__meta">5 exercices · corrigés</span></a><a class="exo-carte" href="atelier-4-objets-connectes.html" data-atelier-carte="atelier-4"><span class="exo-carte__num">Atelier 04</span><h3>Les objets connectés</h3><p>Composants, trajet d’une mesure, HTTP et MQTT, diagnostic de pannes.</p><span class="exo-carte__meta">6 exercices · corrigés</span></a>
+        </div>
+        <div class="sti-note" style="margin-top:24px"><b>📌 Comment travailler.</b><p>Lisez la consigne, répondez d’abord sans regarder, puis ouvrez le corrigé. Un exercice compris se marque « fait » : votre barre avance et votre professeur retrouve votre travail dans le tableau de bord.</p></div>
+        <div class="hero-actions" style="margin-top:20px">
+          <a class="btn btn-secondary" href="../../exercices/series-exercices.html">📚 Toutes les séries du site</a>
+          <a class="btn btn-secondary" href="../../livre-smart.html?livre=3si-2026&amp;page=13">📖 Évaluation du manuel (p. 13)</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer"><div class="container source-footer"><div><strong>STI V2.0 · Le web de A à Z</strong><p>Lycée Raféha · 3ème &amp; 4ème SI · Aymen Essouyah</p></div><nav aria-label="Liens utiles"><a href="../../index.html">Accueil</a><a href="index.html">✏️ Sommaire des ateliers</a><a href="../../cours/systemes-technologies-internet.html">📖 Le cours</a></nav></div></footer>
+  <button type="button" id="back-to-top" class="back-to-top-fab" aria-label="Remonter en haut de la page" title="Haut de page">↑</button>
+</body>
+</html>

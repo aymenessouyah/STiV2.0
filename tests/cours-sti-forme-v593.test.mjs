@@ -105,5 +105,5 @@ test('v593 : le cache hors ligne connaît la page, la feuille et le script du co
   }
   assert.match(sw, /var VERSION_PUBLIEE = "v59\d";/);
   assert.match(sw, /{ url: "\.\/assets\/js\/profil\.js", revision: "matieres-sti-v593" }/);
-  assert.match(sw, /{ url: "\.\/assets\/js\/app\.js", revision: "cours-sti-v594" }/);
+  assert.match(sw, /{ url: "\.\/assets\/js\/app\.js", revision: "cours-sti-v595" }/);
 });

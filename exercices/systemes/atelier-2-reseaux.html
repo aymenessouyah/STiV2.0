@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="sombre" data-taille-texte="normale" class="sti-theme-wait">
+<head>
+  <meta charset="UTF-8">
+  <style>html.sti-theme-wait body { visibility: hidden; }</style>
+  <noscript><style>html.sti-theme-wait body { visibility: visible; }</style></noscript>
+  <script>setTimeout(function () { document.documentElement.classList.remove("sti-theme-wait"); }, 3000);</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Six exercices sur les réseaux : étendue (LAN, MAN, WAN), équipements, paramètres IP / masque / DNS / MAC, architectures, protocoles et liste de contrôle d’accès.">
+  <meta name="author" content="Aymen Essouyah">
+  <meta name="robots" content="noai, noimageai">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https://vywujxmepvcbgedgmger.supabase.co; media-src 'self' blob:; connect-src 'self' https: wss:; frame-src 'self' https://www.youtube.com https://example.com; form-action 'self' https://www.google.com; worker-src 'self'; object-src 'none'; base-uri 'self'">
+  <title>Atelier 2 — Les réseaux informatiques · Exercices 3ᵉ SI</title>
+  <link rel="icon" href="../../assets/icons/STI_by_AE.ico">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="stylesheet" href="../../assets/css/theme.css">
+  <link rel="stylesheet" href="../../assets/css/cours.css">
+  <link rel="stylesheet" href="../../assets/css/cours-sti.css?v=595">
+  <link rel="stylesheet" href="../../assets/css/exercices-sti.css?v=595">
+  <link rel="stylesheet" href="../../assets/css/protection.css?v=227">
+  <script src="../../assets/js/config.js?v=479" defer></script>
+  <script src="../../assets/js/supabase-umd.js" defer></script>
+  <script src="../../assets/js/acces.js?v=479" defer></script>
+  <script src="../../assets/js/sync-progressions.js?v=479" defer></script>
+  <script src="../../assets/js/profil.js" defer></script>
+  <script src="../../assets/js/app.js" defer></script>
+  <script src="../../assets/js/suivi-profil.js" defer></script>
+  <script src="../../assets/js/reconnexion-profil.js" defer></script>
+  <script src="../../assets/js/appel-quiz.js" defer></script>
+  <script src="../../assets/js/cours-onglets-mobile.js" defer></script>
+  <script src="../../assets/js/protection.js?v=227&amp;rev=479" defer></script>
+  <script src="../../assets/js/exercices-sti.js?v=595" defer></script>
+</head>
+<body class="sti-v2 course-page course-page--sti exercices-sti">
+  <a class="skip-link" href="#contenu-principal">Aller au contenu principal</a>
+  <div class="reading-progress" id="readingProgressBar" aria-hidden="true"></div>
+  <header class="site-header" role="banner">
+    <div class="container site-header__inner">
+      <a class="brand-logo" href="../../index.html" aria-label="STI V2.0 Lycée Raféha · 3e &amp; 4e SI — Retour à l’accueil">
+        <img class="brand-logo__drapeau" src="../../assets/images/drapeau-tunisie.svg" alt="Drapeau tunisien" width="40" height="40" loading="lazy">
+        <span class="brand-logo__mark" aria-hidden="true"><img src="../../assets/icons/sti-icon-192.png" alt="" width="40" height="40"></span>
+        <span class="brand-logo__text">
+          <span class="brand-logo__title">STI V2.0</span>
+          <span class="brand-logo__sub">Lycée Raféha · 3e &amp; 4e SI</span>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="Navigation principale">
+        <a class="site-nav__link" href="../../index.html#videos">Vidéos</a>
+        <a class="site-nav__link" href="../../index.html#cours">Cours</a>
+        <a class="site-nav__link" href="../../index.html#smart-book">Scanner mon livre</a>
+        <a class="site-nav__link" href="../../index.html#outils-bac">Outils Bac</a>
+        <a class="site-nav__link" href="../../index.html#quiz">Quiz</a>
+        <a class="site-nav__link" href="../../glossaire.html">Glossaire</a>
+      </nav>
+      <div class="header-actions">
+        <button type="button" class="search-trigger" data-open-search="" aria-label="Rechercher… Ctrl K — Ouvrir la recherche rapide">
+          <span aria-hidden="true">🔎</span><span class="search-trigger__label">Rechercher…</span><kbd>Ctrl K</kbd>
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" id="installBtn" hidden="" title="Installer l'application STI V2.0 hors-ligne">📲 Installer</button>
+        <div class="theme-switcher" role="group" aria-label="Choisir le mode d'affichage">
+          <button type="button" class="theme-switcher__btn" data-set-theme="clair" aria-pressed="false" title="Mode clair">☀️</button>
+          <button type="button" class="theme-switcher__btn" data-set-theme="intermediaire" aria-pressed="false" title="Mode intermédiaire">🌗</button>
+          <button type="button" class="theme-switcher__btn" data-set-theme="sombre" aria-pressed="true" title="Mode sombre">🌙</button>
+        </div>
+        <div data-subscriber-slot=""></div>
+        <button type="button" class="burger-btn" id="stiBurgerBtn" aria-label="Ouvrir le menu mobile" aria-expanded="false" aria-controls="stiMobileNav">☰</button>
+      </div>
+    </div>
+    <nav class="mobile-nav-drawer container" id="stiMobileNav" aria-label="Navigation mobile">
+      <a class="site-nav__link" href="../../index.html#videos">🎥 Vidéos explicatives</a>
+      <a class="site-nav__link" href="../../index.html#cours">📚 Cours &amp; Matières</a>
+      <a class="site-nav__link" href="../../index.html#outils-bac">🛠️ Ateliers &amp; Outils Bac</a>
+      <a class="site-nav__link" href="../../index.html#quiz">🎯 Quiz &amp; Mes erreurs</a>
+      <a class="site-nav__link" href="../../glossaire.html">🌍 Glossaire FR · EN · AR</a>
+      <a class="site-nav__link" href="../../dashboard.html">📊 Mon tableau de bord</a>
+    </nav>
+  </header>
+  <main id="contenu-principal">
+    <section class="course-hero" aria-labelledby="titre-page">
+      <div class="container">
+        <nav class="course-breadcrumb" aria-label="Fil d’Ariane"><a href="../../index.html">Accueil</a><span aria-hidden="true">›</span><a href="../../index.html#cours">Cours</a><span aria-hidden="true">›</span><a href="../../cours/systemes-technologies-internet.html">Systèmes, technologies et Internet</a><span aria-hidden="true">›</span><span class="course-breadcrumb__current" aria-current="page">Atelier 2</span></nav>
+        <div class="course-hero__grid">
+          <div class="course-hero__copy">
+            <div class="course-eyebrow"><span class="badge" style="background:var(--accent-gold-soft);border:1px solid var(--accent-gold-border);color:var(--accent-gold)"><img src="../../assets/images/systemes-technologies-internet-96.png" alt="" width="20" height="20" style="border-radius:5px;background:#fff;object-fit:cover;vertical-align:-4px;margin-right:6px">Atelier 2 · 3ᵉ SI</span><span class="course-eyebrow__meta">ATELIER 2 · RAPPELS &amp; APPLICATION</span></div>
+            <h1 class="course-hero__title" id="titre-page">Relier les machines, <span>comprendre les échanges.</span></h1>
+            <p class="course-hero__lead">Six exercices sur les réseaux : étendue (LAN, MAN, WAN), équipements, paramètres IP / masque / DNS / MAC, architectures, protocoles et liste de contrôle d’accès.</p>
+            <div class="hero-actions">
+              <a class="btn btn-course-primary" href="#atelier">🌐 Commencer l’atelier</a>
+              <a class="btn btn-secondary" href="../../cours/systemes-technologies-internet.html#ch2">📖 Revoir le cours</a>
+              <button type="button" class="btn btn-secondary" data-tout-corriger>🔎 Tout corriger</button>
+            </div>
+          </div>
+          <aside class="course-overview" aria-label="Ce que vous allez travailler">
+            <div class="course-lesson">
+              <h2>Objectifs de l’atelier</h2>
+              <ul><li>Définir un réseau et ses ressources partagées.</li><li>Distinguer LAN, MAN et WAN.</li><li>Lire une adresse IP, un masque, un nom DNS et une adresse MAC.</li><li>Choisir une architecture et rédiger une règle ACL.</li></ul>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+    <section class="section" id="atelier">
+      <div class="container">
+        <div class="exo-progress" role="status" aria-live="polite">
+          <div class="exo-progress__texte"><span data-atelier-titre="atelier-2">Atelier 2 — Les réseaux informatiques</span><small data-exo-compteur>0 exercice fait</small></div>
+          <div class="exo-progress__barre" role="progressbar" aria-label="Progression dans l’atelier" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span data-exo-barre></span></div>
+          <span class="badge" data-atelier-etat>À faire</span>
+        </div>
+        <div class="exo-liste">
+          <article class="exo-item" data-exo-item="atelier-2-e1">
+            <div class="exo-item__head"><span class="exo-item__num">01</span><h3 class="exo-item__titre">Un réseau, à quoi ça sert ?</h3><span class="exo-item__niveau">Rappel de cours</span></div>
+            <p>Complétez : « Un réseau informatique est un ensemble d’<strong>………</strong> reliés entre eux afin d’<strong>………</strong> des données et de <strong>………</strong> des ressources. »</p>
+            <p>Donnez trois ressources que les élèves partagent au laboratoire d’informatique du lycée.</p>
+            <label class="exo-champ__label" for="a2e1">Votre réponse</label>
+            <textarea class="exo-champ" id="a2e1" rows="3"></textarea>
+            <details class="exo-corrige"><summary>Afficher le corrigé</summary><p>« Un réseau informatique est un ensemble d’<strong>équipements informatiques</strong> reliés entre eux afin d’<strong>échanger</strong> des données et de <strong>partager</strong> des ressources. »</p>
+              <p>Trois ressources possibles : l’imprimante, la connexion Internet, le dossier de fichiers du serveur pédagogique (ou un logiciel installé sur le serveur).</p></details>
+            <button type="button" class="btn btn-ghost btn-sm" data-exo-item-bouton aria-pressed="false">○ Marquer cet exercice comme fait</button>
+          </article>
+          <article class="exo-item" data-exo-item="atelier-2-e2">
+            <div class="exo-item__head"><span class="exo-item__num">02</span><h3 class="exo-item__titre">LAN, MAN ou WAN ?</h3><span class="exo-item__niveau">Application</span></div>
+            <div class="table-card"><div class="table-scroll"><table class="course-table">
+              <caption>Quatre situations</caption>
+              <thead><tr><th scope="col">Situation</th><th scope="col">Type</th></tr></thead>
+              <tbody>
+                <tr><td>1. Les postes de la salle informatique du lycée.</td><td>?</td></tr>
+                <tr><td>2. Les lycées d’une même ville reliés entre eux.</td><td>?</td></tr>
+                <tr><td>3. Le siège d’une entreprise et son agence à l’étranger.</td><td>?</td></tr>
+                <tr><td>4. Le Wi-Fi du CDI et le poste du bibliothécaire.</td><td>?</td></tr>
+              </tbody></table></div></div>
+            <div class="exo-qcm" data-qcm="b">
+              <p class="exo-qcm__question">Un réseau qui relie plusieurs établissements d’une même ville est un…</p>
+              <div class="exo-qcm__choix"><button type="button" class="exo-qcm__btn" data-choix="a">LAN</button><button type="button" class="exo-qcm__btn" data-choix="b">MAN</button><button type="button" class="exo-qcm__btn" data-choix="c">WAN</button></div>
+              <p class="exo-qcm__retour" data-juste="✅ Exact : MAN, pour <em>Metropolitan Area Network</em>." data-faux="❌ Non : c’est un MAN (réseau métropolitain). Le LAN reste local, le WAN couvre plusieurs pays."></p>
+            </div><details class="exo-corrige"><summary>Afficher le corrigé</summary><p><strong>1. LAN</strong> · <strong>2. MAN</strong> · <strong>3. WAN</strong> · <strong>4. LAN</strong>.</p></details>
+            <button type="button" class="btn btn-ghost btn-sm" data-exo-item-bouton aria-pressed="false">○ Marquer cet exercice comme fait</button>
+          </article>
+          <article class="exo-item" data-exo-item="atelier-2-e3">
+            <div class="exo-item__head"><span class="exo-item__num">03</span><h3 class="exo-item__titre">Qui fait quoi dans le réseau ?</h3><span class="exo-item__niveau">Équipements</span></div>
+            <p>Associez chaque équipement à sa fonction : carte réseau · switch · routeur · point d’accès Wi-Fi · serveur.</p>
+            <ol>
+              <li>Relie plusieurs appareils dans un réseau local.</li>
+              <li>Relie différents réseaux et dirige les paquets.</li>
+              <li>Permet à un appareil de se connecter au réseau.</li>
+              <li>Permet une connexion sans fil.</li>
+              <li>Fournit des services ou des ressources aux clients.</li>
+            </ol>
+            <label class="exo-champ__label" for="a2e3">Vos réponses</label>
+            <textarea class="exo-champ" id="a2e3" rows="3"></textarea>
+            <details class="exo-corrige"><summary>Afficher le corrigé</summary><p><strong>1 → switch</strong> · <strong>2 → routeur</strong> · <strong>3 → carte réseau</strong> · <strong>4 → point d’accès Wi-Fi</strong> · <strong>5 → serveur</strong>.</p></details>
+            <button type="button" class="btn btn-ghost btn-sm" data-exo-item-bouton aria-pressed="false">○ Marquer cet exercice comme fait</button>
+          </article>
+          <article class="exo-item" data-exo-item="atelier-2-e4">
+            <div class="exo-item__head"><span class="exo-item__num">04</span><h3 class="exo-item__titre">IP, masque, DNS et MAC</h3><span class="exo-item__niveau">Calcul et repérage</span></div>
+            <p><strong>a.</strong> Une machine porte l’adresse <code>192.168.1.20</code> avec le masque <code>255.255.255.0</code>. Quelle est l’adresse du réseau ?</p>
+            <p><strong>b.</strong> Dans cette liste, une seule adresse IPv4 est impossible : laquelle, et pourquoi ?<br>
+            <code>10.0.0.1</code> · <code>192.168.1.300</code> · <code>172.16.5.8</code> · <code>192.168.0.254</code></p>
+            <p><strong>c.</strong> Un élève tape <code>www.example.com</code> dans son navigateur. Quel paramètre traduit ce nom en adresse IP ?</p>
+            <p><strong>d.</strong> À quoi sert l’adresse MAC <code>A4-B1-C1-2D-3E-4F</code> ?</p>
+            <label class="exo-champ__label" for="a2e4">Vos réponses a, b, c, d</label>
+            <textarea class="exo-champ" id="a2e4" rows="4"></textarea>
+            <details class="exo-corrige"><summary>Afficher le corrigé</summary><p><strong>a.</strong> L’adresse réseau est <code>192.168.1.0</code> (le masque garde les trois premiers nombres).</p>
+              <p><strong>b.</strong> <code>192.168.1.300</code> : chaque nombre d’une IPv4 est compris entre 0 et 255 ; 300 est impossible.</p>
+              <p><strong>c.</strong> Le <strong>DNS</strong> (<em>Domain Name System</em>) traduit un nom de domaine en adresse IP.</p>
+              <p><strong>d.</strong> L’adresse MAC identifie une interface réseau au niveau local (réseau local), indépendamment de l’adresse IP.</p></details>
+            <button type="button" class="btn btn-ghost btn-sm" data-exo-item-bouton aria-pressed="false">○ Marquer cet exercice comme fait</button>
+          </article>
+          <article class="exo-item" data-exo-item="atelier-2-e5">
+            <div class="exo-item__head"><span class="exo-item__num">05</span><h3 class="exo-item__titre">Client/serveur ou poste à poste ?</h3><span class="exo-item__niveau">Choix et justification</span></div>
+            <p>Le club informatique du lycée veut partager un dossier de ressources entre six postes.</p>
+            <p><strong>a.</strong> Rappelez la différence entre l’architecture client/serveur et le poste à poste.</p>
+            <p><strong>b.</strong> Quelle architecture conseillez-vous pour un dossier consulté par les six postes, sachant que les droits doivent être contrôlés ? Justifiez en deux arguments.</p>
+            <p><strong>c.</strong> Citez l’inconvénient principal de l’architecture que vous avez choisie.</p>
+            <label class="exo-champ__label" for="a2e5">Votre réponse argumentée</label>
+            <textarea class="exo-champ" id="a2e5" rows="5"></textarea>
+            <details class="exo-corrige"><summary>Afficher le corrigé</summary><p><strong>a.</strong> Client/serveur : des clients demandent un service à un serveur central. Poste à poste : les ordinateurs communiquent directement et partagent sans serveur central obligatoire.</p>
+              <p><b>b.</b> Client/serveur : les données sont centralisées et les droits des six postes se gèrent en un seul endroit.</p>
+              <p><strong>c.</strong> Si le serveur tombe en panne, le dossier partagé devient indisponible pour tous.</p></details>
+            <button type="button" class="btn btn-ghost btn-sm" data-exo-item-bouton aria-pressed="false">○ Marquer cet exercice comme fait</button>
+          </article>
+          <article class="exo-item" data-exo-item="atelier-2-e6">
+            <div class="exo-item__head"><span class="exo-item__num">06</span><h3 class="exo-item__titre">Protocoles et pare-feu</h3><span class="exo-item__niveau">Application</span></div>
+            <p><strong>a.</strong> Reliez chaque protocole à son usage : HTTP · HTTPS · MQTT · TCP/IP.</p>
+            <ol>
+              <li>Échange Web protégé, avec chiffrement.</li>
+              <li>Messagerie légère, adaptée aux objets connectés.</li>
+              <li>Suite de protocoles qui assure l’adressage et le transport des données.</li>
+              <li>Échange de ressources entre un client et un serveur Web.</li>
+            </ol>
+            <p><strong>b.</strong> Écrivez deux règles de liste de contrôle d’accès (ACL) pour le laboratoire : une qui autorise le poste du professeur, une qui bloque un accès non autorisé.</p>
+            <label class="exo-champ__label" for="a2e6">Vos réponses</label>
+            <textarea class="exo-champ" id="a2e6" rows="4"></textarea>
+            <details class="exo-corrige"><summary>Afficher le corrigé</summary><p><strong>a.</strong> 1 → <strong>HTTPS</strong> · 2 → <strong>MQTT</strong> · 3 → <strong>TCP/IP</strong> · 4 → <strong>HTTP</strong>.</p>
+              <p><strong>b.</strong> Exemple : « Autoriser le poste du professeur à accéder au serveur pédagogique » ; « Refuser tout accès depuis une machine non autorisée ». Un pare-feu applique ces règles et contrôle les communications réseau.</p></details>
+            <button type="button" class="btn btn-ghost btn-sm" data-exo-item-bouton aria-pressed="false">○ Marquer cet exercice comme fait</button>
+          </article>
+        </div>
+        <div class="exo-pied">
+          <nav class="exo-nav" aria-label="Navigation entre ateliers">
+            <a class="source-link" href="atelier-1-systemes-exploitation.html">← Atelier 1 · Les systèmes d’exploitation</a><a class="source-link" href="atelier-3-machine-virtuelle.html">Atelier 3 · La machine virtuelle →</a>
+          </nav>
+          <button type="button" class="btn-revise" data-atelier-fait="atelier-2" aria-pressed="false">☐ Marquer l’atelier comme terminé</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer"><div class="container source-footer"><div><strong>STI V2.0 · Le web de A à Z</strong><p>Lycée Raféha · 3ème &amp; 4ème SI · Aymen Essouyah</p></div><nav aria-label="Liens utiles"><a href="../../index.html">Accueil</a><a href="index.html">✏️ Sommaire des ateliers</a><a href="../../cours/systemes-technologies-internet.html">📖 Le cours</a></nav></div></footer>
+  <button type="button" id="back-to-top" class="back-to-top-fab" aria-label="Remonter en haut de la page" title="Haut de page">↑</button>
+</body>
+</html>
