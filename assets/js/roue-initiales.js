@@ -96,12 +96,15 @@
     var b = toks.length > 1 ? premiereLettre(toks[toks.length - 1]) : "";
     return b ? b + "." + a : a;
   }
+  /* v602 : mêmes initiales que la roue du compte — première lettre du prénom
+     puis première lettre du nom (« Aymen Essouyah » → « AE »), et non plus
+     « E.A ». Au téléphone, ce sont elles qu'on voit dans le cercle. */
   function initiales(c) {
     c = c || cache();
     var p = premiereLettre(c.prenom);
     var n = premiereLettre(c.nom);
-    if (p && n) return n + "." + p;
-    if (p || n) return n || p;
+    if (p && n) return (p + n).toUpperCase();
+    if (p || n) return (p || n).toUpperCase();
     return depuisEmail(c.email || c.phone || "");
   }
 

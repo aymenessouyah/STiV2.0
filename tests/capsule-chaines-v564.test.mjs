@@ -273,10 +273,10 @@ test('la capsule est dans le paquet hors-ligne et versionnée', () => {
   const sw = lire('sw.js');
   assert.ok(sw.includes(`"./assets/videos/FonctionsChaine-v564.mp4"`));
   assert.ok(sw.includes(`"./assets/subtitles/FonctionsChaine-fr-v564.vtt"`));
-  assert.ok(sw.includes('revision: "pastilles-ligne-v601"'), 'les pages touchées sont réinvalidées');
+  assert.ok(sw.includes('revision: "roue-compte-v602"'), 'les pages touchées sont réinvalidées');
   /* v573 : l'accueil et le livre connecté repartent au lot « 3ème SI 2026 ». */
   const REV_PAGES = { './index.html': 'cours-sti-v596', './cours/javascript.html': 'cours-sti-v595',
-    './cours/php.html': 'cours-sti-v595', './assets/js/app.js': 'pastilles-ligne-v601' };
+    './cours/php.html': 'cours-sti-v595', './assets/js/app.js': 'roue-compte-v602' };
   const attendu = (page) => REV_PAGES[page] || 'cours-sti-v578';
   for (const page of ['./index.html', './cours/javascript.html', './assets/js/app.js',
     './assets/js/protection.js', './assets/js/lecteur-commun.js']) {

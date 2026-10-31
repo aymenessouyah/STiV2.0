@@ -177,3 +177,71 @@ body.sti-v2:has(#sti-roue-btn.sti-badge-identite) #installBtn::before { content:
   #sti-roue-anneau.sti-badge-identite__anneau,
   #sti-roue-btn .sti-badge-identite__copie::after { transform: none; }
 }
+
+/* ── v602 · sur téléphone, le badge de compte redevient une ROULE ──
+   La carte d'identité (210 × 64 : avatar, nom, classe, QR) occupait presque
+   toute la largeur et forçait l'en-tête sur deux lignes. En dessous de 700 px,
+   elle se réduit à un cercle de 40 px qui contient la photo de l'élève ou, à
+   défaut, ses initiales (première lettre du prénom + première lettre du nom).
+   Le nom, la classe et le QR restent dans le panneau qui s'ouvre au clic. */
+@media (max-width: 700px) {
+  #sti-roue-anneau.sti-badge-identite__anneau,
+  body.sti-v2 [data-subscriber-slot] #sti-roue-anneau.sti-badge-identite__anneau {
+    width: 40px !important;
+    height: 40px !important;
+    padding: 2px !important;
+    border-radius: 50% !important;
+    transform: none !important;
+  }
+  #sti-roue-btn.sti-badge-identite,
+  body.sti-v2 [data-subscriber-slot] #sti-roue-btn.sti-badge-identite {
+    justify-content: center !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    border-radius: 50% !important;
+  }
+  /* Le fond (logo + QR) et le ruban décoratif n'ont plus leur place ici. */
+  .sti-badge-identite__fond,
+  .sti-badge-identite__copie { display: none !important; }
+  #sti-roue-btn.sti-badge-identite::before,
+  #sti-roue-btn.sti-badge-identite::after { content: none !important; }
+  .sti-badge-identite__avatar {
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+    border-width: 2px;
+    font-size: 11px;
+  }
+}
+
+/* v602 : le cercle du compte suit la place laissée par les autres boutons de
+   l'en-tête. À 460 px et moins, il perd quelques pixels pour que le drapeau, le
+   logo, « STI V2.0 », la loupe, le thème et le menu restent tous sur une seule
+   ligne. Le panneau ouvert au clic garde, lui, sa taille confortable. */
+@media (max-width: 460px) {
+  #sti-roue-anneau.sti-badge-identite__anneau,
+  body.sti-v2 [data-subscriber-slot] #sti-roue-anneau.sti-badge-identite__anneau {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 2px !important;
+  }
+  .sti-badge-identite__avatar {
+    flex-basis: 26px;
+    width: 26px;
+    height: 26px;
+    font-size: 10px;
+  }
+}
+@media (max-width: 370px) {
+  #sti-roue-anneau.sti-badge-identite__anneau,
+  body.sti-v2 [data-subscriber-slot] #sti-roue-anneau.sti-badge-identite__anneau {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  .sti-badge-identite__avatar {
+    flex-basis: 24px;
+    width: 24px;
+    height: 24px;
+    font-size: 9.5px;
+  }
+}

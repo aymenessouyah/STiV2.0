@@ -104,6 +104,6 @@ test('v593 : le cache hors ligne connaît la page, la feuille et le script du co
     assert.ok(complet.includes('"' + url + '"'), 'cache complet : ' + url);
   }
   assert.match(sw, /var VERSION_PUBLIEE = "v6\d\d";/);
-  assert.match(sw, /{ url: "\.\/assets\/js\/profil\.js", revision: "matieres-sti-v593" }/);
-  assert.match(sw, /{ url: "\.\/assets\/js\/app\.js", revision: "pastilles-ligne-v601" }/);
+  assert.match(sw, /{ url: "\.\/assets\/js\/profil\.js", revision: "roue-compte-v602" }/);
+  assert.match(sw, /{ url: "\.\/assets\/js\/app\.js", revision: "roue-compte-v602" }/);
 });

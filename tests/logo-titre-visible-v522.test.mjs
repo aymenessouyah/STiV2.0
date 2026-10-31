@@ -70,7 +70,7 @@ test('v522 : les sept pages à bandeau portent bien le titre à côté du logo',
 test('v522 : le nouveau style de l’en-tête est livré hors ligne et son empreinte est exacte', () => {
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
-  assert.match(delta, /url: "\.\/assets\/css\/theme\.css", revision: "pastilles-ligne-v601"/);
+  assert.match(delta, /url: "\.\/assets\/css\/theme\.css", revision: "roue-compte-v602"/);
   for (const bloc of ['SHELL', 'OFFLINE_LIST']) {
     assert.ok(sw.split('var ' + bloc + ' = [')[1].split('];')[0].includes('"./assets/css/theme.css"'), bloc);
   }

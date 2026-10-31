@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-01T10:45:00Z",
+  "generatedAt": "2026-11-01T13:10:00Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 772,
-  "totalBytes": 1114010991,
+  "totalBytes": 1114023226,
   "files": [
     {
       "path": "404.html",
@@ -197,8 +197,8 @@
     },
     {
       "path": "assets/css/badge-compte.css",
-      "bytes": 7719,
-      "gitSha": "618f99e232430ae06b9607cdceb5cbe584b8338b"
+      "bytes": 10197,
+      "gitSha": "6d7af4109c0205180e331b8c4de5e45e6919420f"
     },
     {
       "path": "assets/css/capsules-vedettes.css",
@@ -332,8 +332,8 @@
     },
     {
       "path": "assets/css/theme.css",
-      "bytes": 86062,
-      "gitSha": "0ad3fa8bd2f08f357a5cb0bb12a6dcf8f7a2e4ee"
+      "bytes": 90424,
+      "gitSha": "452607b7d47ea273f2a4aa79de6f9cc6b5e4983c"
     },
     {
       "path": "assets/css/visionneuse-exercices.css",
@@ -737,8 +737,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 130829,
-      "gitSha": "fe84a799efca1ac34f5a6c2411f9e37ead155b9b"
+      "bytes": 135244,
+      "gitSha": "f5e2f6ae78662774e1971de6f395b12cb5afb0d2"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -877,8 +877,8 @@
     },
     {
       "path": "assets/js/profil.js",
-      "bytes": 42364,
-      "gitSha": "90d8f69ffaa84cf9bd3d4616d0aab065a0e7530a"
+      "bytes": 43064,
+      "gitSha": "9a9c20afb9dd7add2b1789fcfc1cfdf6ddf6ba89"
     },
     {
       "path": "assets/js/protection.js",
@@ -962,8 +962,8 @@
     },
     {
       "path": "assets/js/roue-initiales.js",
-      "bytes": 18636,
-      "gitSha": "89b2ec78261e0f83cfd387fb742b95fbbd5243b2"
+      "bytes": 18904,
+      "gitSha": "f5c4bddaafbcc94c8f0a37427d42e6ff3754ac28"
     },
     {
       "path": "assets/js/roue-nuage.js",
@@ -3862,8 +3862,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 103053,
-      "gitSha": "79d0162dd7a1d674ffee1d62cb1edd5ea1e3861b"
+      "bytes": 103065,
+      "gitSha": "70a9d3027afedd3fc8cce3f852356ad33c8ae737"
     }
   ]
 }

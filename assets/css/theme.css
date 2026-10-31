@@ -380,6 +380,33 @@ body.sti-v2 {
   }
 }
 
+/* ── v602 · aucun élément ne doit élargir la page ──
+   Un seul bloc plus large que l'écran suffit à faire dézoomer le navigateur
+   mobile : tout paraît alors rétréci et le contenu est coupé net sur la droite.
+   On empêche le débordement à la source (médias, tableaux, blocs de code) et on
+   coupe proprement le reste. « clip » ne crée pas de conteneur de défilement,
+   donc l'en-tête collant continue de fonctionner (contrairement à hidden). */
+html,
+body.sti-v2 {
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+body.sti-v2 img,
+body.sti-v2 video,
+body.sti-v2 iframe,
+body.sti-v2 canvas,
+body.sti-v2 svg,
+body.sti-v2 table,
+body.sti-v2 pre {
+  max-width: 100%;
+}
+/* Les images gardent leur proportion ; les vidéos gardent leur cadrage imposé
+   (celle du bloc « Bonjour » occupe 100 % de la hauteur de son fond). */
+body.sti-v2 img {
+  height: auto;
+}
+
 body.sti-v2 code,
 body.sti-v2 pre,
 body.sti-v2 kbd,
@@ -695,25 +722,54 @@ html[dir="rtl"] .reading-progress { transform-origin: right center; }
   color: var(--accent-gold);
 }
 
+/* v602 : le badge de compte est une ROULE — un cercle qui contient la photo de
+   l'élève, sinon ses initiales (première lettre du prénom + première lettre du
+   nom), sinon le cadenas pour inviter à se connecter. Sur ordinateur, le mot
+   « Mon compte » s'affiche à côté du cercle comme avant. */
 .sub-login-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 13px;
+  justify-content: center;
+  gap: 0;
+  width: 36px;
+  height: 36px;
+  padding: 0;
   border-radius: var(--radius-full);
   background: var(--brand);
   color: var(--brand-contrast) !important;
   font-size: 0.8rem;
   font-weight: 700;
   white-space: nowrap;
+  overflow: hidden;
   box-shadow: var(--shadow-xs);
   transition: background-color var(--duration-fast) ease, transform var(--duration-fast) ease;
 }
 .sub-login-btn:hover { background: var(--brand-hover); transform: translateY(-1px); }
+.sub-login-btn__photo,
+.sub-login-btn__initiales,
+.sub-login-btn__picto {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-full);
+}
+.sub-login-btn__photo { object-fit: cover; }
+.sub-login-btn__initiales {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: var(--brand-contrast);
+}
+.sub-login-btn__picto { font-size: 0.86rem; line-height: 1; }
 .sub-login-btn__long { display: none; }
 @media (min-width: 720px) {
+  .sub-login-btn { width: auto; gap: 8px; padding: 2px 13px 2px 2px; }
+  .sub-login-btn__photo,
+  .sub-login-btn__initiales,
+  .sub-login-btn__picto { width: 32px; height: 32px; flex: none; }
   .sub-login-btn__long { display: inline; }
-  .sub-login-btn__short { display: none; }
 }
 
 .sub-drawer-backdrop {
@@ -2121,13 +2177,72 @@ body.sti-v2 #pwaInvitationInstaller {
   body.sti-v2 .site-nav__link { padding-inline: 6px; }
 }
 @media (max-width: 460px) {
-  /* Réserver les deux lignes avant la création asynchrone du bouton de compte :
-     aucun saut de page lors du retour d'une bulle d'exercice. */
-  :root { --header-height: 132px; }
-  body.sti-v2 .site-header__inner { align-items: flex-start; padding-top: 7px; }
-  body.sti-v2 .site-header__inner .brand-logo { margin-top: 3px; }
-  body.sti-v2 .header-actions { flex: 1 1 auto; min-width: 0; flex-wrap: wrap; justify-content: flex-end; }
-  body.sti-v2 [data-subscriber-slot] { display: flex; flex: 0 0 100%; min-height: 58px; order: 5; justify-content: flex-end; }
+  /* v602 : l'en-tête tient sur UNE seule ligne — drapeau, logo, « STI V2.0 »,
+     recherche, les trois modes d'affichage, la roue du compte et le menu.
+     Chaque élément se resserre au lieu de passer à la ligne ou de déborder. */
+  :root { --header-height: 74px; }
+  body.sti-v2 .site-header__inner {
+    align-items: center;
+    flex-wrap: nowrap;
+    padding-top: 4px;
+    gap: 4px;
+  }
+  body.sti-v2 .site-header__inner .brand-logo { margin-top: 0; flex: 0 1 auto; min-width: 0; column-gap: 4px; }
+  body.sti-v2 .site-header .brand-logo__drapeau,
+  body.sti-v2 .site-header .brand-logo__mark { width: 26px; height: 26px; border-radius: 5px; }
+  body.sti-v2 .site-header .brand-logo__mark img { width: 26px; height: 26px; }
+  body.sti-v2 .site-header .brand-logo__title { font-size: 0.7rem; max-width: 58px; }
+  body.sti-v2 .site-header .brand-logo__sub { font-size: 0.55rem; max-width: 72px; line-height: 1.05; }
+  body.sti-v2 .header-actions {
+    flex: 1 1 auto;
+    min-width: 0;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    gap: 3px;
+  }
+  body.sti-v2 [data-subscriber-slot] {
+    display: flex;
+    flex: 0 0 auto;
+    min-height: 0;
+    order: 0;
+    justify-content: flex-end;
+  }
+  /* Icônes seules pour la recherche : le libellé et le raccourci coûtaient deux
+     blocs de largeur. */
+  body.sti-v2 .search-trigger { padding-inline: 5px; }
+  body.sti-v2 .search-trigger__label,
+  body.sti-v2 .search-trigger kbd { display: none; }
+  body.sti-v2 .theme-switcher__btn { width: 22px; height: 24px; font-size: 0.7rem; }
+  body.sti-v2 .burger-btn { width: 28px; height: 28px; font-size: 0.9rem; }
+  body.sti-v2 .sub-login-btn { width: 30px; height: 30px; }
+  body.sti-v2 .sub-login-btn__initiales { font-size: 0.68rem; }
+}
+
+/* v602 : téléphones très étroits (320–370 px). À cette largeur, le sous-titre du
+   lycée coûtait plus de place que le titre lui-même : il passe en lecture
+   d'écran (il reste dans l'aria-label du lien) et chaque bouton perd 2 px, de
+   sorte que drapeau · logo · « STI V2.0 » · loupe · thème · compte · menu
+   tiennent sur une seule ligne, sans défilement horizontal. */
+@media (max-width: 370px) {
+  body.sti-v2 .site-header .container { padding-inline: 10px !important; }
+  body.sti-v2 .site-header__inner { gap: 2px; }
+  body.sti-v2 .site-header .brand-logo { column-gap: 3px; }
+  body.sti-v2 .site-header .brand-logo__sub {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  body.sti-v2 .site-header .brand-logo__title { font-size: 0.68rem; max-width: 52px; }
+  body.sti-v2 .header-actions { gap: 2px; }
+  body.sti-v2 .search-trigger { padding-inline: 4px; }
+  body.sti-v2 .theme-switcher { padding: 2px; gap: 1px; }
+  body.sti-v2 .theme-switcher__btn { width: 20px; height: 22px; font-size: 0.64rem; }
+  body.sti-v2 .burger-btn { width: 26px; height: 26px; font-size: 0.85rem; }
+  body.sti-v2 .sub-login-btn { width: 28px; height: 28px; font-size: 0.6rem; }
 }
 body.sti-v2 .news-card .btn { max-width: 100%; white-space: normal; overflow-wrap: anywhere; text-align: start; }
 body.sti-v2 .site-footer .brand-logo { max-width: 100%; }
