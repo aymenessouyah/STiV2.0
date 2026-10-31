@@ -365,6 +365,21 @@ body.sti-v2 {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ── v599 · garde-fou de largeur du document ──
+   Les outils PC « Console JS » et « Deux vues » rétrécissent volontairement la
+   page (76 vw / 30 à 72 vw) et posent leur panneau à droite. Si le panneau
+   disparaît sans que la largeur soit rendue, tout le contenu s'arrête au trois
+   quarts de l'écran alors que la barre de navigation du bas garde la largeur
+   entière. Tant qu'aucun de ces deux panneaux n'est affiché, la page reprend la
+   largeur de l'écran, même si une largeur en ligne traîne encore. */
+@media (max-width: 900px) {
+  html:not(:has(#sti-split-view-panel)):not(:has(#sti-browser-console-panel)) {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden;
+  }
+}
+
 body.sti-v2 code,
 body.sti-v2 pre,
 body.sti-v2 kbd,
@@ -1048,6 +1063,41 @@ body.sti-v2 .welcome-return__dashboard {
 .welcome-course__details { color: var(--text-secondary); font-size: .74rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 body.sti-v2 .welcome-return__empty { font-size: .9rem; }
 .welcome-return__empty a { text-decoration: underline !important; text-underline-offset: .2em; }
+
+/* ── v599 · le bloc « Bonjour » tient dans la largeur du téléphone ──
+   Sur un écran étroit, les cours récents s'empilent sur toute la largeur :
+   plus de ruban horizontal à faire défiler, plus de titres coupés en « Syst… »
+   ni de badge « Consulté » rogné. Toutes les boîtes restent dans l'écran. */
+@media (max-width: 700px) {
+  .welcome-return,
+  .welcome-return > .container { width: 100%; max-width: 100%; }
+  .welcome-return__bar { row-gap: var(--space-2); }
+  .welcome-return__dashboard { margin-inline-start: auto; }
+  .welcome-return .resume-banner { flex-wrap: wrap; max-width: 100%; }
+  .welcome-return .resume-banner .resume-banner__actions { flex-wrap: wrap; }
+  .welcome-return__courses {
+    flex-wrap: wrap;
+    overflow-x: visible;
+    overscroll-behavior-x: auto;
+    scroll-snap-type: none;
+    padding-bottom: 0;
+  }
+  .welcome-course {
+    flex: 1 1 100%;
+    min-width: min(210px, 100%);
+    max-width: 100%;
+    scroll-snap-align: none;
+  }
+  .welcome-course__body { flex: 1 1 auto; }
+  .welcome-course__title,
+  .welcome-course__details {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    overflow-wrap: anywhere;
+  }
+  .welcome-course__state { margin-inline-start: auto; }
+}
 
 /* ── 11. Hero « Le web de A à Z », Terminal animé & Vidéo à la une ── */
 .hero { padding-block: var(--space-8) var(--space-6); }

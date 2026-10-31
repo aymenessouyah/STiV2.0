@@ -105,7 +105,7 @@ test('le lot v550 est publié et versionné', () => {
   const sw = lire('sw.js');
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);
-  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "cours-sti-v596"/);
+  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "accueil-mobile-v599"/);
   assert.match(sw, /url: "\.\/index\.html", revision: "cours-sti-v596"/);
   assert.match(sw, /url: "\.\/cours\/php\.html", revision: "cours-sti-v595"/);
   /* la capsule des boucles reste hors du delta automatique (média lourd) */
