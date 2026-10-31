@@ -57,12 +57,12 @@
     "outils-js-bac.html", "pieges-bac.html", "portail.html", "positionnement-animee/index.html",
     "projets/carte-bancaire/cb.html", "projets/carte-bancaire/enonce-tp-carte-bancaire.html", "projets/fleurs/corrections.html", "projets/fleurs/index.html",
     "projets/fleurs/inscription.html", "projets/fleurs/media/projet-fleurs-4sti-eleve.pdf.html", "projets/formulaire-inscription/cvfleurs.html", "projets/formulaire-inscription/enonce/cvfleurs-énoncé/formulaire inscription.pdf.html",
-    "projets/site-tunisie/correction-details/carte-timbre-droite-haut.html", "projets/site-tunisie/enonce.html", "projets/site-tunisie/index.html", "projets/site-tunisie/pages/accueil.html",
-    "projets/site-tunisie/pages/centre.html", "projets/site-tunisie/pages/nord.html", "projets/site-tunisie/pages/sud.html", "projets/site-tunisie/site-tunisie-correction-animation-html-css.html",
-    "projets/sti0/index.html", "projets/sti0/projetsti0.pdf.html", "projets/sti0/sondage.html", "projets/sti0/sondage.html",
-    "projets/sti0/statistiques.html", "projets/sti0/statistiques.html", "quiz/html-css.html", "quiz/javascript.html",
-    "quiz/php.html", "quiz/pp.html", "quiz/sql.html", "quiz/systemes-internet.html",
-    "quiz/tableaux.html", "revision-erreurs.html"
+    "projets/index.html", "projets/site-tunisie/correction-details/carte-timbre-droite-haut.html", "projets/site-tunisie/enonce.html", "projets/site-tunisie/index.html",
+    "projets/site-tunisie/pages/accueil.html", "projets/site-tunisie/pages/centre.html", "projets/site-tunisie/pages/nord.html", "projets/site-tunisie/pages/sud.html",
+    "projets/site-tunisie/site-tunisie-correction-animation-html-css.html", "projets/sti0/index.html", "projets/sti0/projetsti0.pdf.html", "projets/sti0/sondage.html",
+    "projets/sti0/sondage.html", "projets/sti0/statistiques.html", "projets/sti0/statistiques.html", "quiz/html-css.html",
+    "quiz/javascript.html", "quiz/php.html", "quiz/pp.html", "quiz/sql.html",
+    "quiz/systemes-internet.html", "quiz/tableaux.html", "revision-erreurs.html"
   ];
   /* v434 (gain d'audit A5) : la liste embarquée est d'abord PURGÉE des doublons et
      normalisée en minuscules (le journal est en minuscules : « PHP-recap » y était mort),

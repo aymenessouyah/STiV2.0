@@ -1559,7 +1559,7 @@ test('v457 (Lot D — audit final Quiz) : couverture des pages du site, cache-bu
   assert.match(read('outils/couverture/generer-couverture.py'), /EXCLUS = \("tests\/",\)/);
   assert.equal(couvJson.gen, 'v583');
   assert.equal(couvJson.n, couvJson.pages.length);
-  assert.equal(couvJson.n, 150, 'toutes les pages HTML hors tests/ doivent être couvertes');
+  assert.equal(couvJson.n, 151, 'toutes les pages HTML hors tests/ doivent être couvertes');
   assert.ok(couvJson.pages.includes('quiz/pp.html'), 'quiz/pp.html est une page réelle : elle est couverte');
   assert.ok(roueCouvJs.includes('"quiz/pp.html"'));
   assert.ok(couvJson.pages.includes('cours/PHP-recap.html'), 'la casse réelle est conservée');
@@ -4252,7 +4252,7 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
   assert.match(cinq[0].t, /^v499 — Accueil :/);
 });
 
-test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 150/150 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {
+test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 151/151 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {
   const adminJs = read('assets/js/admin.js');
   const admCouvJs = read('assets/js/admin-couverture.js');
   const admRevJs = read('assets/js/admin-revision.js');
@@ -4301,13 +4301,13 @@ test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, pari
   assert.match(admRevJs, /function lireToutPagine\(fabriquerRequete, plafond\)/);
   assert.match(graphJs, /s\.from\("sti_quiz_parties"\)[\s\S]*?\.range\(deQ,\s*deQ\s*\+\s*999\)/);
 
-  // 2) Parité exacte 150/150 entre assets/pages-couverture.json et le repli hors-ligne de roue-couverture.js
+  // 2) Parité exacte 151/151 entre assets/pages-couverture.json et le repli hors-ligne de roue-couverture.js
   const secM = roueCouvJs.match(/var PAGES = \[([\s\S]*?)\];/);
   assert.ok(secM, 'PAGES présent dans roue-couverture.js');
   const secoursPages = Array.from(vm.runInNewContext('[' + secM[1] + ']')).map((p) => String(p).toLowerCase()).sort();
   const manifestPages = [...couvJson.pages].map((p) => String(p).toLowerCase()).sort();
-  assert.equal(secoursPages.length, 150);
-  assert.deepEqual(secoursPages, manifestPages, 'Le repli hors-ligne de roue-couverture.js doit correspondre exactement aux 150 pages de pages-couverture.json');
+  assert.equal(secoursPages.length, 151);
+  assert.deepEqual(secoursPages, manifestPages, 'Le repli hors-ligne de roue-couverture.js doit correspondre exactement aux 151 pages de pages-couverture.json');
 
   // 3) Annexe HTML5 : cible #annexe-html5 présente + correction de la coquille "aricle" -> "article" + piste barre analytique.js
   assert.match(annexeHtml5, /<main id="annexe-html5">/);
@@ -5038,7 +5038,7 @@ test('v470 (comportemental VM) : isolation multi-élèves quiz, tirage neuf conn
   assert.equal(Object.keys(uploadedFiles[0].json.tables).length, 18);
 });
 
-test('v471 (structure) : 150/150 chemins Git exacts dans roue-revision.js (zéro 404 casse Linux), reprendre.js multi-matières, 43 contrôles sante.js & sw.js sti-atelier-v331', () => {
+test('v471 (structure) : 151/151 chemins Git exacts dans roue-revision.js (zéro 404 casse Linux), reprendre.js multi-matières, 43 contrôles sante.js & sw.js sti-atelier-v331', () => {
   const roueRevJs = read('assets/js/roue-revision.js');
   const reprendreJs = read('assets/js/reprendre.js');
   const rouePlanJs = read('assets/js/roue-plan.js');
@@ -5064,13 +5064,13 @@ test('v471 (structure) : 150/150 chemins Git exacts dans roue-revision.js (zéro
     execFileSync(process.execPath, ['--check', join(root, rel)], { stdio: 'pipe' });
   }
 
-  // 1) Vérification exacte de casse sur disque / Git pour les 150 pages de pages-couverture.json
+  // 1) Vérification exacte de casse sur disque / Git pour les 151 pages de pages-couverture.json
   const gitTracked = new Set(
     execFileSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8' })
       .split('\0')
       .filter(Boolean)
   );
-  assert.equal(couvPages.length, 150);
+  assert.equal(couvPages.length, 151);
   const mMap = roueRevJs.match(/var CHEMINS_REELS = (\{[\s\S]*?\});/);
   assert.ok(mMap, 'CHEMINS_REELS doit être défini dans roue-revision.js');
   const cheminsReels = JSON.parse(mMap[1]);

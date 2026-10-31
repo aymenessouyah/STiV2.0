@@ -5,7 +5,10 @@
     "test:v302": "node --test tests/v302-static.test.mjs",
     "test:v303": "node --test tests/v303-device-control.test.mjs",
     "test:browser:v302": "playwright test --config tests/playwright.config.mjs",
-    "test:browser:v303": "playwright test --config tests/playwright-v303.config.mjs"
+    "test:browser:v303": "playwright test --config tests/playwright-v303.config.mjs",
+    "secours": "node outils/secours/construire-secours.mjs",
+    "secours:documents": "node outils/secours/construire-secours.mjs --volume documents",
+    "secours:tout": "node outils/secours/construire-secours.mjs --volume tout"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.3.16",

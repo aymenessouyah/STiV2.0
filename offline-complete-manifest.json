@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-10-31T15:32:46Z",
+  "generatedAt": "2026-10-31T16:04:30Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 772,
-  "totalBytes": 1114005206,
+  "totalBytes": 1114005509,
   "files": [
     {
       "path": "404.html",
@@ -63,12 +63,12 @@
     {
       "path": "README.md",
       "bytes": 62980,
-      "gitSha": "52d7ec7986adcdaf3ab767683ef6bd6792e3a64c"
+      "gitSha": "e28a98123dad3a40db0bd9195b1373e17c560043"
     },
     {
       "path": "admin.html",
       "bytes": 346703,
-      "gitSha": "a266c7ce79b77888310bc40cdf6beb730d35cc16"
+      "gitSha": "aebf613e0144ed5bc3dd8501df965101b0e1bd1a"
     },
     {
       "path": "assets/audio/cours-sti-ch1.mp3",
@@ -728,12 +728,12 @@
     {
       "path": "assets/js/admin.js",
       "bytes": 772002,
-      "gitSha": "9fe41e5186ae227107750085026d4ce6bc94a8b2"
+      "gitSha": "6e9dc2e4d0a48c8dc26cf48793018c7829582f60"
     },
     {
       "path": "assets/js/analytique.js",
       "bytes": 18719,
-      "gitSha": "d56ba8161c421e8bda4e0461ae61b7014b0a4782"
+      "gitSha": "a6cf7e14f7be6c6653ffdc2b1459bc42847b5417"
     },
     {
       "path": "assets/js/app.js",
@@ -952,8 +952,8 @@
     },
     {
       "path": "assets/js/roue-couverture.js",
-      "bytes": 13932,
-      "gitSha": "108138c763c25cb8470af2c9e30b1ff2cd828991"
+      "bytes": 13954,
+      "gitSha": "d90964b0949caded5dc2f73db934c1c7e2e4a37e"
     },
     {
       "path": "assets/js/roue-habillage.js",
@@ -1052,8 +1052,8 @@
     },
     {
       "path": "assets/pages-couverture.json",
-      "bytes": 6104,
-      "gitSha": "8061a73abe9ecb091cc242199d2accc2c8796846"
+      "bytes": 6126,
+      "gitSha": "c0f9e366be5b8683dd349002620115912f0a3508"
     },
     {
       "path": "assets/streams/css3-v302/css3-1080p.m3u8",
@@ -3302,8 +3302,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 512,
-      "gitSha": "aaae3d7613a5abdb1133b07bd9e70ab8e4e0f677"
+      "bytes": 743,
+      "gitSha": "5de14387665079af5e0dac28a01317e982f7e39b"
     },
     {
       "path": "pieges-bac.html",
@@ -3862,8 +3862,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 102915,
-      "gitSha": "c96e82013713c6f34971d20421b79f60850cad73"
+      "bytes": 102943,
+      "gitSha": "3bc7014ec6b7ad541e29512b6064dd79ce574320"
     }
   ]
 }

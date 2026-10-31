@@ -76,3 +76,7 @@ build/
 /outils/courssti/voix-off.wav
 /outils/courssti/voix/*.wav
 /outils/courssti/rendu.log
+
+# Sauvegarde de secours de la plateforme (outils/secours) : les archives sont
+# produites à la demande et déposées sur Google Drive, jamais dans Git.
+/dist-secours/
