@@ -70,6 +70,6 @@ test('v601 : le logo rétrécit avec la pastille', () => {
 });
 
 test('v601 : la version publiée et le cache avancent', () => {
-  assert.match(SW, /var VERSION_PUBLIEE = "v603";/, 'la version publiée a avancé (v601 → v602)');
+  assert.match(SW, /var VERSION_PUBLIEE = "v604";/, 'la version publiée a avancé (v601 → v602)');
   assert.match(SW, /url: "\.\/assets\/css\/theme\.css", revision: "roue-compte-v602"/);
 });

@@ -60,7 +60,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
   assert.equal(revisions.get('./assets/js/app.js'), 'roue-compte-v602');
   assert.equal(revisions.get('./index.html'), 'cours-sti-v596');
-  assert.equal(revisions.get('./offline-complete-manifest.json'), 'export-drive-v603');
+  assert.equal(revisions.get('./offline-complete-manifest.json'), 'cercle-carte-v604');
   assert.equal(revisions.get('./README.md'), 'couverture-v583');
   /* v585 : le tableau de bord annonce le Smart Book 3ᵉ SI à 81 pages ; le drapeau reste au lot v503. */
   assert.equal(revisions.get('./dashboard.html'), 'livre-3si-81p-v585');
@@ -91,20 +91,20 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   for (const chemin of ['package.json', 'package-lock.json']) {
     assert.equal(revisions.get('./' + chemin), 'xp-operations-v487', chemin);
   }
-  assert.equal(revisions.get('./assets/js/mobile-nav.js'), 'portail-sans-barre-v579');
+  assert.equal(revisions.get('./assets/js/mobile-nav.js'), 'cercle-carte-v604');
   /* v602 : la carte d'identité change de forme (cercle) ; l'image de fond, elle,
      n'a pas bougé et garde sa révision. */
-  assert.equal(revisions.get('./assets/css/badge-compte.css'), 'roue-compte-v602');
+  assert.equal(revisions.get('./assets/css/badge-compte.css'), 'cercle-carte-v604');
   assert.equal(revisions.get('./assets/images/badge-compte-vierge.png'), 'badge-image-v488');
   /* v553 : la roue écoute le défilement en mode passif (audit de fluidité). */
-  assert.equal(revisions.get('./assets/js/roue-initiales.js'), 'roue-compte-v602');
+  assert.equal(revisions.get('./assets/js/roue-initiales.js'), 'cercle-carte-v604');
   for (const chemin of ['assets/css/theme-patrimoine.css']) {
     assert.equal(revisions.get('./' + chemin), 'fidelite-origine-v481', chemin);
   }
   assert.equal(revisions.get('./assets/js/acces.js'), 'exercices-sti-v595');
   /* v529 : masquer la reprise ne doit pas effacer le compteur de vues vidéo. */
   assert.equal(revisions.get('./assets/js/reprendre.js'), 'vues-videos-v531');
-  assert.equal(revisions.get('./assets/js/config.js'), 'portail-sans-barre-v579');
+  assert.equal(revisions.get('./assets/js/config.js'), 'cercle-carte-v604');
   assert.equal(revisions.get('./assets/js/sync-progressions.js'), 'pastille-sync-v534');
   for (const chemin of ['assets/css/cours-matieres.css', 'assets/js/cours-matieres.js', 'assets/js/cours-sql-worker.js', 'assets/js/profil.js', 'assets/js/app.js']) {
     assert.ok(revisions.has('./' + chemin), chemin);

@@ -59,7 +59,7 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
      admin.js plafonne les durées du tableau de bord, filtre les vidéos
      décoratives et normalise les noms de quiz ; empreintes réactualisées. */
   const originaux = {
-    'assets/js/config.js': 'dbe14a6d66e869a2431d2184d7ce597385c75292bb6c5f7862a63a0131a1dad4',
+    'assets/js/config.js': 'decac9848caff43c5cf4338edf90a19fa25a27ebfad37a045f5842bece388858',
     'assets/js/supabase-umd.js': '2eebfe06b1b5309985dc1526e8981ea3a18b71beeef83e7f38e04c303e142d6d',
     /* v595 : l'index de recherche et le fil « dernière lecture » accueillent
        les quatre ateliers d'exercices « Systèmes » ; empreinte réactualisée. */

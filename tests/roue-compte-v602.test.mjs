@@ -106,7 +106,7 @@ test('v602 : les initiales de la roue sont prénom + nom', () => {
   const bloc = roue.slice(roue.indexOf('function initiales(c)'), roue.indexOf('function normaliser'));
   assert.match(bloc, /\(p \+ n\)\.toUpperCase\(\)/, '« Aymen Essouyah » donne « AE »');
   assert.doesNotMatch(bloc, /n \+ "\." \+ p/, 'plus de « E.A » inversé');
-  assert.match(SW, /url: "\.\/assets\/js\/roue-initiales\.js", revision: "roue-compte-v602"/);
+  assert.match(SW, /url: "\.\/assets\/js\/roue-initiales\.js", revision: "cercle-carte-v604"/);
 });
 
 test('v602 : la roue complète devient un cercle de 40 px sur téléphone', () => {
@@ -122,8 +122,8 @@ test('v602 : la roue complète devient un cercle de 40 px sur téléphone', () =
 });
 
 test('v602 : la version publiée et le cache avancent', () => {
-  assert.match(SW, /var VERSION_PUBLIEE = "v603";/, 'la version publiée passe à v602');
+  assert.match(SW, /var VERSION_PUBLIEE = "v604";/, 'la version publiée passe à v602');
   assert.match(SW, /url: "\.\/assets\/css\/theme\.css", revision: "roue-compte-v602"/);
   assert.match(SW, /url: "\.\/assets\/js\/app\.js", revision: "roue-compte-v602"/);
-  assert.match(SW, /url: "\.\/assets\/css\/badge-compte\.css", revision: "roue-compte-v602"/);
+  assert.match(SW, /url: "\.\/assets\/css\/badge-compte\.css", revision: "cercle-carte-v604"/);
 });

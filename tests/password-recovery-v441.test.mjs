@@ -3059,7 +3059,7 @@ test('v464 : correctifs issus du test fonctionnel E2E (purges quota sans Referen
 
   // 4) config.js protège contre les URLs se terminant par .html/ et charge mobile-nav.js?v=579
   assert.match(configJs, /replace\(\/\(\\\.html\?\)\\\/\+\$\/i,\s*"\$1"\)/);
-  assert.match(configJs, /mobile-nav\.js\?v=579/);
+  assert.match(configJs, /mobile-nav\.js\?v=604/);
 
   // 5) sauvegarde.js : fallback RPC admin_labo_devices_list + mobile-diagnostics.js window.confirm
   assert.match(sauvJs, /admin_labo_devices_list/);

@@ -658,7 +658,7 @@
           var liste = [
             "assets/js/roue-nuage.js?v=474",
             "assets/js/roue-habillage.js?v=474",
-            "assets/js/roue-initiales.js?v=474",
+            "assets/js/roue-initiales.js?v=604",
             "assets/js/roue-couverture.js?v=473",
             "assets/js/roue-revision.js?v=473",
             "assets/js/rappels-locaux.js?v=436",

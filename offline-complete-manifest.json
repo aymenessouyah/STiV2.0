@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-01T14:40:00Z",
+  "generatedAt": "2026-11-01T16:00:00Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 773,
-  "totalBytes": 1114042160,
+  "totalBytes": 1114042822,
   "files": [
     {
       "path": "404.html",
@@ -62,8 +62,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 62980,
-      "gitSha": "e28a98123dad3a40db0bd9195b1373e17c560043"
+      "bytes": 63393,
+      "gitSha": "fe41d843bf7435659a61c8626c6dc84ae4a5c618"
     },
     {
       "path": "admin.html",
@@ -197,8 +197,8 @@
     },
     {
       "path": "assets/css/badge-compte.css",
-      "bytes": 10197,
-      "gitSha": "6d7af4109c0205180e331b8c4de5e45e6919420f"
+      "bytes": 10428,
+      "gitSha": "66a7175392bee1a5b008b7e549a353c8c646ba2f"
     },
     {
       "path": "assets/css/capsules-vedettes.css",
@@ -748,7 +748,7 @@
     {
       "path": "assets/js/config.js",
       "bytes": 35679,
-      "gitSha": "9b3870ef8b757774bfee808aaf0a981bef79ef1e"
+      "gitSha": "449e5b57792e026ee1c5e52ffd39e454cda2d4cd"
     },
     {
       "path": "assets/js/cote-ticker.js",
@@ -833,7 +833,7 @@
     {
       "path": "assets/js/mobile-nav.js",
       "bytes": 43792,
-      "gitSha": "1f59c2824b108e9dd446e99bbce219c5f1b1c22e"
+      "gitSha": "72639b6a21164b1b8ac1423c8278b61710bd07c0"
     },
     {
       "path": "assets/js/modules/admin-labo-devices.js",
@@ -3003,7 +3003,7 @@
     {
       "path": "exercices/javascript/js-37-defis-tt.html",
       "bytes": 96609,
-      "gitSha": "9248c4e473127cfad1aa921223d77dab3e2f4852"
+      "gitSha": "f757cad09ad558fe0e9d1457df697f6653ef11ad"
     },
     {
       "path": "exercices/javascript/validation-nom-prenom-js.srt",
@@ -3133,7 +3133,7 @@
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
       "bytes": 31912,
-      "gitSha": "294a44de2aa76df05de94051a78ee753fbdd6cea"
+      "gitSha": "3db9259b24e23157901c2a45a93f8957508be6c8"
     },
     {
       "path": "exercices/sql/Série 4.2 - GestLocation - Corrigé.pdf",
@@ -3867,8 +3867,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 103160,
-      "gitSha": "3838ce576bf513bd933a4801af9b341c3a1e3d2c"
+      "bytes": 103178,
+      "gitSha": "ae220117277ca7437ded0df8ea049909447dcf75"
     }
   ]
 }
