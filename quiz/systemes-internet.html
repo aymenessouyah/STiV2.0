@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="description" content="Quiz Systèmes, technologies et Internet (3ᵉ SI) : systèmes d’exploitation, réseaux et objets connectés, questions tirées au hasard, corrigé expliqué et progression XP.">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, noai, noimageai" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://vywujxmepvcbgedgmger.supabase.co; font-src 'self' data:; connect-src 'self' https://vywujxmepvcbgedgmger.supabase.co wss://vywujxmepvcbgedgmger.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'" />
+<script src="../assets/js/quiz-systemes-boot.js?v=580"></script>
+<link rel="icon" href="../assets/icons/sti-icon-192.png" />
+<title>Quiz Systèmes &amp; Internet — STI V2.0</title>
+<style>
+  :root {
+    --qt-bg: #f9f1e3;
+    --qt-ink: #23201a;
+    --qt-muted: #5a5244;
+    --qt-card: #fffdf7;
+    --qt-surface: #ffffff;
+    --qt-edge: #23201a;
+    --qt-acc: #f4511e;
+    --qt-acc-2: #ff8a50;
+    --qt-hover-bg: #ffe9d6;
+    --qt-hover-soft: #fff8ef;
+    --qt-shadow-card: 6px 6px 0 rgba(244, 81, 30, .4);
+    --qt-shadow-mod: 3.5px 3.5px 0 rgba(244, 81, 30, .35);
+    --qt-shadow-pill: 2.5px 2.5px 0 #23201a;
+    --qt-ok-bg: #eefaf2;
+    --qt-ok-brd: #177245;
+    --qt-ko-bg: #fdf0ef;
+    --qt-ko-brd: #c0392b;
+  }
+  html.dark, html.dark-mode, html[data-theme="dark"] {
+    --qt-bg: #0d1526;
+    --qt-ink: #eef2f8;
+    --qt-muted: #9fb2cc;
+    --qt-card: #16233c;
+    --qt-surface: #1d2e4d;
+    --qt-edge: #2b3d5f;
+    --qt-acc: #ff8c42;
+    --qt-acc-2: #ffa866;
+    --qt-hover-bg: #24385c;
+    --qt-hover-soft: #213456;
+    --qt-shadow-card: 6px 6px 0 rgba(7, 12, 23, .85);
+    --qt-shadow-mod: 3.5px 3.5px 0 rgba(7, 12, 23, .8);
+    --qt-shadow-pill: 2.5px 2.5px 0 #070c17;
+    --qt-ok-bg: rgba(46, 204, 158, .14);
+    --qt-ok-brd: #2ecc9e;
+    --qt-ko-bg: rgba(255, 107, 107, .14);
+    --qt-ko-brd: #ff6b6b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--qt-bg); color: var(--qt-ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    padding: 18px 14px 64px;
+    min-height: 100vh;
+  }
+  .qt-wrap { max-width: 860px; margin: 0 auto; }
+  .qt-nav {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .qt-nav-groupe { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .qt-nav a, .qt-nav .qt-pastille, .qt-nav .qt-theme-btn {
+    display: inline-flex; align-items: center; gap: 6px; padding: 8px 13px; border-radius: 999px;
+    background: var(--qt-card); color: var(--qt-ink); text-decoration: none; border: 2px solid var(--qt-edge);
+    box-shadow: var(--qt-shadow-pill); font-weight: 800; font-size: 13px; font-family: inherit;
+  }
+  .qt-nav .qt-theme-btn { cursor: pointer; }
+  .qt-nav a:hover, .qt-nav .qt-theme-btn:hover { background: var(--qt-hover-bg); border-color: var(--qt-acc); }
+  .qt-pastille img { width: 20px; height: 20px; border-radius: 5px; object-fit: cover; }
+  .qt-carte {
+    background: var(--qt-card); border: 2px solid var(--qt-edge); border-radius: 20px;
+    box-shadow: var(--qt-shadow-card); padding: 22px 20px;
+  }
+  .qt-carte h1 { font-size: 24px; margin-bottom: 6px; }
+  .qt-carte h1 em { font-style: normal; color: var(--qt-acc); }
+  .qt-sous { color: var(--qt-muted); font-size: 14px; line-height: 1.5; margin-bottom: 16px; }
+  .qt-modules { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .qt-module {
+    text-align: left; cursor: pointer; background: var(--qt-card); color: var(--qt-ink);
+    border: 2px solid var(--qt-edge); border-radius: 16px;
+    box-shadow: var(--qt-shadow-mod); padding: 14px; font: inherit;
+    transition: transform .08s ease, border-color .15s ease;
+  }
+  .qt-module:hover { border-color: var(--qt-acc); transform: translateY(-2px); }
+  .qt-module .qt-mod-ico { font-size: 22px; }
+  .qt-module .qt-mod-nom { display: block; font-weight: 900; font-size: 16px; margin: 4px 0 2px; }
+  .qt-module .qt-mod-reste { display: block; color: var(--qt-muted); font-size: 12px; font-weight: 700; }
+  .qt-module.epuise { opacity: .55; }
+  .qt-barre {
+    height: 12px; background: var(--qt-surface); border: 2px solid var(--qt-edge); border-radius: 999px; overflow: hidden;
+    margin: 12px 0 18px;
+  }
+  .qt-barre i { display: block; height: 100%; background: linear-gradient(90deg, var(--qt-acc), var(--qt-acc-2)); width: 0; transition: width .3s ease; }
+  .qt-qmeta { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: 12px; font-weight: 800; color: var(--qt-muted); margin-bottom: 8px; }
+  .qt-qmeta .qt-badge { background: var(--qt-bg); border: 1.5px solid var(--qt-edge); border-radius: 999px; padding: 2px 10px; color: var(--qt-ink); }
+  .qt-question { font-size: 18px; font-weight: 800; line-height: 1.45; margin-bottom: 16px; overflow-wrap: break-word; }
+  .qt-choix { display: grid; gap: 10px; }
+  .qt-choix-btn {
+    text-align: left; cursor: pointer; font: inherit; font-size: 14.5px; line-height: 1.4;
+    background: var(--qt-surface); color: var(--qt-ink); border: 2px solid var(--qt-edge); border-radius: 14px; padding: 12px 14px;
+    box-shadow: var(--qt-shadow-pill); overflow-wrap: break-word;
+  }
+  .qt-choix-btn:hover { border-color: var(--qt-acc); background: var(--qt-hover-soft); }
+  .qt-choix-btn.choisi { background: var(--qt-hover-bg); border-color: var(--qt-acc); box-shadow: 2.5px 2.5px 0 var(--qt-acc); }
+  .qt-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+  .qt-btn {
+    cursor: pointer; font: inherit; font-weight: 900; font-size: 14px; padding: 11px 18px;
+    border-radius: 999px; border: 2px solid var(--qt-edge); background: linear-gradient(120deg, #f4511e, #ff8a50);
+    color: #fff; box-shadow: 3px 3px 0 var(--qt-edge);
+  }
+  .qt-btn.secondaire { background: var(--qt-card); color: var(--qt-ink); }
+  .qt-btn.secondaire:hover { background: var(--qt-hover-bg); border-color: var(--qt-acc); }
+  .qt-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .qt-score { font-size: 20px; font-weight: 900; margin-bottom: 6px; }
+  .qt-correction { border: 2px solid var(--qt-edge); border-radius: 14px; padding: 14px; margin-bottom: 12px; background: var(--qt-surface); }
+  .qt-correction.ok { border-color: var(--qt-ok-brd); background: var(--qt-ok-bg); }
+  .qt-correction.ko { border-color: var(--qt-ko-brd); background: var(--qt-ko-bg); }
+  .qt-correction .qt-cq { font-weight: 800; margin-bottom: 8px; line-height: 1.45; overflow-wrap: break-word; }
+  .qt-correction .qt-ligne { font-size: 13.5px; line-height: 1.5; margin: 3px 0; overflow-wrap: break-word; }
+  .qt-correction .qt-conseil {
+    margin-top: 8px; padding: 8px 11px; border-radius: 10px;
+    background: rgba(244, 81, 30, .1); border: 1.5px solid var(--qt-acc);
+    font-size: 12.8px; line-height: 1.45; color: var(--qt-ink);
+  }
+  .qt-correction .qt-ref { display: inline-block; margin-top: 8px; font-size: 11.5px; font-weight: 800; background: var(--qt-bg); border: 1.5px solid var(--qt-edge); border-radius: 999px; padding: 2px 10px; color: var(--qt-ink); }
+  .qt-points-reviser {
+    border: 2px solid var(--qt-ko-brd); border-radius: 16px; padding: 14px 16px;
+    margin-bottom: 16px; background: var(--qt-ko-bg);
+  }
+  .qt-points-reviser h2 { font-size: 16px; font-weight: 900; margin-bottom: 10px; color: var(--qt-ink); }
+  .qt-points-grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+  .qt-point-carte {
+    background: var(--qt-surface); border: 1.5px solid var(--qt-edge); border-radius: 12px; padding: 10px 12px;
+  }
+  .qt-point-entete { display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap; margin-bottom: 5px; font-weight: 900; font-size: 13px; }
+  .qt-point-lien {
+    display: inline-block; padding: 2px 9px; border-radius: 999px; background: var(--qt-acc);
+    color: #fff; text-decoration: none; font-size: 11px; font-weight: 800;
+  }
+  .qt-point-refs { font-size: 12px; color: var(--qt-muted); line-height: 1.45; font-weight: 700; }
+  .qt-verrou { text-align: center; padding: 26px 10px; }
+  .qt-verrou .qt-gros { font-size: 40px; margin-bottom: 10px; }
+  @media print { .qt-nav, .qt-actions { display: none !important; } body { background: #fff; color: #000; } .qt-carte { box-shadow: none; background: #fff; } }
+</style>
+  <link rel="manifest" href="../manifest.webmanifest" />
+</head>
+<body>
+  <div class="qt-wrap">
+    <nav class="qt-nav" aria-label="Navigation du quiz">
+      <a href="../index.html#modules">← Retour aux quiz</a>
+      <span class="qt-pastille"><img src="../assets/icons/sti-icon-512.png" alt="" width="20" height="20" /> Quiz Systèmes &amp; Internet · abonnés</span>
+      <div class="qt-nav-groupe">
+        <a href="../revision-erreurs.html">🔁 Mes erreurs</a>
+        <a href="../cours/systemes-technologies-internet.html">🖥️ Le cours</a>
+        <a href="../livre-smart.html">📖 Mon livre</a>
+        <button type="button" class="qt-theme-btn" id="qt-theme-toggle" aria-pressed="false" title="Basculer entre le mode clair et le mode sombre">🌙 Sombre</button>
+      </div>
+    </nav>
+    <main class="qt-carte" id="qt-app">
+      <h1>Quiz <em>Systèmes, technologies et Internet</em></h1>
+      <p class="qt-sous">Chargement des questions…</p>
+    </main>
+  </div>
+  <script src="../assets/js/protection.js?v=227" defer></script>
+<script src="../assets/js/xp-plancher.js?v=520"></script>
+<script src="../assets/js/quiz-alea.js?v=555"></script>
+  <script src="../assets/js/config.js?v=476" defer></script>
+  <script src="../assets/js/supabase-umd.js" defer></script>
+  <script src="../assets/js/acces.js?v=453" defer></script>
+  <script src="../assets/js/sync-progressions.js?v=478" defer></script>
+  <script src="../assets/js/profil.js" defer data-sti-quiz-seul></script>
+  <script src="../assets/js/quiz-sync.js?v=460" defer></script>
+  <script src="../assets/js/quiz-systemes.js?v=580" defer></script>
+<script src="../assets/js/retour-quiz.js" defer></script>
+</body>
+</html>

@@ -150,3 +150,80 @@ details.sti-correction ul { margin: 0 0 0 1.1em; }
   .sti-evaluation ol > li::before { border-color: #000; color: #000; }
   details.sti-correction { break-inside: avoid; }
 }
+
+/* ── Les dix sections de la vidéo : des boutons, pas une liste morte ─────────
+   Un clic (ou Entrée / Espace) ouvre le lecteur à l'instant de la section.
+   Le lecteur commun lit data-video-open et data-video-start (v577/v580). */
+.sti-sections-video > summary { cursor: pointer; }
+.sti-sections-video__liste {
+  list-style: none;
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.sti-section {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 12px;
+  font: inherit;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  background: var(--surface-solid);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 2px 2px 0 var(--border);
+  transition: transform .12s ease, background .15s ease, border-color .15s ease;
+}
+.sti-section:hover,
+.sti-section:focus-visible {
+  transform: translate(-1px, -1px);
+  border-color: var(--course-accent-border);
+  background: var(--course-accent-soft);
+}
+.sti-section:focus-visible {
+  outline: 3px solid var(--course-accent);
+  outline-offset: 2px;
+}
+.sti-section__temps {
+  flex: 0 0 auto;
+  min-width: 3.1em;
+  font-family: var(--font-mono);
+  font-size: .9rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--course-accent);
+  background: var(--course-accent-soft);
+  border: 1px solid var(--course-accent-border);
+  border-radius: var(--radius-md);
+  padding: 2px 6px;
+  text-align: center;
+}
+.sti-section__texte { flex: 1 1 auto; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.sti-section__chapitre {
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.sti-section__titre { font-weight: 700; line-height: 1.35; }
+.sti-section__lecture { flex: 0 0 auto; font-size: .95rem; color: var(--course-accent); }
+.sti-sections-video__note { margin: var(--space-2) 0 0; font-size: .86rem; color: var(--text-muted); }
+
+/* Téléphone étroit : le repère reste lisible, le titre passe sur deux lignes. */
+@media (max-width: 480px) {
+  .sti-section { gap: 9px; padding: 8px 10px; }
+  .sti-section__lecture { display: none; }
+}
+/* Impression et contraste élevé : pas d'ombre, texte noir sur blanc. */
+@media print {
+  .sti-section { box-shadow: none; border-color: #000; }
+  .sti-section__lecture { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sti-section, .sti-section:hover, .sti-section:focus-visible { transition: none; transform: none; }
+}

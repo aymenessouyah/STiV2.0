@@ -149,7 +149,7 @@ test('l’accueil compte la nouvelle capsule dans son catalogue', () => {
 
 test('le cache hors-ligne embarque la vidéo sans téléchargement automatique', () => {
   const sw = lire('sw.js');
-  assert.match(sw, /var UPDATE_ID = "v579-vitrine-sti-portail"/);
+  assert.match(sw, /var UPDATE_ID = "v580-quiz-systemes"/);
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];
   for (const chemin of [VIDEO, VTT]) assert.ok(offline.includes(`"./${chemin}"`), chemin);
@@ -158,7 +158,7 @@ test('le cache hors-ligne embarque la vidéo sans téléchargement automatique',
   assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "etiquette-relief-v572"/);
   assert.match(delta, /url: "\.\/assets\/js\/protection\.js", revision: "cours-sti-v578"/);
   assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "vitrine-sti-v579"/);
-  assert.ok(sw.includes('var UPDATE_FILES = [') && sw.split('var UPDATE_FILES = [')[1].split('];')[0].split('{ url:').length - 1 <= 264);
+  assert.ok(sw.includes('var UPDATE_FILES = [') && sw.split('var UPDATE_FILES = [')[1].split('];')[0].split('{ url:').length - 1 <= 268);
 });
 
 test('le manifeste complet décrit la vidéo et ses sous-titres', () => {

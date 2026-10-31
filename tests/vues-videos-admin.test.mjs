@@ -452,7 +452,7 @@ test('reconnexion-profil fusionne aussi les compteurs de vues', () => {
 
 test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »', () => {
   const sw = lire('sw.js');
-  assert.match(sw, /var UPDATE_ID = "v579-vitrine-sti-portail"/);
+  assert.match(sw, /var UPDATE_ID = "v580-quiz-systemes"/);
   /* Le manifeste a suivi la v533 : il porte sa propre révision. */
   /* sync-progressions.js est reparti au lot v534 (pastille de synchro) : cinq fichiers restent. */
   /* admin-vues-videos.js repart au lot v549 (capsule PHP au catalogue du coin).
@@ -474,7 +474,8 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
   /* Budget du delta préservé : le module entre dans la liste, une annexe figée en sort. */
   const urls = [...delta.matchAll(/url:\s*"([^"]+)"/g)].map((m) => m[1]);
   assert.equal(new Set(urls).size, urls.length, 'aucun doublon');
-  assert.ok(urls.length <= 264, 'delta léger (≤ 264 entrées)');
+  /* v580 : le quiz STI ajoute 4 entrées (page, moteur, initialiseur, banque). */
+  assert.ok(urls.length <= 268, 'delta léger (≤ 268 entrées)');
   assert.ok(!urls.includes('./documents/annexes/annexe-sql.pdf.html'), 'place libérée par une annexe figée');
   /* Préchargement hors ligne : le module doit y être pour que le coin marche sans réseau. */
   const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];
@@ -483,7 +484,7 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
 
 test('le manifeste hors ligne contient le nouveau module avec son empreinte', () => {
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  assert.equal(manifeste.version, 'v579-sti-atelier-v386');
+  assert.equal(manifeste.version, 'v580-sti-atelier-v386');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((n, f) => n + f.bytes, 0));
   const entree = manifeste.files.find((f) => f.path === MODULE);

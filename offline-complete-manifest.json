@@ -1,9 +1,9 @@
 {
-  "version": "v579-sti-atelier-v386",
-  "generatedAt": "2026-10-31T07:52:44Z",
+  "version": "v580-sti-atelier-v386",
+  "generatedAt": "2026-10-31T08:16:05Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 753,
-  "totalBytes": 1110584008,
+  "totalFiles": 757,
+  "totalBytes": 1110647495,
   "files": [
     {
       "path": "404.html",
@@ -217,8 +217,8 @@
     },
     {
       "path": "assets/css/cours-sti.css",
-      "bytes": 5471,
-      "gitSha": "8411a3d5b231276f7d8c952559cd0d6e33a917ef"
+      "bytes": 8009,
+      "gitSha": "f474fb952191b77822fadf6ea98942d685908288"
     },
     {
       "path": "assets/css/cours.css",
@@ -317,13 +317,18 @@
     },
     {
       "path": "assets/data/nouveautes.json",
-      "bytes": 38171,
-      "gitSha": "4b0d9bf132a5f2161a7268c8e11f094070542a12"
+      "bytes": 44922,
+      "gitSha": "641a1bbd230cda3aa5362300628b2772e6cebbe1"
     },
     {
       "path": "assets/data/quiz-banque.json",
       "bytes": 319995,
       "gitSha": "63f5ec696fd37511642fc4dfb5e7e0d38954ad2e"
+    },
+    {
+      "path": "assets/data/quiz-systemes-internet.json",
+      "bytes": 10720,
+      "gitSha": "147790188e7267921ecc5b1d26bd0e2e36e41ab5"
     },
     {
       "path": "assets/data/smart-book-2026.json",
@@ -847,8 +852,18 @@
     },
     {
       "path": "assets/js/quiz-sync.js",
-      "bytes": 67644,
-      "gitSha": "8cca23a1bb6f299846e1c3f5804598e36ed54761"
+      "bytes": 67701,
+      "gitSha": "3e8cc14f0b2e1193c05eaf85e05d6a382fc46daa"
+    },
+    {
+      "path": "assets/js/quiz-systemes-boot.js",
+      "bytes": 2505,
+      "gitSha": "5901a9d535207eb6a2d33175863937b1442ca997"
+    },
+    {
+      "path": "assets/js/quiz-systemes.js",
+      "bytes": 22845,
+      "gitSha": "5feb49884fd3e607a340a35df857568c41b7e776"
     },
     {
       "path": "assets/js/quiz-tableaux-boot.js",
@@ -1392,8 +1407,8 @@
     },
     {
       "path": "cours/systemes-technologies-internet.html",
-      "bytes": 57923,
-      "gitSha": "0528165da6663ffd01607217f15c7c1a9371ab9c"
+      "bytes": 64126,
+      "gitSha": "ee7da979f68c6f6a5e338425a2a447a1f9f15ae5"
     },
     {
       "path": "cssanimee/cours.js",
@@ -3167,8 +3182,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 63630,
-      "gitSha": "e6da758f6c8000316d66169de891d9757a74b00f"
+      "bytes": 64532,
+      "gitSha": "4fc406480117d9c04dbc66ed6d1cfff84fe7f2df"
     },
     {
       "path": "livre-smart.html",
@@ -3706,14 +3721,19 @@
       "gitSha": "edd6e42e976344c6fec5b7ea084e41fdc6318c03"
     },
     {
+      "path": "quiz/systemes-internet.html",
+      "bytes": 10341,
+      "gitSha": "5d4f932bd1688388a9e127e1d7708f8270c83093"
+    },
+    {
       "path": "quiz/tableaux.html",
       "bytes": 10153,
       "gitSha": "5a626435a9e3dbebba219e17ea9f97d56f925c2a"
     },
     {
       "path": "revision-erreurs.html",
-      "bytes": 19405,
-      "gitSha": "2f8bf562e2e7b821f903466d115eacb8e4bbd637"
+      "bytes": 19492,
+      "gitSha": "da9f5eabaab2c3c320bcad2b53bf1405f4a824c4"
     },
     {
       "path": "robots.txt",
@@ -3767,8 +3787,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 99698,
-      "gitSha": "8196484d295428e5567b97c36b0a58d317c3ee65"
+      "bytes": 100236,
+      "gitSha": "a85507d55260bcab8c92e0ccc4f7336bc47bb354"
     }
   ]
 }

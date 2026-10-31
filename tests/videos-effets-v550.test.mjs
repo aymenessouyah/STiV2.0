@@ -104,9 +104,9 @@ test('la capsule des boucles appartient à JavaScript et à PHP', () => {
 test('le lot v550 est publié et versionné', () => {
   const sw = lire('sw.js');
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
-  assert.match(sw, /var UPDATE_ID = "v579-vitrine-sti-portail"/);
+  assert.match(sw, /var UPDATE_ID = "v580-quiz-systemes"/);
   assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "vitrine-sti-v579"/);
-  assert.match(sw, /url: "\.\/index\.html", revision: "vitrine-sti-v579"/);
+  assert.match(sw, /url: "\.\/index\.html", revision: "quiz-systemes-v580"/);
   assert.match(sw, /url: "\.\/cours\/php\.html", revision: "etiquette-relief-v572"/);
   /* la capsule des boucles reste hors du delta automatique (média lourd) */
   assert.ok(!sw.split('var UPDATE_FILES = [')[1].split('];')[0].includes('BouclePour-v547.mp4'));

@@ -132,7 +132,7 @@ test('l’accueil compte la nouvelle capsule dans son catalogue', () => {
 
 test('le cache hors-ligne embarque la vidéo sans téléchargement automatique', () => {
   const sw = lire('sw.js');
-  assert.match(sw, /var UPDATE_ID = "v579-vitrine-sti-portail"/);
+  assert.match(sw, /var UPDATE_ID = "v580-quiz-systemes"/);
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];
   for (const chemin of [VIDEO, VTT]) assert.ok(offline.includes(`"./${chemin}"`), chemin);
@@ -142,7 +142,8 @@ test('le cache hors-ligne embarque la vidéo sans téléchargement automatique',
   assert.match(delta, /url: "\.\/assets\/js\/protection\.js", revision: "cours-sti-v578"/);
   assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "vitrine-sti-v579"/);
   const nbDelta = delta.split('{ url:').length - 1;
-  assert.ok(nbDelta <= 264, `delta trop long : ${nbDelta}`);
+  /* v580 : le quiz STI ajoute 4 entrées au delta (268). */
+  assert.ok(nbDelta <= 268, `delta trop long : ${nbDelta}`);
 });
 
 test('le manifeste complet décrit la vidéo et ses sous-titres', () => {
@@ -157,7 +158,7 @@ test('le manifeste complet décrit la vidéo et ses sous-titres', () => {
     const sha = createHash('sha1').update(Buffer.concat([Buffer.from(`blob ${blob.length}\0`), blob])).digest('hex');
     assert.equal(entree.gitSha, sha, `sha1 de ${chemin}`);
   }
-  assert.match(manifeste.version, /^v579/);
+  assert.match(manifeste.version, /^v580/);
 });
 
 test('le moteur de rendu couvre les onze défis et les trois rappels', () => {

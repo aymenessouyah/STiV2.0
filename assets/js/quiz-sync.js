@@ -876,6 +876,7 @@
   }
 
   var NOMS_QUIZ_ACCES = {
+    "systemes": "Quiz Systèmes & Internet",
     "html-css": "Quiz HTML/CSS",
     "javascript": "Quiz JS",
     "sql": "Quiz SQL",
@@ -1464,7 +1465,7 @@
 
   function reinitialiserSessionsConnexion() {
     sauverSessionsLocales({});
-    sauverPurgeSessions(["html-css", "javascript", "sql", "php", "tableaux"]);
+    sauverPurgeSessions(["systemes", "html-css", "javascript", "sql", "php", "tableaux"]);
     quitterRevision();
   }
 

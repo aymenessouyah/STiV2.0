@@ -17,7 +17,7 @@
   <link rel="manifest" href="../manifest.webmanifest">
   <link rel="stylesheet" href="../assets/css/theme.css">
   <link rel="stylesheet" href="../assets/css/cours.css">
-  <link rel="stylesheet" href="../assets/css/cours-sti.css?v=573">
+  <link rel="stylesheet" href="../assets/css/cours-sti.css?v=580">
   <link rel="stylesheet" href="../assets/css/protection.css?v=227">
   <!-- Dépendances de l’accès conservées telles quelles et exécutées dans cet ordre. -->
   <script src="../assets/js/config.js?v=479" defer></script>
@@ -145,20 +145,91 @@
                 <a class="source-link" href="../assets/subtitles/CoursSystemesInternet-fr-v578.vtt" download>Sous-titres (VTT)</a>
                 <a class="source-link" href="../assets/videos/CoursSystemesInternet-v578.mp4" download>Télécharger la vidéo (MP4)</a>
               </div>
-              <details style="margin-top:var(--space-3)">
-                <summary><b>Les dix sections de la vidéo</b></summary>
-                <ol>
-                  <li>Bienvenue — le cours qui précède le Web</li>
-                  <li>Chapitre 1 · Le système d'exploitation et ses rôles</li>
-                  <li>Chapitre 1 · Types de systèmes et licences</li>
-                  <li>Chapitre 1 · Déployer, virtualiser, sécuriser</li>
-                  <li>Chapitre 2 · Le réseau, son étendue, ses équipements</li>
-                  <li>Chapitre 2 · IP, masque, DNS et adresse MAC</li>
-                  <li>Chapitre 2 · Architectures, protocoles, sécurité</li>
-                  <li>Chapitre 3 · L'Internet des objets et ses composants</li>
-                  <li>Chapitre 3 · Échanger, tester, la serre intelligente</li>
-                  <li>Fiche de synthèse — l'essentiel du cours</li>
+              <details class="sti-sections-video" style="margin-top:var(--space-3)">
+                <summary><b>Les dix sections de la vidéo</b> — cliquez sur une section pour lancer la vidéo à cet instant</summary>
+                <ol class="sti-sections-video__liste">
+                  <li>
+                    <button type="button" class="sti-section" data-video-open="cours-sti" data-video-start="1.2"
+                            aria-label="Lire la vidéo à 0:01 — Ouverture · Bienvenue — le cours qui précède le Web">
+                      <span class="sti-section__temps">0:01</span>
+                      <span class="sti-section__texte"><span class="sti-section__chapitre">Ouverture</span><span class="sti-section__titre">Bienvenue — le cours qui précède le Web</span></span>
+                      <span class="sti-section__lecture" aria-hidden="true">▶</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sti-section" data-video-open="cours-sti" data-video-start="53.16"
+                            aria-label="Lire la vidéo à 0:53 — Chapitre 1 · Le système d'exploitation et ses rôles">
+                      <span class="sti-section__temps">0:53</span>
+                      <span class="sti-section__texte"><span class="sti-section__chapitre">Chapitre 1</span><span class="sti-section__titre">Le système d'exploitation et ses rôles</span></span>
+                      <span class="sti-section__lecture" aria-hidden="true">▶</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sti-section" data-video-open="cours-sti" data-video-start="139.39"
+                            aria-label="Lire la vidéo à 2:19 — Chapitre 1 · Types de systèmes et licences">
+                      <span class="sti-section__temps">2:19</span>
+                      <span class="sti-section__texte"><span class="sti-section__chapitre">Chapitre 1</span><span class="sti-section__titre">Types de systèmes et licences</span></span>
+                      <span class="sti-section__lecture" aria-hidden="true">▶</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sti-section" data-video-open="cours-sti" data-video-start="214.86"
+                            aria-label="Lire la vidéo à 3:35 — Chapitre 1 · Déployer, virtualiser, sécuriser">
+                      <span class="sti-section__temps">3:35</span>
+                      <span class="sti-section__texte"><span class="sti-section__chapitre">Chapitre 1</span><span class="sti-section__titre">Déployer, virtualiser, sécuriser</span></span>
+                      <span class="sti-section__lecture" aria-hidden="true">▶</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sti-section" data-video-open="cours-sti" data-video-start="282.69"
+                            aria-label="Lire la vidéo à 4:43 — Chapitre 2 · Le réseau, son étendue, ses équipements">
+                      <span class="sti-section__temps">4:43</span>
+                      <span class="sti-section__texte"><span class="sti-section__chapitre">Chapitre 2</span><span class="sti-section__titre">Le réseau, son étendue, ses équipements</span></span>
+                      <span class="sti-section__lecture" aria-hidden="true">▶</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sti-section" data-video-open="cours-sti" data-video-start="359.88"
+                            aria-label="Lire la vidéo à 6:00 — Chapitre 2 · IP, masque, DNS et adresse MAC">
+                      <span class="sti-section__temps">6:00</span>
+                      <span class="sti-section__texte"><span class="sti-section__chapitre">Chapitre 2</span><span class="sti-section__titre">IP, masque, DNS et adresse MAC</span></span>
+                      <span class="sti-section__lecture" aria-hidden="true">▶</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sti-section" data-video-open="cours-sti" data-video-start="447.51"
+                            aria-label="Lire la vidéo à 7:28 — Chapitre 2 · Architectures, protocoles, sécurité">
+                      <span class="sti-section__temps">7:28</span>
+                      <span class="sti-section__texte"><span class="sti-section__chapitre">Chapitre 2</span><span class="sti-section__titre">Architectures, protocoles, sécurité</span></span>
+                      <span class="sti-section__lecture" aria-hidden="true">▶</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sti-section" data-video-open="cours-sti" data-video-start="532.02"
+                            aria-label="Lire la vidéo à 8:52 — Chapitre 3 · L'Internet des objets et ses composants">
+                      <span class="sti-section__temps">8:52</span>
+                      <span class="sti-section__texte"><span class="sti-section__chapitre">Chapitre 3</span><span class="sti-section__titre">L'Internet des objets et ses composants</span></span>
+                      <span class="sti-section__lecture" aria-hidden="true">▶</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sti-section" data-video-open="cours-sti" data-video-start="608.81"
+                            aria-label="Lire la vidéo à 10:09 — Chapitre 3 · Échanger, tester, la serre intelligente">
+                      <span class="sti-section__temps">10:09</span>
+                      <span class="sti-section__texte"><span class="sti-section__chapitre">Chapitre 3</span><span class="sti-section__titre">Échanger, tester, la serre intelligente</span></span>
+                      <span class="sti-section__lecture" aria-hidden="true">▶</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sti-section" data-video-open="cours-sti" data-video-start="705.12"
+                            aria-label="Lire la vidéo à 11:45 — Fiche de synthèse · L'essentiel du cours">
+                      <span class="sti-section__temps">11:45</span>
+                      <span class="sti-section__texte"><span class="sti-section__chapitre">Fiche de synthèse</span><span class="sti-section__titre">L'essentiel du cours</span></span>
+                      <span class="sti-section__lecture" aria-hidden="true">▶</span>
+                    </button>
+                  </li>
                 </ol>
+                <p class="sti-sections-video__note">Chaque section ouvre le lecteur dans une fenêtre par-dessus le cours ; les boutons ⏮ et ⏭ du lecteur passent d'un chapitre à l'autre, et la liste déroulante du lecteur donne le même choix.</p>
               </details>
             </div>
           </section>
