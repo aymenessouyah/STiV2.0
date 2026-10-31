@@ -38,7 +38,7 @@ test('chaque carte de la vidéothèque reçoit son effet et sa couleur', () => {
     'les capsules portent leur classe');
 
   const liste = catalogue();
-  assert.equal(liste.length, 26, 'vingt-six cartes');
+  assert.equal(liste.length, 27, 'vingt-sept cartes');
   assert.ok(liste.every((v) => v.couleur && /^#[0-9a-f]{6}$/i.test(v.couleur)), 'chaque carte a sa couleur');
   const effets = liste.map((v) => effetAttendu(v.id));
   assert.ok(effets.every((e) => e >= 0 && e <= 3), 'quatre effets possibles');
@@ -104,9 +104,9 @@ test('la capsule des boucles appartient à JavaScript et à PHP', () => {
 test('le lot v550 est publié et versionné', () => {
   const sw = lire('sw.js');
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
-  assert.match(sw, /var UPDATE_ID = "v578-video-cours-sti-visuels-20261031"/);
-  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "etiquette-relief-v572"/);
-  assert.match(sw, /url: "\.\/index\.html", revision: "sti-3si-v573"/);
+  assert.match(sw, /var UPDATE_ID = "v579-vitrine-sti-portail"/);
+  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "vitrine-sti-v579"/);
+  assert.match(sw, /url: "\.\/index\.html", revision: "vitrine-sti-v579"/);
   assert.match(sw, /url: "\.\/cours\/php\.html", revision: "etiquette-relief-v572"/);
   /* la capsule des boucles reste hors du delta automatique (média lourd) */
   assert.ok(!sw.split('var UPDATE_FILES = [')[1].split('];')[0].includes('BouclePour-v547.mp4'));

@@ -1,9 +1,9 @@
 {
-  "version": "v578-sti-atelier-v386",
-  "generatedAt": "2026-10-31T07:30:45Z",
+  "version": "v579-sti-atelier-v386",
+  "generatedAt": "2026-10-31T07:52:44Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 753,
-  "totalBytes": 1110580761,
+  "totalBytes": 1110584008,
   "files": [
     {
       "path": "404.html",
@@ -697,8 +697,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 123999,
-      "gitSha": "7edf97cb2d7bed38864964c043b88232946c0680"
+      "bytes": 125659,
+      "gitSha": "0dee990ae9a9a1e16e64a5f2c003fc91befc37a1"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -707,8 +707,8 @@
     },
     {
       "path": "assets/js/config.js",
-      "bytes": 35357,
-      "gitSha": "c6ee56ea8acb9405ea1afd6bf8e0843b04db685c"
+      "bytes": 35679,
+      "gitSha": "9b3870ef8b757774bfee808aaf0a981bef79ef1e"
     },
     {
       "path": "assets/js/cote-ticker.js",
@@ -777,8 +777,8 @@
     },
     {
       "path": "assets/js/mobile-nav.js",
-      "bytes": 42853,
-      "gitSha": "0f15f2878ff2f3dc34709e92ac4e87c749151a2e"
+      "bytes": 43792,
+      "gitSha": "1f59c2824b108e9dd446e99bbce219c5f1b1c22e"
     },
     {
       "path": "assets/js/modules/admin-labo-devices.js",
@@ -2938,7 +2938,7 @@
     {
       "path": "exercices/javascript/js-37-defis-tt.html",
       "bytes": 96609,
-      "gitSha": "07677ec5f5407453e5d954b6e8fabaa2e6fd9ea5"
+      "gitSha": "9248c4e473127cfad1aa921223d77dab3e2f4852"
     },
     {
       "path": "exercices/javascript/validation-nom-prenom-js.srt",
@@ -3068,7 +3068,7 @@
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
       "bytes": 31912,
-      "gitSha": "856687e7f3e2d6b97af8e35d27dbfbfa0df88964"
+      "gitSha": "294a44de2aa76df05de94051a78ee753fbdd6cea"
     },
     {
       "path": "exercices/sql/Série 4.2 - GestLocation - Corrigé.pdf",
@@ -3167,8 +3167,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 63533,
-      "gitSha": "f5ae85e098089326adfa49c3642152c440ced837"
+      "bytes": 63630,
+      "gitSha": "e6da758f6c8000316d66169de891d9757a74b00f"
     },
     {
       "path": "livre-smart.html",
@@ -3227,8 +3227,8 @@
     },
     {
       "path": "portail.html",
-      "bytes": 32300,
-      "gitSha": "ac7526452eb5a1bd647820293371753b7de76582"
+      "bytes": 32526,
+      "gitSha": "cbfee026d0e1c5b553c638ea4688c433cb9af8b0"
     },
     {
       "path": "projets/carte-bancaire/cb.html",
@@ -3767,8 +3767,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 99695,
-      "gitSha": "569385ae69c5d6e499f41b6ef2a8e7b3b4b111f8"
+      "bytes": 99698,
+      "gitSha": "8196484d295428e5567b97c36b0a58d317c3ee65"
     }
   ]
 }

@@ -13,6 +13,11 @@
   /* Le tableau de bord reste inchangé. */
   var pnNet = location.pathname.replace(/\/$/, "");
   if (/(^|\/)admin(\.html)?$/i.test(pnNet)) return;
+  /* v579 : la page de connexion et d'abonnement ne reçoit JAMAIS la barre.
+     Le portail porte le captcha Cloudflare : une barre flottante posée dessus
+     masque le contrôle et fait cliquer à côté. La même règle existe dans
+     config.js (le chargeur et le gabarit) et dans le <head> du portail. */
+  if (/(^|\/)portail(\.html)?$/i.test(pnNet)) return;
 
   /* Conserver le préfixe du site dans les liens. */
   function racine() {
@@ -309,7 +314,11 @@
   }
 
   /* ---------- contenu du volet « + » : cours, familles de vidéos, outils ---------- */
+  /* v579 : le cours « Systèmes, technologies et Internet » (3ᵉ SI) ouvre la liste.
+     Son adresse n'est pas `cours/<cle>.html` : chaque entrée peut porter son
+     propre lien (`lien`), sinon on retombe sur `cours/<cle>.html`. */
   var MATIERES = [
+    { cle: "sti", nom: "Systèmes &amp; Internet", ico: "🖥️", teinte: "linear-gradient(135deg,#fde68a,#b45309)", sous: "Le livre avant HTML (3ᵉ SI)", lien: "cours/systemes-technologies-internet.html" },
     { cle: "html5", nom: "HTML5", ico: "🧱", teinte: "linear-gradient(135deg,#ff9d5c,#f4511e)", sous: "Structure, formulaires, tableaux" },
     { cle: "css3", nom: "CSS3", ico: "🎨", teinte: "linear-gradient(135deg,#5ec8ff,#0284c7)", sous: "Sélecteurs, Flexbox, animations" },
     { cle: "javascript", nom: "JavaScript", ico: "⚡", teinte: "linear-gradient(135deg,#f7df1e,#d99b00)", sous: "DOM, événements, fonctions" },
@@ -318,6 +327,7 @@
   ];
   var FAMILLES_VIDEOS = [
     { cle: "all", nom: "Toutes les vidéos", ico: "🎬" },
+    { cle: "sti", nom: "Cours STI (systèmes &amp; Internet)", ico: "🖥️" },
     { cle: "html5", nom: "HTML5", ico: "🧱" },
     { cle: "css3", nom: "CSS3", ico: "🎨" },
     { cle: "javascript", nom: "JavaScript", ico: "⚡" },
@@ -397,7 +407,8 @@
 
     corps += '<h4>📚 Tous les cours</h4><div class="sti-sheet-cours">';
     MATIERES.forEach(function (m) {
-      corps += '<a class="sti-sheet-carte' + (m.cle === "php" ? " sti-4si-only" : "") + '" href="' + R + 'cours/' + m.cle + '.html">' +
+      var cible = m.lien || ("cours/" + m.cle + ".html");
+      corps += '<a class="sti-sheet-carte' + (m.cle === "php" ? " sti-4si-only" : "") + '" href="' + R + cible + '">' +
         '<i aria-hidden="true" style="background:' + m.teinte + '">' + m.ico + '</i>' +
         '<span><strong>' + m.nom + '</strong><small>' + m.sous + '</small></span></a>';
     });

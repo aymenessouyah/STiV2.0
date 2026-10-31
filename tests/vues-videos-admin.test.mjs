@@ -76,11 +76,11 @@ test('le module compile et s’exporte même hors du tableau de bord', () => {
 
 /* ───────────────────────── 2. le catalogue suit la vitrine de l’accueil ───────────────────────── */
 
-test('le catalogue du coin reprend les 26 capsules publiques de app.js, sans doublon', () => {
+test('le catalogue du coin reprend les 27 capsules publiques de app.js, sans doublon', () => {
   const app = lire('assets/js/app.js');
   const bloc = app.slice(app.indexOf('var CATALOGUE_VIDEOS = ['), app.indexOf('\n  ];', app.indexOf('var CATALOGUE_VIDEOS = [')));
   const idsVitrine = [...bloc.matchAll(/id:\s*"([^"]+)"/g)].map((m) => m[1]);
-  assert.equal(idsVitrine.length, 26, 'vingt-quatre capsules sur l’accueil');
+  assert.equal(idsVitrine.length, 27, 'vingt-sept capsules sur l’accueil');
   const fenetre = chargerModule(lire(MODULE));
   const catalogue = fenetre.STI_VUES_VIDEOS.catalogue();
   const ids = catalogue.map((v) => v.id);
@@ -452,7 +452,7 @@ test('reconnexion-profil fusionne aussi les compteurs de vues', () => {
 
 test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »', () => {
   const sw = lire('sw.js');
-  assert.match(sw, /var UPDATE_ID = "v578-video-cours-sti-visuels-20261031"/);
+  assert.match(sw, /var UPDATE_ID = "v579-vitrine-sti-portail"/);
   /* Le manifeste a suivi la v533 : il porte sa propre révision. */
   /* sync-progressions.js est reparti au lot v534 (pastille de synchro) : cinq fichiers restent. */
   /* admin-vues-videos.js repart au lot v549 (capsule PHP au catalogue du coin).
@@ -483,7 +483,7 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
 
 test('le manifeste hors ligne contient le nouveau module avec son empreinte', () => {
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  assert.equal(manifeste.version, 'v578-sti-atelier-v386');
+  assert.equal(manifeste.version, 'v579-sti-atelier-v386');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((n, f) => n + f.bytes, 0));
   const entree = manifeste.files.find((f) => f.path === MODULE);

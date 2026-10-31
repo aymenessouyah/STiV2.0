@@ -31,6 +31,9 @@
     var pn = location.pathname;
     if (pn.indexOf("/tests/") !== -1) return;
     if (/(^|\/)admin(\.html)?$/i.test(pn.replace(/\/$/, ""))) return;
+    /* v579 : cette page-ci ne veut aucune barre — ni la vraie, ni son esquisse
+       peinte d'avance : le captcha Cloudflare doit rester dégagé. */
+    if (/(^|\/)portail(\.html)?$/i.test(pn.replace(/\/$/, ""))) return;
     var d = JSON.parse(localStorage.getItem("sti-bnav-skel") || "null");
     if (!d || !d.h || typeof d.f !== "string" || !/^#[0-9a-f]{3,8}$|^rgba?\([\d.,\s]+\)$/i.test(d.f)) return;
     if (Date.now() - (d.t || 0) > 45 * 24 * 3600 * 1000) return;

@@ -213,8 +213,8 @@ test('la capsule est dans le paquet hors-ligne et versionnée', () => {
   assert.ok(sw.includes(`"./assets/videos/PhpChaines-v566.mp4"`), 'MP4 hors-ligne');
   assert.ok(sw.includes(`"./assets/subtitles/PhpChaines-fr-v566.vtt"`), 'VTT hors-ligne');
   /* v573 : l'accueil et le livre connecté repartent au lot « 3ème SI 2026 ». */
-  const REV_PAGES = { './index.html': 'sti-3si-v573', './cours/javascript.html': 'etiquette-relief-v572',
-    './cours/php.html': 'etiquette-relief-v572', './assets/js/app.js': 'etiquette-relief-v572' };
+  const REV_PAGES = { './index.html': 'vitrine-sti-v579', './cours/javascript.html': 'etiquette-relief-v572',
+    './cours/php.html': 'etiquette-relief-v572', './assets/js/app.js': 'vitrine-sti-v579' };
   const attendu = (page) => REV_PAGES[page] || 'cours-sti-v578';
   for (const page of ['./index.html', './cours/php.html', './assets/js/app.js',
     './assets/js/protection.js', './assets/js/lecteur-commun.js',
@@ -227,7 +227,7 @@ test('les totaux de l’accueil et du catalogue suivent', () => {
   const liste = catalogue();
   const index = lire('index.html');
   const php = liste.filter((v) => (v.matieres || [v.matiere]).includes('php')).length;
-  assert.equal(liste.length, 26, 'vingt-six capsules');
+  assert.equal(liste.length, 27, 'vingt-sept capsules');
   assert.equal(php, 6, 'six capsules PHP');
   assert.ok(index.includes(`data-video-filter="all">Toutes (${liste.length})</button>`));
   assert.ok(index.includes(`<span id="videosTotalNombre">${liste.length}</span>`));
