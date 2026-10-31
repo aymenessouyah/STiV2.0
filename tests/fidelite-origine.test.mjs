@@ -65,7 +65,7 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
     'assets/js/sync-progressions.js': 'c6e36a6f0ebea5e481cfb1b16afb9c0cfefc595ed4de21a1becff5a096d327b6',
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
     'portail.html': '7ea8179bed2a6eac89f6852352c224d83b34d2215cfb6f6acf9d01b657a03ad1',
-    'admin.html': 'adf469e9d8927123f7adab6035984855f1fc0aad9e01e7fd76ce208b6064e142',
+    'admin.html': '7f4bda926d2190995f4734a54821bbf2ad076c874ad035eab72ffcb4552cd54c',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };
@@ -212,7 +212,9 @@ test('commandes d’administration : scripts et fonctions de la barre PC inchang
      empreintes de admin.js, d'admin.html et du manifeste réactualisées.
      v584 : la section Connexions gagne « 🔎 Fouiller ce navigateur » et « 📂 Importer un
      fichier » (recherche en lecture seule de tout l'historique local, réimport idempotent) ;
-     empreinte de admin.js réactualisée. */
+     empreinte de admin.js réactualisée.
+     v585 : le guide du tableau de bord annonce le Smart Book 3ᵉ SI à 81 pages (édition 2026)
+     au lieu de l'ancienne édition de 72 pages ; empreinte d'admin.html réactualisée. */
   assert.equal(sha('assets/js/admin.js'), 'ba2bdaccd0a5259e19ea7d401cf4a25a44d35d2b0d167b8c3e7f6e957211bd49');
   assert.equal(sha('assets/js/rayonsx-surligneur.js'), '1b7fe2067629766ef4043fa3060199b71124d8486e36d92aaac0b45bd861847c');
   const protection = lire('assets/js/protection.js');
