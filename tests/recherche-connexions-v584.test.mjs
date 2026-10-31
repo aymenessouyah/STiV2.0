@@ -178,7 +178,8 @@ test('v584 : la fouille est en lecture seule et le réimport reste idempotent', 
   assert.match(adminJs, /btn-fouiller-acces/);
   assert.match(adminJs, /btn-importer-fichier-acces/);
   assert.match(adminJs, /if \(document\.getElementById\("btn-fouiller-acces"\)\) return;/);
-  assert.match(bloc, /accept = "\.json,application\/json"/);
+  /* v592 : les archives .json.gz sont acceptées en plus des .json simples. */
+  assert.match(bloc, /accept = "\.json,\.gz,application\/json,application\/gzip"/);
   assert.match(bloc, /new FileReader\(\)/);
 
   /* Le bouton ♻️ de la v582 reste en place : la nouvelle fouille ne le remplace pas. */
@@ -193,7 +194,7 @@ test('v584 : le service worker sert la nouvelle version de admin.js', () => {
   const sw = read('sw.js');
   const entree = sw.split('\n').find((l) => l.includes('url: "./assets/js/admin.js"'));
   assert.ok(entree);
-  assert.match(entree, /revision: "videos-admin-v590"/);
+  assert.match(entree, /revision: "connexions-gz-v592"/);
   /* Le nom de cache et l'identifiant de publication ne bougent pas : pas de
      re-téléchargement massif des 778 entrées du delta. */
   assert.match(sw, /var CACHE = "sti-atelier-v386";/);

@@ -228,8 +228,13 @@ test('commandes d’administration : scripts et fonctions de la barre PC inchang
      v590 : bilan vidéo limité aux 27 capsules de la vitrine, mesures du tableau de bord
      (durées plafonnées, quiz dédoublonnés, STI compté) et banque de questions étoffée
      (SQL 61 → 86, cours STI 18 → 71) ; empreintes d'admin.html, d'admin.js et de
-     quiz-banque.json réactualisées. */
-  assert.equal(sha('assets/js/admin.js'), '83e5ae4d156cd86e914ee11181d340c817a173f15d7122fad1baa11780a80765');
+     quiz-banque.json réactualisées.
+     v591 : le cours « Systèmes, technologies et Internet » gagne sa version audio
+     (trois chapitres lus, lecteur dans la page du cours) ; admin.js inchangé.
+     v592 : « 📂 Importer un fichier » accepte les archives .json.gz (sauvegarde des
+     18 tables), décompressées dans le navigateur avant la fouille des connexions ;
+     empreinte d'admin.js réactualisée. */
+  assert.equal(sha('assets/js/admin.js'), 'e190898f5ddfed3bf99470b8eccd07306d371278c2a1dcc6f6ced36e1080ee55');
   assert.equal(sha('assets/js/rayonsx-surligneur.js'), '1b7fe2067629766ef4043fa3060199b71124d8486e36d92aaac0b45bd861847c');
   const protection = lire('assets/js/protection.js');
   const debut = protection.indexOf('  function estAppareilPC()');

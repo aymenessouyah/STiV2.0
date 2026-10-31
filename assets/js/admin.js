@@ -8564,10 +8564,39 @@
     });
   }
 
+  /* v592 : retrouver les connexions perdues demande parfois de lire une ARCHIVE
+     compressée (.json.gz) — c'est le format des sauvegardes de la plateforme
+     (18 tables) et celui de l'archive du 22/10/2026. La décompression se fait
+     dans le navigateur (DecompressionStream) : le fichier ne quitte pas l'appareil. */
+  function lireTexteFichierAdmin(fichier) {
+    return new Promise(function (resolve, reject) {
+      if (!fichier) { reject(new Error("fichier absent")); return; }
+      var nom = String(fichier.name || "");
+      var estGz = /\.gz$/i.test(nom) || fichier.type === "application/gzip" ||
+        fichier.type === "application/x-gzip";
+      if (!estGz) {
+        var lecteur = new FileReader();
+        lecteur.onerror = function () { reject(new Error("fichier illisible")); };
+        lecteur.onload = function () { resolve(String(lecteur.result)); };
+        try { lecteur.readAsText(fichier); } catch (e) { reject(e); }
+        return;
+      }
+      if (typeof DecompressionStream !== "function" || typeof fichier.stream !== "function" ||
+          typeof Response !== "function") {
+        reject(new Error("ce navigateur ne sait pas décompresser les fichiers .gz"));
+        return;
+      }
+      try {
+        var flux = fichier.stream().pipeThrough(new DecompressionStream("gzip"));
+        new Response(flux).text().then(resolve, reject);
+      } catch (e) { reject(e); }
+    });
+  }
+
   function importerFichierConnexionsAdmin() {
     var inp = document.createElement("input");
     inp.type = "file";
-    inp.accept = ".json,application/json";
+    inp.accept = ".json,.gz,application/json,application/gzip";
     inp.style.display = "none";
     document.body.appendChild(inp);
     inp.addEventListener("change", function () {
@@ -8575,16 +8604,17 @@
       try { document.body.removeChild(inp); } catch (e) {}
       if (!f) return;
       msg("⏳ Lecture de « " + f.name + " »…", "ok");
-      var lecteur = new FileReader();
-      lecteur.onerror = function () { msg("❌ Fichier illisible.", "err"); };
-      lecteur.onload = function () {
+      /* v592 : .json comme .json.gz — une archive de sauvegarde entière suffit :
+         la fouille y retrouve seule les lignes de connexion. */
+      lireTexteFichierAdmin(f).then(function (texte) {
         var valeurs;
-        try { valeurs = JSON.parse(String(lecteur.result)); }
+        try { valeurs = JSON.parse(texte); }
         catch (e) { msg("❌ Ce fichier n'est pas un JSON valide : " + f.name, "err"); return; }
         var analyse = analyserSourcesAccesV584([{ nom: "fichier " + f.name, valeurs: valeurs }]);
         proposerReimportConnexionsV584(analyse, "Le fichier « " + f.name + " »");
-      };
-      try { lecteur.readAsText(f); } catch (e) { msg("❌ Lecture impossible de ce fichier.", "err"); }
+      }).catch(function (e) {
+        msg("❌ Lecture impossible de « " + f.name + " » : " + ((e && e.message) || "fichier illisible"), "err");
+      });
     });
     inp.click();
   }
@@ -8595,7 +8625,8 @@
     extraireLignesAcces: extraireLignesAccesV584,
     analyserSources: analyserSourcesAccesV584,
     statistiquesLignes: statistiquesLignesAccesV584,
-    lignesDepuisTexteJson: lignesDepuisTexteJsonV584
+    lignesDepuisTexteJson: lignesDepuisTexteJsonV584,
+    lireTexteFichier: lireTexteFichierAdmin
   };
 
   (function initOutilsRechercheAccesV584() {
