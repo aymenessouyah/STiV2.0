@@ -1579,6 +1579,14 @@
     synchroniserFileHorsLigne(true);
   });
 
+  /* v581 — même plafond que le tableau de bord : une session laissée ouverte
+     ne peut pas peser plus de 3 h dans le temps affiché à l'élève. */
+  var PLAFOND_SESSION_SEC_STI = 3 * 3600;
+  function dureeBorneeSTI(sec) {
+    var v = Math.max(0, Number(sec) || 0);
+    return v > PLAFOND_SESSION_SEC_STI ? PLAFOND_SESSION_SEC_STI : v;
+  }
+
   function rafraichirDureeEtScoresServeur(uid, seulementCacheLocal) {
     if (!uid || uid === "offline-user") return;
     /* Affichage immédiat depuis le cache local si disponible */
@@ -1589,7 +1597,7 @@
       qOff.forEach(function (it) {
         var pg = String((it && it.page) || "");
         if (pg.indexOf("MSG_") !== 0 && pg.indexOf("QUIZ:") !== 0 && pg.indexOf("CTRL_") !== 0 && pg !== "PROG_MEDIA") {
-          secCache += Number((it && it.duree_sec) || 0);
+          secCache += dureeBorneeSTI(it && it.duree_sec);
         }
       });
       if (elD && secCache > 0) {
@@ -1674,7 +1682,7 @@
           pg.indexOf("MAIN_LEVEE:") === 0 ||
           pg.indexOf("ADMIN_") === 0
         ) return;
-        tot += Math.max(0, Number(a.duree_sec || 0));
+        tot += dureeBorneeSTI(a.duree_sec);
       });
       try {
         Object.keys(mesScores).forEach(function (kSc) {
@@ -10341,7 +10349,7 @@
       var debutOff = Date.now();
       var cleSession = "off-" + debutOff;
       function majFileOff() {
-        var duree = Math.max(1, Math.round((Date.now() - debutOff) / 1000));
+        var duree = Math.min(PLAFOND_SESSION_SEC_STI, Math.max(1, Math.round((Date.now() - debutOff) / 1000)));
         try {
           var q = JSON.parse(localStorage.getItem(CLE_FILE_OFFLINE) || "[]");
           var trouve = false;
@@ -10385,6 +10393,23 @@
           return;
         }
         var id = r.data.id, debut = Date.now();
+        /* v581 — temps actif cumulé, indépendant de l'heure de départ.
+           Avant, chaque tick réécrivait « maintenant − début » : un onglet
+           resté ouvert trois jours (ou un portable en veille) inscrivait
+           4 000 minutes pour une seule page. On n'ajoute maintenant que le
+           temps réellement observé entre deux ticks, et jamais plus que
+           l'intervalle prévu + une marge (le trou = veille ou onglet gelé). */
+        var INTERVALLE_TICK_MS = 30000;
+        var MARGE_TICK_MS = 45000;
+        var dernierTick = debut;
+        var cumulActifMs = 0;
+        function secondesActives(maintenant) {
+          var delta = maintenant - dernierTick;
+          if (delta < 0) delta = 0;
+          dernierTick = maintenant;
+          cumulActifMs += Math.min(delta, INTERVALLE_TICK_MS + MARGE_TICK_MS);
+          return Math.round(cumulActifMs / 1000);
+        }
         function lireJetonAuthKeepalive() {
           try {
             for (var i = 0; i < localStorage.length; i++) {
@@ -10411,9 +10436,11 @@
           }
           dernierFermeTs = maintenantFerme;
           if (navigator.onLine) {
+            /* v581 : durée = temps actif mesuré (jamais moins de 1 s pour
+               qu'une visite reste visible), plafonnée à 3 h par page. */
             var payloadFin = {
               fin: new Date().toISOString(),
-              duree_sec: Math.round((maintenantFerme - debut) / 1000)
+              duree_sec: Math.min(PLAFOND_SESSION_SEC_STI, Math.max(1, secondesActives(maintenantFerme)))
             };
             var tkKa = (estPageHide || estVisHidden) ? lireJetonAuthKeepalive() : "";
             if ((estPageHide || estVisHidden) && tkKa && typeof fetch === "function") {
@@ -10446,6 +10473,9 @@
           reprendreRealtimeApresBfcacheGlobalSTI();
           if (ev && ev.persisted) {
             debut = Date.now();
+            /* v581 : la page revient du cache (bfcache) après un temps inconnu :
+               on repart de maintenant pour ne pas compter l'absence. */
+            dernierTick = Date.now();
             setTimeout(envoyerPresence, 260);
             try { rafraichirDureeEtScoresServeur(uid, true); } catch (eP) {}
             if (typeof window.rafraichirBadgesProgressionSTI === "function") {

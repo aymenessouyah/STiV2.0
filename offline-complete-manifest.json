@@ -1,9 +1,9 @@
 {
   "version": "v580-sti-atelier-v386",
-  "generatedAt": "2026-10-31T08:16:05Z",
+  "generatedAt": "2026-10-31T08:48:58Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 757,
-  "totalBytes": 1110647495,
+  "totalBytes": 1110670560,
   "files": [
     {
       "path": "404.html",
@@ -657,8 +657,8 @@
     },
     {
       "path": "assets/js/acces.js",
-      "bytes": 965016,
-      "gitSha": "a22cc13791c9354a7e1d1ec2afd7c97bcc71584c"
+      "bytes": 966687,
+      "gitSha": "acf07928c86155e460b8d8907d767dd927b563ab"
     },
     {
       "path": "assets/js/admin-couverture.js",
@@ -687,18 +687,18 @@
     },
     {
       "path": "assets/js/admin-vues-videos.js",
-      "bytes": 29980,
-      "gitSha": "8141aff521060f64464592f9a871c91ea2c14445"
+      "bytes": 31410,
+      "gitSha": "8bf844ac76da3a1962f76aa7ba9fc199485f8b3a"
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 711214,
-      "gitSha": "147f45031ea7d374b0c7639f8e4d6725672e8310"
+      "bytes": 726562,
+      "gitSha": "33d67e50feee3a6ff15d387d8513d5d56d375c43"
     },
     {
       "path": "assets/js/analytique.js",
-      "bytes": 14203,
-      "gitSha": "111dc85346c9401a473e1018a777c425e30ad7b1"
+      "bytes": 17958,
+      "gitSha": "a5190808b8ee5fb0d2e5e5ec4724519cb1e409ac"
     },
     {
       "path": "assets/js/app.js",
@@ -837,8 +837,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 251225,
-      "gitSha": "ef7ca10a139864c7cff6bec4e2b8b5caa260604b"
+      "bytes": 252086,
+      "gitSha": "6620cb4e42c626167c15cdc7b4b0a8ca07c0b3d6"
     },
     {
       "path": "assets/js/quiz-admin.js",

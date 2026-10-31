@@ -2630,13 +2630,15 @@ test('v461 (comportemental VM) : ABED Ala (4eme SI2) remonte 1/8 vidéo (73%) de
 
   const bilAla = ctxAdmin.window.__stiBilanProgressionMediaUser(abedAla);
   assert.equal(bilAla.ok4, true);
-  assert.equal(bilAla.totVid, 8, 'Un élève de 4eme SI2 a 8 vidéos de base (incluant PHP & Guichet)');
+  assert.equal(bilAla.totVid, 9, 'Un élève de 4eme SI2 a 9 vidéos de base (cours STI + PHP & Guichet)');
   assert.equal(bilAla.totAud, 5, 'Un élève de 4eme SI2 a 5 audios de base (incluant Audio PHP)');
   assert.equal(bilAla.nbVidVues, 1, 'Le compteur vidéo d’ABED Ala doit afficher 1 vidéo consultée (et non 0)');
   assert.equal(bilAla.nbVidEnCours, 1);
   assert.equal(bilAla.nbVidDone, 0);
-  assert.equal(bilAla.resumeCourtVid, '1/8 ⏳');
-  assert.equal(bilAla.resumeEnteteVid, '1/8 · 1 ⏳ en cours');
+  assert.equal(bilAla.resumeCourtVid, '1/9 ⏳');
+  assert.equal(bilAla.resumeEnteteVid, '1/9 · 1 ⏳ en cours');
+  assert.ok(Array.from(bilAla.catVideos, (v) => v.key).includes('video:cours-sti'),
+    'Le cours « Systèmes, technologies et Internet » compte dans le socle de tous');
   assert.ok(Array.from(bilAla.listV).includes('Cours PHP (⏳ 73%)'));
 
   const bil3SI = ctxAdmin.window.__stiBilanProgressionMediaUser(eleve3SI);
@@ -6960,7 +6962,10 @@ test('v479 (structure & migration SQL) : fiabilisation intégrale du compteur vi
   // 6) Parité des compteurs Roue élève (acces.js) / Admin (admin.js) / Analytique (analytique.js)
   assert.match(accesJs, /function extrairePctMediaPan\(ent\)/);
   assert.match(accesJs, /mProg\["audio:guichet-etapes"\]/);
-  assert.match(anaJs, /e\.sec != null[\s\S]*?>=\s*2/);
+  /* v581 : le seuil « media vu » est passé de 2 s à 10 s, dans les trois
+     compteurs à la fois (accès élève, tableau de bord, analytique). */
+  assert.match(anaJs, /var SEUIL_VUE_SEC = 10;/);
+  assert.match(anaJs, /sec >= SEUIL_VUE_SEC/);
   assert.match(adminJs, /"video:sql-serie4-2"/);
   assert.match(adminJs, /"video:validation-nom-prenom-js"/);
 

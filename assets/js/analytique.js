@@ -4,9 +4,74 @@
 (function () {
   "use strict";
   var cfg = window.STI_AUTH || { URL: "https://vywujxmepvcbgedgmger.supabase.co", CLE: "sb_publishable_FI5FimytONd5VdWK6GfXLA_I6vPTrvn" };
+  /* v581 — dénominateurs réels du site (ils étaient figés à 15 vidéos et
+     8 audios, alors que la vitrine compte 27 capsules et que le dossier
+     assets/audio en contient 16 hors ambiance). Un élève qui avait tout vu
+     affichait donc « 15/15 » puis « 16/15 ». */
   var TOTAL_PAGES_SITE = 124;
-  var TOTAL_VIDEOS_SITE = 15;
-  var TOTAL_AUDIOS_SITE = 8;
+  var TOTAL_VIDEOS_SITE = 27;
+  var TOTAL_AUDIOS_SITE = 16;
+  /* v581 — même définition de « média vu » que le tableau de bord : les vidéos
+     décoratives (drapeau animé de l'accueil, bandeau, présentation) et les
+     démos de TP ne sont pas des cours ; une lecture de moins de 10 s ne compte
+     pas ; deux anciennes clés désignent le même média. */
+  var MEDIAS_DECORATIFS = ["drapeau-sti-vent", "drapeau-lycee-bandeau", "drapeaurafeha", "drapeau-rafeha", "stivideoofficiel", "flower", "ambient"];
+  var RE_MEDIA_DECORATIF = /^drapeau/i;
+  var ALIAS_MEDIAS = {
+    /* Doublons constatés dans sti_progressions : une vidéo, deux clés. */
+    "video:bouclepour": "video:boucle-pour",
+    "video:php-guichet-v10": "video:php-guichet"
+  };
+  var PREFIXES_MEDIAS = [{ debut: "video:courssystemesinternet", cle: "video:cours-sti" }];
+  var SEUIL_VUE_SEC = 10;
+  function cleMediaSuivie(k) {
+    var cle = String(k == null ? "" : k);
+    if (cle.indexOf("video:") !== 0 && cle.indexOf("audio:") !== 0) return "";
+    var slug = cle.slice(cle.indexOf(":") + 1);
+    if (!slug) return "";
+    if (RE_MEDIA_DECORATIF.test(slug)) return "";
+    for (var i = 0; i < MEDIAS_DECORATIFS.length; i++) {
+      if (slug.indexOf(MEDIAS_DECORATIFS[i]) !== -1) return "";
+    }
+    if (ALIAS_MEDIAS[cle]) return ALIAS_MEDIAS[cle];
+    for (var j = 0; j < PREFIXES_MEDIAS.length; j++) {
+      if (cle.indexOf(PREFIXES_MEDIAS[j].debut) === 0) return PREFIXES_MEDIAS[j].cle;
+    }
+    return cle;
+  }
+  function pctMediaSuivi(e) {
+    if (typeof e === "number") return Math.max(0, Math.min(100, Math.round(e)));
+    if (!e || typeof e !== "object") return 0;
+    var pct = Math.max(Number(e.maxPct) || 0, Number(e.pct) || 0);
+    var sec = Number(e.sec != null ? e.sec : (e.t || e.time || 0)) || 0;
+    if (!pct && sec >= SEUIL_VUE_SEC) {
+      var dur = Number(e.dur) || 0;
+      pct = dur > 2 ? Math.max(1, Math.round((sec / dur) * 100)) : 1;
+    }
+    if (e.done || pct >= 88) return 100;
+    return Math.max(0, Math.min(99, Math.round(pct)));
+  }
+  /* v581 — un quiz = un nom normalisé, pas une chaîne libre : le journal écrit
+     « Quiz JS », la base écrit « javascript ». */
+  var QUIZ_CONNUS = {
+    "html-css": true, "javascript": true, "sql": true, "php": true,
+    "tableaux": true, "systemes": true, "bac-pratique": true
+  };
+  function slugQuiz(nom) {
+    var t = String(nom == null ? "" : nom).toLowerCase().trim().replace(/\s+/g, " ");
+    if (t.normalize) t = t.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    t = t.replace(/^quiz\s*/, "").replace(/^[-–—:·]\s*/, "").trim();
+    if (!t) return "";
+    var c = t.replace(/[\s._-]+/g, "");
+    if (/^html5?(&|\/|et)?css3?$/.test(c)) return "html-css";
+    if (/^(js|javascript)$/.test(c)) return "javascript";
+    if (/^sql/.test(c)) return "sql";
+    if (/^php/.test(c)) return "php";
+    if (/^tableaux/.test(c)) return "tableaux";
+    if (/^(systemes)/.test(c)) return "systemes";
+    if (/^(bac|atelier)/.test(c)) return "bac-pratique";
+    return c;
+  }
 
   function ech(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -76,22 +141,37 @@
       Object.keys(pv).forEach(function (k) { if (/^exercices\//i.test(k) && pv[k]) nbExos++; });
       Object.keys(d).forEach(function (k) { if (k.indexOf("sti-autosave-v1:") === 0 && d[k]) nbExos++; });
 
-      var nbVid = 0, nbAud = 0;
+      var nbVid = 0, nbAud = 0, vus = {};
       Object.keys(mp).forEach(function (k) {
-        var e = mp[k];
-        var pctM = typeof e === "number" ? e : Number((e && (e.maxPct != null ? e.maxPct : e.pct)) || ((e && e.done) ? 100 : 0));
-        if (!pctM && e && typeof e === "object" && (Number(e.sec != null ? e.sec : (e.t || e.time || 0)) || 0) >= 2) pctM = 1;
+        var cle = cleMediaSuivie(k);
+        if (!cle || vus[cle]) return;
+        var pctM = pctMediaSuivi(mp[k]);
         if (pctM > 0) {
-          if (k.indexOf("video:") === 0) nbVid++;
-          else if (k.indexOf("audio:") === 0) nbAud++;
-          medias[k] = medias[k] || [0, 0];
-          medias[k][0] += Math.min(100, pctM);
-          medias[k][1]++;
+          vus[cle] = true;
+          if (cle.indexOf("video:") === 0) nbVid++;
+          else nbAud++;
+          medias[cle] = medias[cle] || [0, 0];
+          medias[cle][0] += Math.min(100, pctM);
+          medias[cle][1]++;
         }
       });
 
+      /* v581 — « quiz » = partie de quiz enregistrée. Avant, n'importe quelle
+         valeur locale contenant un « / » ou un « % » (progression, chapitre…)
+         était comptée comme un quiz terminé. */
+      var slugsLocaux = {};
+      Object.keys(sc).forEach(function (k) {
+        if (!sc[k]) return;
+        var sl = slugQuiz(k);
+        if (!sl) return;
+        /* v581 — c'est le NOM qui dit qu'il s'agit d'un quiz, pas la valeur :
+           « Progression HTML » = « 4/5 chapitres » ou « Vidéos » = « 80 % »
+           n'ont jamais été des quiz terminés. */
+        if (!QUIZ_CONNUS[sl] && !/quiz/i.test(k)) return;
+        slugsLocaux[sl] = true;
+      });
       var nbQuiz = (l.user_id && quizParUser[l.user_id]) || 0;
-      var nbScoresLoc = Object.keys(sc).filter(function (k) { return /(\/\s*\d+|%)/.test(String(sc[k] || "")); }).length;
+      var nbScoresLoc = Object.keys(slugsLocaux).length;
       if (nbScoresLoc > nbQuiz) nbQuiz = nbScoresLoc;
 
       var pctGlobal = Math.min(100, Math.round(

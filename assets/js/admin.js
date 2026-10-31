@@ -2607,7 +2607,16 @@
     if (h === 0) return m + " min";
     return h + " h " + (m < 10 ? "0" + m : m) + " min";
   }
-  function dureeLigne(a) {
+  /* v581 — durée d'une session.
+     Une session laissée ouverte (onglet oublié, machine en veille, navigateur
+     tué sans fermeture) peut courir plusieurs jours : sur la base réelle, huit
+     sessions de plus de 6 h totalisaient à elles seules 56 % du temps affiché.
+     Une page ne se consulte pas trois heures d'affilée au lycée : au-delà du
+     plafond, on compte le plafond et la ligne est signalée « session non
+     refermée » (voir sessionEcretee). */
+  var DUREE_SESSION_MAX_ADMIN = 3 * 3600;
+  function dureeLigneBrute(a) {
+    if (!a) return 0;
     if (a.duree_sec != null && a.duree_sec > 0) return Number(a.duree_sec);
     if (a.debut && a.fin) {
       var diff = Math.round((new Date(a.fin) - new Date(a.debut)) / 1000);
@@ -2615,6 +2624,16 @@
     }
     return 0;
   }
+  function dureeLigne(a) {
+    var sec = dureeLigneBrute(a);
+    return sec > DUREE_SESSION_MAX_ADMIN ? DUREE_SESSION_MAX_ADMIN : sec;
+  }
+  function sessionEcretee(a) {
+    return dureeLigneBrute(a) > DUREE_SESSION_MAX_ADMIN;
+  }
+  window.__stiDureeLigneAdmin = dureeLigne;
+  window.__stiDureeLigneBruteAdmin = dureeLigneBrute;
+  window.__stiSessionEcreteeAdmin = sessionEcretee;
   function cleSemaine(iso) {
     var d = iso ? new Date(iso) : new Date();
     if (isNaN(d.getTime())) d = new Date();
@@ -3863,20 +3882,125 @@
     return null;
   }
 
+  /* v581 — à partir de combien de secondes une vidéo est considérée comme vue.
+     Le suivi enregistre aussi les lectures d'une seconde (survol, préchargement).
+     Deux secondes suffisaient pour cocher « vue » : on demande maintenant une
+     lecture réelle de 10 secondes, ou une progression mesurée par le lecteur. */
+  var SEUIL_VUE_MEDIA_SEC_ADMIN = 10;
+  /* v581 — identité unique d'un quiz.
+     Le journal d'activité écrit « Quiz JS », la table sti_quiz_parties écrit
+     « javascript », le nuage écrit « Quiz JS » : sans identifiant commun, un
+     seul quiz produisait deux badges et deux notes différentes.
+     Déclaré au niveau du module (et non dans appliquerDonneesAdmin) car utilisé
+     aussi par les boucles qui lisent le journal AVANT ce point du fichier. */
+  /* v581 — un même quiz portait deux noms selon la source : le journal
+     d'activité écrit « Quiz JS », la table sti_quiz_parties écrit
+     « javascript ». Le tableau de bord affichait donc deux badges (et deux
+     lignes) pour un seul quiz, avec deux notes différentes. On ramène tout
+     à un identifiant unique, et l'affichage repart de cet identifiant. */
+  var QUIZ_CANON_ADMIN = {
+    "html-css": "Quiz HTML/CSS",
+    "javascript": "Quiz JavaScript",
+    "sql": "Quiz SQL",
+    "php": "Quiz PHP",
+    "tableaux": "Quiz Tableaux",
+    "systemes": "Quiz Systèmes & Internet",
+    "bac-pratique": "Atelier Bac Pratique"
+  };
+  function slugQuizAdmin(nom) {
+    var s = String(nom == null ? "" : nom).toLowerCase().trim().replace(/\s+/g, " ");
+    /* Les accents changeraient le slug : « Systèmes » doit tomber sur
+       « systemes », sinon le quiz STI garde un libellé brut. */
+    if (s.normalize) s = s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    s = s.replace(/^quiz\s*/, "").replace(/^[-–—:·]\s*/, "").trim();
+    if (!s) return "";
+    var compact = s.replace(/[\s._-]+/g, "");
+    if (/^html5?(&|\/|et)?css3?$/.test(compact)) return "html-css";
+    if (/^(js|javascript)$/.test(compact)) return "javascript";
+    if (/^sql/.test(compact)) return "sql";
+    if (/^php/.test(compact)) return "php";
+    if (/^tableaux/.test(compact)) return "tableaux";
+    if (/^(systemes|systemesinternet|systemesettechnologies)/.test(compact)) return "systemes";
+    if (/^(bac|atelier)/.test(compact)) return "bac-pratique";
+    return compact;
+  }
+  function libelleQuizAdmin(slug, module, nomOriginal) {
+    var base = QUIZ_CANON_ADMIN[slug];
+    var m = String(module == null ? "" : module).trim();
+    /* Seul le quiz des tableaux existe en plusieurs variantes (mix,
+       récap PHP…) : c'est le seul dont le module fait partie du nom.
+       Sinon « Quiz HTML/CSS » et « Quiz HTML/CSS · Mix » redeviendraient
+       deux lignes pour un même quiz. */
+    if (base && m && m !== "*" && slug === "tableaux") {
+      return base + " · " + m.charAt(0).toUpperCase() + m.slice(1);
+    }
+    /* Quiz hors catalogue connu (« Chasse aux erreurs », « Examen Blanc
+       STI »…) : on garde le nom tel que l'élève l'a vu, jamais le slug
+       technique « chasseauxerreurs ». */
+    return base || String(nomOriginal == null ? "" : nomOriginal).trim() || String(slug || "");
+  }
+  window.__stiSlugQuizAdmin = slugQuizAdmin;
+  window.__stiLibelleQuizAdmin = libelleQuizAdmin;
+
   function extrairePctMediaEntreeAdmin(it) {
     if (it == null) return 0;
     if (typeof it === "number") return Math.max(0, Math.min(100, Math.round(it)));
     if (typeof it === "object") {
       var maxP = Math.max(Number(it.maxPct) || 0, Number(it.pct) || 0);
-      if (!maxP && (Number(it.sec) || 0) >= 2) {
+      var secLue = Number(it.sec) || 0;
+      if (!maxP && secLue >= SEUIL_VUE_MEDIA_SEC_ADMIN) {
         var dur = Number(it.dur) || 0;
-        maxP = dur > 2 ? Math.max(1, Math.round((Number(it.sec) / dur) * 100)) : 1;
+        maxP = dur > 2 ? Math.max(1, Math.round((secLue / dur) * 100)) : 1;
       }
       if (it.done || maxP >= 88) return 100;
       return Math.max(0, Math.min(99, Math.round(maxP)));
     }
     return 0;
   }
+
+  /* v581 — quels médias comptent comme « vidéos / audios vus ».
+     Le suivi universel du site enregistre TOUT média qui se lit, y compris les
+     vidéos décoratives de l'accueil (drapeau animé, bandeau du lycée, vidéo de
+     présentation) et les vidéos de démonstration des TP. Sur la base réelle, le
+     seul drapeau animé comptait 17 élèves comme « ayant vu une vidéo ».
+     Ces clés sont donc ignorées ici, et plus jamais enregistrées à la source
+     (protection.js, même liste).
+     Deux clés historiques désignent par ailleurs le même média : on les ramène
+     au slug du catalogue pour ne pas compter deux fois la même capsule. */
+  var MEDIAS_DECORATIFS_ADMIN = ["drapeau-sti-vent", "drapeau-lycee-bandeau", "drapeaurafeha", "drapeau-rafeha", "stivideoofficiel", "flower", "ambient"];
+  /* Tout ce qui commence par « drapeau » est un ornement de page d'accueil ou
+     de TP (drapeau animé au vent, bandeau du lycée), jamais un cours. */
+  var RE_MEDIA_DECORATIF_ADMIN = /^drapeau/i;
+  var ALIAS_MEDIAS_ADMIN = {
+    /* Ces trois doublons existent réellement dans sti_progressions (relevé du
+       31/10/2026) : le fichier de la capsule « boucle Pour » s'appelle
+       bouclepour.mp4, un ancien lecteur écrivait php-guichet-v10, et la vidéo
+       du cours STI s'appelait CoursSystemesInternet-v578.mp4. Une seule vidéo
+       ne doit compter qu'une fois. */
+    "video:bouclepour": "video:boucle-pour",
+    "video:php-guichet-v10": "video:php-guichet"
+  };
+  var PREFIXES_MEDIAS_ADMIN = [
+    { debut: "video:courssystemesinternet", cle: "video:cours-sti" }
+  ];
+  function normaliserCleMediaAdmin(cle) {
+    var k = String(cle == null ? "" : cle);
+    var i = k.indexOf(":");
+    if (i <= 0) return "";
+    var slug = k.slice(i + 1);
+    if (!slug) return "";
+    if (RE_MEDIA_DECORATIF_ADMIN.test(slug)) return "";
+    for (var d = 0; d < MEDIAS_DECORATIFS_ADMIN.length; d += 1) {
+      if (slug.indexOf(MEDIAS_DECORATIFS_ADMIN[d]) !== -1) return "";
+    }
+    var alias = ALIAS_MEDIAS_ADMIN[k];
+    if (alias) return alias;
+    for (var p = 0; p < PREFIXES_MEDIAS_ADMIN.length; p += 1) {
+      if (k.indexOf(PREFIXES_MEDIAS_ADMIN[p].debut) === 0) return PREFIXES_MEDIAS_ADMIN[p].cle;
+    }
+    return k;
+  }
+  window.__stiNormaliserCleMediaAdmin = normaliserCleMediaAdmin;
 
   function fusionnerProgressionsCloudDansMaps(tousProfils) {
     var uidParEmail = {};
@@ -3897,9 +4021,11 @@
         if (!progMediaParUser[uid]) progMediaParUser[uid] = {};
         Object.keys(mProg).forEach(function (k) {
           if (k.indexOf("video:") !== 0 && k.indexOf("audio:") !== 0) return;
+          var cleMedia = normaliserCleMediaAdmin(k);
+          if (!cleMedia) return; /* vidéo décorative ou de démonstration */
           var pct = extrairePctMediaEntreeAdmin(mProg[k]);
-          if (pct > (progMediaParUser[uid][k] || 0)) {
-            progMediaParUser[uid][k] = pct;
+          if (pct > (progMediaParUser[uid][cleMedia] || 0)) {
+            progMediaParUser[uid][cleMedia] = pct;
           }
         });
       }
@@ -4390,13 +4516,16 @@
           if (n20Log == null) return;
           var tsQuiz = infoQ.ts || a.debut;
           if (estQuizPurge(tsQuiz)) return;
+          var slugQ = slugQuizAdmin(infoQ.quiz || nomQ);
+          var libQ = libelleQuizAdmin(slugQ, "", infoQ.quiz || nomQ);
           if (!scoresParUser[a.user_id]) scoresParUser[a.user_id] = {};
-          if (!scoresParUser[a.user_id][nomQ]) scoresParUser[a.user_id][nomQ] = infoQ.note;
+          if (!scoresParUser[a.user_id][libQ]) scoresParUser[a.user_id][libQ] = infoQ.note;
           listeResultatsQuiz.push({
             id: a.id,
             uid: a.user_id,
-            nomQ: nomQ,
-            quiz: infoQ.quiz || nomQ,
+            slugQuiz: slugQ,
+            nomQ: libQ,
+            quiz: libQ,
             note: infoQ.note,
             score: infoQ.score != null ? infoQ.score : n20Log,
             total: infoQ.total || 20,
@@ -4407,13 +4536,6 @@
       });
 
       /* Réconciliation complète avec sti_quiz_parties + scores cloud (sti_progressions) */
-      var LIB_QUIZ_SYNC_ADMIN = {
-        "html-css": "Quiz HTML5 & CSS3",
-        "javascript": "Quiz JavaScript",
-        "sql": "Quiz SQL",
-        "php": "Quiz PHP",
-        "tableaux": "Quiz Tableaux"
-      };
       var laboIdsQuiz = {};
       tous.forEach(function (pr) {
         if (!pr || !pr.id) return;
@@ -4421,9 +4543,12 @@
         if (emL === "elevelabo3@exemple.tn" || /^elevelabo3$/i.test(String(pr.classe || "").trim())) laboIdsQuiz[pr.id] = true;
       });
       var clesQuizDeja = {};
+      /* v581 : la clé anti-doublon repart de l'identifiant du quiz (et non de
+         son libellé) : le journal et sti_quiz_parties désignent enfin la même
+         partie, une seule fois. */
       listeResultatsQuiz.forEach(function (q) {
         var minTs = Math.floor((new Date(q.ts || 0).getTime() || 0) / 120000);
-        clesQuizDeja[q.uid + "|" + String(q.quiz || q.nomQ).toLowerCase() + "|" + minTs] = true;
+        clesQuizDeja[q.uid + "|" + (q.slugQuiz || slugQuizAdmin(q.quiz || q.nomQ)) + "|" + minTs] = true;
       });
       (quizPartiesCloudAdmin || []).forEach(function (qp) {
         if (!qp || !qp.user_id || adminIds[qp.user_id] || laboIdsQuiz[qp.user_id]) return;
@@ -4432,23 +4557,21 @@
         var tsP = qp.cree_le || "";
         if (tsP && tsP > dernierQuizPartieCreeLeAdmin) dernierQuizPartieCreeLeAdmin = tsP;
         if (tsP && estQuizPurge(tsP)) return;
-        var nomLib = LIB_QUIZ_SYNC_ADMIN[qp.quiz] || ("Quiz " + String(qp.quiz || "STI"));
-        if (qp.quiz === "tableaux" && qp.module && qp.module !== "*") {
-          nomLib = "Quiz Tableaux (" + String(qp.module).toUpperCase() + ")";
-        }
+        var slugP = slugQuizAdmin(qp.quiz);
+        var nomLib = libelleQuizAdmin(slugP, qp.module, "Quiz " + String(qp.quiz || "STI"));
         var pctP = Math.round((scP * 100) / totP);
         var n20P = Math.round(((scP * 20) / totP) * 10) / 10;
         var noteFmt = scP + "/" + totP + " (" + pctP + "%)";
         if (!scoresParUser[qp.user_id]) scoresParUser[qp.user_id] = {};
         if (!scoresParUser[qp.user_id][nomLib]) scoresParUser[qp.user_id][nomLib] = noteFmt;
         var minTsP = Math.floor((new Date(tsP || 0).getTime() || 0) / 120000);
-        var cleDedup = qp.user_id + "|" + nomLib.toLowerCase() + "|" + minTsP;
-        var cleDedupBase = qp.user_id + "|" + (LIB_QUIZ_SYNC_ADMIN[qp.quiz] || nomLib).toLowerCase() + "|" + minTsP;
-        if (!clesQuizDeja[cleDedup] && !clesQuizDeja[cleDedupBase]) {
+        var cleDedup = qp.user_id + "|" + slugP + "|" + minTsP;
+        if (!clesQuizDeja[cleDedup]) {
           clesQuizDeja[cleDedup] = true;
           listeResultatsQuiz.push({
             id: "qp_" + (qp.id || (qp.user_id + "_" + tsP)),
             uid: qp.user_id,
+            slugQuiz: slugP,
             nomQ: nomLib,
             quiz: nomLib,
             note: noteFmt,
@@ -4465,17 +4588,22 @@
         Object.keys(mapC).forEach(function (nomSc) {
           var n20C = extraireNoteSur20(mapC[nomSc]);
           if (n20C == null) return;
+          /* v581 : même normalisation que le journal et que sti_quiz_parties,
+             sinon un quiz unique produit deux badges avec deux notes. */
+          var slugSc = slugQuizAdmin(nomSc);
+          var libSc = QUIZ_CANON_ADMIN[slugSc] || nomSc;
           if (!scoresParUser[uidSc]) scoresParUser[uidSc] = {};
-          if (!scoresParUser[uidSc][nomSc]) scoresParUser[uidSc][nomSc] = mapC[nomSc];
+          if (!scoresParUser[uidSc][libSc]) scoresParUser[uidSc][libSc] = mapC[nomSc];
           var dejaQuizUser = listeResultatsQuiz.some(function (x) {
-            return x.uid === uidSc && String(x.quiz || x.nomQ).toLowerCase() === String(nomSc).toLowerCase();
+            return x.uid === uidSc && String(x.quiz || x.nomQ).toLowerCase() === String(libSc).toLowerCase();
           });
           if (!dejaQuizUser) {
             listeResultatsQuiz.push({
-              id: "prog_" + uidSc + "_" + nomSc,
+              id: "prog_" + uidSc + "_" + slugSc,
               uid: uidSc,
-              nomQ: nomSc,
-              quiz: nomSc,
+              slugQuiz: slugSc,
+              nomQ: libSc,
+              quiz: libSc,
               note: mapC[nomSc],
               score: n20C,
               total: 20,
@@ -5466,7 +5594,37 @@
     if (valPrec && (valPrec === "*" || semainesDispo.indexOf(valPrec) !== -1)) {
       selSemaine.value = valPrec;
     }
+    majNoteCumulAcces();
   }
+
+  /* v581 — dire sur quoi porte le cumul.
+     Le tableau de bord ne charge que l'historique des activités (100 lignes,
+     puis 500 par 500, plafond 5 000). Quand la base en contient davantage, le
+     « cumul » n'est plus le cumul : on l'écrit noir sur blanc au lieu de
+     laisser croire à un total exact. */
+  function majNoteCumulAcces() {
+    var note = document.getElementById("note-cumul-acces");
+    if (!note && selSemaine && selSemaine.parentNode) {
+      note = document.createElement("span");
+      note.id = "note-cumul-acces";
+      note.style.cssText = "font-size:11px;font-weight:800;color:var(--adm-muted,#7a6f5d);white-space:nowrap";
+      selSemaine.parentNode.insertBefore(note, selSemaine);
+    }
+    if (!note) return;
+    var charges = (accesBrutsAdmin || []).length;
+    var total = Number(window.__stiCountAcces) || charges;
+    if (total > charges) {
+      note.textContent = "⚠️ cumul sur les " + charges + " dernières activités (" + total + " en base)";
+      note.title = "Le tableau de bord charge l'historique par pages de 500 activités, avec un plafond de 5 000. " +
+        "Le cumul de temps et le nombre de connexions ne portent donc que sur les activités chargées.";
+      note.style.color = "#b45309";
+    } else {
+      note.textContent = "cumul complet (" + charges + " activité(s))";
+      note.title = "Toutes les activités de la base sont chargées : le cumul est exact.";
+      note.style.color = "";
+    }
+  }
+  window.__stiMajNoteCumulAdmin = majNoteCumulAcces;
 
   function dureePourAbonne(uid) {
     var sk = selSemaine ? selSemaine.value : semainesDispo[0];
@@ -5611,7 +5769,12 @@
     return {
       nbPages: Object.keys(pagesMap).length,
       totalPagesSite: 124,
-      nbCours: Math.max(Object.keys(coursMap).length, mods.filter(function (m) { return m !== "Exercices" && m !== "Bac/Projet"; }).length),
+      /* v581 : les modules « Quiz », « Exercices » et « Bac/Projet » n'étaient
+         pas des cours et gonflaient le compteur : un élève qui n'avait fait
+         qu'un quiz apparaissait avec « 1 cours consulté ». */
+      nbCours: Math.max(Object.keys(coursMap).length, mods.filter(function (m) {
+        return m !== "Exercices" && m !== "Bac/Projet" && m !== "Quiz";
+      }).length),
       nbExos: Object.keys(exosMap).length,
       nbVidVues: bilMed.nbVidVues,
       totVid: bilMed.totVid,
@@ -5627,15 +5790,21 @@
   function statsQuizPourUser(uid) {
     var items = listeResultatsQuiz.filter(function (q) { return q.uid === uid; });
     var notes20 = [];
+    var slugsVus = {};
     items.forEach(function (q) {
-      var n = extraireNoteSur20(q.note);
+      /* v581 : on réutilise la note sur 20 déjà normalisée à l'import, au lieu
+         de re-analyser un texte libre (« Score : 4000 pts » ne donnait rien). */
+      var n = (q.note20 != null && isFinite(Number(q.note20))) ? Number(q.note20) : extraireNoteSur20(q.note);
       if (n != null && !isNaN(n)) notes20.push(n);
+      var sl = q.slugQuiz || slugQuizAdmin(q.quiz || q.nomQ);
+      if (sl) slugsVus[sl] = true;
     });
     var moy = notes20.length
       ? (Math.round((notes20.reduce(function (a, b) { return a + b; }, 0) / notes20.length) * 10) / 10)
       : null;
     return {
       nb: items.length,
+      nbQuizDifferents: Object.keys(slugsVus).length,
       moyenne20: moy,
       items: items
     };
@@ -5656,6 +5825,9 @@
       if (mk.indexOf("javascript") !== -1) vus["JS"] = true;
       if (mk.indexOf("sql") !== -1) vus["SQL"] = true;
       if (mk.indexOf("php") !== -1) vus["PHP"] = true;
+      /* v581 : le cours « Systèmes, technologies et Internet » existe depuis la
+         v577 : il manquait dans la liste des cours consultés. */
+      if (mk.indexOf("cours-sti") !== -1) vus["STI"] = true;
     });
     function classerPageConsultee(pgBrut) {
       var pg = String(pgBrut || "").toLowerCase();
@@ -5665,6 +5837,7 @@
       if (pg.indexOf("javascript") !== -1 || pg.indexOf("tp1-js") !== -1 || pg.indexOf("tp2-js") !== -1 || pg.indexOf("tp3-js") !== -1 || pg.indexOf("tp4-js") !== -1 || pg.indexOf("tp5-js") !== -1) vus["JS"] = true;
       if (pg.indexOf("sql") !== -1 || pg.indexOf("-bd") !== -1) vus["SQL"] = true;
       if (pg.indexOf("php") !== -1) vus["PHP"] = true;
+      if (pg.indexOf("systemes-technologies") !== -1 || pg.indexOf("cours/systemes") !== -1) vus["STI"] = true;
       if (pg.indexOf("exercice") !== -1 || pg.indexOf("fonctions-standards") !== -1) vus["Exercices"] = true;
       if (pg.indexOf("bac-pratique") !== -1 || pg.indexOf("sti0") !== -1) vus["Bac/Projet"] = true;
     }
@@ -5702,7 +5875,24 @@
   }
   window.__stiEstProfil4SIAdmin = estProfil4SIAdmin;
 
+  /* v581 : libellés des capsules ajoutées depuis v519 (sans eux, l'élève voyait
+     « Vidéo date js », « Vidéo cours sti »…). */
   var LIBELLES_VIDEOS_SUPP_ADMIN = {
+    "video:cours-sti": "Cours Systèmes & Internet",
+    "video:boucle-pour": "Les boucles (Pour, Répéter…jusqu’à, Tant que)",
+    "video:console-variables": "La console, les variables et les types",
+    "video:fonctions-chaine": "Les chaînes de caractères",
+    "video:date-js": "L’objet Date",
+    "video:php-variables": "PHP — variables et types",
+    "video:php-chaines": "PHP — chaînes et date/heure",
+    "video:tp-train-serie6": "TP Train (Série 6)",
+    "video:defis37-tableau-aleas-media": "Les 37 Défis",
+    "video:tp-evenements-liens": "TP Événements, liens et arrière-plans",
+    "video:tp-formulaire-tableau-autre": "TP Formulaire et tableau",
+    "video:tp-display-float-position": "TP display, float et position",
+    "video:tp-transitions-animations": "TP transitions et animations",
+    "video:css3-display": "Display CSS animé",
+    "video:sql-initiation": "Construire une requête SQL",
     "video:php-cours": "Cours PHP",
     "video:php-guichet": "Guichet PHP/MySQLi",
     "video:php-synthese": "Synthèse PHP",
@@ -5755,6 +5945,9 @@
     }
     var ok4 = estProfil4SIAdmin(p);
     var catVideos = [
+      /* v581 : le cours « Systèmes, technologies et Internet » est public et
+         ouvre la vitrine des vidéos — il compte donc dans le socle de tous. */
+      { key: "video:cours-sti", label: "Cours Systèmes & Internet" },
       { key: "video:html5-cours", label: "Cours HTML5" },
       { key: "video:css3-cours", label: "Cours CSS3" },
       { key: "video:javascript-cours", label: "Cours JS" },
@@ -6396,7 +6589,14 @@
         Object.keys(scMap).forEach(function (k) {
           var bq = document.createElement("span");
           bq.className = "badge-quiz";
-          bq.textContent = "🏆 " + k + " : " + scMap[k];
+          /* v581 : le badge affiche la note ramenée sur 20 (la valeur d'origine
+             reste en infobulle) — « 6/10 (12/20 · 2237 pts) » n'était pas
+             comparable d'un élève à l'autre. */
+          var n20Badge = extraireNoteSur20(scMap[k]);
+          bq.textContent = "🏆 " + k + " : " + (n20Badge != null ? (String(n20Badge).replace(".", ",") + "/20") : scMap[k]);
+          if (n20Badge != null && String(scMap[k]).trim() !== (n20Badge + "/20")) {
+            bq.title = "Note d'origine : " + scMap[k];
+          }
           divSc.appendChild(bq);
         });
         tdNom.appendChild(divSc);
@@ -6534,6 +6734,14 @@
         totSub.style.cssText = "font-size:10.5px;color:#5a5244;font-weight:700;margin-top:3px;";
         totSub.textContent = "Cumul : " + fmtDureeCumul(secTot);
         tdDur.appendChild(totSub);
+      } else if (selSemaine && selSemaine.value === "*") {
+        /* v581 : quand on choisit « Toutes les semaines », la colonne s'appelle
+           toujours « Durée / semaine » alors qu'elle affiche le cumul. On le
+           dit dans la cellule, et on rappelle sur quoi il porte. */
+        var cumulSub = document.createElement("div");
+        cumulSub.style.cssText = "font-size:10.5px;color:#5a5244;font-weight:700;margin-top:3px;";
+        cumulSub.textContent = "cumul toutes semaines · " + (counts[p.id] || 0) + " session(s)";
+        tdDur.appendChild(cumulSub);
       }
 
       var td3 = document.createElement("td");
@@ -6715,16 +6923,46 @@
       tb.appendChild(tr0);
       return;
     }
+    /* v581 — bandeau de synthèse : nombre de quiz différents, d'élèves et
+       moyenne sur 20, calculés sur la sélection affichée. Sans lui, il fallait
+       additionner les lignes à la main pour savoir où en est la classe. */
+    var resumeQ = document.getElementById("resume-quiz-admin");
+    if (!resumeQ && tb.parentNode && tb.parentNode.parentNode) {
+      resumeQ = document.createElement("p");
+      resumeQ.id = "resume-quiz-admin";
+      resumeQ.style.cssText = "font-size:12.5px;font-weight:800;color:#5a5244;margin:0 0 8px";
+      tb.parentNode.parentNode.parentNode.insertBefore(resumeQ, tb.parentNode.parentNode);
+    }
+    if (resumeQ) {
+      var elevesQ = {}, slugsQ = {}, sommeN20 = 0, nbNotes = 0, minN20 = null, maxN20 = null;
+      filtresQ.forEach(function (q) {
+        elevesQ[q.uid] = true;
+        slugsQ[q.slugQuiz || slugQuizAdmin(q.quiz)] = true;
+        var n = Number(q.note20);
+        if (isFinite(n) && n != null) {
+          sommeN20 += n;
+          nbNotes += 1;
+          if (minN20 == null || n < minN20) minN20 = n;
+          if (maxN20 == null || n > maxN20) maxN20 = n;
+        }
+      });
+      var moyQ = nbNotes ? Math.round((sommeN20 / nbNotes) * 10) / 10 : null;
+      resumeQ.textContent = "🏆 " + totalQ + " résultat(s) · " + Object.keys(elevesQ).length + " élève(s) · " +
+        Object.keys(slugsQ).length + " quiz différent(s)" +
+        (moyQ == null ? "" : " · moyenne " + String(moyQ).replace(".", ",") + "/20 (min " +
+          String(minN20).replace(".", ",") + " · max " + String(maxN20).replace(".", ",") + ")") +
+        (filtresQ.length > (toutVoirQuiz ? totalQ : 5) ? " · les 5 plus récents affichés" : "");
+    }
+
     var limQ = toutVoirQuiz ? totalQ : 5;
     filtresQ.slice(0, limQ).forEach(function (q) {
       var p = mapProf[q.uid];
       var tr = document.createElement("tr");
       var nomEl = p ? contact(p) : q.uid;
       var clEl = p ? (lyceePropre(p) + " · " + (p.classe || "—")) : "—";
-      [nomEl, clEl, "🏆 " + q.quiz, q.note, fmtDate(q.ts)].forEach(function (v, idx) {
+      [nomEl, clEl, "🏆 " + q.quiz].forEach(function (v, idx) {
         var td = document.createElement("td");
-        if (idx === 0 || idx === 3) td.style.fontWeight = "800";
-        if (idx === 3) td.style.color = "#177245";
+        if (idx === 0) td.style.fontWeight = "800";
         if (idx === 0 && p) {
           td.className = "nom-cliquable-fiche";
           td.title = "Cliquer pour ouvrir la fiche récapitulative de cet élève";
@@ -6733,6 +6971,28 @@
         td.textContent = v;
         tr.appendChild(td);
       });
+      /* v581 — la note est toujours ramenée à une note sur 20, avec la valeur
+         d'origine entre parenthèses. Avant, la colonne recopiait le texte brut
+         (« 6/10 (12/20 · 2237 pts) », « Score : 4000 pts »…), impossible à
+         comparer d'une ligne à l'autre. */
+      var tdNote = document.createElement("td");
+      tdNote.style.fontWeight = "800";
+      tdNote.style.color = "#177245";
+      var nQ = Number(q.note20);
+      if (isFinite(nQ)) {
+        var nQArrondi = Math.round(nQ * 10) / 10;
+        tdNote.innerHTML = "<b>" + String(nQArrondi).replace(".", ",") + " / 20</b>" +
+          (q.note && String(q.note) !== String(nQArrondi) + "/20"
+            ? " <span style='font-weight:700;font-size:11px;color:#7a6f5d'>(" + echHtml(q.note) + ")</span>"
+            : "");
+        tdNote.title = "Note ramenée sur 20 à partir de : " + String(q.note || (q.score + "/" + q.total));
+      } else {
+        tdNote.textContent = String(q.note || "—");
+      }
+      tr.appendChild(tdNote);
+      var tdDate = document.createElement("td");
+      tdDate.textContent = fmtDate(q.ts);
+      tr.appendChild(tdDate);
       tb.appendChild(tr);
     });
     if (wrapVoirPlusQuiz && btnVoirPlusQuiz) {
@@ -7011,7 +7271,7 @@
       "</div>" +
       "<div class='fiche-kpis'>" +
         "<div class='fiche-kpi'><small>⏱️ Temps (période)</small><b style='color:#d84315'>" + echHtml(fmtDureeCumul(secSem)) + "</b><span>Cumul total : " + echHtml(fmtDureeCumul(secTot)) + " (" + nbCon + " sess.)</span></div>" +
-        "<div class='fiche-kpi'><small>🏆 Moyenne Quiz / Bac</small><b style='color:#177245'>" + (stQ.moyenne20 != null ? (stQ.moyenne20 + " / 20") : "—") + "</b><span>" + stQ.nb + " épreuve(s) passée(s)</span></div>" +
+        "<div class='fiche-kpi'><small>🏆 Moyenne Quiz / Bac</small><b style='color:#177245'>" + (stQ.moyenne20 != null ? (stQ.moyenne20 + " / 20") : "—") + "</b><span>" + stQ.nbQuizDifferents + " quiz visité(s) · " + stQ.nb + " épreuve(s) passée(s)</span></div>" +
         "<div class='fiche-kpi'><small>📄 Pages · Cours · Exos</small><b style='color:#0f766e'>" + bilanSuiviCompletEleve(p).nbPages + " / 124 p.</b><span>📚 " + bilanSuiviCompletEleve(p).nbCours + " cours · ✏️ " + bilanSuiviCompletEleve(p).nbExos + " exo(s)</span></div>" +
         "<div class='fiche-kpi'><small>🎬 Vidéos · 🔊 Audios · 💬 Msg</small><b>🎬 " + echHtml(bilFiche.resumeCourtVid) + "</b><span>🔊 " + echHtml(bilFiche.resumeCourtAud) + " · 💬 " + msgsEl.length + " msg</span></div>" +
       "</div>" +
@@ -7019,7 +7279,7 @@
       htmlMediaProgFiche +
       "<div class='fiche-modules-bar'><span>📱 Appareil(s) détecté(s) (" + infoApp.nb + ") :</span> " + htmlAppareils + "</div>" +
       htmlSemaines +
-      "<div class='fiche-sec-titre'>🏆 Notes des Quiz &amp; Atelier Bac Pratique (" + stQ.nb + ")</div>" +
+      "<div class='fiche-sec-titre'>🏆 Notes des Quiz &amp; Atelier Bac Pratique (" + stQ.nbQuizDifferents + " quiz · " + stQ.nb + " épreuve(s))</div>" +
       htmlQuiz +
       "<div class='fiche-sec-titre'>🎯 Parties synchronisées — historique complet des scores en ligne</div>" +
       "<div class='fiche-parties-sync' id='fiche-parties-sync'><span style='color:#7a6f5d;font-size:11.5px'>⏳ Chargement de l'historique en ligne…</span></div>" +
@@ -7647,9 +7907,19 @@
         "<span style='font-size:12px;color:#5a5244;font-weight:700'>🏛️ " + echHtml(lyceeTxt) + "</span>";
       tr.appendChild(tdLyceeClasse);
 
-      [fmtDate(a.debut), fmtDuree(dureeLigne(a)), a.lieu || "—", a.page || "—"].forEach(function (v) {
+      /* v581 : la durée affichée est la durée comptée (plafonnée). Une session
+         jamais refermée est signalée par ⚠️ et expliquée au survol. */
+      var dureeAffichee = fmtDuree(dureeLigne(a));
+      if (sessionEcretee(a)) dureeAffichee = "⚠️ " + dureeAffichee;
+      [fmtDate(a.debut), dureeAffichee, a.lieu || "—", a.page || "—"].forEach(function (v, idx) {
         var td = document.createElement("td");
         td.textContent = v;
+        if (idx === 1 && sessionEcretee(a)) {
+          td.title = "Session non refermée : " + fmtDuree(dureeLigneBrute(a)) +
+            " dans la base, comptée " + fmtDuree(DUREE_SESSION_MAX_ADMIN) + " au maximum.";
+          td.style.color = "#b45309";
+          td.style.fontWeight = "900";
+        }
         tr.appendChild(td);
       });
       ta.appendChild(tr);
