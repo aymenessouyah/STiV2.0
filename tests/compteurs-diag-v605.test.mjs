@@ -48,7 +48,7 @@ test('v605 — le diagnostic interroge la base pour cet élève précis', () => 
 });
 
 test('v605 — le rapport distingue les trois pannes possibles', () => {
-  assert.match(adminJs, /L'élève n'a AUCUNE ligne dans la base/, 'cas « journal jamais écrit »');
+  assert.match(adminJs, /L'élève n'a AUCUNE ligne dans le journal/, 'cas « journal jamais écrit »');
   assert.match(adminJs, /Les lignes existent en base, mais la page n'en a chargé aucune/, 'cas « fenêtre de chargement »');
   assert.match(adminJs, /Les lignes sont chargées : le compteur affiché devrait suivre/, 'cas « affichage »');
 });
@@ -70,14 +70,14 @@ test('v605 — le rapport est lisible, copiable et refermable', () => {
 });
 
 test('v605 — la page d’administration charge la nouvelle version du script', () => {
-  assert.match(adminHtml, /assets\/js\/admin\.js\?v=605-perf/);
+  assert.match(adminHtml, /assets\/js\/admin\.js\?v=607-perf/);
 });
 
 test('v605 — la publication avance et le service worker reverra admin.js', () => {
-  assert.match(sw, /var VERSION_PUBLIEE = "v606";/);
-  assert.match(sw, /var PUBLIEE_LE = "2026-11-01T18:05:00Z";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v607";/);
+  assert.match(sw, /var PUBLIEE_LE = "2026-11-01T21:20:00Z";/);
   assert.match(sw, /v605-compteurs-expliques-20261101/);
   /* v606 : la version publiée avance, mais la révision d’admin.js reste celle de v605. */
-  assert.match(sw, /\{ url: "\.\/assets\/js\/admin\.js", revision: "compteurs-diag-v605" \}/);
-  assert.match(sw, /\{ url: "\.\/admin\.html", revision: "export-trouvable-v606" \}/);
+  assert.match(sw, /\{ url: "\.\/assets\/js\/admin\.js", revision: "journal-acces-v607" \}/);
+  assert.match(sw, /\{ url: "\.\/admin\.html", revision: "journal-acces-v607" \}/);
 });

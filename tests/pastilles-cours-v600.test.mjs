@@ -82,7 +82,7 @@ test('v600 : l’ordinateur garde ses cartes complètes', () => {
 });
 
 test('v600 : la version publiée et le cache avancent', () => {
-  assert.match(SW, /var VERSION_PUBLIEE = "v606";/, 'la version publiée passe à v600');
+  assert.match(SW, /var VERSION_PUBLIEE = "v607";/, 'la version publiée passe à v600');
   assert.match(SW, /url: "\.\/assets\/css\/theme\.css", revision: "roue-compte-v602"/);
   assert.match(SW, /url: "\.\/assets\/js\/app\.js", revision: "roue-compte-v602"/);
 });

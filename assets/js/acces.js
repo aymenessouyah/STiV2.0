@@ -10387,18 +10387,77 @@
         if (document.visibilityState === "hidden") majFileOff();
       });
     }
+    /* v607 — « 0 min · 0 sess. » alors que l'élève travaille.
+       La ligne de session était créée avec « return=representation »
+       (.select("id").single()) : si la base ne renvoie pas la ligne (lecture
+       filtrée, réponse vide ou multiple), TOUT l'INSERT était perdu et la page
+       basculait en silence vers la file hors-ligne — la table `acces` restait
+       donc vide pour cet élève, pendant que ses progressions (sti_progressions,
+       écrites autrement) arrivaient sans problème. C'est exactement le tableau
+       montré par la fiche : pages, cours, vidéos et quiz présents, temps 0.
+       On écrit désormais d'abord, on retrouve ensuite l'identifiant, et toute
+       panne est remontée dans sti_diagnostics pour être vue par le professeur. */
+    function signalerPanneJournalAcces(message, detail) {
+      try {
+        if (sessionStorage.getItem("sti-journal-acces-panne") === "1") return;
+        sessionStorage.setItem("sti-journal-acces-panne", "1");
+      } catch (eSj) {}
+      try {
+        if (!navigator.onLine) return;
+        sb.from("sti_diagnostics").insert({
+          page: String(chemin || "/").slice(0, 180),
+          genre: "journal_acces",
+          message: String(message || "écriture du journal impossible").slice(0, 400),
+          detail: String(detail || "").slice(0, 1800),
+          agent: String(navigator.userAgent || "").slice(0, 300),
+          resolution: (screen.width || 0) + "x" + (screen.height || 0),
+          en_ligne: true
+        }).then(function () {}).catch(function () {});
+      } catch (eSd) {}
+    }
+    function retrouverIdSession(tsInit, suite) {
+      sb.from("acces").select("id").eq("user_id", uid).eq("debut", tsInit)
+        .order("id", { ascending: false }).limit(1)
+        .then(function (r) {
+          suite((r && !r.error && r.data && r.data[0] && r.data[0].id) ? r.data[0].id : null);
+        }).catch(function () { suite(null); });
+    }
+    function ouvrirSessionJournal(tsInit) {
+      var ligne = { user_id: uid, lieu: lieu, page: chemin, debut: tsInit, fin: tsInit, duree_sec: 1 };
+      function echec(err) {
+        signalerPanneJournalAcces(
+          (err && (err.message || err.details)) || "insertion dans acces refusée",
+          JSON.stringify({ code: (err && err.code) || "", details: (err && err.details) || "", hint: (err && err.hint) || "", page: chemin })
+        );
+        suiviHorsLigne();
+      }
+      insererAccesSTI(ligne).select("id").single().then(function (r) {
+        if (r && !r.error && r.data && r.data.id) return suivreSessionId(r.data.id);
+        /* L'écriture a peut-être abouti sans que la ligne soit relue : on cherche
+           la session ouverte à cet instant précis avant de réessayer (aucun doublon). */
+        return retrouverIdSession(tsInit, function (id) {
+          if (id) return suivreSessionId(id);
+          return insererAccesSTI(Object.assign({}, ligne)).then(function (r2) {
+            if (r2 && r2.error) { echec(r2.error); return null; }
+            return retrouverIdSession(tsInit, function (id2) {
+              if (id2) return suivreSessionId(id2);
+              echec({ message: "ligne de session écrite mais identifiant illisible" });
+              return null;
+            });
+          }).catch(function (err2) { echec(err2); return null; });
+        });
+      }).catch(function (err) {
+        echec(err);
+      });
+    }
     function insere() {
       if (!navigator.onLine) {
         suiviHorsLigne();
         return;
       }
       var tsInit = new Date().toISOString();
-      insererAccesSTI({ user_id: uid, lieu: lieu, page: chemin, fin: tsInit, duree_sec: 1 }).select("id").single().then(function (r) {
-        if (r.error || !r.data) {
-          suiviHorsLigne();
-          return;
-        }
-        var id = r.data.id, debut = Date.now();
+      function suivreSessionId(id) {
+        var debut = Date.now();
         /* v581 — temps actif cumulé, indépendant de l'heure de départ.
            Avant, chaque tick réécrivait « maintenant − début » : un onglet
            resté ouvert trois jours (ou un portable en veille) inscrivait
@@ -10492,9 +10551,8 @@
         document.addEventListener("visibilitychange", function (evVis) {
           if (document.visibilityState === "hidden") ferme(evVis || { type: "visibilitychange" });
         });
-      }).catch(function () {
-        suiviHorsLigne();
-      });
+      }
+      ouvrirSessionJournal(tsInit);
     }
     if (!navigator.onLine) {
       suiviHorsLigne();
