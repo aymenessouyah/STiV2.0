@@ -1,6 +1,6 @@
 # Rapport d’audit de la plateforme — v553
 
-**Date** : 2026-10-31 · **Pages auditées** : 133 · **Liens vérifiés** : 1407 · **Questions de quiz** : 660
+**Date** : 2026-10-31 · **Pages auditées** : 133 · **Liens vérifiés** : 1409 · **Questions de quiz** : 660
 
 | Constats | Nombre |
 |---|---|
@@ -13,10 +13,10 @@
 
 | Question | Verdict | Ce qui a été mesuré |
 |---|---|---|
-| Fluidité | ✅ conforme | preload des vidéos, animations sur transform/opacity, écouteurs passifs, « réduire les animations » — Les 39 vidéos des pages attendent un clic (preload metadata/none) · Les 12 animations du thème restent sur transform/opacity · Les 18 écouteurs de défilement sont passifs · prefers-reduced-motion respecté dans le thème et dans la grille des capsules |
+| Fluidité | ✅ conforme | preload des vidéos, animations sur transform/opacity, écouteurs passifs, « réduire les animations » — Les 39 vidéos des pages attendent un clic (preload metadata/none) · Les 12 animations du thème restent sur transform/opacity · Les 19 écouteurs de défilement sont passifs · prefers-reduced-motion respecté dans le thème et dans la grille des capsules |
 | Rapidité | ✅ conforme (réserves mineures) | poids des pages, scripts bloquants, cache hors-ligne, images différées — 44 page(s) dépassent 1,5 Mo de code · 8 script(s) bloquant(s) dans l’en-tête (petits fichiers, ordre imposé) |
 | Sécurité | ✅ conforme | secrets, RLS, administration, liens _blank, CSP — RLS active sur les 10 tables créées par les migrations · Aucune clé de service (service_role) dans les pages ni les scripts · Aucun eval / new Function hors bac à sable · Tous les liens _blank sont isolés (rel=noopener) · Content-Security-Policy déclarée sur 82/133 pages · admin.js vérifie la session et l’adresse de l’administrateur avant d’afficher quoi que ce soit · Seule la clé publique (sb_publishable_) est exposée côté client |
-| Accès aux cours, vidéos et exercices | ✅ conforme | liens, ancres, vidéos du catalogue, menu — Tous les liens et ancres locaux existent (1407 vérifiés) · Les 27 vidéos du catalogue sont livrées (957 Mo de médias) · 19 pages de cours et 67 pages d’exercices joignables |
+| Accès aux cours, vidéos et exercices | ✅ conforme | liens, ancres, vidéos du catalogue, menu — Tous les liens et ancres locaux existent (1409 vérifiés) · Les 27 vidéos du catalogue sont livrées (957 Mo de médias) · 19 pages de cours et 67 pages d’exercices joignables |
 | Quiz : tirage aléatoire à chaque entrée | ✅ conforme | mélange des questions et de la place de la bonne réponse — Les 6 quiz tirent questions et réponses à chaque partie |
 | XP : synchronisation entre appareils | ✅ conforme | file locale, envoi idempotent, maximum conservé — Scores et réponses passent par une file locale puis un envoi idempotent |
 | Quiz conformes aux annexes | ✅ conforme | vocabulaire des énoncés et des bonnes réponses — Quiz ↔ annexes : 91 % du vocabulaire vient directement de l’annexe, 98 % avec le cours |
@@ -24,7 +24,7 @@
 
 | Axe | Constat | Niveau | Détail |
 |---|---|---|---|
-| Accès | Tous les liens et ancres locaux existent (1407 vérifiés) | ✅ ok |  |
+| Accès | Tous les liens et ancres locaux existent (1409 vérifiés) | ✅ ok |  |
 | Accès | Les 27 vidéos du catalogue sont livrées (957 Mo de médias) | ✅ ok |  |
 | Accès | 19 pages de cours et 67 pages d’exercices joignables | ✅ ok |  |
 | Quiz | Les 6 quiz tirent questions et réponses à chaque partie | ✅ ok | 6 s’appuient sur le module commun STIQuizAlea (crypto.getRandomValues). Redirection ignorée : pp.html. |
@@ -34,12 +34,12 @@
 | Mobile | Menu mobile accessible (aria-expanded) et 29 points de rupture dans le thème | ✅ ok |  |
 | Fluidité | Les 39 vidéos des pages attendent un clic (preload metadata/none) | ✅ ok |  |
 | Fluidité | Les 12 animations du thème restent sur transform/opacity | ✅ ok |  |
-| Fluidité | Les 18 écouteurs de défilement sont passifs | ✅ ok |  |
+| Fluidité | Les 19 écouteurs de défilement sont passifs | ✅ ok |  |
 | Fluidité | prefers-reduced-motion respecté dans le thème et dans la grille des capsules | ✅ ok |  |
-| Rapidité | 44 page(s) dépassent 1,5 Mo de code | ℹ️ mineur | Positionnement-animee/index.html — 1651 Ko<br>admin.html — 1968 Ko<br>bac-pratique.html — 1611 Ko<br>cours/PHP-recap.html — 1616 Ko<br>cours/Recap-JavaScript-STI.html — 1680 Ko<br>cours/annexe-fleuriste-html5.html — 1666 Ko<br>cours/courscss3.html — 1745 Ko<br>cours/courshtml5.html — 2095 Ko<br>cours/coursphp.html — 1650 Ko<br>cours/css3.html — 2148 Ko<br>cours/fiche-revision-html5.html — 1717 Ko<br>cours/html5.html — 2119 Ko |
+| Rapidité | 44 page(s) dépassent 1,5 Mo de code | ℹ️ mineur | Positionnement-animee/index.html — 1651 Ko<br>admin.html — 1968 Ko<br>bac-pratique.html — 1612 Ko<br>cours/PHP-recap.html — 1616 Ko<br>cours/Recap-JavaScript-STI.html — 1680 Ko<br>cours/annexe-fleuriste-html5.html — 1666 Ko<br>cours/courscss3.html — 1745 Ko<br>cours/courshtml5.html — 2095 Ko<br>cours/coursphp.html — 1650 Ko<br>cours/css3.html — 2150 Ko<br>cours/fiche-revision-html5.html — 1717 Ko<br>cours/html5.html — 2122 Ko |
 | Rapidité | 8 script(s) bloquant(s) dans l’en-tête (petits fichiers, ordre imposé) | ℹ️ mineur | dashboard.html → assets/js/config.js?v=479<br>index.html → assets/js/config.js?v=479<br>quiz/pp.html → ../assets/js/retour-quiz.js<br>quiz/systemes-internet.html → ../assets/js/quiz-systemes-boot.js?v=580<br>quiz/tableaux.html → ../assets/js/quiz-tableaux-boot.js?v=456<br>revision-erreurs.html → assets/js/config.js?v=476<br>revision-erreurs.html → assets/js/supabase-umd.js<br>revision-erreurs.html → assets/js/quiz-sync.js?v=460 |
-| Rapidité | Service worker prêt : 760 fichiers décrits hors-ligne (v582-sti-atelier-v386) | ✅ ok |  |
-| Rapidité | Chargement différé des images : 119/197 (60 %) | ✅ ok |  |
+| Rapidité | Service worker prêt : 763 fichiers décrits hors-ligne (v582-sti-atelier-v386) | ✅ ok |  |
+| Rapidité | Chargement différé des images : 119/199 (60 %) | ✅ ok |  |
 | Sécurité | RLS active sur les 10 tables créées par les migrations | ✅ ok |  |
 | Sécurité | Aucune clé de service (service_role) dans les pages ni les scripts | ✅ ok |  |
 | Sécurité | Aucun eval / new Function hors bac à sable | ✅ ok |  |
@@ -53,7 +53,7 @@
 
 ## Chiffres relevés
 
-- **liens** : 1407
+- **liens** : 1409
 - **videos** : 233
 - **poidsVideos** : 1002976367
 - **catalogue** : 27
@@ -67,10 +67,10 @@
 - **videosHtml** : 39
 - **keyframes** : 12
 - **keyframesDisposition** : 0
-- **ecouteursDefilement** : 18
+- **ecouteursDefilement** : 19
 - **pagesLourdes** : 44
-- **offline** : 760
-- **images** : imgTotal = 197 · lazyTotal = 119
+- **offline** : 763
+- **images** : imgTotal = 199 · lazyTotal = 119
 - **csp** : 82
 
 ## Comment relancer

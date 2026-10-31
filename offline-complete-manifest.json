@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-10-31T11:58:47Z",
+  "generatedAt": "2026-10-31T12:20:03Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 761,
-  "totalBytes": 1113716883,
+  "totalFiles": 763,
+  "totalBytes": 1113848506,
   "files": [
     {
       "path": "404.html",
@@ -671,6 +671,16 @@
       "gitSha": "38de5c8c2bdeceff1f75f2026d2fd372511c5396"
     },
     {
+      "path": "assets/images/systemes-technologies-internet-96.png",
+      "bytes": 7406,
+      "gitSha": "cfacbb2f6569abefc99a74a54681665cba6b30cb"
+    },
+    {
+      "path": "assets/images/systemes-technologies-internet.png",
+      "bytes": 122858,
+      "gitSha": "8940c0c3ad66e3f0ae1e14d58d577918b4ac8424"
+    },
+    {
       "path": "assets/js/acces.js",
       "bytes": 967135,
       "gitSha": "54668e27bea68bb15142a86cda27537e93773bb7"
@@ -717,8 +727,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 126981,
-      "gitSha": "eefbdbd11ac02810f216d9422c19d3bdcbd972dd"
+      "bytes": 127641,
+      "gitSha": "6d9429f82da69fe784408b80c97c8aac4207fb06"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -1427,8 +1437,8 @@
     },
     {
       "path": "cours/systemes-technologies-internet.html",
-      "bytes": 68496,
-      "gitSha": "0f665e932b936e039d13ab60af12e069ea0f0a72"
+      "bytes": 68680,
+      "gitSha": "97dcbdfd4ecfa0ebce82939fc14d6a029c34b14a"
     },
     {
       "path": "cssanimee/cours.js",
@@ -3202,8 +3212,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 64532,
-      "gitSha": "ee952d343ff12bf95ac121676697a08077ccae6a"
+      "bytes": 64667,
+      "gitSha": "47a183243a60bd95fb1f4b3e79a76d34f35741dd"
     },
     {
       "path": "livre-smart.html",
@@ -3807,8 +3817,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 101199,
-      "gitSha": "7d568a7c66af10b70dbc47c0b970e91e0cb4dc17"
+      "bytes": 101579,
+      "gitSha": "6432f8fb2a7702d349effab38cca7b033c0b983a"
     }
   ]
 }
