@@ -8,7 +8,7 @@
       "572"
     ],
     "assets/css/cours-sti.css": [
-      "573"
+      "580"
     ],
     "assets/css/protection.css": [
       "193",
@@ -91,6 +91,12 @@
     ],
     "assets/js/quiz-sync.js": [
       "460"
+    ],
+    "assets/js/quiz-systemes-boot.js": [
+      "580"
+    ],
+    "assets/js/quiz-systemes.js": [
+      "580"
     ],
     "assets/js/quiz-tableaux-boot.js": [
       "456"

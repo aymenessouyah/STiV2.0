@@ -1,5 +1,105 @@
 [
   {
+    "version": "v580",
+    "date": "2026-10-31",
+    "categorie": "Quiz & évaluation",
+    "icone": "🖥️",
+    "titre": "Le quiz « Systèmes, technologies et Internet » : 18 questions du manuel 3ᵉ SI",
+    "resume": "La partie 1 du livre (rôles et types de systèmes d’exploitation, licences libres, machine virtuelle, LAN/MAN/WAN, adresse IP et masque, DNS, adresse MAC, client-serveur et HTTPS, objets connectés et broker MQTT) avait son cours, sa vidéo et son glossaire : elle a désormais son quiz. Dix questions tirées au hasard par partie, sans répétition, corrigé expliqué qui renvoie au chapitre exact du cours, suivi XP et reprise dans « Mes erreurs ». Plafond de 20 % de bonnes réponses en case A respecté.",
+    "lien": "quiz/systemes-internet.html",
+    "libelleLien": "Lancer le quiz STI"
+  },
+  {
+    "version": "v579",
+    "date": "2026-10-31",
+    "categorie": "Navigation mobile & Vidéos (.mp4)",
+    "icone": "📱",
+    "titre": "Portail sans barre mobile, la vidéo du cours ouvre les vidéos, le bouton « + » les montre",
+    "resume": "La page de connexion et d’abonnement ne reçoit plus jamais la barre du bas : trois verrous la refusent (la page elle-même, le chargeur et le gabarit de config.js, puis mobile-nav.js) pour laisser le captcha Cloudflare dégagé. La vidéo du cours « Systèmes, technologies et Internet » (13 min 03, MP4 + sous-titres) devient la première carte de « Vidéos explicatives », avec sa pastille STI et des compteurs à 27. Le volet « + » du téléphone ajoute le cours dans « Tous les cours » et sa famille dans « Familles de vidéos ».",
+    "lien": "index.html#videos",
+    "libelleLien": "Voir les vidéos explicatives"
+  },
+  {
+    "version": "v578",
+    "date": "2026-10-30",
+    "categorie": "Vidéos (.mp4)",
+    "icone": "🎬",
+    "titre": "La vidéo du cours STI s’enrichit des images du manuel",
+    "resume": "Les pages 5 à 13 du manuel 3ᵉ SI deviennent une vidéo de cours de 13 min 03 : rôles des systèmes d’exploitation, types et licences, machine virtuelle et sécurité, réseaux (étendue, équipements, adresse IP et masque, DNS, MAC), architectures et protocoles, Internet des objets, MQTT et serre intelligente. Les figures du livre s’ajoutent aux photographies et illustrations libres, avec les sous-titres français livrés à côté du MP4.",
+    "lien": "cours/systemes-technologies-internet.html#video-cours",
+    "libelleLien": "Regarder la vidéo du cours"
+  },
+  {
+    "version": "v577",
+    "date": "2026-10-30",
+    "categorie": "Lecteur vidéo",
+    "icone": "🎥",
+    "titre": "La vidéo du cours se regarde au bon chapitre, avec ses dix sections",
+    "resume": "Le lecteur pas à pas reconnaît le cours « Systèmes, technologies et Internet » : dix chapitres calés sur la voix, titre dédié et cartes du cours qui ouvrent directement la bonne minute. Le lecteur commun sait démarrer la vidéo depuis n’importe quelle carte du cours.",
+    "lien": "cours/systemes-technologies-internet.html",
+    "libelleLien": "Ouvrir le cours"
+  },
+  {
+    "version": "v576",
+    "date": "2026-10-30",
+    "categorie": "Livre connecté",
+    "icone": "📖",
+    "titre": "Le PDF du livre connecté se télécharge sous un nom propre",
+    "resume": "Le manuel téléchargé depuis le livre connecté ne s’appelle plus « document.pdf » : il porte le nom du manuel et de son niveau, ce qui évite les doublons dans la galerie du téléphone.",
+    "lien": "livre-smart.html",
+    "libelleLien": "Ouvrir le livre connecté"
+  },
+  {
+    "version": "v575",
+    "date": "2026-10-30",
+    "categorie": "Livre & Vidéos (.mp4)",
+    "icone": "📚",
+    "titre": "Livre 3ᵉ SI 2026 rafraîchi, manuel 4ᵉ SI réparé, vidéos rangées dans l’ordre du programme",
+    "resume": "Le livre affiche la NOUVELLE édition 3SI (81 pages) et non plus l’ancienne (72 pages) ; le manuel 4ᵉ SI est réparé et les anciens liens « ?niveau=3si » retombent sur le bon ouvrage. La vitrine des vidéos se lit désormais dans l’ordre du programme — HTML5, CSS3, JavaScript, SQL, PHP — et le tableau de bord affiche sa version ainsi que le compte des cours.",
+    "lien": "livre-smart.html",
+    "libelleLien": "Voir le manuel"
+  },
+  {
+    "version": "v574",
+    "date": "2026-10-30",
+    "categorie": "Glossaire & accès",
+    "icone": "🔑",
+    "titre": "Glossaire trilingue (FR · EN · AR) et cours STI ouvert à tous les comptes",
+    "resume": "Le glossaire réunit les notions du cours en français, anglais et arabe, avec recherche et filtre par module. Le cours « Systèmes, technologies et Internet » n’est pas verrouillé : il est visible par les élèves, les professeurs, les comptes labo et les abonnés GOLD.",
+    "lien": "glossaire.html",
+    "libelleLien": "Chercher dans le glossaire"
+  },
+  {
+    "version": "v573",
+    "date": "2026-10-29",
+    "categorie": "Cours",
+    "icone": "🖥️",
+    "titre": "Nouveau cours 3ᵉ SI : « Systèmes, technologies et Internet »",
+    "resume": "La partie du manuel située avant HTML devient un cours complet : trois chapitres, neuf sections, les tableaux et schémas du livre, les activités d’application et la fiche de synthèse. C’est le cours d’entrée de la 3ᵉ SI, avant le Web.",
+    "lien": "cours/systemes-technologies-internet.html",
+    "libelleLien": "Ouvrir le cours"
+  },
+  {
+    "version": "v572",
+    "date": "2026-10-28",
+    "categorie": "Interface & étiquettes",
+    "icone": "🏷️",
+    "titre": "L’étiquette « Capsule » prend du relief et un reflet",
+    "resume": "L’étiquette dorée gagne une épaisseur de carton (trait sombre, ombre portée), une arête éclairée, des bords modelés et un reflet qui la traverse environ deux secondes toutes les sept secondes — jamais de clignotement. Le cordon est plus rond et le mot légèrement gravé. Reflet supprimé si l’élève demande moins d’animation ou préfère le contraste élevé.",
+    "lien": "index.html#videos",
+    "libelleLien": "Voir les capsules"
+  },
+  {
+    "version": "v571",
+    "date": "2026-10-28",
+    "categorie": "Interface & étiquettes",
+    "icone": "🎗️",
+    "titre": "Étiquette « Capsule » en forme d’étiquette dorée sur chaque vidéo",
+    "resume": "L’ancienne pastille verte et le libellé « ✦ Capsule » laissent la place à une vraie étiquette de bagage, dessinée en CSS pur : corps doré à deux tons, coins du haut coupés, œillet sombre et cordon. Une seule définition sert la grille d’accueil et les cartes de cours ; même position, contraste 7,4:1, lisible sur téléphone et conservée à l’impression.",
+    "lien": "index.html#videos",
+    "libelleLien": "Voir les capsules"
+  },
+  {
     "version": "v479",
     "date": "2026-10-27",
     "categorie": "Vidéos (.mp4), Podcasts (.mp3) & Synchronisation",

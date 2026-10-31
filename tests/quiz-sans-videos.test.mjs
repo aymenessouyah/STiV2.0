@@ -12,8 +12,10 @@ const racine = resolve(new URL('..', import.meta.url).pathname);
 const lire = chemin => readFileSync(resolve(racine, chemin), 'utf8');
 const pagesQuiz = readdirSync(resolve(racine, 'quiz')).filter(f => f.endsWith('.html')).sort();
 
-test('v495 : les six pages de quiz ne portent aucune vidéo de cours', () => {
-  assert.deepEqual(pagesQuiz, ['html-css.html', 'javascript.html', 'php.html', 'pp.html', 'sql.html', 'tableaux.html']);
+test('v495 : les sept pages de quiz ne portent aucune vidéo de cours', () => {
+  /* v580 : le quiz « Systèmes, technologies et Internet » rejoint les six autres. */
+  assert.deepEqual(pagesQuiz, ['html-css.html', 'javascript.html', 'php.html', 'pp.html', 'sql.html',
+    'systemes-internet.html', 'tableaux.html']);
   for (const page of pagesQuiz) {
     const html = lire('quiz/' + page);
     const nom = 'quiz/' + page;

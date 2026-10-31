@@ -16,7 +16,7 @@ const revisions = new Map(entrees.map(m => [m[1], m[2]]));
 /* Le résolveur conserve à la fois les correctifs de main et les ressources de la refonte. */
 test('fusion du service worker : cache inédit, révisions XP/médias et refonte conservées', () => {
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
-  assert.match(sw, /var UPDATE_ID = "v579-vitrine-sti-portail"/);
+  assert.match(sw, /var UPDATE_ID = "v580-quiz-systemes"/);
   assert.equal(entrees.length, revisions.size, 'aucune URL de mise à jour en double');
   /* v520 : profil.js porte le plancher anti-recul des XP. */
   assert.equal(revisions.get('./assets/js/profil.js'), 'xp-jamais-en-recul-v520');
@@ -40,16 +40,17 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   }
   /* v521 : les pages HTML gagnent leur meta description ; seules les pages
      réellement modifiées changent de révision, les modules restent sur leur lot. */
-  assert.equal(revisions.get('./revision-erreurs.html'), 'meta-seo-v521');
+  assert.equal(revisions.get('./revision-erreurs.html'), 'quiz-systemes-v580');
   /* v519 : le tirage aléatoire des quiz. */
   for (const chemin of ['assets/js/quiz-tableaux.js', 'assets/js/quiz-alea.js']) {
     assert.equal(revisions.get('./' + chemin), 'plafond-a-v555', chemin);
   }
-  /* v520 : les cinq pages de quiz, le synchroniseur et le moteur XP invalident
-     leur ancienne copie pour que le compteur ne recule plus. */
-  for (const chemin of ['assets/js/quiz-sync.js', 'assets/js/xp-plancher.js']) {
-    assert.equal(revisions.get('./' + chemin), 'xp-jamais-en-recul-v520', chemin);
-  }
+  /* v520 : les pages de quiz, le synchroniseur et le moteur XP invalident leur
+     ancienne copie pour que le compteur ne recule plus.
+     v580 : le synchroniseur apprend le quiz « Systèmes & Internet » (nom dans
+     l'historique, purge des sessions) ; il porte donc sa propre révision. */
+  assert.equal(revisions.get('./assets/js/xp-plancher.js'), 'xp-jamais-en-recul-v520');
+  assert.equal(revisions.get('./assets/js/quiz-sync.js'), 'quiz-systemes-v580');
   /* v529 : le synchroniseur fusionne aussi les compteurs de vues vidéo. */
   assert.equal(revisions.get('./assets/js/sync-progressions.js'), 'pastille-sync-v534');
   /* v521 : les cinq pages de quiz gardent le garde-fou XP et gagnent leur meta description.
@@ -60,7 +61,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./quiz/php.html'), 'plafond-a-v555');
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
   assert.equal(revisions.get('./assets/js/app.js'), 'vitrine-sti-v579');
-  assert.equal(revisions.get('./index.html'), 'vitrine-sti-v579');
+  assert.equal(revisions.get('./index.html'), 'quiz-systemes-v580');
   assert.equal(revisions.get('./offline-complete-manifest.json'), 'classe-nav-v536');
   assert.equal(revisions.get('./README.md'), 'xp-jamais-en-recul-v520');
   for (const chemin of ['dashboard.html', 'assets/images/drapeau-tunisie.svg']) {
@@ -73,7 +74,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./admin.html'), 'photo-secours-v562');
   assert.equal(revisions.get('./assets/js/sante.js'), 'tp-transitions-v512');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */
-  assert.equal(revisions.get('./index.html'), 'vitrine-sti-v579');
+  assert.equal(revisions.get('./index.html'), 'quiz-systemes-v580');
   assert.equal(revisions.get('./assets/js/admin.js'), 'photo-secours-v562');
   assert.equal(revisions.get('./assets/css/cours.css'), 'retrait-fond-cours-v508');
   /* v563 : le cours SQL accueille la convention d'écriture d'un schéma. */
@@ -128,7 +129,7 @@ test('les scripts historiques sont chargés une seule fois et dans l’ordre req
 });
 
 test('manifeste hors ligne fusionné : toutes les empreintes et les deux migrations sont exactes', () => {
-  assert.equal(manifeste.version, 'v579-sti-atelier-v386');
+  assert.equal(manifeste.version, 'v580-sti-atelier-v386');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.ok(manifeste.files.some(f => f.path === 'assets/js/xp-plancher.js'), 'le garde-fou XP est livré hors ligne');
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((total, f) => total + f.bytes, 0));
@@ -442,21 +443,23 @@ test('migration v350 : seuls les modules XP et PWA modifiés sont révisés, mé
 test('migration v351 → v354 : pages appelantes actualisées, ressources inchangées et médias conservés', async () => {
   const result = await simulerMigration('sti-atelier-v351', [
     ['./index.html', 'xp-pwa-v490'], ['./assets/js/app.js', 'video-js-validation-v485'],
-    ['./assets/js/profil.js', 'xp-pwa-v490'], ['./assets/js/quiz-sync.js', 'xp-jamais-en-recul-v520'],
+    ['./assets/js/profil.js', 'xp-pwa-v490'], ['./assets/js/xp-plancher.js', 'xp-jamais-en-recul-v520'],
     ['./cours/html5.html', 'cours-retour-xp-v486'], ['./exercices/series-exercices.html', 'video-js-validation-v485']
   ], [
     ['/cours/html5.html', 20, 'ancien cours html5'],
-    ['/assets/js/quiz-sync.js', 22, 'sync xp v490 conservée']
+    ['/assets/js/xp-plancher.js', 22, 'garde-fou XP conservé']
   ]);
   const cache = await result.api.open('sti-atelier-v386');
   for (const chemin of ['/index.html', '/cours/html5.html', '/exercices/series-exercices.html', '/assets/js/app.js', '/assets/js/profil.js']) {
     assert.match(await (await cache.match('https://sti.example' + chemin)).text(), /^nouveau :/, chemin);
     assert.ok(result.requetes.some(url => new URL(url, 'https://sti.example/').pathname === chemin), chemin + ' téléchargé');
   }
-  assert.equal(await (await cache.match('https://sti.example/assets/js/quiz-sync.js')).text(), 'sync xp v490 conservée');
+  /* v580 : quiz-sync.js a maintenant sa propre révision ; le témoin « ressource
+     inchangée » est le garde-fou XP, qui n'a pas bougé. */
+  assert.equal(await (await cache.match('https://sti.example/assets/js/xp-plancher.js')).text(), 'garde-fou XP conservé');
   const videos = await result.api.open('sti-videos-labo-v1');
   assert.equal(await (await videos.match('https://sti.example/assets/videos/exemple.mp4')).text(), 'vidéo locale');
-  assert.ok(!result.requetes.some(url => new URL(url, 'https://sti.example/').pathname === '/assets/js/quiz-sync.js'));
+  assert.ok(!result.requetes.some(url => new URL(url, 'https://sti.example/').pathname === '/assets/js/xp-plancher.js'));
   assert.ok(result.requetes.every(url => !/\.(mp4|mp3|pdf|wasm)(?:$|\?)/i.test(url)));
 });
 

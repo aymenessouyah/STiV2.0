@@ -937,7 +937,9 @@ test('v451 : nouveautés sans undefined + mode sombre, barre PC recalée à gauc
     innerHTML: '',
     getAttribute(k) {
       if (k === 'data-racine') return './';
-      if (k === 'data-limite') return '25';
+      /* v580 : le journal dépasse maintenant 60 entrées ; la page réelle
+         demande data-limite="60", on rend donc toute la liste ici. */
+      if (k === 'data-limite') return '60';
       return null;
     },
     querySelectorAll() { return []; }
@@ -5422,8 +5424,11 @@ test('v473 (structure & budgets performance) : 0 doublon dans UPDATE_FILES (-85,
   assert.equal(uniqueUrls.size, urls.length, `UPDATE_FILES ne doit contenir aucun doublon (${urls.length} entrées vs ${uniqueUrls.size} uniques)`);
   // Les pages historiques harmonisées doivent aussi invalider leur ancienne copie ; le noyau préchargé reste limité ci-dessous.
   /* v573 : le nouveau cours 3ème SI ajoute sa page et sa feuille de style au
-     lot de mise à jour (264 entrées) ; le budget reste serré, sans média. */
-  assert.ok(urls.length <= 264, `UPDATE_FILES doit rester compact (<= 264 entrées uniques, observé: ${urls.length})`);
+     lot de mise à jour (264 entrées).
+     v580 : le quiz « Systèmes, technologies et Internet » ajoute sa page, son
+     moteur, son initialiseur et sa banque de questions (268 entrées) ; le
+     budget reste serré, sans média. */
+  assert.ok(urls.length <= 268, `UPDATE_FILES doit rester compact (<= 268 entrées uniques, observé: ${urls.length})`);
 
   const mCore = swJs.match(/var NOYAU_RAPIDE_RECHARGEMENT = (\{[\s\S]*?\n\});/);
   assert.ok(mCore, 'NOYAU_RAPIDE_RECHARGEMENT doit encadrer les rechargements proactifs du SW');
@@ -5438,8 +5443,11 @@ test('v473 (structure & budgets performance) : 0 doublon dans UPDATE_FILES (-85,
      boucle garantie de la vidéo de fond (~11 Ko). v532 modernise la barre mobile :
      le volet (cours, vidéos, fiches, outils) ajoute ~9,3 Ko à mobile-nav.js. v536
      ajoute le soulignement de la rubrique active (~7 Ko de JS et ~4 Ko de CSS).
-     La borne reste un garde-fou de poids, relevée à 600 Ko. */
-  assert.ok(coreBytes > 0 && coreBytes < 600 * 1024, `Le noyau de rechargement SW doit peser < 600 Ko (observé: ${coreBytes} octets)`);
+     La borne reste un garde-fou de poids, relevée à 600 Ko.
+     v580 : le journal des nouveautés documente enfin v571 → v580 (+6 Ko de
+     texte, aucune image) ; la borne passe à 640 Ko pour laisser vivre la page
+     « Nouveautés » sans relâcher le garde-fou. */
+  assert.ok(coreBytes > 0 && coreBytes < 640 * 1024, `Le noyau de rechargement SW doit peser < 640 Ko (observé: ${coreBytes} octets)`);
   assert.match(swJs, /appareilSansCachePrealable/);
   assert.match(swJs, /_lruTouchRecents/);
   assert.match(swJs, /_timerHitDebounce/);

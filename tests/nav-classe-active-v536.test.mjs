@@ -97,11 +97,11 @@ test('v536 : le titre « STI V2.0 » n’est plus écrasé quand la barre est af
 });
 
 test('v536 : la livraison hors ligne porte le lot et les empreintes', () => {
-  assert.match(sw, /var UPDATE_ID = "v579-vitrine-sti-portail"/);
+  assert.match(sw, /var UPDATE_ID = "v580-quiz-systemes"/);
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   assert.match(delta, /url: "\.\/assets\/css\/theme\.css", revision: "classe-nav-v536"/);
   assert.match(delta, /url: "\.\/assets\/js\/mobile-nav\.js", revision: "portail-sans-barre-v579"/);
-  assert.equal(manifeste.version, 'v579-sti-atelier-v386');
+  assert.equal(manifeste.version, 'v580-sti-atelier-v386');
   for (const chemin of ['assets/css/theme.css', 'assets/js/mobile-nav.js']) {
     const entree = manifeste.files.find(f => f.path === chemin);
     assert.ok(entree, chemin + ' dans le manifeste');

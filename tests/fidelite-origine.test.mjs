@@ -213,7 +213,8 @@ test('banques et données JSON d’origine conservées ; retour de quiz ajouté 
      ces deux URL changent : la pagination, le nombre de fiches et les autres
      entrées sont inchangés. */
   const json = {
-    'assets/data/nouveautes.json': '519ab2b9a8866737bb14a5db189a9dc01ef07c3ccf51482fc85d8b32baf0a520',
+    /* v580 : le journal ajoute v571 → v580 (aucune entrée existante modifiée). */
+    'assets/data/nouveautes.json': '24c3eb9e3611e39e63f0d3b5b039c17a6932c6514d49e06b96c7c17462601e51',
     'assets/data/quiz-banque.json': '2696942ae18a009e315239561a576ad6f2ff33db0609990082db418a45796c67',
     'assets/data/smart-book-2026.json': '2d2b3ddcf1d6b345c82de99eac119ab5be301c1e7ebfdaa577c19b2c88196a68',
     /* v573 : édition 2026 du manuel 3ème SI — 81 pages, la partie « Systèmes,
