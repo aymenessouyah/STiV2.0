@@ -247,7 +247,7 @@
       var pb = res[0] && res[0].error;
       if (!profils.length) { etat("⚠️ Profils illisibles : " + ((pb && pb.message) || "aucun élève renvoyé (session admin ?)"), "#b91c1c"); return; }
       var pages = res[2];
-      if (!pages) { etat("⚠️ Manifeste assets/pages-couverture.json introuvable — lancez tools/pages-couverture.py.", "#b91c1c"); return; }
+      if (!pages) { etat("⚠️ Manifeste assets/pages-couverture.json introuvable — lancez outils/couverture/generer-couverture.py.", "#b91c1c"); return; }
       remplirClasses(profils);
       var classe = elClasse ? elClasse.value : "*";
       var actifs = profils.filter(function (p) {

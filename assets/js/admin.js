@@ -31,6 +31,28 @@
   }
   var esc = echHtml;
 
+  /* v583 : le décompte « x / N pages » n'est plus recopié à six endroits du
+     fichier. Source unique : assets/pages-couverture.json, régénéré au build par
+     outils/couverture/generer-couverture.py (toutes les pages HTML du site hors
+     tests/, casse réelle, n calculé). TOTAL_PAGES_SITE_ADMIN n'est qu'un repli
+     hors-ligne : un test vérifie qu'il reste égal au manifeste. */
+  var TOTAL_PAGES_SITE_ADMIN = 145;
+  function chargerTotalPagesSiteAdmin() {
+    return fetch("assets/pages-couverture.json", { cache: "no-cache" }).then(function (r) {
+      return r && r.ok ? r.json() : null;
+    }).then(function (j) {
+      var n = j ? (Number(j.n) || (Array.isArray(j.pages) ? j.pages.length : 0)) : 0;
+      if (n > 0 && n !== TOTAL_PAGES_SITE_ADMIN) {
+        console.warn("[v583] pages-couverture.json annonce " + n +
+          " pages, le repli du tableau de bord en annonce " + TOTAL_PAGES_SITE_ADMIN +
+          " : relancer outils/couverture/generer-couverture.py et aligner le repli.");
+        TOTAL_PAGES_SITE_ADMIN = n;
+      }
+      return TOTAL_PAGES_SITE_ADMIN;
+    }).catch(function () { return TOTAL_PAGES_SITE_ADMIN; });
+  }
+  try { if (typeof fetch === "function") chargerTotalPagesSiteAdmin(); } catch (e) {}
+
   /* v559 : une photo peut désormais venir du bucket privé photos-profils
      (URL signée) au lieu d'être une data URL base64. Une URL signée expirée
      renvoie "" : l'avatar retombe sur les initiales, jamais sur une image
@@ -5861,7 +5883,7 @@
     var mods = modulesConsultesPourUser(uid);
     return {
       nbPages: Object.keys(pagesMap).length,
-      totalPagesSite: 124,
+      totalPagesSite: TOTAL_PAGES_SITE_ADMIN,
       /* v581 : les modules « Quiz », « Exercices » et « Bac/Projet » n'étaient
          pas des cours et gonflaient le compteur : un élève qui n'avait fait
          qu'un quiz apparaissait avec « 1 cours consulté ». */
@@ -6145,7 +6167,7 @@
         "Nb Connexions",
         "Duree periode",
         "Duree cumulee",
-        "Pages vues (/124)",
+        "Pages vues (/" + TOTAL_PAGES_SITE_ADMIN + ")",
         "Cours consultes",
         "Exercices travailles",
         "Moyenne Quiz (/20)",
@@ -7386,7 +7408,7 @@
             : ("Cumul total : " + echHtml(fmtDureeCumul(secTot)) + " (" + nbCon + " sess.)")) +
           "</span></div>" +
         "<div class='fiche-kpi'><small>🏆 Moyenne Quiz / Bac</small><b style='color:#177245'>" + (stQ.moyenne20 != null ? (stQ.moyenne20 + " / 20") : "—") + "</b><span>" + stQ.nbQuizDifferents + " quiz visité(s) · " + stQ.nb + " épreuve(s) passée(s)</span></div>" +
-        "<div class='fiche-kpi'><small>📄 Pages · Cours · Exos</small><b style='color:#0f766e'>" + bilanSuiviCompletEleve(p).nbPages + " / 124 p.</b><span>📚 " + bilanSuiviCompletEleve(p).nbCours + " cours · ✏️ " + bilanSuiviCompletEleve(p).nbExos + " exo(s)</span></div>" +
+        "<div class='fiche-kpi'><small>📄 Pages · Cours · Exos</small><b style='color:#0f766e'>" + bilanSuiviCompletEleve(p).nbPages + " / " + TOTAL_PAGES_SITE_ADMIN + " p.</b><span>📚 " + bilanSuiviCompletEleve(p).nbCours + " cours · ✏️ " + bilanSuiviCompletEleve(p).nbExos + " exo(s)</span></div>" +
         "<div class='fiche-kpi'><small>🎬 Vidéos · 🔊 Audios · 💬 Msg</small><b>🎬 " + echHtml(bilFiche.resumeCourtVid) + "</b><span>🔊 " + echHtml(bilFiche.resumeCourtAud) + " · 💬 " + msgsEl.length + " msg</span></div>" +
       "</div>" +
       "<div class='fiche-modules-bar'><span>📚 Modules consultés (" + mods.length + ") :</span> " + htmlMods + "</div>" +
@@ -7630,7 +7652,7 @@
         '"Duree periode";"' + fmtDureeCumul(dureePourAbonne(p.id)) + '"',
         '"Duree cumulee";"' + fmtDureeCumul(dureesTotales[p.id] || 0) + '"',
         '"Historique des connexions";"' + texteHistoriqueAccesAdmin().replace(/"/g, '""') + '"',
-        '"Pages vues (/124)";"' + suivF.nbPages + '/124"',
+        '"Pages vues (/" + TOTAL_PAGES_SITE_ADMIN + ")";"' + suivF.nbPages + '/' + TOTAL_PAGES_SITE_ADMIN + '"',
         '"Cours consultes";"' + suivF.nbCours + '"',
         '"Exercices travailles";"' + suivF.nbExos + '"',
         '"Videos (.mp4)";"' + String(bilF.resumeCourtVid).replace(/"/g, '""') + '"',
@@ -13503,7 +13525,7 @@
         "</div>" +
         "<div class='kpis'>" +
           "<div class='kpi'><small>Moyenne Quiz</small><b>" + (moyGen != null ? moyGen + " / 20" : "—") + "</b></div>" +
-          "<div class='kpi'><small>Pages · Cours · Exos</small><b>" + suivBull.nbPages + "/124 · " + suivBull.nbCours + "c · " + suivBull.nbExos + "e</b></div>" +
+          "<div class='kpi'><small>Pages · Cours · Exos</small><b>" + suivBull.nbPages + "/" + TOTAL_PAGES_SITE_ADMIN + " · " + suivBull.nbCours + "c · " + suivBull.nbExos + "e</b></div>" +
           "<div class='kpi'><small>Vidéos · Audios</small><b>🎬 " + echHtml(bilBull.resumeCourtVid) + " · 🔊 " + echHtml(bilBull.resumeCourtAud) + "</b></div>" +
           "<div class='kpi'><small>Temps d'étude</small><b>" + echHtml(fmtDuree(secTot)) + " (" + echHtml(fmtDuree(secHeb)) + " sem.)</b></div>" +
         "</div>" +
