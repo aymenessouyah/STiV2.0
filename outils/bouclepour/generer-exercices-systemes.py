@@ -101,8 +101,8 @@ HERO = """  <main id="contenu-principal">
       <div class="container">
         <nav class="course-breadcrumb" aria-label="Fil d’Ariane"><a href="../../index.html">Accueil</a><span aria-hidden="true">›</span><a href="../../index.html#cours">Cours</a><span aria-hidden="true">›</span><a href="../../cours/systemes-technologies-internet.html">Systèmes, technologies et Internet</a><span aria-hidden="true">›</span><span class="course-breadcrumb__current" aria-current="page">{fil}</span></nav>
         <div class="course-hero__grid">
-          <div class="course-hero__copy">
-            <div class="course-eyebrow"><span class="badge" style="background:var(--accent-gold-soft);border:1px solid var(--accent-gold-border);color:var(--accent-gold)"><img src="../../assets/images/systemes-technologies-internet-96.png" alt="" width="20" height="20" style="border-radius:5px;background:#fff;object-fit:cover;vertical-align:-4px;margin-right:6px">Atelier {num} · 3ᵉ SI</span><span class="course-eyebrow__meta">{niveau}</span></div>
+          <div class="course-hero__copy"><svg class="matiere-logo matiere-logo--hero" aria-hidden="true" viewBox="0 0 48 48"><use href="../../assets/icons/matieres.svg#sti"></use></svg>
+            <div class="course-eyebrow"><span class="badge" style="background:var(--accent-gold-soft);border:1px solid var(--accent-gold-border);color:var(--accent-gold)"><svg class="matiere-logo matiere-logo--pastille" viewBox="0 0 48 48" aria-hidden="true"><use href="../../assets/icons/matieres.svg#sti"></use></svg>Atelier {num} · 3ᵉ SI</span><span class="course-eyebrow__meta">{niveau}</span></div>
             <h1 class="course-hero__title" id="titre-page">{titre_hero}</h1>
             <p class="course-hero__lead">{chapeau}</p>
             <div class="hero-actions">
@@ -574,8 +574,8 @@ INDEX_MAIN = """  <main id="contenu-principal">
       <div class="container">
         <nav class="course-breadcrumb" aria-label="Fil d’Ariane"><a href="../../index.html">Accueil</a><span aria-hidden="true">›</span><a href="../../index.html#cours">Cours</a><span aria-hidden="true">›</span><a href="../../cours/systemes-technologies-internet.html">Systèmes, technologies et Internet</a><span aria-hidden="true">›</span><span class="course-breadcrumb__current" aria-current="page">Exercices</span></nav>
         <div class="course-hero__grid">
-          <div class="course-hero__copy">
-            <div class="course-eyebrow"><span class="badge" style="background:var(--accent-gold-soft);border:1px solid var(--accent-gold-border);color:var(--accent-gold)"><img src="../../assets/images/systemes-technologies-internet-96.png" alt="" width="20" height="20" style="border-radius:5px;background:#fff;object-fit:cover;vertical-align:-4px;margin-right:6px">Exercices · 3ᵉ SI</span><span class="course-eyebrow__meta">4 ATELIERS · 23 EXERCICES CORRIGÉS</span></div>
+          <div class="course-hero__copy"><svg class="matiere-logo matiere-logo--hero" aria-hidden="true" viewBox="0 0 48 48"><use href="../../assets/icons/matieres.svg#sti"></use></svg>
+            <div class="course-eyebrow"><span class="badge" style="background:var(--accent-gold-soft);border:1px solid var(--accent-gold-border);color:var(--accent-gold)"><svg class="matiere-logo matiere-logo--pastille" viewBox="0 0 48 48" aria-hidden="true"><use href="../../assets/icons/matieres.svg#sti"></use></svg>Exercices · 3ᵉ SI</span><span class="course-eyebrow__meta">4 ATELIERS · 23 EXERCICES CORRIGÉS</span></div>
             <h1 class="course-hero__title" id="titre-page">S’entraîner <span>sur la machine, pas seulement la lire.</span></h1>
             <p class="course-hero__lead">Quatre ateliers progressifs sur la partie du manuel qui précède HTML5 : systèmes d’exploitation, réseaux, machine virtuelle et objets connectés. Chaque exercice a son corrigé, et votre progression se garde d’un appareil à l’autre.</p>
             <div class="hero-actions">

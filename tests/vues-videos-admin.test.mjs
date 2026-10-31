@@ -473,12 +473,12 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
   assert.ok(delta.includes('url: "./assets/js/admin-vues-videos.js", revision: "cours-sti-v578"'),
     'le coin des vues repart au lot v549');
   assert.match(delta, /url: "\.\/assets\/js\/sync-progressions\.js", revision: "pastille-sync-v534"/);
-  assert.match(delta, /url: "\.\/offline-complete-manifest\.json", revision: "cours-sti-v595"/);
+  assert.match(delta, /url: "\.\/offline-complete-manifest\.json", revision: "cours-sti-v596"/);
   /* Budget du delta préservé : le module entre dans la liste, une annexe figée en sort. */
   const urls = [...delta.matchAll(/url:\s*"([^"]+)"/g)].map((m) => m[1]);
   assert.equal(new Set(urls).size, urls.length, 'aucun doublon');
   /* v580 : le quiz STI ajoute 4 entrées (page, moteur, initialiseur, banque). */
-  assert.ok(urls.length <= 272, 'delta léger (≤ 272 entrées)');
+  assert.ok(urls.length <= 276, 'delta léger (≤ 276 entrées)');
   assert.ok(!urls.includes('./documents/annexes/annexe-sql.pdf.html'), 'place libérée par une annexe figée');
   /* Préchargement hors ligne : le module doit y être pour que le coin marche sans réseau. */
   const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];

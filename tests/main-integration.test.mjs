@@ -20,12 +20,10 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(entrees.length, revisions.size, 'aucune URL de mise à jour en double');
   /* v520 : profil.js porte le plancher anti-recul des XP. */
   assert.equal(revisions.get('./assets/js/profil.js'), 'matieres-sti-v593');
-  for (const chemin of [
-    'assets/icons/matieres.svg',
-    'assets/js/suivi-profil.js'
-  ]) {
-    assert.equal(revisions.get('./' + chemin), 'suivi-contextes-v491', chemin);
-  }
+  assert.equal(revisions.get('./assets/js/suivi-profil.js'), 'suivi-contextes-v491');
+  /* v596 : le sprite gagne le pictogramme de la matière « Systèmes » ; il porte
+     donc sa propre révision, sinon les appareils installés garderaient l'ancien. */
+  assert.equal(revisions.get('./assets/icons/matieres.svg'), 'matiere-sti-v596');
   /* v529 : reconnexion-profil.js fusionne les compteurs de vues par appareil. */
   assert.equal(revisions.get('./assets/js/reconnexion-profil.js'), 'vues-videos-v531');
   /* v523 : la page des séries gagne les liens du TP Train (Série 5). */
@@ -60,9 +58,9 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   }
   assert.equal(revisions.get('./quiz/php.html'), 'plafond-a-v555');
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
-  assert.equal(revisions.get('./assets/js/app.js'), 'cours-sti-v595');
-  assert.equal(revisions.get('./index.html'), 'cours-sti-v595');
-  assert.equal(revisions.get('./offline-complete-manifest.json'), 'cours-sti-v595');
+  assert.equal(revisions.get('./assets/js/app.js'), 'cours-sti-v596');
+  assert.equal(revisions.get('./index.html'), 'cours-sti-v596');
+  assert.equal(revisions.get('./offline-complete-manifest.json'), 'cours-sti-v596');
   assert.equal(revisions.get('./README.md'), 'couverture-v583');
   /* v585 : le tableau de bord annonce le Smart Book 3ᵉ SI à 81 pages ; le drapeau reste au lot v503. */
   assert.equal(revisions.get('./dashboard.html'), 'livre-3si-81p-v585');
@@ -70,11 +68,11 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v517 : le ruban lit mieux la classe — la 4e SI passe au vert. */
   assert.equal(revisions.get('./assets/js/news-perso.js'), 'ruban-vert-v517');
   /* v507 : ruban sans logo et compteurs de vidéos. */
-  assert.equal(revisions.get('./assets/css/theme.css'), 'cours-sti-v595');
+  assert.equal(revisions.get('./assets/css/theme.css'), 'cours-sti-v596');
   assert.equal(revisions.get('./admin.html'), 'publication-v590');
   assert.equal(revisions.get('./assets/js/sante.js'), 'tp-transitions-v512');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */
-  assert.equal(revisions.get('./index.html'), 'cours-sti-v595');
+  assert.equal(revisions.get('./index.html'), 'cours-sti-v596');
   assert.equal(revisions.get('./assets/js/admin.js'), 'connexions-gz-v592');
   assert.equal(revisions.get('./assets/css/cours.css'), 'retrait-fond-cours-v508');
   /* v563 : le cours SQL accueille la convention d'écriture d'un schéma. */

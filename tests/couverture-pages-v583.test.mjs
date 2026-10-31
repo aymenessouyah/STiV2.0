@@ -32,7 +32,9 @@ const pagesGit = execFileSync('git', ['ls-files', '-z', '*.html'], { cwd: root, 
 test('v583 : le manifeste de couverture décrit exactement les pages réelles du site', () => {
   assert.equal(manifeste.gen, 'v583');
   assert.equal(manifeste.n, manifeste.pages.length, 'n doit être calculé, pas recopié');
-  assert.equal(manifeste.n, 145, '145 pages HTML hors tests/ au 31/10/2026');
+  /* v596 : 150 pages HTML hors tests/ depuis les cinq ateliers d'exercices
+     « Systèmes, technologies et Internet » (v595). */
+  assert.equal(manifeste.n, 150, '150 pages HTML hors tests/ au 31/10/2026');
   assert.deepEqual([...manifeste.pages].sort(), pagesGit, 'le manifeste doit être la liste exacte de git ls-files');
   assert.equal(new Set(manifeste.pages).size, manifeste.pages.length, 'aucun doublon de chemin exact');
 });
@@ -59,7 +61,7 @@ test('v583 : le générateur détecte un manifeste périmé', () => {
     cwd: root,
     encoding: 'utf8'
   });
-  assert.match(sortie, /à jour \(145 pages\)/);
+  assert.match(sortie, /à jour \(150 pages\)/);
   /* L'ancien générateur n'est plus qu'un relais : il ne doit plus produire de liste. */
   assert.match(read('tools/pages-couverture.py'), /DÉPRÉCIÉ/);
 });
@@ -68,14 +70,14 @@ test('v583 : le tableau de bord et l’analytique lisent le manifeste, sans « 1
   const adminJs = read('assets/js/admin.js');
   const anaJs = read('assets/js/analytique.js');
 
-  assert.match(adminJs, /var TOTAL_PAGES_SITE_ADMIN = 145;/);
+  assert.match(adminJs, /var TOTAL_PAGES_SITE_ADMIN = 150;/);
   assert.match(adminJs, /chargerTotalPagesSiteAdmin\(\)/);
   assert.match(adminJs, /fetch\("assets\/pages-couverture\.json", \{ cache: "no-cache" \}\)/);
   assert.doesNotMatch(adminJs, /"\/124/, 'plus aucun libellé /124 dans le tableau de bord');
   assert.doesNotMatch(adminJs, /totalPagesSite: 124/);
   assert.match(adminJs, /totalPagesSite: TOTAL_PAGES_SITE_ADMIN/);
 
-  assert.match(anaJs, /var TOTAL_PAGES_SITE = 145;/);
+  assert.match(anaJs, /var TOTAL_PAGES_SITE = 150;/);
   assert.match(anaJs, /chargerTotalPagesSite\(\)/);
   assert.match(anaJs, /fetch\("assets\/pages-couverture\.json", \{ cache: "no-cache" \}\)/);
   assert.doesNotMatch(anaJs, /var TOTAL_PAGES_SITE = 124;/);
@@ -89,14 +91,14 @@ test('v583 : le tableau de bord et l’analytique lisent le manifeste, sans « 1
 
 test('v583 : les libellés affichés suivent le même nombre', () => {
   const adminHtml = read('admin.html');
-  assert.match(adminHtml, /couverture sur <b>145 pages<\/b>/);
-  assert.match(adminHtml, /Couverture 145 pages/);
+  assert.match(adminHtml, /couverture sur <b>150 pages<\/b>/);
+  assert.match(adminHtml, /Couverture 150 pages/);
   assert.doesNotMatch(adminHtml, /couverture sur <b>124 pages<\/b>/);
 
   const readme = read('README.md');
-  assert.match(readme, /couverture sur \*\*145 pages\*\*/);
-  assert.match(readme, /Anneau de couverture sur \*\*145 pages\*\*/);
-  assert.match(readme, /taux réel d'exploration des \*\*145 pages\*\*/);
+  assert.match(readme, /couverture sur \*\*150 pages\*\*/);
+  assert.match(readme, /Anneau de couverture sur \*\*150 pages\*\*/);
+  assert.match(readme, /taux réel d'exploration des \*\*150 pages\*\*/);
 });
 
 test('v583 : le repli hors-ligne de la roue reflète le manifeste et le Service Worker suit', () => {
@@ -118,7 +120,7 @@ test('v583 : le repli hors-ligne de la roue reflète le manifeste et le Service 
     './assets/js/admin.js': 'connexions-gz-v592',
     './assets/js/analytique.js': 'couverture-v583',
     './assets/js/admin-couverture.js': 'couverture-v583',
-    './assets/js/roue-couverture.js': 'couverture-v586',
+    './assets/js/roue-couverture.js': 'couverture-v596',
     './admin.html': 'publication-v590'
   };
   for (const [url, revision] of Object.entries(revisionsAttendues)) {
