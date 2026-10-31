@@ -209,8 +209,11 @@ test('commandes d’administration : scripts et fonctions de la barre PC inchang
      v583 : le décompte des pages n'est plus figé à 124 dans admin.js ; il vient du
      manifeste assets/pages-couverture.json (145 pages réelles, générées par
      outils/couverture/generer-couverture.py) et admin.html affiche ce même nombre ;
-     empreintes de admin.js, d'admin.html et du manifeste réactualisées. */
-  assert.equal(sha('assets/js/admin.js'), 'dc16947cb90e5941894cc375a6857b81e1596fb18df7a276b8336c0ee72e421d');
+     empreintes de admin.js, d'admin.html et du manifeste réactualisées.
+     v584 : la section Connexions gagne « 🔎 Fouiller ce navigateur » et « 📂 Importer un
+     fichier » (recherche en lecture seule de tout l'historique local, réimport idempotent) ;
+     empreinte de admin.js réactualisée. */
+  assert.equal(sha('assets/js/admin.js'), 'ba2bdaccd0a5259e19ea7d401cf4a25a44d35d2b0d167b8c3e7f6e957211bd49');
   assert.equal(sha('assets/js/rayonsx-surligneur.js'), '1b7fe2067629766ef4043fa3060199b71124d8486e36d92aaac0b45bd861847c');
   const protection = lire('assets/js/protection.js');
   const debut = protection.indexOf('  function estAppareilPC()');

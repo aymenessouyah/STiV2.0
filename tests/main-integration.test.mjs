@@ -75,7 +75,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./assets/js/sante.js'), 'tp-transitions-v512');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */
   assert.equal(revisions.get('./index.html'), 'quiz-systemes-v580');
-  assert.equal(revisions.get('./assets/js/admin.js'), 'couverture-v583');
+  assert.equal(revisions.get('./assets/js/admin.js'), 'recherche-connexions-v584');
   assert.equal(revisions.get('./assets/css/cours.css'), 'retrait-fond-cours-v508');
   /* v563 : le cours SQL accueille la convention d'écriture d'un schéma. */
   assert.equal(revisions.get('./cours/sql.html'), 'schema-notation-v563');
