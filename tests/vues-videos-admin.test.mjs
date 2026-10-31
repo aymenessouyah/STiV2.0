@@ -71,7 +71,7 @@ test('le module compile et s’exporte même hors du tableau de bord', () => {
   for (const nom of ['catalogue', 'analyser', 'pourcentageMedia', 'vuesDeLEntree', 'charger', 'rendre']) {
     assert.equal(typeof api[nom], 'function', nom);
   }
-  assert.equal(api.catalogue().length, 32, 'catalogue complet (24 capsules publiques + 6 médias de cours)');
+  assert.equal(api.catalogue().length, 33, 'catalogue complet (24 capsules publiques + 7 médias de cours)');
 });
 
 /* ───────────────────────── 2. le catalogue suit la vitrine de l’accueil ───────────────────────── */
@@ -452,14 +452,14 @@ test('reconnexion-profil fusionne aussi les compteurs de vues', () => {
 
 test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »', () => {
   const sw = lire('sw.js');
-  assert.match(sw, /var UPDATE_ID = "v575-livre-accueil-20261031"/);
+  assert.match(sw, /var UPDATE_ID = "v577-video-cours-sti-20261031"/);
   /* Le manifeste a suivi la v533 : il porte sa propre révision. */
   /* sync-progressions.js est reparti au lot v534 (pastille de synchro) : cinq fichiers restent. */
   /* admin-vues-videos.js repart au lot v549 (capsule PHP au catalogue du coin).
      v557 : admin.html repart à son tour (cache-buster admin.js en ?v=557-perf) :
      deux fichiers restent au lot v531. */
   assert.equal((sw.match(new RegExp('revision: "' + REV + '"', 'g')) || []).length, 2, 'deux fichiers restent au lot v531');
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "php-chaines-v566"/, 'le lecteur repart au lot v545');
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "cours-sti-v577"/, 'le lecteur repart au lot v545');
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   for (const chemin of ['assets/js/reconnexion-profil.js',
     'assets/js/reprendre.js']) {
@@ -467,7 +467,7 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
   }
   assert.ok(delta.includes('url: "./admin.html", revision: "photo-secours-v562"'),
     'la page d’administration repart au lot v557');
-  assert.ok(delta.includes('url: "./assets/js/admin-vues-videos.js", revision: "php-chaines-v566"'),
+  assert.ok(delta.includes('url: "./assets/js/admin-vues-videos.js", revision: "cours-sti-v577"'),
     'le coin des vues repart au lot v549');
   assert.match(delta, /url: "\.\/assets\/js\/sync-progressions\.js", revision: "pastille-sync-v534"/);
   assert.match(delta, /url: "\.\/offline-complete-manifest\.json", revision: "classe-nav-v536"/);
@@ -483,7 +483,7 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
 
 test('le manifeste hors ligne contient le nouveau module avec son empreinte', () => {
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  assert.equal(manifeste.version, 'v575-sti-atelier-v386');
+  assert.equal(manifeste.version, 'v577-sti-atelier-v386');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((n, f) => n + f.bytes, 0));
   const entree = manifeste.files.find((f) => f.path === MODULE);

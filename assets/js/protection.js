@@ -1390,6 +1390,18 @@
       };
       /* Repères repris mot pour mot de la vidéo de synthèse du cours PHP. */
       STI_CHAPITRES_MEDIA["php-synthese"] = [{"t":0,"short":"🎬 Bienvenue — STI 2.0 By AE","label":"0:00 · 🎬 Bienvenue — STI 2.0 By AE"},{"t":31.2,"short":"0 · Le projet et le web local","label":"0:31 · 0 · Le projet et le web local"},{"t":79.37,"short":"1 · Base de données ecole","label":"1:19 · 1 · Base de données ecole"},{"t":121.17,"short":"2 · index.html","label":"2:01 · 2 · index.html"},{"t":164.05,"short":"3 · inscription.html","label":"2:44 · 3 · inscription.html"},{"t":203.52,"short":"4 · CSS float","label":"3:23 · 4 · CSS float"},{"t":258.85,"short":"5 · CSS transition en détail","label":"4:18 · 5 · CSS transition en détail"},{"t":321.65,"short":"6 · JavaScript : let, innerHTML, alert, return","label":"5:21 · 6 · JavaScript : let, innerHTML, alert, return"},{"t":374.85,"short":"7 · Nom_prenom et dates","label":"6:14 · 7 · Nom_prenom et dates"},{"t":431.09,"short":"8 · PHP : ajouter et liste","label":"7:11 · 8 · PHP : ajouter et liste"},{"t":470.09,"short":"9 · modifier, statistiques, tests","label":"7:50 · 9 · modifier, statistiques, tests"},{"t":518.02,"short":"🔍 ajouter.php ligne par ligne","label":"8:38 · 🔍 ajouter.php ligne par ligne"},{"t":593.06,"short":"🔍 liste.php ligne par ligne","label":"9:53 · 🔍 liste.php ligne par ligne"},{"t":656.86,"short":"🔍 modifier.php ligne par ligne","label":"10:56 · 🔍 modifier.php ligne par ligne"},{"t":716.59,"short":"🔍 statistiques.php ligne par ligne","label":"11:56 · 🔍 statistiques.php ligne par ligne"},{"t":778.26,"short":"⚖ fetch et num_rows / COUNT(*)","label":"12:58 · ⚖ fetch et num_rows / COUNT(*)"},{"t":841.03,"short":"★ Fin — plateforme et bon courage","label":"14:01 · ★ Fin — plateforme et bon courage"}];
+      STI_CHAPITRES_MEDIA["cours-sti"] = [
+        { t: 1.200, short: "1 · Bienvenue — le cours qui précède le Web", label: "0:01 · 1 · Bienvenue — le cours qui précède le Web" },
+        { t: 61.510, short: "2 · Chapitre 1 · Le système d'exploitation et ses rôles", label: "1:02 · 2 · Chapitre 1 · Le système d'exploitation et ses rôles" },
+        { t: 147.740, short: "3 · Chapitre 1 · Types de systèmes et licences", label: "2:28 · 3 · Chapitre 1 · Types de systèmes et licences" },
+        { t: 223.210, short: "4 · Chapitre 1 · Déployer, virtualiser, sécuriser", label: "3:43 · 4 · Chapitre 1 · Déployer, virtualiser, sécuriser" },
+        { t: 291.040, short: "5 · Chapitre 2 · Le réseau, son étendue, ses équipements", label: "4:51 · 5 · Chapitre 2 · Le réseau, son étendue, ses équipements" },
+        { t: 368.230, short: "6 · Chapitre 2 · IP, masque, DNS et adresse MAC", label: "6:08 · 6 · Chapitre 2 · IP, masque, DNS et adresse MAC" },
+        { t: 455.860, short: "7 · Chapitre 2 · Architectures, protocoles, sécurité", label: "7:36 · 7 · Chapitre 2 · Architectures, protocoles, sécurité" },
+        { t: 540.370, short: "8 · Chapitre 3 · L'Internet des objets et ses composants", label: "9:00 · 8 · Chapitre 3 · L'Internet des objets et ses composants" },
+        { t: 617.160, short: "9 · Chapitre 3 · Échanger, tester, la serre intelligente", label: "10:17 · 9 · Chapitre 3 · Échanger, tester, la serre intelligente" },
+        { t: 713.470, short: "10 · Fiche de synthèse — l'essentiel du cours", label: "11:53 · 10 · Fiche de synthèse — l'essentiel du cours" }
+      ];
       /* La courte démonstration display ne possède qu'un seul départ. */
       STI_CHAPITRES_MEDIA["css3-display"] = [{ t: 0, short: "Display", label: "00:00 · Démonstration display" }];
       /* Repères synchronisés sur validation-nom-prenom-js.srt (Série 5 JavaScript — Objet String). */
@@ -2653,6 +2665,8 @@
         var estDateJs = (sSlug === "date-js" || sSlug.indexOf("date-js") !== -1 || sSlug.indexOf("DateJS") !== -1);
         /* v566 : capsule « PHP — chaînes, transtypage et date/heure ». */
         var estPhpChaines = (sSlug === "php-chaines" || sSlug.indexOf("php-chaines") !== -1 || sSlug.indexOf("PhpChaines") !== -1);
+        /* v577 : vidéo du cours « Systèmes, technologies et Internet » (3ᵉ SI). */
+        var estCoursSti = (sSlug === "cours-sti" || sSlug.indexOf("cours-sti") !== -1 || sSlug.indexOf("CoursSystemesInternet") !== -1);
         var estCssDisplay = (!estJsValidation && !estTpTrain && (sSlug === "css3-display" || sSlug.indexOf("displayanim.mp4") !== -1));
         var estPhpSynthese = (!estJsValidation && !estTpTrain && (sSlug === "php-synthese" || sSlug.indexOf("php-synthese.mp4") !== -1));
         var estSqlInit = (!estTpTrain && sSlug === "sql-initiation" || sSlug.indexOf("sql-initiation") !== -1);
@@ -2674,7 +2688,10 @@
         var estCssPos = (!estJsValidation && !estTpTrain && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && (sSlug === "css-positionnement" || sSlug.indexOf("css-positionnement") !== -1 || (!sSlug && estPageCssPos)));
         var estGuichet = (!estJsValidation && !estTpTrain && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && (sSlug === "php-guichet" || sSlug.indexOf("php-guichet") !== -1 || sSlug === "guichet" || (!sSlug && estPageGuichet)));
         if (!estTpEvenements && !estTpFormulaire && !estTpDisplay && !estTpTransitions && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && !estGuichet && !estCssDisplay && !estPhpSynthese && !estJsValidation && !estTpTrain && !estDefis37 && !estBouclePour && !estConsoleVariables && !estPhpVariables && !estFonctionsChaine && !estDateJs && !estPhpChaines) {
-          return;
+          /* v577 : la vidéo du cours STI n'est pas dans la liste des capsules. */
+          if (!estCoursSti) {
+            return;
+          }
         }
         /* Couper immédiatement toute voix de l'animation interactive pour éviter que 2 voix ne parlent en même temps */
         try {
@@ -2706,6 +2723,8 @@
           }
         } catch (e) {}
         var slugCible = estPhpChaines ? "php-chaines" : estDateJs ? "date-js" : estFonctionsChaine ? "fonctions-chaine" : estBouclePour ? "boucle-pour" : estConsoleVariables ? "console-variables" : estPhpVariables ? "php-variables" : estDefis37 ? "defis37-tableau-aleas-media" : estTpTrain ? "tp-train-serie6" : estTpEvenements ? "tp-evenements-liens" : estTpFormulaire ? "tp-formulaire-tableau-autre" : estTpDisplay ? "tp-display-float-position" : estTpTransitions ? "tp-transitions-animations" : estJsValidation ? "validation-nom-prenom-js" : estCssDisplay ? "css3-display" : estPhpSynthese ? "php-synthese" : estSqlInit ? "sql-initiation" : (estExploreFloat ? "explore-tunisie-float" : (estExploreFlex ? "explore-tunisie-flex" : (estSqlSerie6 ? "sql-serie6" : (estSqlSerie5 ? "sql-serie5" : (estSqlSerie4 ? "sql-serie4" : (estSqlSerie3 ? "sql-serie3" : (estSqlSerie2 ? "sql-serie2" : (estSqlSerie1 ? "sql-serie1" : (estHtml5 ? "html5-cours" : (estCss3 ? "css3-cours" : (estJs ? "javascript-cours" : (estPhpC ? "php-cours" : (estSql ? "sql-cours" : (estCssDeco ? "css-animee" : (estCssPos ? "css-positionnement" : "php-guichet")))))))))))))));
+        /* v577 : la vidéo du cours STI a son propre jeu de chapitres. */
+        if (estCoursSti) slugCible = "cours-sti";
         try {
           if (
             window.top &&
@@ -2717,6 +2736,7 @@
           }
         } catch (e) {}
         var url = estPhpChaines ? prefixeAssetsSTI() + "videos/PhpChaines-v566.mp4" : estDateJs ? prefixeAssetsSTI() + "videos/DateJS-v565.mp4" : estFonctionsChaine ? prefixeAssetsSTI() + "videos/FonctionsChaine-v564.mp4" : estBouclePour ? prefixeAssetsSTI() + "videos/BouclePour-v547.mp4" : estConsoleVariables ? prefixeAssetsSTI() + "videos/ConsoleVariables-v548.mp4" : estPhpVariables ? prefixeAssetsSTI() + "videos/PhpVariables-v549.mp4" : estDefis37 ? prefixeAssetsSTI() + "videos/defis37-tableau-aleas-media.mp4" : estTpTrain ? prefixeAssetsSTI() + "videos/tp-train-serie6.mp4" : estTpEvenements ? prefixeAssetsSTI() + "videos/tp-evenements-liens-v2.mp4" : estTpFormulaire ? prefixeAssetsSTI() + "videos/tp-formulaire-tableau-autre.mp4" : estTpDisplay ? prefixeAssetsSTI() + "videos/tp-display-float-position.mp4" : estTpTransitions ? prefixeAssetsSTI() + "videos/tp-transitions-animations.mp4" : estJsValidation ? prefixeAssetsSTI() + "videos/validation-nom-prenom-js.mp4" : estCssDisplay ? prefixeAssetsSTI() + "videos/displayanim.mp4" : estPhpSynthese ? prefixeAssetsSTI() + "videos/php-synthese.mp4" : estSqlInit ? resoudreUrlVideoSqlInit() : (estExploreFloat ? resoudreUrlVideoExploreFloat() : (estExploreFlex ? resoudreUrlVideoExploreFlex() : (estSqlSerie6 ? resoudreUrlVideoSqlSerie6() : (estSqlSerie5 ? resoudreUrlVideoSqlSerie5() : (estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estSqlSerie3 ? resoudreUrlVideoSqlSerie3() : (estSqlSerie2 ? resoudreUrlVideoSqlSerie2() : (estSqlSerie1 ? resoudreUrlVideoSqlSerie1() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet())))))))))))))));
+        if (estCoursSti) url = prefixeAssetsSTI() + "videos/CoursSystemesInternet-v577.mp4";
         var css3Qualite = "auto";
         if (estCss3) {
           var prefCss3 = "";
@@ -2727,6 +2747,7 @@
           url = (css3Qualite === "480" || css3Qualite === "720") ? resoudreUrlVideoCss3Mobile() : resoudreUrlVideoCss3();
         }
         var titre = titreOpt || (estBouclePour ? "🎥 Les boucles — Pour, Répéter…jusqu'à, Tant que" : estConsoleVariables ? "🎥 La console, les variables et les types" : estPhpVariables ? "🎥 PHP — Les variables, la portée et les types" : estDefis37 ? "🎥 Les 37 Défis — Tableau, Aléas & Captchas, Média" : estTpTrain ? "🎥 TP Train — correction détaillée (Série 6 JavaScript)" : estTpEvenements ? "🎥 TP — Événements, liens et arrière-plans (HTML5 & CSS3)" : estTpFormulaire ? "🎥 TP — Formulaire, tableau et autres balises (HTML5 & CSS3)" : estTpDisplay ? "🎥 TP — display, float et position (HTML5 & CSS3)" : estTpTransitions ? "🎥 TP — transitions et animations (CSS3)" : estJsValidation ? "🎥 JavaScript — Validation du champ Nom & Prénom (pas à pas)" : estCssDisplay ? "🎥 CSS3 — Display : la démo animée" : estPhpSynthese ? "🎥 PHP — Synthèse : gestion des élèves" : estSqlInit ? VIDEO_SQL_INIT_INFO.title : (estExploreFloat ? VIDEO_EXPLORE_FLOAT_INFO.title : (estExploreFlex ? VIDEO_EXPLORE_FLEX_INFO.title : (estSqlSerie6 ? VIDEO_SQL_SERIE6_INFO.title : (estSqlSerie5 ? VIDEO_SQL_SERIE5_INFO.title : (estSqlSerie4 ? VIDEO_SQL_SERIE4_INFO.title : (estSqlSerie3 ? VIDEO_SQL_SERIE3_INFO.title : (estSqlSerie2 ? VIDEO_SQL_SERIE2_INFO.title : (estSqlSerie1 ? VIDEO_SQL_SERIE1_INFO.title : (estHtml5 ? VIDEO_HTML5_INFO.title : (estCss3 ? VIDEO_CSS3_INFO.title : (estJs ? VIDEO_JS_INFO.title : (estPhpC ? VIDEO_PHP_COURS_INFO.title : (estSql ? VIDEO_SQL_INFO.title : (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title))))))))))))))));
+        if (estCoursSti) titre = titreOpt || "🎥 Cours — Systèmes, technologies et Internet (3ᵉ SI)";
 
         var overlay = document.getElementById("sti-video-modal-overlay");
         if (!overlay) {

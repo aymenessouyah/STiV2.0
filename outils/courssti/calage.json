@@ -1,0 +1,28 @@
+{
+  "durees": {
+    "ouverture": 59.76,
+    "systeme": 85.68,
+    "systeme_types": 74.92,
+    "systeme_deployer": 67.28,
+    "reseau_definition": 76.64,
+    "reseau_parametres": 87.08,
+    "reseau_architectures": 83.96,
+    "iot_principe": 76.24,
+    "iot_echange": 95.76,
+    "synthese": 76.4
+  },
+  "debuts": {
+    "ouverture": 1.2,
+    "systeme": 61.51,
+    "systeme_types": 147.74,
+    "systeme_deployer": 223.21,
+    "reseau_definition": 291.04,
+    "reseau_parametres": 368.23,
+    "reseau_architectures": 455.86,
+    "iot_principe": 540.37,
+    "iot_echange": 617.16,
+    "synthese": 713.47
+  },
+  "total": 791.67,
+  "debit": 15.33
+}
