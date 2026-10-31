@@ -171,7 +171,7 @@ test('v498 : service worker et manifeste hors ligne connaissent le drapeau et la
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);
   assert.match(sw, /url: "\.\/index\.html", revision: "quiz-sauvegarde-v590"/);
   assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "quiz-sauvegarde-v590"/);
-  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "quiz-sauvegarde-v590"/);
+  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "matieres-sti-v593"/);
   assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "ruban-vert-v517"/);
   assert.match(sw, /url: "\.\/assets\/images\/drapeau-tunisie\.svg", revision: "accueil-lycee-v503"/);
   const shell = sw.split('var SHELL = [')[1].split('];')[0];

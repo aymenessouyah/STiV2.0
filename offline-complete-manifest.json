@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-10-31T11:41:40Z",
+  "generatedAt": "2026-10-31T11:58:47Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 760,
-  "totalBytes": 1113706092,
+  "totalFiles": 761,
+  "totalBytes": 1113716883,
   "files": [
     {
       "path": "404.html",
@@ -297,8 +297,8 @@
     },
     {
       "path": "assets/css/smart-book.css",
-      "bytes": 10315,
-      "gitSha": "e86b347d84c10cc4e7be4f6c374f4751ca328efa"
+      "bytes": 10476,
+      "gitSha": "471457c05f3c2b405a82a6395ab0fea1e4c45619"
     },
     {
       "path": "assets/css/sombre-universel-v372.css",
@@ -717,8 +717,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 125659,
-      "gitSha": "ee73ad0de9c9b0d9a5b36cec1c3744422d67cfda"
+      "bytes": 126981,
+      "gitSha": "eefbdbd11ac02810f216d9422c19d3bdcbd972dd"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -779,6 +779,11 @@
       "path": "assets/js/cours-sql-worker.js",
       "bytes": 1279,
       "gitSha": "33b9a831d590525ded7fe954b52d4838a3766a8b"
+    },
+    {
+      "path": "assets/js/cours-sti.js",
+      "bytes": 6880,
+      "gitSha": "f648ad66de4b65019b79a2c0efd0d018d8dbaae5"
     },
     {
       "path": "assets/js/dialogues-compat.js",
@@ -847,8 +852,8 @@
     },
     {
       "path": "assets/js/profil.js",
-      "bytes": 41963,
-      "gitSha": "30d6e902cc0ecd59e01b449f37f3364d21af39dc"
+      "bytes": 42364,
+      "gitSha": "90d8f69ffaa84cf9bd3d4616d0aab065a0e7530a"
     },
     {
       "path": "assets/js/protection.js",
@@ -962,8 +967,8 @@
     },
     {
       "path": "assets/js/smart-book.js",
-      "bytes": 19880,
-      "gitSha": "bfc3ca2830a4931dddc0fab836fd1f08859b8ea0"
+      "bytes": 20375,
+      "gitSha": "c26c4e31624573871d1f9f33f8e60feb5e528d8c"
     },
     {
       "path": "assets/js/sql-playground.js",
@@ -1422,8 +1427,8 @@
     },
     {
       "path": "cours/systemes-technologies-internet.html",
-      "bytes": 67141,
-      "gitSha": "ed93adff31094af3a106d8bee71aac8d0d4b938d"
+      "bytes": 68496,
+      "gitSha": "0f665e932b936e039d13ab60af12e069ea0f0a72"
     },
     {
       "path": "cssanimee/cours.js",
@@ -3202,8 +3207,8 @@
     },
     {
       "path": "livre-smart.html",
-      "bytes": 7761,
-      "gitSha": "93f98331e3edf8333fbf98237bede47f2d0e60f7"
+      "bytes": 7822,
+      "gitSha": "5a89428c82e6578e3c540e052b507cc1fd984014"
     },
     {
       "path": "ma-fiche-revision.html",
@@ -3802,8 +3807,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 101083,
-      "gitSha": "e91de83bb06319527e330e7e35d4fdaf2649542b"
+      "bytes": 101199,
+      "gitSha": "7d568a7c66af10b70dbc47c0b970e91e0cb4dc17"
     }
   ]
 }

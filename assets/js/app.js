@@ -179,6 +179,28 @@
         { titre: "Série 4 & 5 — Connexion MySQLi et requêtes", niveau: "Avancé", enonce: "exercices/php/Tp4-php.html", corrige: "exercices/php/Tp4-Correction-php.html" },
         { titre: "Débogage & Remise en ordre PHP Bac", niveau: "Spécial Bac", enonce: "exercices/php/debogage-php-bac.html", corrige: "exercices/php/ordre-php-bac.html" }
       ]
+    },
+    /* v593 : « Systèmes, technologies et Internet » (3ème SI) est un vrai cours de
+       la plateforme, il entre donc dans la liste des matières : sans cela il
+       n'apparaissait ni dans « X en cours » ni dans la progression par matière.
+       Ses chapitres n'ont pas d'onglets Exercices/Annexes/Vidéos : `ancres`
+       indique au tableau de bord où pointer pour chaque rubrique. */
+    sti: {
+      id: "sti",
+      nom: "Systèmes & Internet",
+      icone: "🖥️",
+      badgeClasse: "badge-sti",
+      couleur: "#22d3ee",
+      nbVideos: 1,
+      niveau: "3ème SI",
+      urlCours: "cours/systemes-technologies-internet.html",
+      urlQuiz: "quiz/systemes-internet.html",
+      urlAudio: "assets/audio/cours-sti-ch1.mp3",
+      urlAnnexe: "livre-smart.html?livre=3si-2026&page=5",
+      urlAnnexePdf: "documents/livre/sti-smart-book-3si-2026.pdf",
+      ancres: { exercices: "#evaluation", annexes: "#manuel", videos: "#video-cours" },
+      resume: "Systèmes d'exploitation, réseaux (LAN, IP, DNS, MAC) et Internet des objets — la partie du manuel qui précède HTML5.",
+      exercices: []
     }
   };
 
@@ -194,8 +216,9 @@
     {
       /* v579 : le cours de la partie 1 du manuel 3ᵉ SI (systèmes, réseaux, IoT)
          ouvre la vitrine : c'est la première chose que voit un élève de 3ᵉ.
-         Sa matière « sti » n'est pas une des cinq matières du programme, d'où
-         sa place à part dans le tri (voir MATIERES_EN_TETE_VIDEOS). */
+         v593 : sa matière « sti » rejoint la liste des matières (cours suivi au
+         tableau de bord) ; elle garde sa place en tête du tri
+         (voir MATIERES_EN_TETE_VIDEOS). */
       id: "cours-sti",
       matiere: "sti",
       nomMatiere: "Systèmes & Internet",
@@ -2158,7 +2181,7 @@
     var listeProg = document.getElementById("dashSubjectsList");
     if (badgeProg) badgeProg.textContent = rev.faits + " / " + rev.total + " révisés";
     if (listeProg) {
-      var clesMat = ok4 ? ["html5", "css3", "javascript", "sql", "php"] : ["html5", "css3", "javascript", "sql"];
+      var clesMat = ok4 ? ["sti", "html5", "css3", "javascript", "sql", "php"] : ["sti", "html5", "css3", "javascript", "sql"];
       listeProg.innerHTML = clesMat.map(function (id) {
         var m = MATIERES[id];
         var fait = Boolean(profil.progression && profil.progression[id]);
@@ -2170,9 +2193,9 @@
                 '<strong style="display:block">' + echapperHtml(m.nom) + "</strong>" +
                 '<div style="display:flex;gap:8px;font-size:.76rem;color:var(--text-muted);margin-top:2px">' +
                   '<a href="' + pref + m.urlCours + '#cours">Cours</a>·' +
-                  '<a href="' + pref + m.urlCours + '#exercices">Exercices</a>·' +
-                  '<a href="' + pref + m.urlCours + '#annexes">Annexes</a>·' +
-                  '<a href="' + pref + m.urlCours + '#videos">Vidéos (' + CATALOGUE_VIDEOS.filter(function (v) { return videoDeMatiere(v, m.id) && (!v.reserve4si || ok4); }).length + ")</a>" +
+                  '<a href="' + pref + m.urlCours + (m.ancres ? m.ancres.exercices : '#exercices') + '">Exercices</a>·' +
+                  '<a href="' + pref + m.urlCours + (m.ancres ? m.ancres.annexes : '#annexes') + '">Annexes</a>·' +
+                  '<a href="' + pref + m.urlCours + (m.ancres ? m.ancres.videos : '#videos') + '">Vidéos (' + CATALOGUE_VIDEOS.filter(function (v) { return videoDeMatiere(v, m.id) && (!v.reserve4si || ok4); }).length + ")</a>" +
                 "</div>" +
               "</div>" +
             "</div>" +
@@ -2398,7 +2421,8 @@
     css3: ["selecteurs", "typographie", "arriere-plan", "boite-display", "marges-debordement", "positionnement", "tableaux-listes", "filtres", "animations", "pas-a-pas"],
     javascript: ["sec1", "sec2", "sec3", "sec4", "sec5", "sec6", "sec7", "sec8", "sec9", "sec10", "sec11", "sec12", "sec13", "sec14", "sec15"],
     sql: ["intro", "ldd", "lmd", "bac"],
-    php: ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10"]
+    php: ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10"],
+    sti: ["ch1", "ch2", "ch3"]
   };
   var minuteurCompteAccueil = 0;
   var delaiCompteAccueil = 1200;

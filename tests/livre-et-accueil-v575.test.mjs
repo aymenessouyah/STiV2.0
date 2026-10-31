@@ -81,12 +81,12 @@ test('v575 : couvertures, PDF et index ne restent plus sur l’ancienne édition
   /* Les révisions du service worker suivent, sinon le cache hors ligne garde les anciennes. */
   /* v576 : le nom du PDF téléchargé change → les deux fichiers du lecteur repartent en v576. */
   const revisions = {
-    'livre-smart.html': 'livre-3si-v587',
-    'assets/js/smart-book.js': 'livre-3si-v587',
-    'assets/images/smart-books/couverture-3si.jpg': 'livre-3si-v587',
-    'assets/images/smart-books/couverture-4si.jpg': 'livre-3si-v587',
-    'assets/data/smart-book-3si-2026.json': 'livre-3si-v587',
-    'assets/data/smart-book-2026.json': 'livre-3si-v587'
+    'livre-smart.html': 'livre-3si-v593',
+    'assets/js/smart-book.js': 'livre-3si-v593',
+    'assets/images/smart-books/couverture-3si.jpg': 'livre-3si-v593',
+    'assets/images/smart-books/couverture-4si.jpg': 'livre-3si-v593',
+    'assets/data/smart-book-3si-2026.json': 'livre-3si-v593',
+    'assets/data/smart-book-2026.json': 'livre-3si-v593'
   };
   for (const [fichier, revision] of Object.entries(revisions)) {
     assert.match(sw, new RegExp('url: "\\./' + fichier.replace(/[.]/g, '\\.') + '", revision: "' + revision + '"'), fichier);
@@ -183,7 +183,7 @@ test('v575 : le lecteur charge réellement les deux manuels (écran de la captur
   const trois = await chargerLecteur('?livre=3si-2026');
   assert.match(trois['global-status'].textContent, /3ème SI — 2026 prêt/);
   assert.equal(trois['book-size'].textContent, '81 pages · 53 fiches + 9 pages de cours + 15 pages de tableaux');
-  assert.equal(trois['download-book'].href, 'documents/livre/sti-smart-book-3si-2026.pdf?v=587');
+  assert.equal(trois['download-book'].href, 'documents/livre/sti-smart-book-3si-2026.pdf?v=593');
   assert.equal(trois['count'].textContent, '77 repère(s) sur 77 · 3ème SI');
 
   const quatre = await chargerLecteur('?livre=4si-2026');
@@ -205,11 +205,11 @@ test('v576 : le PDF téléchargé porte un nom de fichier propre', async () => {
 
   const trois = await chargerLecteur('?livre=3si-2026');
   assert.equal(trois['download-book'].attributs.download, 'STI-Smart-Book-3SI-2026.pdf');
-  assert.equal(trois['download-book'].href, 'documents/livre/sti-smart-book-3si-2026.pdf?v=587');
+  assert.equal(trois['download-book'].href, 'documents/livre/sti-smart-book-3si-2026.pdf?v=593');
 
   const quatre = await chargerLecteur('?livre=4si-2026');
   assert.equal(quatre['download-book'].attributs.download, 'STI-Smart-Book-4SI-2026.pdf');
-  assert.equal(quatre['download-book'].href, 'documents/livre/sti-smart-book-2026.pdf?v=587');
+  assert.equal(quatre['download-book'].href, 'documents/livre/sti-smart-book-2026.pdf?v=593');
 
   /* Aucun nom de fichier ne contient le paramètre de version. */
   for (const nom of [trois['download-book'].attributs.download, quatre['download-book'].attributs.download]) {

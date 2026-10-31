@@ -216,7 +216,7 @@ test('la vidéo est dans le paquet hors-ligne et versionnée', () => {
   assert.ok(sw.includes(`{ url: "./assets/js/protection.js", revision: "${REV}" }`), 'révision du lecteur');
   assert.ok(sw.includes(`{ url: "./assets/js/lecteur-commun.js", revision: "${REV}" }`), 'révision du lecteur commun');
   assert.ok(sw.includes(`{ url: "./assets/js/admin-vues-videos.js", revision: "${REV}" }`), 'révision de la vue admin');
-  assert.ok(sw.includes(`{ url: "./${PAGE}", revision: "sti-audio-v591", refreshIfCached: true }`), 'révision du cours');
+  assert.ok(sw.includes(`{ url: "./${PAGE}", revision: "cours-sti-v593", refreshIfCached: true }`), 'révision du cours');
 });
 
 test('les outils savent refaire la vidéo', () => {

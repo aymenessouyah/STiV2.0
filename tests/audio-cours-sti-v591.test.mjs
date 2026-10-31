@@ -43,7 +43,10 @@ test('v591 : la page du cours propose l’écoute des trois chapitres', () => {
   }
   const boutons = page.match(/data-sti-audio="ch[123]"/g) || [];
   assert.equal(boutons.length, 3, 'trois boutons de chapitre');
-  assert.match(page, /href="#audio-cours"/, 'un accès direct depuis l’en-tête du cours');
+  /* v593 : l'accès direct est devenu un bouton (il ouvre la section et lance le
+     chapitre 1), comme « Écouter le cours » du cours HTML5. */
+  assert.match(page, /<button type="button" class="btn btn-secondary" id="heroListenBtn">[^<]*Écouter le cours/,
+    'un accès direct depuis l’en-tête du cours');
   assert.match(page, /<p class="sti-audio-statut" id="stiAudioStatut" aria-live="polite">/,
     'le chapitre en cours est annoncé aux lecteurs d’écran');
 });
@@ -63,8 +66,8 @@ test('v591 : les pistes sont servies hors ligne sans alourdir le delta', () => {
     assert.equal(sw.indexOf('url: "' + chemin + '"'), -1, chemin + ' reste hors du delta');
   }
   /* La page et sa feuille de style changent aussi : elles doivent être réinvalidées. */
-  assert.match(sw, /url: "\.\/cours\/systemes-technologies-internet\.html", revision: "sti-audio-v591", refreshIfCached: true/);
-  assert.match(sw, /url: "\.\/assets\/css\/cours-sti\.css", revision: "sti-audio-v591"/);
+  assert.match(sw, /url: "\.\/cours\/systemes-technologies-internet\.html", revision: "cours-sti-v593", refreshIfCached: true/);
+  assert.match(sw, /url: "\.\/assets\/css\/cours-sti\.css", revision: "cours-sti-v593"/);
 });
 
 test('v591 : le manifeste hors ligne connaît les pistes et leur empreinte', () => {
@@ -81,5 +84,5 @@ test('v591 : le manifeste hors ligne connaît les pistes et leur empreinte', () 
 test('v591 : la page reste valide (lecteur sans dépendance externe)', () => {
   assert.doesNotMatch(page, /<audio[^>]+src="https?:/, 'aucune piste distante');
   assert.match(page, /media-src 'self' blob:/, 'la CSP autorise bien les médias locaux');
-  assert.ok(page.includes('cours-sti.css?v=591'), 'la feuille de style est réinvalidée');
+  assert.ok(page.includes('cours-sti.css?v=593'), 'la feuille de style est réinvalidée');
 });

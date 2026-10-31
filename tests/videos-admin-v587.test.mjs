@@ -201,7 +201,9 @@ test('v587 : le manuel 3ᵉ SI servi est bien l’édition 2026 de 81 pages', ()
   const livre = smartBook.slice(smartBook.indexOf("'3si-2026':"));
   assert.match(livre, /pages: 81/);
   assert.match(livre, /sti-smart-book-3si-2026\.pdf/);
-  assert.match(smartBook, /let REVUE_LIVRE = '587'/, 'le cache-buster du livre suit la livraison');
+  /* v593 : révision portée à 593 — le PDF 3ᵉ SI a été remplacé sous la même
+     adresse, il faut donc une nouvelle URL pour ne pas resservir l'ancien. */
+  assert.match(smartBook, /let REVUE_LIVRE = '593'/, 'le cache-buster du livre suit la livraison');
   /* Les données du livre sont demandées avec la même révision : un appareil qui
      gardait l'index de l'ancienne édition ne peut plus l'afficher. */
   assert.match(smartBook, /fetch\(books\[id\]\.data \+ '\?v=' \+ REVUE_LIVRE\)/);

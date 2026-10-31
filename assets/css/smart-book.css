@@ -43,3 +43,4 @@
  .book-showcase{margin:10px auto 24px}
  .hero-controls .book-picker{margin-top:0}
 }
+/* v593 : l'édition téléchargée (nombre de pages) s'affiche dans le bouton. */.download-pages{font-size:12px;font-weight:600;opacity:.85;white-space:nowrap}

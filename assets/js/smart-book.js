@@ -35,7 +35,10 @@
   let publicBase = new URL('https://aymenessouyah.github.io/STiV2.0/');
   /* v575 : même version que les feuilles et couvertures du livre, pour que le PDF
      téléchargé et les images de couverture ne restent jamais sur l'édition précédente. */
-  let REVUE_LIVRE = '587';
+  /* v593 : le PDF de 3ᵉ SI a été remplacé (nouvelle édition, 81 pages) sous la
+     même adresse. La révision change donc pour que le navigateur ne resserve
+     pas l'ancien fichier resté en cache. */
+  let REVUE_LIVRE = '593';
   let books = {
     /* `entries` = nombre de pages repérées dans l'index (une par page utile) ;
        `fiches` = nombre de fiches numérotées ; `coursPages` = pages de cours
@@ -140,6 +143,10 @@
          à partir de l'URL et le « ?v=… » du cache finit dans le fichier téléchargé. */
       $('download-book').href = book.pdf + '?v=' + REVUE_LIVRE;
       $('download-book').setAttribute('download', nomPdf);
+      /* v593 : le bouton annonce l'édition téléchargée (nombre de pages),
+         pour qu'on voie tout de suite si le fichier reçu est le bon. */
+      let pagesBouton = $('download-book-pages');
+      if (pagesBouton) pagesBouton.textContent = '· ' + book.pages + ' pages';
       $('preview-3si').setAttribute('aria-pressed', String(id === '3si-2026'));
       $('preview-4si').setAttribute('aria-pressed', String(id === '4si-2026'));
       ready = true; setControls(true); renderCatalog();
