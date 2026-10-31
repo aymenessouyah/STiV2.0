@@ -1280,6 +1280,20 @@ body.sti-v2 .welcome-return__empty { font-size: .9rem; }
   transition: transform var(--duration-fast) var(--ease-out), border-color var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
 }
 .video-card:hover { transform: translateY(-4px); border-color: var(--border-strong); box-shadow: var(--shadow-md); }
+
+/* v587 — l'étiquette « Capsule » est TOUJOURS posée sur sa carte, même si la
+   feuille détaillée (assets/css/capsules-vedettes.css, chargée après celle-ci)
+   n'est pas encore arrivée : un cache hors ligne ancien, ou une page qui ne la
+   charge pas, laissait sinon le mot « Capsule » tomber dans le flux, en haut de
+   la carte — l'étiquette « échappait » à sa vignette. Ces quatre lignes suffisent
+   à la garder en place ; le dessin doré reste dans capsules-vedettes.css. */
+.sti-etiquette-capsule {
+  position: absolute;
+  inset-block-start: 8px;
+  inset-inline-start: 10px;
+  z-index: 5;
+  pointer-events: none;
+}
 .video-card__thumb {
   position: relative;
   aspect-ratio: 16 / 9;

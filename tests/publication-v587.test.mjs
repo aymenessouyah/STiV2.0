@@ -113,6 +113,12 @@ test('v587 : l’étiquette de la capsule ne peut plus échapper à sa carte', (
   assert.match(blocVideoCard, /position: relative/,
     'la carte de la vidéothèque est le repère de son étiquette');
 
+  /* Filet de base dans theme.css (chargée partout) : même si la feuille des
+     capsules n'arrive pas — cache hors ligne ancien, page qui ne la charge pas —
+     l'étiquette reste une pastille posée et ne tombe pas dans le flux. */
+  assert.match(theme, /\.sti-etiquette-capsule \{[^}]*position: absolute;[^}]*inset-block-start: 8px;[^}]*inset-inline-start: 10px;[^}]*z-index: 5;[^}]*pointer-events: none;/s,
+    'repli de positionnement dans theme.css');
+
   const capsules = lire('assets/css/capsules-vedettes.css');
   assert.match(capsules, /\.featured-video-card,\s*\n\.matiere-video-card,\s*\n\.video-card \{ position: relative; \}/,
     'les trois familles de cartes sont des repères, sans dépendre d’une classe');
