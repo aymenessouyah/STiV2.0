@@ -199,6 +199,10 @@ body.sti-v2:has(#sti-roue-btn.sti-badge-identite) #installBtn::before { content:
     padding: 0 !important;
     gap: 0 !important;
     border-radius: 50% !important;
+    /* v604 : l'ombre de la carte (7 px de décalage) écrasait le cercle ;
+       la photo ne doit pas non plus dépasser du disque. */
+    overflow: hidden !important;
+    box-shadow: 0 3px 9px var(--sti-badge-ombre) !important;
   }
   /* Le fond (logo + QR) et le ruban décoratif n'ont plus leur place ici. */
   .sti-badge-identite__fond,

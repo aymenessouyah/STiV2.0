@@ -64,7 +64,7 @@ window.STI_AUTH = {
       var m = pn.match(/^(.*?)\/(?:cours|exercices|projets|documents|annexes|quiz|cssanimee|Positionnement-animee|tests)\//);
       base = m ? location.origin + m[1] + "/" : location.origin + pn.slice(0, pn.lastIndexOf("/") + 1);
     } catch (e) {}
-    s.src = base + "assets/js/mobile-nav.js?v=579";
+    s.src = base + "assets/js/mobile-nav.js?v=604";
     s.async = true;
     (document.head || document.documentElement).appendChild(s);
   } catch (e) {}

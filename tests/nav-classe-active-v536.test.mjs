@@ -100,7 +100,7 @@ test('v536 : la livraison hors ligne porte le lot et les empreintes', () => {
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   assert.match(delta, /url: "\.\/assets\/css\/theme\.css", revision: "roue-compte-v602"/);
-  assert.match(delta, /url: "\.\/assets\/js\/mobile-nav\.js", revision: "portail-sans-barre-v579"/);
+  assert.match(delta, /url: "\.\/assets\/js\/mobile-nav\.js", revision: "cercle-carte-v604"/);
   assert.equal(manifeste.version, 'v582-sti-atelier-v386');
   for (const chemin of ['assets/css/theme.css', 'assets/js/mobile-nav.js']) {
     const entree = manifeste.files.find(f => f.path === chemin);
