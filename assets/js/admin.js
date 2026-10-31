@@ -3318,8 +3318,12 @@
             if (!progMediaParUser[uidP]) progMediaParUser[uidP] = {};
             Object.keys(p.payload.m).forEach(function (k) {
               var vP = Number(p.payload.m[k]) || 0;
-              if (vP > (progMediaLiveBuffer[uidP][k] || 0)) progMediaLiveBuffer[uidP][k] = vP;
-              if (vP > (progMediaParUser[uidP][k] || 0)) progMediaParUser[uidP][k] = vP;
+              /* v587 : même filtre que les données du cloud — une vidéo de décor
+                 (drapeau de l'accueil) n'entre pas dans le suivi. */
+              var cleP = normaliserCleMediaAdmin(k);
+              if (!cleP) return;
+              if (vP > (progMediaLiveBuffer[uidP][cleP] || 0)) progMediaLiveBuffer[uidP][cleP] = vP;
+              if (vP > (progMediaParUser[uidP][cleP] || 0)) progMediaParUser[uidP][cleP] = vP;
             });
             rendAbonnes();
             if (modalFicheEleve && modalFicheEleve.classList.contains("visible") && eleveFicheActif && eleveFicheActif.id === uidP) {
@@ -4313,7 +4317,9 @@
       if (!progMediaParUser[uidL]) progMediaParUser[uidL] = {};
       Object.keys(mL).forEach(function (k) {
         var vL = Number(mL[k]) || 0;
-        if (vL > (progMediaParUser[uidL][k] || 0)) progMediaParUser[uidL][k] = vL;
+        var cleL = normaliserCleMediaAdmin(k);
+        if (!cleL) return; /* v587 : vidéo de décor, jamais comptée */
+        if (vL > (progMediaParUser[uidL][cleL] || 0)) progMediaParUser[uidL][cleL] = vL;
       });
     });
   }
@@ -6095,6 +6101,67 @@
     "audio:sql-serie6": "Audio SQL Série 6"
   };
 
+  /* v587 — catalogue de référence des vidéos pédagogiques du tableau de bord.
+     ────────────────────────────────────────────────────────────────────────
+     Avant, le dénominateur « vidéos vues (x/N) » dépendait de ce que l'élève
+     avait ouvert : seules les vidéos déjà commencées entraient dans le total,
+     et les capsules n'y figuraient pas tant qu'elles n'étaient pas lancées.
+     Deux élèves n'avaient donc jamais le même N. Le total vient maintenant de
+     ce catalogue fixe.
+
+     Ordre imposé par le programme : le cours de la partie 1 du manuel 3ᵉ SI
+     d'abord, puis HTML5, CSS3, JavaScript, SQL, et PHP pour la 4ᵉ SI.
+
+     Les vidéos de décor de l'accueil (drapeau animé au vent, bandeau du lycée,
+     présentation) n'y figurent pas : ce sont des vidéos par défaut, lues sans
+     aucun travail de l'élève, et elles gonflaient artificiellement le compteur.
+     Toute clé qui commence par « drapeau » est donc ignorée, ici comme dans les
+     données venues du cloud (MEDIAS_DECORATIFS_ADMIN, v581). */
+  var CATALOGUE_VIDEOS_ADMIN = [
+    { key: "video:cours-sti", label: "Cours Systèmes & Internet", niveau: "tous" },
+    { key: "video:html5-cours", label: "Cours HTML5", niveau: "tous" },
+    { key: "video:tp-evenements-liens", label: "TP Événements, liens et arrière-plans", niveau: "tous" },
+    { key: "video:tp-formulaire-tableau-autre", label: "TP Formulaire et tableau", niveau: "tous" },
+    { key: "video:tp-display-float-position", label: "TP display, float et position", niveau: "tous" },
+    { key: "video:css3-cours", label: "Cours CSS3", niveau: "tous" },
+    { key: "video:css3-display", label: "Display CSS animé", niveau: "tous" },
+    { key: "video:css-positionnement", label: "CSS Positionnement", niveau: "tous" },
+    { key: "video:css-animee", label: "CSS Décoration", niveau: "tous" },
+    { key: "video:tp-transitions-animations", label: "TP transitions et animations", niveau: "tous" },
+    { key: "video:javascript-cours", label: "Cours JS", niveau: "tous" },
+    { key: "video:console-variables", label: "La console, les variables et les types", niveau: "tous" },
+    { key: "video:fonctions-chaine", label: "Les chaînes de caractères", niveau: "tous" },
+    { key: "video:date-js", label: "L’objet Date", niveau: "tous" },
+    { key: "video:boucle-pour", label: "Les boucles", niveau: "tous" },
+    { key: "video:validation-nom-prenom-js", label: "Validation Nom & Prénom", niveau: "tous" },
+    { key: "video:tp-train-serie6", label: "TP Train (Série 6)", niveau: "tous" },
+    { key: "video:defis37-tableau-aleas-media", label: "Les 37 Défis", niveau: "tous" },
+    { key: "video:sql-cours", label: "Cours SQL", niveau: "tous" },
+    { key: "video:sql-initiation", label: "Construire une requête SQL", niveau: "tous" },
+    { key: "video:php-cours", label: "Cours PHP", niveau: "4si" },
+    { key: "video:php-variables", label: "PHP — variables et types", niveau: "4si" },
+    { key: "video:php-chaines", label: "PHP — chaînes et date/heure", niveau: "4si" },
+    { key: "video:php-synthese", label: "Synthèse PHP", niveau: "4si" },
+    { key: "video:php-guichet", label: "Guichet PHP/MySQLi", niveau: "4si" },
+    { key: "video:sql-serie4", label: "SQL Série 4 (jointures)", niveau: "4si" },
+    { key: "video:sql-serie5", label: "SQL Série 5 (dates)", niveau: "4si" }
+  ];
+
+  /* Une clé de média décoratif n'est jamais un travail d'élève. Même règle que
+     MEDIAS_DECORATIFS_ADMIN (v581), répétée ici en autonome pour que le calcul
+     reste testable isolément. */
+  function estMediaDecoratifAdminFiche(cle) {
+    var k = String(cle == null ? "" : cle);
+    var i = k.indexOf(":");
+    var slug = i >= 0 ? k.slice(i + 1) : k;
+    if (!slug) return true;
+    if (/^drapeau/i.test(slug)) return true;
+    return /^(stivideoofficiel|flower|ambient)$/i.test(slug);
+  }
+  window.__stiCatalogueVideosAdmin = CATALOGUE_VIDEOS_ADMIN.map(function (v) {
+    return { key: v.key, label: v.label, niveau: v.niveau };
+  });
+
   function libelleCompteurMediaAdmin(nbDone, nbEnCours, tot, modeEntete) {
     var vues = (nbDone || 0) + (nbEnCours || 0);
     if (!vues) return "0/" + tot;
@@ -6115,25 +6182,19 @@
       pm["audio:php-guichet"] = pm["audio:guichet-etapes"];
     }
     var ok4 = estProfil4SIAdmin(p);
-    var catVideos = [
-      /* v581 : le cours « Systèmes, technologies et Internet » est public et
-         ouvre la vitrine des vidéos — il compte donc dans le socle de tous. */
-      { key: "video:cours-sti", label: "Cours Systèmes & Internet" },
-      { key: "video:html5-cours", label: "Cours HTML5" },
-      { key: "video:css3-cours", label: "Cours CSS3" },
-      { key: "video:javascript-cours", label: "Cours JS" },
-      { key: "video:sql-cours", label: "Cours SQL" },
-      { key: "video:css-positionnement", label: "CSS Positionnement" },
-      { key: "video:css-animee", label: "CSS Décoration" }
-    ];
-    if (ok4) {
-      catVideos.push({ key: "video:php-cours", label: "Cours PHP" });
-      catVideos.push({ key: "video:php-guichet", label: "Guichet PHP/MySQLi" });
-    }
+    /* v587 : le total vient du catalogue (fixe), et non plus des vidéos déjà
+       ouvertes : toutes les capsules comptent, même à 0 %, et les deux élèves
+       d'un même niveau ont le même dénominateur. La 4ᵉ SI ajoute ses vidéos. */
+    var catVideos = CATALOGUE_VIDEOS_ADMIN
+      .filter(function (v) { return v.niveau !== "4si" || ok4; })
+      .map(function (v) { return { key: v.key, label: v.label }; });
     var mapDejaVid = {};
     catVideos.forEach(function (v) { mapDejaVid[v.key] = true; });
     Object.keys(pm).forEach(function (k) {
       if (k.indexOf("video:") !== 0 || mapDejaVid[k]) return;
+      /* v587 : les vidéos de décor de l'accueil (drapeau animé, bandeau du lycée,
+         présentation) ne sont pas un travail : jamais comptées. */
+      if (estMediaDecoratifAdminFiche(k)) return;
       if ((Number(pm[k]) || 0) < 1) return;
       mapDejaVid[k] = true;
       var lblV = LIBELLES_VIDEOS_SUPP_ADMIN[k] || ("Vidéo " + k.slice(6).replace(/-/g, " "));

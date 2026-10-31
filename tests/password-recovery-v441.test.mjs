@@ -2641,13 +2641,13 @@ test('v461 (comportemental VM) : ABED Ala (4eme SI2) remonte 1/8 vidéo (73%) de
 
   const bilAla = ctxAdmin.window.__stiBilanProgressionMediaUser(abedAla);
   assert.equal(bilAla.ok4, true);
-  assert.equal(bilAla.totVid, 9, 'Un élève de 4eme SI2 a 9 vidéos de base (cours STI + PHP & Guichet)');
+  assert.equal(bilAla.totVid, 27, 'Un élève de 4eme SI2 a 27 vidéos au socle (catalogue complet des capsules)');
   assert.equal(bilAla.totAud, 5, 'Un élève de 4eme SI2 a 5 audios de base (incluant Audio PHP)');
   assert.equal(bilAla.nbVidVues, 1, 'Le compteur vidéo d’ABED Ala doit afficher 1 vidéo consultée (et non 0)');
   assert.equal(bilAla.nbVidEnCours, 1);
   assert.equal(bilAla.nbVidDone, 0);
-  assert.equal(bilAla.resumeCourtVid, '1/9 ⏳');
-  assert.equal(bilAla.resumeEnteteVid, '1/9 · 1 ⏳ en cours');
+  assert.equal(bilAla.resumeCourtVid, '1/27 ⏳');
+  assert.equal(bilAla.resumeEnteteVid, '1/27 · 1 ⏳ en cours');
   assert.ok(Array.from(bilAla.catVideos, (v) => v.key).includes('video:cours-sti'),
     'Le cours « Systèmes, technologies et Internet » compte dans le socle de tous');
   assert.ok(Array.from(bilAla.listV).includes('Cours PHP (⏳ 73%)'));

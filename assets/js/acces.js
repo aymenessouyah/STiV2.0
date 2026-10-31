@@ -2678,6 +2678,12 @@
         var mp = extrairePctMediaPan(mProg[mk]);
         if (!mp || mp < 1) return;
         if (!ok4SI && mk.toLowerCase().indexOf("php") !== -1) return;
+        /* v587 : les vidéos de décor de l'accueil (drapeau animé au vent, bandeau
+           du lycée, présentation) se lisent sans aucun travail de l'élève ; elles
+           ne comptent donc pas comme « vidéo vue », ici comme dans le tableau de
+           bord du professeur. */
+        var slugPan = mk.slice(mk.indexOf(":") + 1);
+        if (/^drapeau/i.test(slugPan) || /^(stivideoofficiel|flower|ambient)$/i.test(slugPan)) return;
         if (mk.indexOf("video:") === 0) {
           var vSl = mk.slice(6);
           if (vidKeys.indexOf(vSl) === -1) vidKeys.push(vSl);
