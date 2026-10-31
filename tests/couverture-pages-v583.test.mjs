@@ -119,7 +119,7 @@ test('v583 : le repli hors-ligne de la roue reflète le manifeste et le Service 
     './assets/js/analytique.js': 'couverture-v583',
     './assets/js/admin-couverture.js': 'couverture-v583',
     './assets/js/roue-couverture.js': 'couverture-v583',
-    './admin.html': 'couverture-v583'
+    './admin.html': 'livre-3si-81p-v585'
   };
   for (const [url, revision] of Object.entries(revisionsAttendues)) {
     const ligne = sw.split('\n').find((l) => l.includes('url: "' + url + '"'));

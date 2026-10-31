@@ -468,8 +468,8 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
     'assets/js/reprendre.js']) {
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${REV}"`), chemin);
   }
-  assert.ok(delta.includes('url: "./admin.html", revision: "couverture-v583"'),
-    'la page d’administration repart au lot v583 (décompte des pages)');
+  assert.ok(delta.includes('url: "./admin.html", revision: "livre-3si-81p-v585"'),
+    'la page d’administration repart au lot v585 (Smart Book 3SI à 81 pages)');
   assert.ok(delta.includes('url: "./assets/js/admin-vues-videos.js", revision: "cours-sti-v578"'),
     'le coin des vues repart au lot v549');
   assert.match(delta, /url: "\.\/assets\/js\/sync-progressions\.js", revision: "pastille-sync-v534"/);

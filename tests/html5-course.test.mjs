@@ -82,7 +82,7 @@ test('hors ligne : nouvelles ressources présentes et anciennes révisions inval
     const revision = path === 'assets/js/app.js' ? 'vitrine-sti-v579' :
       path === 'cours/html5.html' ? 'sti-3si-v573' :
       path === 'assets/css/cours.css' ? 'retrait-fond-cours-v508' :
-      path === 'dashboard.html' ? 'accueil-lycee-v503' :
+      path === 'dashboard.html' ? 'livre-3si-81p-v585' :
       path === 'assets/js/cours-html5.js' ? 'tp-display-v510' :
       path === 'assets/css/theme.css' ? 'classe-nav-v536' :
       path === 'assets/js/profil.js' ? 'xp-jamais-en-recul-v520' : 'suivi-contextes-v491';

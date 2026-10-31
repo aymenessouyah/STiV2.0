@@ -64,14 +64,14 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./index.html'), 'quiz-systemes-v580');
   assert.equal(revisions.get('./offline-complete-manifest.json'), 'classe-nav-v536');
   assert.equal(revisions.get('./README.md'), 'couverture-v583');
-  for (const chemin of ['dashboard.html', 'assets/images/drapeau-tunisie.svg']) {
-    assert.equal(revisions.get('./' + chemin), 'accueil-lycee-v503', chemin);
-  }
+  /* v585 : le tableau de bord annonce le Smart Book 3ᵉ SI à 81 pages ; le drapeau reste au lot v503. */
+  assert.equal(revisions.get('./dashboard.html'), 'livre-3si-81p-v585');
+  assert.equal(revisions.get('./assets/images/drapeau-tunisie.svg'), 'accueil-lycee-v503');
   /* v517 : le ruban lit mieux la classe — la 4e SI passe au vert. */
   assert.equal(revisions.get('./assets/js/news-perso.js'), 'ruban-vert-v517');
   /* v507 : ruban sans logo et compteurs de vidéos. */
   assert.equal(revisions.get('./assets/css/theme.css'), 'classe-nav-v536');
-  assert.equal(revisions.get('./admin.html'), 'couverture-v583');
+  assert.equal(revisions.get('./admin.html'), 'livre-3si-81p-v585');
   assert.equal(revisions.get('./assets/js/sante.js'), 'tp-transitions-v512');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */
   assert.equal(revisions.get('./index.html'), 'quiz-systemes-v580');
