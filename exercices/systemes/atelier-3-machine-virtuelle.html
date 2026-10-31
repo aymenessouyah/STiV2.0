@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="sombre" data-taille-texte="normale" class="sti-theme-wait">
+<head>
+  <meta charset="UTF-8">
+  <style>html.sti-theme-wait body { visibility: hidden; }</style>
+  <noscript><style>html.sti-theme-wait body { visibility: visible; }</style></noscript>
+  <script>setTimeout(function () { document.documentElement.classList.remove("sti-theme-wait"); }, 3000);</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Cinq exercices sur la virtualisation : définition, schéma, vrai ou faux, intérêt pour un laboratoire et protocole d’installation en cinq étapes.">
+  <meta name="author" content="Aymen Essouyah">
+  <meta name="robots" content="noai, noimageai">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https://vywujxmepvcbgedgmger.supabase.co; media-src 'self' blob:; connect-src 'self' https: wss:; frame-src 'self' https://www.youtube.com https://example.com; form-action 'self' https://www.google.com; worker-src 'self'; object-src 'none'; base-uri 'self'">
+  <title>Atelier 3 — La machine virtuelle · Exercices 3ᵉ SI</title>
+  <link rel="icon" href="../../assets/icons/STI_by_AE.ico">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="stylesheet" href="../../assets/css/theme.css">
+  <link rel="stylesheet" href="../../assets/css/cours.css">
+  <link rel="stylesheet" href="../../assets/css/cours-sti.css?v=595">
+  <link rel="stylesheet" href="../../assets/css/exercices-sti.css?v=595">
+  <link rel="stylesheet" href="../../assets/css/protection.css?v=227">
+  <script src="../../assets/js/config.js?v=479" defer></script>
+  <script src="../../assets/js/supabase-umd.js" defer></script>
+  <script src="../../assets/js/acces.js?v=479" defer></script>
+  <script src="../../assets/js/sync-progressions.js?v=479" defer></script>
+  <script src="../../assets/js/profil.js" defer></script>
+  <script src="../../assets/js/app.js" defer></script>
+  <script src="../../assets/js/suivi-profil.js" defer></script>
+  <script src="../../assets/js/reconnexion-profil.js" defer></script>
+  <script src="../../assets/js/appel-quiz.js" defer></script>
+  <script src="../../assets/js/cours-onglets-mobile.js" defer></script>
+  <script src="../../assets/js/protection.js?v=227&amp;rev=479" defer></script>
+  <script src="../../assets/js/exercices-sti.js?v=595" defer></script>
+</head>
+<body class="sti-v2 course-page course-page--sti exercices-sti">
+  <a class="skip-link" href="#contenu-principal">Aller au contenu principal</a>
+  <div class="reading-progress" id="readingProgressBar" aria-hidden="true"></div>
+  <header class="site-header" role="banner">
+    <div class="container site-header__inner">
+      <a class="brand-logo" href="../../index.html" aria-label="STI V2.0 Lycée Raféha · 3e &amp; 4e SI — Retour à l’accueil">
+        <img class="brand-logo__drapeau" src="../../assets/images/drapeau-tunisie.svg" alt="Drapeau tunisien" width="40" height="40" loading="lazy">
+        <span class="brand-logo__mark" aria-hidden="true"><img src="../../assets/icons/sti-icon-192.png" alt="" width="40" height="40"></span>
+        <span class="brand-logo__text">
+          <span class="brand-logo__title">STI V2.0</span>
+          <span class="brand-logo__sub">Lycée Raféha · 3e &amp; 4e SI</span>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="Navigation principale">
+        <a class="site-nav__link" href="../../index.html#videos">Vidéos</a>
+        <a class="site-nav__link" href="../../index.html#cours">Cours</a>
+        <a class="site-nav__link" href="../../index.html#smart-book">Scanner mon livre</a>
+        <a class="site-nav__link" href="../../index.html#outils-bac">Outils Bac</a>
+        <a class="site-nav__link" href="../../index.html#quiz">Quiz</a>
+        <a class="site-nav__link" href="../../glossaire.html">Glossaire</a>
+      </nav>
+      <div class="header-actions">
+        <button type="button" class="search-trigger" data-open-search="" aria-label="Rechercher… Ctrl K — Ouvrir la recherche rapide">
+          <span aria-hidden="true">🔎</span><span class="search-trigger__label">Rechercher…</span><kbd>Ctrl K</kbd>
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" id="installBtn" hidden="" title="Installer l'application STI V2.0 hors-ligne">📲 Installer</button>
+        <div class="theme-switcher" role="group" aria-label="Choisir le mode d'affichage">
+          <button type="button" class="theme-switcher__btn" data-set-theme="clair" aria-pressed="false" title="Mode clair">☀️</button>
+          <button type="button" class="theme-switcher__btn" data-set-theme="intermediaire" aria-pressed="false" title="Mode intermédiaire">🌗</button>
+          <button type="button" class="theme-switcher__btn" data-set-theme="sombre" aria-pressed="true" title="Mode sombre">🌙</button>
+        </div>
+        <div data-subscriber-slot=""></div>
+        <button type="button" class="burger-btn" id="stiBurgerBtn" aria-label="Ouvrir le menu mobile" aria-expanded="false" aria-controls="stiMobileNav">☰</button>
+      </div>
+    </div>
+    <nav class="mobile-nav-drawer container" id="stiMobileNav" aria-label="Navigation mobile">
+      <a class="site-nav__link" href="../../index.html#videos">🎥 Vidéos explicatives</a>
+      <a class="site-nav__link" href="../../index.html#cours">📚 Cours &amp; Matières</a>
+      <a class="site-nav__link" href="../../index.html#outils-bac">🛠️ Ateliers &amp; Outils Bac</a>
+      <a class="site-nav__link" href="../../index.html#quiz">🎯 Quiz &amp; Mes erreurs</a>
+      <a class="site-nav__link" href="../../glossaire.html">🌍 Glossaire FR · EN · AR</a>
+      <a class="site-nav__link" href="../../dashboard.html">📊 Mon tableau de bord</a>
+    </nav>
+  </header>
+  <main id="contenu-principal">
+    <section class="course-hero" aria-labelledby="titre-page">
+      <div class="container">
+        <nav class="course-breadcrumb" aria-label="Fil d’Ariane"><a href="../../index.html">Accueil</a><span aria-hidden="true">›</span><a href="../../index.html#cours">Cours</a><span aria-hidden="true">›</span><a href="../../cours/systemes-technologies-internet.html">Systèmes, technologies et Internet</a><span aria-hidden="true">›</span><span class="course-breadcrumb__current" aria-current="page">Atelier 3</span></nav>
+        <div class="course-hero__grid">
+          <div class="course-hero__copy">
+            <div class="course-eyebrow"><span class="badge" style="background:var(--accent-gold-soft);border:1px solid var(--accent-gold-border);color:var(--accent-gold)"><img src="../../assets/images/systemes-technologies-internet-96.png" alt="" width="20" height="20" style="border-radius:5px;background:#fff;object-fit:cover;vertical-align:-4px;margin-right:6px">Atelier 3 · 3ᵉ SI</span><span class="course-eyebrow__meta">ATELIER 3 · MÉTHODE</span></div>
+            <h1 class="course-hero__title" id="titre-page">Tester un système <span>sans rien casser.</span></h1>
+            <p class="course-hero__lead">Cinq exercices sur la virtualisation : définition, schéma, vrai ou faux, intérêt pour un laboratoire et protocole d’installation en cinq étapes.</p>
+            <div class="hero-actions">
+              <a class="btn btn-course-primary" href="#atelier">📦 Commencer l’atelier</a>
+              <a class="btn btn-secondary" href="../../cours/systemes-technologies-internet.html#ch1-vm">📖 Revoir le cours</a>
+              <button type="button" class="btn btn-secondary" data-tout-corriger>🔎 Tout corriger</button>
+            </div>
+          </div>
+          <aside class="course-overview" aria-label="Ce que vous allez travailler">
+            <div class="course-lesson">
+              <h2>Objectifs de l’atelier</h2>
+              <ul><li>Définir une machine virtuelle et nommer deux logiciels.</li><li>Expliquer la différence avec une installation classique.</li><li>Justifier l’usage de la virtualisation au lycée.</li><li>Ordonner un protocole d’installation.</li></ul>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+    <section class="section" id="atelier">
+      <div class="container">
+        <div class="exo-progress" role="status" aria-live="polite">
+          <div class="exo-progress__texte"><span data-atelier-titre="atelier-3">Atelier 3 — La machine virtuelle</span><small data-exo-compteur>0 exercice fait</small></div>
+          <div class="exo-progress__barre" role="progressbar" aria-label="Progression dans l’atelier" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span data-exo-barre></span></div>
+          <span class="badge" data-atelier-etat>À faire</span>
+        </div>
+        <div class="exo-liste">
+          <article class="exo-item" data-exo-item="atelier-3-e1">
+            <div class="exo-item__head"><span class="exo-item__num">01</span><h3 class="exo-item__titre">Comprendre la machine virtuelle</h3><span class="exo-item__niveau">Rappel de cours</span></div>
+            <p>Complétez : « Une machine virtuelle est un ordinateur <strong>………</strong> par un logiciel. Elle permet d’installer un système d’exploitation dans une <strong>………</strong>, sans <strong>………</strong> le système principal. »</p>
+            <p>Citez deux logiciels de virtualisation du programme.</p>
+            <label class="exo-champ__label" for="a3e1">Votre réponse</label>
+            <textarea class="exo-champ" id="a3e1" rows="3"></textarea>
+            <details class="exo-corrige"><summary>Afficher le corrigé</summary><p>« Une machine virtuelle est un ordinateur <strong>simulé</strong> par un logiciel. Elle permet d’installer un système d’exploitation dans une <strong>fenêtre</strong>, sans <strong>remplacer</strong> le système principal. »</p>
+              <p>Deux logiciels de virtualisation : <strong>VMware</strong> et <strong>VirtualBox</strong>.</p></details>
+            <button type="button" class="btn btn-ghost btn-sm" data-exo-item-bouton aria-pressed="false">○ Marquer cet exercice comme fait</button>
+          </article>
+          <article class="exo-item" data-exo-item="atelier-3-e2">
+            <div class="exo-item__head"><span class="exo-item__num">02</span><h3 class="exo-item__titre">Le schéma à compléter</h3><span class="exo-item__niveau">Schéma</span></div>
+            <p>Complétez la chaîne, du plus concret au plus virtuel :</p>
+            <p><strong>PC réel (Windows)</strong> → <strong>………</strong> → <strong>machine virtuelle (Linux)</strong></p>
+            <label class="exo-champ__label" for="a3e2">La case manquante <span class="exo-champ__aide">Pensez au rôle de VMware ou VirtualBox</span></label>
+            <textarea class="exo-champ" id="a3e2" rows="2"></textarea>
+            <div class="exo-qcm" data-qcm="b">
+              <p class="exo-qcm__question">Sans logiciel de virtualisation, que se passe-t-il si l’on veut tester Linux sur un PC Windows ?</p>
+              <div class="exo-qcm__choix"><button type="button" class="exo-qcm__btn" data-choix="a">Linux s’installe dans une fenêtre, à côté de Windows</button><button type="button" class="exo-qcm__btn" data-choix="b">Il faut remplacer Windows ou créer une autre partition</button><button type="button" class="exo-qcm__btn" data-choix="c">Linux s’installe automatiquement sur le disque du lycée</button></div>
+              <p class="exo-qcm__retour" data-juste="✅ Exact : sans virtualisation, il faut remplacer le système ou prévoir une autre partition (double démarrage)." data-faux="❌ Non : c’est justement l’avantage de la VM. Sans elle, il faut remplacer le système ou créer une autre partition."></p>
+            </div><details class="exo-corrige"><summary>Afficher le corrigé</summary><p>La case manquante est le <strong>logiciel de virtualisation</strong> (VMware ou VirtualBox) : il crée la machine virtuelle dans une fenêtre du système réel.</p></details>
+            <button type="button" class="btn btn-ghost btn-sm" data-exo-item-bouton aria-pressed="false">○ Marquer cet exercice comme fait</button>
+          </article>
+          <article class="exo-item" data-exo-item="atelier-3-e3">
+            <div class="exo-item__head"><span class="exo-item__num">03</span><h3 class="exo-item__titre">Vrai ou faux</h3><span class="exo-item__niveau">Attention aux pièges</span></div>
+            <ol>
+              <li>Une machine virtuelle est un ordinateur physique supplémentaire.</li>
+              <li>La machine virtuelle s’exécute dans une fenêtre du système principal.</li>
+              <li>Une panne dans la machine virtuelle peut empêcher le système principal de démarrer.</li>
+              <li>La machine virtuelle demande de la mémoire et du processeur au vrai PC.</li>
+            </ol>
+            <label class="exo-champ__label" for="a3e3">Vos réponses justifiées</label>
+            <textarea class="exo-champ" id="a3e3" rows="4"></textarea>
+            <details class="exo-corrige"><summary>Afficher le corrigé</summary><ol>
+              <li><strong>Faux</strong> : c’est un ordinateur simulé par un logiciel, pas une machine physique de plus.</li>
+              <li><strong>Vrai</strong> : elle s’exécute dans une fenêtre, sans remplacer le système principal.</li>
+              <li><strong>Faux</strong> : elle reste isolée dans une fenêtre ; le système principal continue de fonctionner.</li>
+              <li><strong>Vrai</strong> : les ressources sont prises sur le vrai PC, d’où des machines parfois plus lentes.</li>
+            </ol></details>
+            <button type="button" class="btn btn-ghost btn-sm" data-exo-item-bouton aria-pressed="false">○ Marquer cet exercice comme fait</button>
+          </article>
+          <article class="exo-item" data-exo-item="atelier-3-e4">
+            <div class="exo-item__head"><span class="exo-item__num">04</span><h3 class="exo-item__titre">Pourquoi virtualiser au lycée ?</h3><span class="exo-item__niveau">Situation professionnelle</span></div>
+            <p>Le laboratoire d’informatique doit faire essayer Linux à vingt élèves, sans abîmer les postes sous Windows.</p>
+            <ol>
+              <li>Donnez trois avantages de la machine virtuelle dans cette situation.</li>
+              <li>Citez une limite à surveiller.</li>
+              <li>Rédigez une consigne de sécurité de deux lignes pour les élèves.</li>
+            </ol>
+            <label class="exo-champ__label" for="a3e4">Vos réponses</label>
+            <textarea class="exo-champ" id="a3e4" rows="5"></textarea>
+            <details class="exo-corrige"><summary>Afficher le corrigé</summary><ol>
+              <li>On teste un autre système sans toucher au système principal ; on peut revenir en arrière en supprimant simplement la VM ; chaque élève travaille dans son propre environnement, isolé des autres.</li>
+              <li>La machine virtuelle consomme la mémoire, le processeur et le disque du PC réel : elle peut être plus lente.</li>
+              <li>Exemple : « Ne supprimez jamais le dossier de la machine virtuelle. Enregistrez votre travail dans le dossier partagé du serveur, pas seulement dans la VM. »</li>
+            </ol></details>
+            <button type="button" class="btn btn-ghost btn-sm" data-exo-item-bouton aria-pressed="false">○ Marquer cet exercice comme fait</button>
+          </article>
+          <article class="exo-item" data-exo-item="atelier-3-e5">
+            <div class="exo-item__head"><span class="exo-item__num">05</span><h3 class="exo-item__titre">Protocole d’installation en cinq étapes</h3><span class="exo-item__niveau">Méthode</span></div>
+            <p>Remettez dans l’ordre les étapes proposées, de la première à la dernière :</p>
+            <p><em>Démarrer la machine virtuelle · Installer le logiciel de virtualisation · Vérifier la connexion réseau de la VM · Créer une nouvelle machine virtuelle et lui attribuer de la mémoire · Installer le système d’exploitation invité.</em></p>
+            <label class="exo-champ__label" for="a3e5">Les cinq étapes dans l’ordre</label>
+            <textarea class="exo-champ" id="a3e5" rows="3"></textarea>
+            <details class="exo-corrige"><summary>Afficher le corrigé</summary><ol>
+              <li>Installer le logiciel de virtualisation.</li>
+              <li>Créer une nouvelle machine virtuelle et lui attribuer de la mémoire.</li>
+              <li>Installer le système d’exploitation invité.</li>
+              <li>Démarrer la machine virtuelle.</li>
+              <li>Vérifier la connexion réseau de la VM.</li>
+            </ol></details>
+            <button type="button" class="btn btn-ghost btn-sm" data-exo-item-bouton aria-pressed="false">○ Marquer cet exercice comme fait</button>
+          </article>
+        </div>
+        <div class="exo-pied">
+          <nav class="exo-nav" aria-label="Navigation entre ateliers">
+            <a class="source-link" href="atelier-2-reseaux.html">← Atelier 2 · Les réseaux</a><a class="source-link" href="atelier-4-objets-connectes.html">Atelier 4 · Les objets connectés →</a>
+          </nav>
+          <button type="button" class="btn-revise" data-atelier-fait="atelier-3" aria-pressed="false">☐ Marquer l’atelier comme terminé</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer"><div class="container source-footer"><div><strong>STI V2.0 · Le web de A à Z</strong><p>Lycée Raféha · 3ème &amp; 4ème SI · Aymen Essouyah</p></div><nav aria-label="Liens utiles"><a href="../../index.html">Accueil</a><a href="index.html">✏️ Sommaire des ateliers</a><a href="../../cours/systemes-technologies-internet.html">📖 Le cours</a></nav></div></footer>
+  <button type="button" id="back-to-top" class="back-to-top-fab" aria-label="Remonter en haut de la page" title="Haut de page">↑</button>
+</body>
+</html>

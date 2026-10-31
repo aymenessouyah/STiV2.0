@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-10-31T12:20:03Z",
+  "generatedAt": "2026-10-31T13:25:52Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 763,
-  "totalBytes": 1113848506,
+  "totalFiles": 770,
+  "totalBytes": 1113965072,
   "files": [
     {
       "path": "404.html",
@@ -251,6 +251,11 @@
       "gitSha": "f9cc78b11ec464b118e380d277703a7686b41aef"
     },
     {
+      "path": "assets/css/exercices-sti.css",
+      "bytes": 8038,
+      "gitSha": "5f94a76586451735f3f48aa41c3365bd5e32cce4"
+    },
+    {
       "path": "assets/css/html.css",
       "bytes": 364036,
       "gitSha": "9c8ff2d5be54d6af2938557a2b82c3bc8a552e54"
@@ -332,8 +337,8 @@
     },
     {
       "path": "assets/data/nouveautes.json",
-      "bytes": 44922,
-      "gitSha": "641a1bbd230cda3aa5362300628b2772e6cebbe1"
+      "bytes": 46061,
+      "gitSha": "eac1d3fa55d8a3c7716283f8ccf52cc899976b64"
     },
     {
       "path": "assets/data/quiz-banque.json",
@@ -682,8 +687,8 @@
     },
     {
       "path": "assets/js/acces.js",
-      "bytes": 967135,
-      "gitSha": "54668e27bea68bb15142a86cda27537e93773bb7"
+      "bytes": 969101,
+      "gitSha": "41b7a4ee77f8fcc6ce1a6aea64017a7b69303ef5"
     },
     {
       "path": "assets/js/admin-couverture.js",
@@ -727,8 +732,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 127641,
-      "gitSha": "6d9429f82da69fe784408b80c97c8aac4207fb06"
+      "bytes": 128706,
+      "gitSha": "5580b6d3a0dcfca80e49c4d10aa2efcbe1826fea"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -799,6 +804,11 @@
       "path": "assets/js/dialogues-compat.js",
       "bytes": 6366,
       "gitSha": "7fcfa88ea7effa5940e0d4fbb4989ff48216af6d"
+    },
+    {
+      "path": "assets/js/exercices-sti.js",
+      "bytes": 8570,
+      "gitSha": "8025118f32ee220a7dd4ec5fefa3ca378ed774e1"
     },
     {
       "path": "assets/js/graphiques-activite.js",
@@ -1437,8 +1447,8 @@
     },
     {
       "path": "cours/systemes-technologies-internet.html",
-      "bytes": 68680,
-      "gitSha": "97dcbdfd4ecfa0ebce82939fc14d6a029c34b14a"
+      "bytes": 71476,
+      "gitSha": "b3ed76c96139e0868e11428d5d3ce12fa82be5de"
     },
     {
       "path": "cssanimee/cours.js",
@@ -3206,14 +3216,39 @@
       "gitSha": "435d345064f872b54ab0506b61812349fa1da305"
     },
     {
+      "path": "exercices/systemes/atelier-1-systemes-exploitation.html",
+      "bytes": 20791,
+      "gitSha": "45a120a66f4d167c7a87a0bb90a7c6ffdd02cf56"
+    },
+    {
+      "path": "exercices/systemes/atelier-2-reseaux.html",
+      "bytes": 20293,
+      "gitSha": "f6b655153e78ee2a326e471ed891705b4584dae8"
+    },
+    {
+      "path": "exercices/systemes/atelier-3-machine-virtuelle.html",
+      "bytes": 18204,
+      "gitSha": "5940d80ad35e6c751d07d10ba9668d78944b2a6b"
+    },
+    {
+      "path": "exercices/systemes/atelier-4-objets-connectes.html",
+      "bytes": 20270,
+      "gitSha": "aff50c933666623859c1c2108af9344500bffb13"
+    },
+    {
+      "path": "exercices/systemes/index.html",
+      "bytes": 11543,
+      "gitSha": "a420603a954a548af0d032aef47c9116463c9745"
+    },
+    {
       "path": "glossaire.html",
       "bytes": 38733,
       "gitSha": "9dc738b30dfca8c08b58d820a28123587f286362"
     },
     {
       "path": "index.html",
-      "bytes": 64667,
-      "gitSha": "47a183243a60bd95fb1f4b3e79a76d34f35741dd"
+      "bytes": 64986,
+      "gitSha": "91e78d1a14fe93ea2308be4d4fd9e992e9a5e9e4"
     },
     {
       "path": "livre-smart.html",
@@ -3777,8 +3812,8 @@
     },
     {
       "path": "sitemap.xml",
-      "bytes": 10970,
-      "gitSha": "70dbd345ea8f8458b9adee563dac7f23db206422"
+      "bytes": 11870,
+      "gitSha": "587c5fad94aeba10f95d2a9a53d1d66a9a0b1ff2"
     },
     {
       "path": "supabase/migrations/20261027_media_prog_monotone_v479.sql",
@@ -3817,8 +3852,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 101579,
-      "gitSha": "6432f8fb2a7702d349effab38cca7b033c0b983a"
+      "bytes": 102251,
+      "gitSha": "701d8fd486f2a992e879907f2420115ad9cb74e8"
     }
   ]
 }

@@ -1,0 +1,234 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   STI V2.0 — Exercices « Systèmes, technologies et Internet » (3ème SI)
+   Quatre ateliers corrigés : systèmes d'exploitation, réseaux, machine
+   virtuelle, objets connectés. Le cours garde son accent or ; les exercices
+   reprennent la même famille de couleurs, avec les variables du thème.
+   Aucune couleur codée en dur : tout passe par theme.css / cours.css.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.exercices-sti {
+  --exo-accent: var(--accent-gold);
+  --exo-accent-soft: var(--accent-gold-soft);
+  --exo-accent-border: var(--accent-gold-border);
+}
+
+/* ── 1. Bandeau de progression de l'atelier ── */
+.exo-progress {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  position: sticky;
+  top: 8px;
+  z-index: 5;
+  backdrop-filter: blur(8px);
+}
+.exo-progress__texte { font-weight: 700; font-size: .92rem; }
+.exo-progress__texte small { display: block; font-weight: 500; color: var(--text-muted); font-size: .78rem; }
+.exo-progress__barre {
+  flex: 1 1 180px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  overflow: hidden;
+  min-width: 140px;
+}
+.exo-progress__barre > span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  border-radius: inherit;
+  background: var(--exo-accent);
+  transition: width .35s ease;
+}
+
+/* ── 2. Un exercice = une carte numérotée ── */
+.exo-liste { display: grid; gap: var(--space-4); margin-top: var(--space-4); }
+
+.exo-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-solid);
+  padding: var(--space-4);
+}
+.exo-item__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-2);
+}
+.exo-item__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 8px;
+  border-radius: 10px;
+  background: var(--exo-accent-soft);
+  border: 1px solid var(--exo-accent-border);
+  color: var(--exo-accent);
+  font: 800 .95rem/1 var(--font-mono);
+}
+.exo-item__titre { margin: 0; font-size: 1.02rem; }
+.exo-item__niveau {
+  margin-inline-start: auto;
+  font: 700 .7rem/1 var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--text-muted);
+}
+.exo-item.is-fait { border-color: var(--exo-accent-border); }
+.exo-item.is-fait .exo-item__num { background: var(--exo-accent); color: var(--text-inverse); }
+
+/* Consigne, tableaux à compléter, zones de réponse */
+.exo-item ol,
+.exo-item ul { margin: var(--space-2) 0 0; padding-inline-start: 1.35rem; }
+.exo-item li { margin-block: .35rem; }
+.exo-item p { margin-block: .5rem; }
+
+.exo-champ {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  margin-top: var(--space-2);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--bg-alt);
+  color: var(--text);
+  font: 500 .92rem/1.5 var(--font-sans, system-ui, sans-serif);
+  resize: vertical;
+}
+.exo-champ:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+.exo-champ__label { display: block; margin-top: var(--space-3); font-weight: 700; font-size: .88rem; }
+.exo-champ__aide { display: block; color: var(--text-muted); font-size: .78rem; font-weight: 500; }
+
+/* ── 3. Questions à choix unique avec correction immédiate ── */
+.exo-qcm {
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-alt);
+}
+.exo-qcm__question { font-weight: 700; margin: 0 0 var(--space-2); }
+.exo-qcm__choix { display: flex; flex-wrap: wrap; gap: 8px; }
+.exo-qcm__btn {
+  padding: 9px 13px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: 999px;
+  background: var(--surface-elevated);
+  color: var(--text);
+  font: 600 .88rem/1.2 inherit;
+  cursor: pointer;
+  transition: transform .15s ease, background .2s ease;
+}
+.exo-qcm__btn:hover { transform: translateY(-1px); }
+.exo-qcm__btn[aria-pressed="true"] { border-color: var(--brand); }
+.exo-qcm__btn.is-juste { background: rgba(34, 197, 94, .18); border-color: #22c55e; color: var(--text); }
+.exo-qcm__btn.is-faux { background: rgba(239, 68, 68, .16); border-color: #ef4444; color: var(--text); }
+.exo-qcm__btn:disabled { cursor: default; opacity: .75; }
+.exo-qcm__retour {
+  margin-top: var(--space-2);
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-height: 1.2em;
+}
+.exo-qcm__retour.is-juste { color: #22c55e; }
+.exo-qcm__retour.is-faux { color: #ef4444; }
+
+/* ── 4. Corrigé dépliable ── */
+.exo-corrige {
+  margin-top: var(--space-3);
+  border: 1px solid var(--exo-accent-border);
+  border-radius: var(--radius-md);
+  background: var(--exo-accent-soft);
+  padding: 0 var(--space-3);
+}
+.exo-corrige > summary {
+  cursor: pointer;
+  padding: 10px 0;
+  font-weight: 700;
+  color: var(--exo-accent);
+  list-style: none;
+}
+.exo-corrige > summary::-webkit-details-marker { display: none; }
+.exo-corrige > summary::before { content: "🔎 "; }
+.exo-corrige[open] > summary { border-bottom: 1px solid var(--exo-accent-border); margin-bottom: var(--space-2); }
+.exo-corrige > *:not(summary) { color: var(--text); font-size: .93rem; }
+.exo-corrige ol { padding-inline-start: 1.35rem; margin-bottom: var(--space-3); }
+
+/* ── 5. Bas de page : marquer fait, navigation entre ateliers ── */
+.exo-pied {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px dashed var(--border-strong);
+}
+.exo-pied .btn-revise { margin-inline-start: auto; }
+.exo-pied .btn-revise[aria-pressed="true"] {
+  background: var(--exo-accent);
+  border-color: var(--exo-accent);
+  color: var(--text-inverse);
+}
+.exo-nav { display: flex; flex-wrap: wrap; gap: var(--space-3); font-weight: 700; }
+
+/* ── 6. Grille du sommaire des quatre ateliers ── */
+.exo-sommaire {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  margin-top: var(--space-4);
+}
+.exo-carte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-solid);
+  text-decoration: none;
+  color: inherit;
+  transition: transform .15s ease, border-color .2s ease;
+}
+.exo-carte:hover,
+.exo-carte:focus-visible { transform: translateY(-2px); border-color: var(--exo-accent-border); }
+.exo-carte__num {
+  font: 800 .78rem/1 var(--font-mono);
+  color: var(--exo-accent);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.exo-carte h3 { margin: 0; font-size: 1.02rem; }
+.exo-carte p { margin: 0; font-size: .88rem; color: var(--text-secondary); }
+.exo-carte__meta {
+  margin-top: auto;
+  padding-top: var(--space-2);
+  font-size: .78rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.exo-carte.is-fait { border-color: var(--exo-accent-border); background: var(--exo-accent-soft); }
+.exo-carte.is-fait .exo-carte__num::after { content: " · ✓ fait"; }
+
+/* ── 7. Impression : un élève doit pouvoir rendre sa feuille ── */
+@media print {
+  .exo-progress,
+  .exo-pied,
+  .site-header,
+  .site-footer,
+  .back-to-top-fab,
+  .reading-progress { display: none !important; }
+  .exo-item { break-inside: avoid; border: 1px solid #999; background: #fff; color: #000; }
+  .exo-corrige { display: none !important; }
+}

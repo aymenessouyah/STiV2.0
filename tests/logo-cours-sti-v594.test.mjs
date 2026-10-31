@@ -64,10 +64,10 @@ test('v594 : le logo est servi hors ligne et versionné', () => {
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   const complet = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];
   for (const chemin of ['./' + LOGO_512, './' + LOGO_96]) {
-    assert.ok(delta.includes('url: "' + chemin + '", revision: "cours-sti-v594"'), 'delta : ' + chemin);
+    assert.ok(delta.includes('url: "' + chemin + '", revision: "cours-sti-v595"'), 'delta : ' + chemin);
     assert.ok(complet.includes('"' + chemin + '"'), 'cache complet : ' + chemin);
   }
-  assert.match(sw, /var VERSION_PUBLIEE = "v594";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v595";/);
 
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
   for (const chemin of [LOGO_512, LOGO_96]) {

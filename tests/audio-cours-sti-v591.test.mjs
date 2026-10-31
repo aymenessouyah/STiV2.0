@@ -66,8 +66,8 @@ test('v591 : les pistes sont servies hors ligne sans alourdir le delta', () => {
     assert.equal(sw.indexOf('url: "' + chemin + '"'), -1, chemin + ' reste hors du delta');
   }
   /* La page et sa feuille de style changent aussi : elles doivent être réinvalidées. */
-  assert.match(sw, /url: "\.\/cours\/systemes-technologies-internet\.html", revision: "cours-sti-v594", refreshIfCached: true/);
-  assert.match(sw, /url: "\.\/assets\/css\/cours-sti\.css", revision: "cours-sti-v594"/);
+  assert.match(sw, /url: "\.\/cours\/systemes-technologies-internet\.html", revision: "cours-sti-v595", refreshIfCached: true/);
+  assert.match(sw, /url: "\.\/assets\/css\/cours-sti\.css", revision: "cours-sti-v595"/);
 });
 
 test('v591 : le manifeste hors ligne connaît les pistes et leur empreinte', () => {
@@ -84,5 +84,5 @@ test('v591 : le manifeste hors ligne connaît les pistes et leur empreinte', () 
 test('v591 : la page reste valide (lecteur sans dépendance externe)', () => {
   assert.doesNotMatch(page, /<audio[^>]+src="https?:/, 'aucune piste distante');
   assert.match(page, /media-src 'self' blob:/, 'la CSP autorise bien les médias locaux');
-  assert.ok(page.includes('cours-sti.css?v=593'), 'la feuille de style est réinvalidée');
+  assert.ok(page.includes('cours-sti.css?v=595'), 'la feuille de style est réinvalidée');
 });

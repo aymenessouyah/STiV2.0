@@ -203,7 +203,15 @@
       urlAnnexePdf: "documents/livre/sti-smart-book-3si-2026.pdf",
       ancres: { exercices: "#evaluation", annexes: "#manuel", videos: "#video-cours" },
       resume: "Systèmes d'exploitation, réseaux (LAN, IP, DNS, MAC) et Internet des objets — la partie du manuel qui précède HTML5.",
-      exercices: []
+      /* v595 : quatre ateliers d'exercices corrigés, propres à la 3ème SI.
+         urlExercices évite de fabriquer un lien avec urlCours + ancre. */
+      urlExercices: "exercices/systemes/index.html",
+      exercices: [
+        { titre: "Atelier 1 — Les systèmes d'exploitation", niveau: "Débutant", enonce: "exercices/systemes/atelier-1-systemes-exploitation.html", corrige: "exercices/systemes/atelier-1-systemes-exploitation.html" },
+        { titre: "Atelier 2 — Les réseaux informatiques", niveau: "Intermédiaire", enonce: "exercices/systemes/atelier-2-reseaux.html", corrige: "exercices/systemes/atelier-2-reseaux.html" },
+        { titre: "Atelier 3 — La machine virtuelle", niveau: "Intermédiaire", enonce: "exercices/systemes/atelier-3-machine-virtuelle.html", corrige: "exercices/systemes/atelier-3-machine-virtuelle.html" },
+        { titre: "Atelier 4 — Les objets connectés", niveau: "Avancé", enonce: "exercices/systemes/atelier-4-objets-connectes.html", corrige: "exercices/systemes/atelier-4-objets-connectes.html" }
+      ]
     }
   };
 
@@ -2198,7 +2206,7 @@
                 '<strong style="display:block">' + echapperHtml(m.nom) + "</strong>" +
                 '<div style="display:flex;gap:8px;font-size:.76rem;color:var(--text-muted);margin-top:2px">' +
                   '<a href="' + pref + m.urlCours + '#cours">Cours</a>·' +
-                  '<a href="' + pref + m.urlCours + (m.ancres ? m.ancres.exercices : '#exercices') + '">Exercices</a>·' +
+                  '<a href="' + pref + (m.urlExercices || (m.urlCours + (m.ancres ? m.ancres.exercices : '#exercices'))) + '">Exercices</a>·' +
                   '<a href="' + pref + m.urlCours + (m.ancres ? m.ancres.annexes : '#annexes') + '">Annexes</a>·' +
                   '<a href="' + pref + m.urlCours + (m.ancres ? m.ancres.videos : '#videos') + '">Vidéos (' + CATALOGUE_VIDEOS.filter(function (v) { return videoDeMatiere(v, m.id) && (!v.reserve4si || ok4); }).length + ")</a>" +
                 "</div>" +

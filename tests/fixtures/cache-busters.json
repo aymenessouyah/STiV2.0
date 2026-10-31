@@ -8,7 +8,10 @@
       "587"
     ],
     "assets/css/cours-sti.css": [
-      "593"
+      "595"
+    ],
+    "assets/css/exercices-sti.css": [
+      "595"
     ],
     "assets/css/protection.css": [
       "193",
@@ -56,6 +59,9 @@
       "425",
       "476",
       "479"
+    ],
+    "assets/js/exercices-sti.js": [
+      "595"
     ],
     "assets/js/graphiques-activite.js": [
       "469"

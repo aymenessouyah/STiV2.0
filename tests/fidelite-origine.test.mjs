@@ -61,7 +61,9 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
   const originaux = {
     'assets/js/config.js': 'dbe14a6d66e869a2431d2184d7ce597385c75292bb6c5f7862a63a0131a1dad4',
     'assets/js/supabase-umd.js': '2eebfe06b1b5309985dc1526e8981ea3a18b71beeef83e7f38e04c303e142d6d',
-    'assets/js/acces.js': '560e57a45e3efd365b9c278dcc4826aca11d262d832bb20843d5e75e8cd7550a',
+    /* v595 : l'index de recherche et le fil « dernière lecture » accueillent
+       les quatre ateliers d'exercices « Systèmes » ; empreinte réactualisée. */
+    'assets/js/acces.js': '45b0e16e7bfb8f42e055ed6d889175432cac06258cae8e20d614b08fe69fee57',
     'assets/js/sync-progressions.js': 'c6e36a6f0ebea5e481cfb1b16afb9c0cfefc595ed4de21a1becff5a096d327b6',
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
     'portail.html': '7ea8179bed2a6eac89f6852352c224d83b34d2215cfb6f6acf9d01b657a03ad1',
@@ -165,12 +167,12 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
   }
   assert.doesNotMatch(delta, /"\.\/[^"\n]+\.(?:mp4|mp3|pdf|wasm)"/i);
   for (const chemin of ['assets/css/cours.css','assets/js/app.js','assets/js/cours-matieres.js','cours/html5.html','cours/css3.html','cours/javascript.html','cours/sql.html','cours/php.html']) {
-    const revision = chemin === 'assets/js/app.js' ? 'cours-sti-v594'
+    const revision = chemin === 'assets/js/app.js' ? 'cours-sti-v595'
       : chemin === 'assets/css/cours.css' ? 'retrait-fond-cours-v508'
       : chemin === 'cours/css3.html' ? 'tp-transitions-v512'
       : chemin === 'cours/html5.html' ? 'sti-3si-v573'
-      : chemin === 'cours/javascript.html' ? 'cours-sti-v594'
-      : chemin === 'cours/php.html' ? 'cours-sti-v594'
+      : chemin === 'cours/javascript.html' ? 'cours-sti-v595'
+      : chemin === 'cours/php.html' ? 'cours-sti-v595'
       /* v563 : cours/sql.html reçoit la convention d'écriture d'un schéma. */
       : chemin === 'cours/sql.html' ? 'schema-notation-v563'
       : chemin.startsWith('cours/') ? 'retrait-fond-cours-v508' : 'progression-chapitres-v492';
@@ -252,7 +254,8 @@ test('banques et données JSON d’origine conservées ; retour de quiz ajouté 
   const json = {
     /* v583 : pages-couverture.json n'est plus une liste de 124 entrées à casse
        minuscules : 145 pages réelles, casse exacte, n calculé. */
-    'assets/data/nouveautes.json': '24c3eb9e3611e39e63f0d3b5b039c17a6932c6514d49e06b96c7c17462601e51',
+    /* v595 : entrée des quatre ateliers d'exercices « Systèmes » (ajout en tête). */
+    'assets/data/nouveautes.json': '583fb1f447c54aabe02e8145318bc98696e54b52c148ec1f78cf337365177ae1',
     'assets/data/quiz-banque.json': '04a76ac1dd25d0b3817f44e8edd518fd944ea8275f9a450024ecf572800860a5',
     'assets/data/smart-book-2026.json': '2d2b3ddcf1d6b345c82de99eac119ab5be301c1e7ebfdaa577c19b2c88196a68',
     /* v573 : édition 2026 du manuel 3ème SI — 81 pages, la partie « Systèmes,
