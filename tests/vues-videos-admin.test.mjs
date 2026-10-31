@@ -116,7 +116,7 @@ test('les lectures se cumulent par appareil et les élèves restent comptés une
 
   assert.deepEqual({ vues: parId['html5-cours'].vues, eleves: parId['html5-cours'].eleves }, { vues: 3, eleves: 2 });
   assert.deepEqual({ vues: parId['css3-cours'].vues, eleves: parId['css3-cours'].eleves }, { vues: 1, eleves: 1 }, 'entrée historique comptée une fois');
-  assert.equal(parId['sql-cours'].vues, 0, 'moins de 2 s : pas une vue');
+  assert.equal(parId['sql-cours'].vues, 0, 'moins de 10 s (1 s lue) : pas une vue');
   assert.equal(parId['sql-cours'].eleves, 0);
   assert.equal(parId['html5-cours'].audio, undefined);
   assert.equal(res.vues, 4, 'total des lectures');
@@ -130,7 +130,10 @@ test('un compteur par appareil additionne les lectures du même élève', () => 
   assert.equal(api.vuesDeLEntree({ vues: { a: 3, b: 2 } }), 5);
   assert.equal(api.vuesDeLEntree({ maxPct: 40 }), 1, 'entrée ancienne : une lecture au moins');
   assert.equal(api.vuesDeLEntree({ vues: { a: 0 } }), 0, 'compteur présent mais nul : zéro inventé');
-  assert.equal(api.pourcentageMedia({ sec: 2 }), 1);
+  /* v581 : une lecture de 2 s (survol, préchargement) n'est plus une vue ;
+     il faut 10 s réelles, comme dans les fiches élèves et l'analytique. */
+  assert.equal(api.pourcentageMedia({ sec: 2 }), 0, 'moins de 10 s : pas encore une vue');
+  assert.equal(api.pourcentageMedia({ sec: 12 }), 1);
   assert.equal(api.pourcentageMedia({ done: true }), 100);
   assert.equal(api.pourcentageMedia({ maxPct: 55 }), 55);
 });

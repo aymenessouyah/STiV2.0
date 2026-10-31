@@ -1756,6 +1756,12 @@
           /(^|\/)media\/son\.mp3$/.test(u) ||
           u.indexOf("soundhelix") !== -1
         ) return "";
+        /* v581 : les vidéos décoratives (drapeau animé de l'accueil, bandeau du
+           lycée, vidéo de présentation) et les vidéos de démonstration des TP ne
+           sont pas des cours. Elles ne doivent donc pas entrer dans le compteur
+           de « vidéos vues » du tableau de bord (17 élèves étaient comptés à
+           tort sur le seul drapeau animé). */
+        if (u.indexOf("drapeau") !== -1 || u.indexOf("stivideoofficiel") !== -1) return "";
         var mNom = u.match(/\/([^\/]+)\.(mp4|webm|m3u8|mpd|mp3|ogg|wav|m4a)$/i) || u.match(/^([^\/]+)\.(mp4|webm|m3u8|mpd|mp3|ogg|wav|m4a)$/i);
         if (!mNom) return "";
         var base = mNom[1].trim();
@@ -1776,6 +1782,11 @@
         };
         var slug = alias[base] || base;
         if (!estAudio && slug.indexOf("gestlocation") !== -1) slug = "sql-serie4-2";
+        /* v581 : le fichier de la vidéo du cours STI s'appelle
+           CoursSystemesInternet-v578.mp4 ; sans cette règle la progression
+           s'enregistrait sous « courssystemesinternet-v578 » alors que le
+           tableau de bord et le catalogue attendent « cours-sti ». */
+        if (!estAudio && slug.indexOf("courssystemesinternet") !== -1) slug = "cours-sti";
         if (!estAudio && u.indexOf("/streams/css3-v302/") !== -1) slug = "css3-cours";
         if (!estAudio && u.indexOf("/hls/") !== -1) {
           var mHls = u.match(/\/hls\/([^\/]+)\//i);

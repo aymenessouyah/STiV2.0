@@ -150,8 +150,33 @@
     });
   }
 
+  /* v581 — même définition que le tableau de bord et analytique.js :
+     une lecture de moins de 10 s (survol, préchargement) n'est pas une vue.
+     Les vidéos décoratives et les démos de TP ne sont pas des cours, et deux
+     anciennes clés désignent le même média : sans cela, la carte « Vidéos »
+     ne tombait pas d'accord avec les fiches élèves. */
+  var SEUIL_VUE_SEC = 10;
+  var MEDIAS_DECORATIFS = ["drapeau-sti-vent", "drapeau-lycee-bandeau", "drapeaurafeha", "drapeau-rafeha", "stivideoofficiel", "flower", "ambient"];
+  var RE_MEDIA_DECORATIF = /^drapeau/i;
+  /* Doublons constatés dans sti_progressions : une vidéo, deux clés. */
+  var ALIAS_MEDIAS = { "bouclepour": "boucle-pour", "php-guichet-v10": "php-guichet" };
+  var PREFIXES_MEDIAS = [{ debut: "courssystemesinternet", cle: "cours-sti" }];
+  function slugMediaSuivi(slug) {
+    var s = String(slug == null ? "" : slug);
+    if (!s) return "";
+    if (RE_MEDIA_DECORATIF.test(s)) return "";
+    for (var i = 0; i < MEDIAS_DECORATIFS.length; i++) {
+      if (s.indexOf(MEDIAS_DECORATIFS[i]) !== -1) return "";
+    }
+    if (ALIAS_MEDIAS[s]) return ALIAS_MEDIAS[s];
+    for (var j = 0; j < PREFIXES_MEDIAS.length; j++) {
+      if (s.indexOf(PREFIXES_MEDIAS[j].debut) === 0) return PREFIXES_MEDIAS[j].cle;
+    }
+    return s;
+  }
+
   /* Avancement enregistré pour un média (0 = jamais lancé). Même règle qu'analytique.js
-     et que la roue : maxPct/pct, à défaut « ≥ 2 s » d'écoute. */
+     et que la roue : maxPct/pct, à défaut « ≥ 10 s » d'écoute. */
   function pourcentageMedia(e) {
     if (e == null) return 0;
     if (typeof e === "number") return Math.max(0, Math.min(100, Math.round(e)));
@@ -159,7 +184,7 @@
     var p = Math.max(Number(e.maxPct) || 0, Number(e.pct) || 0);
     if (!p) {
       var s = Number(e.sec != null ? e.sec : (e.t != null ? e.t : e.time)) || 0;
-      if (s >= 2) p = 1;
+      if (s >= SEUIL_VUE_SEC) p = 1;
     }
     if (e.done && p < 100) p = 100;
     return Math.max(0, Math.min(100, Math.round(p)));
@@ -275,12 +300,14 @@
       if (!mp || typeof mp !== "object") return;
       elevesComptes++;
       var aVuUneVideo = false, aVuPeriode = false;
+      var dejaCompte = {};
       Object.keys(mp).forEach(function (k) {
         if (String(k).indexOf("video:") !== 0) return;
-        var slug = String(k).slice(6);
-        if (!slug) return;
+        var slug = slugMediaSuivi(String(k).slice(6));
+        if (!slug || dejaCompte[slug]) return;
         var e = mp[k];
         if (pourcentageMedia(e) <= 0) return;
+        dejaCompte[slug] = true;
         var c = compteurs[slug] || (compteurs[slug] = { cumulVues: 0, cumulEleves: 0, periodeVues: 0, periodeEleves: 0, estime: false });
         c.cumulVues += vuesDeLEntree(e);
         c.cumulEleves += 1;

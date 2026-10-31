@@ -54,11 +54,14 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
      initiales (écoute « error » déléguée) dans admin.js, acces.js et
      roue-initiales.js ; empreintes réactualisées.
      v579 : config.js et portail.html refusent la barre mobile sur la page du
-     portail (captcha Cloudflare) ; empreintes réactualisées. */
+     portail (captcha Cloudflare) ; empreintes réactualisées.
+     v581 : acces.js borne chaque session à 3 h (temps affiché à l'élève) et
+     admin.js plafonne les durées du tableau de bord, filtre les vidéos
+     décoratives et normalise les noms de quiz ; empreintes réactualisées. */
   const originaux = {
     'assets/js/config.js': 'dbe14a6d66e869a2431d2184d7ce597385c75292bb6c5f7862a63a0131a1dad4',
     'assets/js/supabase-umd.js': '2eebfe06b1b5309985dc1526e8981ea3a18b71beeef83e7f38e04c303e142d6d',
-    'assets/js/acces.js': 'a127d66572e4a59c036fefbf2975178fea5cce6f518a7014fdd0424d970630cc',
+    'assets/js/acces.js': '8f16495b58d4413477fb137f998095239498ff478f9d72a5bb6f2c8f4d1da137',
     'assets/js/sync-progressions.js': 'c6e36a6f0ebea5e481cfb1b16afb9c0cfefc595ed4de21a1becff5a096d327b6',
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
     'portail.html': '7ea8179bed2a6eac89f6852352c224d83b34d2215cfb6f6acf9d01b657a03ad1',
@@ -196,8 +199,11 @@ test('commandes d’administration : scripts et fonctions de la barre PC inchang
      v560 : le tableau de bord bascule tout seul les photos restées en base64
      vers le bucket privé (5 au plus par ouverture).
      v562 : l'avatar retombe sur les initiales si le fichier de la photo a
-     disparu du bucket ; empreinte réactualisée. */
-  assert.equal(sha('assets/js/admin.js'), '256939c3096e7c27f59c749c430ad7f9dad1034e95d78a181261b3d875deb901');
+     disparu du bucket ; empreinte réactualisée.
+     v581 : audit du tableau de bord (durées plafonnées à 3 h par session,
+     vidéos décoratives écartées du compteur, quiz ramenés à un seul nom et
+     notes toujours affichées sur 20) ; empreinte réactualisée. */
+  assert.equal(sha('assets/js/admin.js'), '8b2b2dd147c362b81a6c03ba9b85bf73ce154a096de9bcb9ba12f051af1e3236');
   assert.equal(sha('assets/js/rayonsx-surligneur.js'), '1b7fe2067629766ef4043fa3060199b71124d8486e36d92aaac0b45bd861847c');
   const protection = lire('assets/js/protection.js');
   const debut = protection.indexOf('  function estAppareilPC()');
