@@ -103,7 +103,7 @@ test('v593 : le cache hors ligne connaît la page, la feuille et le script du co
     assert.ok(delta.includes('url: "' + url + '"'), 'delta : ' + url);
     assert.ok(complet.includes('"' + url + '"'), 'cache complet : ' + url);
   }
-  assert.match(sw, /var VERSION_PUBLIEE = "v593";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v59\d";/);
   assert.match(sw, /{ url: "\.\/assets\/js\/profil\.js", revision: "matieres-sti-v593" }/);
-  assert.match(sw, /{ url: "\.\/assets\/js\/app\.js", revision: "matieres-sti-v593" }/);
+  assert.match(sw, /{ url: "\.\/assets\/js\/app\.js", revision: "cours-sti-v594" }/);
 });

@@ -189,6 +189,9 @@
       id: "sti",
       nom: "Systèmes & Internet",
       icone: "🖥️",
+      /* v594 : logo fourni par le professeur (loupe sur les réseaux, le cloud
+         et la clé) — il remplace l'émoji dans le tableau de bord et les cartes. */
+      image: "assets/images/systemes-technologies-internet-96.png",
       badgeClasse: "badge-sti",
       couleur: "#22d3ee",
       nbVideos: 1,
@@ -2188,7 +2191,9 @@
         return (
           '<div class="dash-row">' +
             '<div style="display:flex;align-items:center;gap:10px">' +
-              '<span style="font-size:1.3rem">' + m.icone + "</span>" +
+              (m.image
+                ? '<img src="' + pref + m.image + '" alt="" width="26" height="26" style="border-radius:7px;background:#fff;object-fit:cover;display:block">'
+                : '<span style="font-size:1.3rem">' + m.icone + "</span>") +
               "<div>" +
                 '<strong style="display:block">' + echapperHtml(m.nom) + "</strong>" +
                 '<div style="display:flex;gap:8px;font-size:.76rem;color:var(--text-muted);margin-top:2px">' +
@@ -2562,8 +2567,11 @@
     var lienActif = document.activeElement && document.activeElement.closest && document.activeElement.closest("[data-welcome-course]");
     var focusId = lienActif && zone.contains(lienActif) ? lienActif.getAttribute("data-welcome-course") : "";
     zone.innerHTML = cartes.map(function (c) {
+      var matiere = MATIERES[c.id] || {};
       return '<a class="welcome-course welcome-course--' + c.id + '" data-welcome-course="' + c.id + '" href="' + c.href + '">' +
-        '<span class="welcome-course__cover"><span class="welcome-course__icon" aria-hidden="true"><svg><use href="' + pref + 'assets/icons/matieres.svg#' + c.id + '"></use></svg></span></span>' +
+        '<span class="welcome-course__cover"><span class="welcome-course__icon" aria-hidden="true">' + (matiere.image
+          ? '<img src="' + pref + matiere.image + '" alt="" width="34" height="34" style="border-radius:8px;background:#fff;object-fit:cover;display:block">'
+          : '<svg><use href="' + pref + 'assets/icons/matieres.svg#' + c.id + '"></use></svg>') + '</span></span>' +
         '<span class="welcome-course__body"><strong class="welcome-course__title">' + echapperHtml(c.titre) + '</strong>' +
         '<span class="welcome-course__details">Cours · ' + c.consultes + ' / ' + c.total + ' chapitres consultés · Continuer →</span></span>' +
         '<span class="welcome-course__state">' + (c.revises ? c.revises + " / " + c.total + " révisés" : "Consulté") + '</span></a>';

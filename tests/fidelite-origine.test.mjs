@@ -165,12 +165,12 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
   }
   assert.doesNotMatch(delta, /"\.\/[^"\n]+\.(?:mp4|mp3|pdf|wasm)"/i);
   for (const chemin of ['assets/css/cours.css','assets/js/app.js','assets/js/cours-matieres.js','cours/html5.html','cours/css3.html','cours/javascript.html','cours/sql.html','cours/php.html']) {
-    const revision = chemin === 'assets/js/app.js' ? 'matieres-sti-v593'
+    const revision = chemin === 'assets/js/app.js' ? 'cours-sti-v594'
       : chemin === 'assets/css/cours.css' ? 'retrait-fond-cours-v508'
       : chemin === 'cours/css3.html' ? 'tp-transitions-v512'
       : chemin === 'cours/html5.html' ? 'sti-3si-v573'
-      : chemin === 'cours/javascript.html' ? 'quiz-sauvegarde-v590'
-      : chemin === 'cours/php.html' ? 'quiz-sauvegarde-v590'
+      : chemin === 'cours/javascript.html' ? 'cours-sti-v594'
+      : chemin === 'cours/php.html' ? 'cours-sti-v594'
       /* v563 : cours/sql.html reçoit la convention d'écriture d'un schéma. */
       : chemin === 'cours/sql.html' ? 'schema-notation-v563'
       : chemin.startsWith('cours/') ? 'retrait-fond-cours-v508' : 'progression-chapitres-v492';
