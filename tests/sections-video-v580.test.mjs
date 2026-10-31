@@ -93,7 +93,7 @@ test('v580 : boutons utilisables au clavier, sur téléphone et à l’impressio
 });
 
 test('v580 : la feuille du cours est versionnée et suit les sections', () => {
-  assert.ok(PAGE.includes('cours-sti.css?v=580'), 'la feuille est appelée avec sa nouvelle version');
+  assert.ok(PAGE.includes('cours-sti.css?v=591'), 'la feuille est appelée avec sa nouvelle version (v591 : audio du cours)');
   const sw = lire('sw.js');
-  assert.match(sw, /url: "\.\/assets\/css\/cours-sti\.css", revision: "sti-sections-v580"/);
+  assert.match(sw, /url: "\.\/assets\/css\/cours-sti\.css", revision: "sti-audio-v591"/);
 });

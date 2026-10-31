@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-10-31T11:25:27Z",
+  "generatedAt": "2026-10-31T11:36:49Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 757,
-  "totalBytes": 1110766585,
+  "totalFiles": 760,
+  "totalBytes": 1113704523,
   "files": [
     {
       "path": "404.html",
@@ -62,13 +62,28 @@
     },
     {
       "path": "README.md",
-      "bytes": 62882,
-      "gitSha": "41da4c606fdd228c2d9597a5120a04d198d60da0"
+      "bytes": 62980,
+      "gitSha": "18e347935d22a083d97de2bb1038df8717467c68"
     },
     {
       "path": "admin.html",
       "bytes": 346703,
       "gitSha": "0e63c4e7dc80833f423c489f126c1ad0f67ea92e"
+    },
+    {
+      "path": "assets/audio/cours-sti-ch1.mp3",
+      "bytes": 1011897,
+      "gitSha": "ab90863f1221a9bea4ade1a19ea21f0f0c21884c"
+    },
+    {
+      "path": "assets/audio/cours-sti-ch2.mp3",
+      "bytes": 1111998,
+      "gitSha": "605af995f90680b970a8e88dfbf66e850a23f3d9"
+    },
+    {
+      "path": "assets/audio/cours-sti-ch3.mp3",
+      "bytes": 810231,
+      "gitSha": "a8648363b64131ed466f8ccc05a7e178a468ea9d"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -217,8 +232,8 @@
     },
     {
       "path": "assets/css/cours-sti.css",
-      "bytes": 8009,
-      "gitSha": "f474fb952191b77822fadf6ea98942d685908288"
+      "bytes": 8600,
+      "gitSha": "4ca3452bd0ed8b7e62e444a50b308c3938a56074"
     },
     {
       "path": "assets/css/cours.css",
@@ -1407,8 +1422,8 @@
     },
     {
       "path": "cours/systemes-technologies-internet.html",
-      "bytes": 64126,
-      "gitSha": "ee7da979f68c6f6a5e338425a2a447a1f9f15ae5"
+      "bytes": 67141,
+      "gitSha": "ed93adff31094af3a106d8bee71aac8d0d4b938d"
     },
     {
       "path": "cssanimee/cours.js",
@@ -3787,8 +3802,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 100974,
-      "gitSha": "72817f6c2edf97e60b606ba5f8ea3b1431d2be34"
+      "bytes": 101082,
+      "gitSha": "ffe70d9674b7be6e5885560704c0161252f167c0"
     }
   ]
 }

@@ -227,3 +227,20 @@ details.sti-correction ul { margin: 0 0 0 1.1em; }
 @media (prefers-reduced-motion: reduce) {
   .sti-section, .sti-section:hover, .sti-section:focus-visible { transition: none; transform: none; }
 }
+
+/* ─── v591 : le cours lu à voix haute ─────────────────────────────────────── */
+.sti-audio-cours audio {
+  width: 100%;
+  margin: var(--space-2, 8px) 0 var(--space-3, 12px);
+}
+.sti-audio-cours .source-btn[aria-pressed="true"] {
+  background: var(--accent-gold-soft, #fdf3d8);
+  border-color: var(--accent-gold-border, #d9b64a);
+  color: var(--accent-gold, #8a6d1f);
+  font-weight: 700;
+}
+.sti-audio-statut {
+  font-size: .86rem;
+  color: var(--text-muted, #5a5244);
+  margin: var(--space-2, 8px) 0 0;
+}

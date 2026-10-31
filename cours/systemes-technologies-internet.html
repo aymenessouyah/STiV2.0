@@ -17,7 +17,7 @@
   <link rel="manifest" href="../manifest.webmanifest">
   <link rel="stylesheet" href="../assets/css/theme.css">
   <link rel="stylesheet" href="../assets/css/cours.css">
-  <link rel="stylesheet" href="../assets/css/cours-sti.css?v=580">
+  <link rel="stylesheet" href="../assets/css/cours-sti.css?v=591">
   <link rel="stylesheet" href="../assets/css/protection.css?v=227">
   <!-- Dépendances de l’accès conservées telles quelles et exécutées dans cet ordre. -->
   <script src="../assets/js/config.js?v=479" defer></script>
@@ -106,6 +106,7 @@
               <a class="btn btn-course-primary" href="#introduction">📖 Commencer le cours</a>
               <a class="btn btn-secondary" href="#evaluation">📝 Aller à l’évaluation</a>
               <a class="btn btn-secondary" href="#video-cours" data-video-open="cours-sti">🎬 Voir la vidéo du cours</a>
+              <a class="btn btn-secondary" href="#audio-cours">🔊 Écouter le cours</a>
               <a class="hero-annexe-link" href="../livre-smart.html?livre=3si-2026&amp;page=5">📖 Ouvrir les pages 5 à 13 du manuel ↗</a>
             </div>
             <div class="course-hero__facts"><span>▦ 3 chapitres</span><span>✦ Activités corrigées</span><span>📝 Évaluation sur 10 points</span></div>
@@ -249,6 +250,24 @@
         </div>
       </div>
     </section>
+
+          <!-- v591 : le cours lu à voix haute, chapitre par chapitre (même voix que les capsules) -->
+          <section class="featured-video-card sti-audio-cours" id="audio-cours" aria-label="Le cours en audio">
+            <div class="featured-video-card__head">
+              <div><span class="video-label">COURS EN AUDIO · 3ÈME SI</span><h2>Systèmes, technologies et Internet <span>(à écouter)</span></h2></div>
+              <span class="badge" style="background:var(--accent-gold-soft);border:1px solid var(--accent-gold-border);color:var(--accent-gold)">🔊 3 chapitres</span>
+            </div>
+            <div class="featured-video-card__foot">
+              <p>Le cours lu à voix haute, chapitre par chapitre, avec la même voix que les capsules vidéo : pour réviser en marchant, dans le bus, ou quand on ne peut pas regarder l'écran.</p>
+              <audio id="stiCoursAudio" controls preload="metadata" src="../assets/audio/cours-sti-ch1.mp3" aria-label="Cours Systèmes, technologies et Internet en audio"></audio>
+              <div class="source-actions" role="group" aria-label="Choisir un chapitre audio">
+                <button type="button" class="source-btn" data-sti-audio="ch1" data-sti-titre="Chapitre 1 · Les systèmes d’exploitation" aria-pressed="true">Chapitre 1 · Systèmes</button>
+                <button type="button" class="source-btn" data-sti-audio="ch2" data-sti-titre="Chapitre 2 · Les réseaux informatiques" aria-pressed="false">Chapitre 2 · Réseaux</button>
+                <button type="button" class="source-btn" data-sti-audio="ch3" data-sti-titre="Chapitre 3 · L’Internet des objets" aria-pressed="false">Chapitre 3 · IoT</button>
+              </div>
+              <p class="sti-audio-statut" id="stiAudioStatut" aria-live="polite">Chapitre 1 · Les systèmes d’exploitation</p>
+            </div>
+          </section>
 
     <div id="cours" class="course-panel" data-course-panel="cours">
       <div class="container" style="padding-block:var(--space-6)">
@@ -774,5 +793,26 @@
   </main>
   <footer class="site-footer"><div class="container source-footer"><div><strong>STI V2.0 · Le web de A à Z</strong><p>Lycée Raféha · 3ème &amp; 4ème SI · Aymen Essouyah</p></div><nav aria-label="Liens utiles"><a href="../index.html">Accueil</a><a href="../livre-smart.html">📖 Livre connecté</a><a href="../cours/html5.html">🌐 Cours HTML5</a></nav></div></footer>
   <button type="button" id="back-to-top" class="back-to-top-fab" aria-label="Remonter en haut de la page" title="Haut de page">↑</button>
+  <script>
+    /* v591 : le cours en audio — un chapitre par bouton, reprise simple. */
+    (function () {
+      var audio = document.getElementById("stiCoursAudio");
+      if (!audio) return;
+      var statut = document.getElementById("stiAudioStatut");
+      var boutons = Array.prototype.slice.call(document.querySelectorAll("[data-sti-audio]"));
+      var fichiers = { ch1: "cours-sti-ch1.mp3", ch2: "cours-sti-ch2.mp3", ch3: "cours-sti-ch3.mp3" };
+      boutons.forEach(function (b) {
+        b.addEventListener("click", function () {
+          var id = b.getAttribute("data-sti-audio");
+          if (!fichiers[id]) return;
+          boutons.forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+          audio.src = "../assets/audio/" + fichiers[id];
+          if (statut) statut.textContent = b.getAttribute("data-sti-titre") || "";
+          var lecture = audio.play();
+          if (lecture && lecture.catch) lecture.catch(function () {});
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
