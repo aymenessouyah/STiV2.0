@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-10-31T10:05:22Z",
+  "generatedAt": "2026-10-31T10:12:38Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 757,
-  "totalBytes": 1110708137,
+  "totalBytes": 1110708752,
   "files": [
     {
       "path": "404.html",
@@ -907,8 +907,8 @@
     },
     {
       "path": "assets/js/roue-couverture.js",
-      "bytes": 13067,
-      "gitSha": "94128160d85595038b361cc301fe7f8dccb5f065"
+      "bytes": 13682,
+      "gitSha": "69f9f33453705b9ee2038e0235fa8055b1ce1f43"
     },
     {
       "path": "assets/js/roue-habillage.js",
@@ -3788,7 +3788,7 @@
     {
       "path": "sw.js",
       "bytes": 100229,
-      "gitSha": "a2cc543c497c40d309332d6fb23f5a4d934c89dd"
+      "gitSha": "1d5517d916b14aecf3698a8d197186f015cb8f56"
     }
   ]
 }

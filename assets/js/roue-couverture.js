@@ -70,12 +70,18 @@
      hors-ligne ; plus aucun total codé à la main. Drapeau lisible : __STI_COUV_SOURCE. */
   var MAP = {};
   var L = [];
+  /* v586 : le dénominateur est le nombre de pages du site (145), pas le nombre de
+     chemins distincts après passage en minuscules (142). Trois paires de fichiers ne
+     diffèrent que par la casse : elles restent deux pages au total, mais une seule
+     visite possible. Sans cela l'anneau annonçait « /142 » là où le tableau de bord
+     annonce « /145 ». */
+  var TOTAL = PAGES.length;
   for (var i0 = 0; i0 < PAGES.length; i0++) {
     var k0 = String(PAGES[i0]).toLowerCase();
     if (!MAP[k0]) { MAP[k0] = 1; L.push(k0); }
   }
   PAGES = L;
-  var TOTAL = PAGES.length;
+  window.__STI_COUV_TOTAL = TOTAL;
   window.__STI_COUV_SOURCE = "liste embarquée (repli)";
   var CLE = "sti-pages-vues-v432";
 
@@ -107,7 +113,7 @@
     if (raw === dernierRawCouv) return dernierCalcCouv;
     var l = raw ? (function () { try { return JSON.parse(raw) || {}; } catch (e2) { return {}; } })() : {};
     var n = 0;
-    for (var i = 0; i < TOTAL; i++) if (l[PAGES[i]]) n++;
+    for (var i = 0; i < PAGES.length; i++) if (l[PAGES[i]]) n++;
     dernierRawCouv = raw;
     dernierCalcCouv = { n: n, pct: Math.min(100, Math.round((n * 100) / TOTAL)) };
     return dernierCalcCouv;
@@ -142,7 +148,10 @@
       var s2 = String(j.pages[i]).toLowerCase();
       if (!set[s2]) { set[s2] = 1; out.push(s2); }
     }
-    PAGES = out; MAP = set; TOTAL = out.length;
+    /* v586 : total = nombre de pages déclarées par le manifeste (doublons de casse
+       compris), pour le même dénominateur que le tableau de bord. */
+    PAGES = out; MAP = set; TOTAL = j.pages.length;
+    window.__STI_COUV_TOTAL = TOTAL;
     dernierRawCouv = null;
     window.__STI_COUV_MANIFEST = true;
     window.__STI_COUV_SOURCE = "manifeste du build";

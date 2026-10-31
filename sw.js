@@ -197,7 +197,7 @@ var UPDATE_FILES = [
   { url: "./exercices/html-css/tp-formulaire-tableau-autre/drapeau.png", revision: "tp-formulaire-v502" },
   { url: "./exercices/html-css/tp-evenements-liens/drapeau.png", revision: "tp-evenements-v500" },
   { url: "./ma-fiche-revision.html", revision: "fidelite-origine-v481" },
-  { url: "./assets/js/roue-couverture.js", revision: "couverture-v583", bootstrapBySize: true, bytes: 13067, sha256: "80c1e67537154e84068cb860c636cb6ebbf631ac59c81785ca202da3b48e0a1e" },
+  { url: "./assets/js/roue-couverture.js", revision: "couverture-v586", bootstrapBySize: true, bytes: 13682, sha256: "20883b3c409e9cc1d8806d42adfe02c518deb44e940064a22bee884bb483a062" },
   { url: "./assets/js/roue-revision.js", revision: "tp-train-v523" },
   { url: "./assets/js/roue-plan.js", revision: "perf-fluide-v473" },
   { url: "./assets/js/sync-progressions.js", revision: "pastille-sync-v534" },
