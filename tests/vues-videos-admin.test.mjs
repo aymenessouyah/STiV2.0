@@ -468,12 +468,12 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
     'assets/js/reprendre.js']) {
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${REV}"`), chemin);
   }
-  assert.ok(delta.includes('url: "./admin.html", revision: "export-drive-v603"'),
+  assert.ok(delta.includes('url: "./admin.html", revision: "compteurs-diag-v605"'),
     'la page d’administration repart au lot v585 (Smart Book 3SI à 81 pages)');
   assert.ok(delta.includes('url: "./assets/js/admin-vues-videos.js", revision: "cours-sti-v578"'),
     'le coin des vues repart au lot v549');
   assert.match(delta, /url: "\.\/assets\/js\/sync-progressions\.js", revision: "pastille-sync-v534"/);
-  assert.match(delta, /url: "\.\/offline-complete-manifest\.json", revision: "cercle-carte-v604"/);
+  assert.match(delta, /url: "\.\/offline-complete-manifest\.json", revision: "compteurs-diag-v605"/);
   /* Budget du delta préservé : le module entre dans la liste, une annexe figée en sort. */
   const urls = [...delta.matchAll(/url:\s*"([^"]+)"/g)].map((m) => m[1]);
   assert.equal(new Set(urls).size, urls.length, 'aucun doublon');

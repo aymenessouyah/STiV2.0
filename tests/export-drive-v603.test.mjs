@@ -179,10 +179,10 @@ test('v603 : le script Apps Script accepte une archive enrichie', () => {
 });
 
 test('v603 : la livraison hors ligne embarque le module', () => {
-  assert.match(SW, /var VERSION_PUBLIEE = "v604";/);
+  assert.match(SW, /var VERSION_PUBLIEE = "v605";/);
   assert.match(SW, /url: "\.\/assets\/js\/export-drive\.js", revision: "export-drive-v603"/);
   assert.match(SW, /url: "\.\/assets\/js\/sauvegarde\.js", revision: "export-drive-v603"/);
-  assert.match(SW, /url: "\.\/admin\.html", revision: "export-drive-v603"/);
+  assert.match(SW, /url: "\.\/admin\.html", revision: "compteurs-diag-v605"/);
   assert.ok(MANIFESTE.files.some(f => f.path === 'assets/js/export-drive.js'),
     'le module est décrit dans le manifeste hors-ligne');
 });
