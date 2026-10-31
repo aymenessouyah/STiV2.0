@@ -226,7 +226,7 @@ test('la capsule est dans le paquet hors-ligne et versionnée', () => {
   assert.ok(sw.includes(`"./assets/subtitles/DateJS-fr-v565.vtt"`), 'VTT hors-ligne');
   /* v573 : l'accueil et le livre connecté repartent au lot « 3ème SI 2026 ». */
   const REV_PAGES = { './index.html': 'cours-sti-v596', './cours/javascript.html': 'cours-sti-v595',
-    './cours/php.html': 'cours-sti-v595', './assets/js/app.js': 'cours-sti-v596' };
+    './cours/php.html': 'cours-sti-v595', './assets/js/app.js': 'accueil-mobile-v599' };
   const attendu = (page) => REV_PAGES[page] || 'cours-sti-v578';
   for (const page of ['./index.html', './cours/javascript.html', './assets/js/app.js',
     './assets/js/protection.js', './assets/js/lecteur-commun.js',

@@ -102,7 +102,7 @@ test('hors ligne : révisions, médias et empreintes des ressources JavaScript',
     const actualises = ['assets/js/cours-javascript.js', 'assets/js/dialogues-compat.js', 'projets/fleurs/controle.js', 'projets/carte-bancaire/controle.js'];
     /* v521 : ces pages ont reçu leur meta description après le lot de fidélité v481. */
     const pagesMetaV521 = ['exercices/javascript/js-37-defis-tt.html', 'projets/fleurs/index.html', 'projets/fleurs/inscription.html', 'projets/formulaire-inscription/cvFleurs.html', 'projets/carte-bancaire/cb.html'];
-    const revision = path === 'assets/js/app.js' ? 'cours-sti-v596' :
+    const revision = path === 'assets/js/app.js' ? 'accueil-mobile-v599' :
       path === 'cours/javascript.html' ? 'cours-sti-v595' :
       path === 'assets/css/cours-javascript.css' ? 'barre-mobile-v532' :
       path === 'assets/js/cours-javascript.js' ? 'progression-chapitres-v492' :

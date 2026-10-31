@@ -2625,8 +2625,39 @@
   }
 
   /* 12. Initialisation */
+  /* v599 : un panneau d'outil PC (« Console JS », « Deux vues ») rétrécit la page
+     à 76 % ou 62 % de sa largeur tant qu'il est ouvert. S'il se referme par un
+     chemin imprévu (retour arrière, changement de page, nettoyage du DOM), la
+     largeur reste collée et, sur téléphone, tout le contenu s'arrête au trois
+     quarts de l'écran alors que la barre du bas occupe toute la largeur.
+     Ce garde-fou rend la page à sa largeur naturelle dès qu'aucun de ces deux
+     panneaux n'est présent. Le zoom volontaire des outils PC est conservé. */
+  function assainirLargeurDocument() {
+    var racine = document.documentElement;
+    if (!racine) return;
+    if (document.getElementById("sti-split-view-panel") || document.getElementById("sti-browser-console-panel")) return;
+    if (racine.style.width) racine.style.width = "";
+    if (racine.style.overflowX) racine.style.overflowX = "";
+    var corps = document.body;
+    if (!corps) return;
+    var largeurEcran = global.innerWidth || 0;
+    if (largeurEcran && largeurEcran <= 900 && corps.style.zoom && !document.getElementById("sti-pc-win-tools")) {
+      corps.style.zoom = "";
+    }
+  }
+
+  function surveillerLargeurDocument() {
+    assainirLargeurDocument();
+    global.addEventListener("pageshow", assainirLargeurDocument);
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden) assainirLargeurDocument();
+    });
+    global.addEventListener("resize", assainirLargeurDocument);
+  }
+
   function demarrerApplication() {
     if (redirigerAnciennePageExercices()) return;
+    surveillerLargeurDocument();
     estimerLectureCours();
     initialiserPageMatiereUnifiee();
     actualiserAccueilEtVisite();
