@@ -2273,6 +2273,7 @@
             "<div>" +
               "<div style='font-size:17px;font-weight:900'>FICHE CONSEIL DE CLASSE STI V2.0 — " + echHtml(titreCl + titreLy) + "</div>" +
               "<div style='font-size:11px;color:#334155;font-weight:700'>Prof. Aymen Essouyah · " + echHtml(lblPer) + " · Édité le " + echHtml(dateStr) + "</div>" +
+              "<div style='font-size:10px;color:#b45309;font-weight:800'>📅 " + echHtml(texteHistoriqueAccesAdmin()) + "</div>" +
             "</div>" +
           "</div>" +
           "<img src='assets/images/qr-stiv2.png' alt='' style='width:44px;height:44px' />" +
@@ -2656,6 +2657,36 @@
     var act = cle === cleSemaine(new Date().toISOString()) ? " (cette semaine)" : "";
     return "Sem. du " + fmt(lun) + " au " + fmt(dim) + act;
   }
+
+  /* ---------- v582 : jusqu'où remonte l'historique des connexions ----------
+     Sur la base réelle, la table `acces` a été vidée autour du 25/10/2026 : les
+     compteurs de connexions, de durée et de pages ne peuvent pas remonter
+     avant. Plutôt que de laisser croire qu'un élève n'a jamais travaillé, on
+     écrit la date de départ de l'historique partout où un chiffre peut être lu
+     comme un total (tableau, fiche élève, bilan A4, exports CSV). */
+  function datePremiereActiviteAdmin(liste) {
+    var min = null;
+    (liste || []).forEach(function (a) {
+      var t = new Date(a && a.debut).getTime();
+      if (!isNaN(t) && (min === null || t < min)) min = t;
+    });
+    return min;
+  }
+  function fmtDateCourteAdmin(ts) {
+    var d = new Date(ts);
+    if (isNaN(d.getTime())) return "—";
+    return ("0" + d.getDate()).slice(-2) + "/" + ("0" + (d.getMonth() + 1)).slice(-2) + "/" + d.getFullYear();
+  }
+  function texteHistoriqueAccesAdmin() {
+    var t = datePremiereActiviteAdmin(acces);
+    var charge = (accesBrutsAdmin || []).length;
+    var total = Number(window.__stiCountAcces) || charge;
+    var portee = total > charge ? " (" + charge + " dernières activités chargées sur " + total + ")" : "";
+    if (t === null) return "aucune connexion enregistrée" + portee;
+    return "historique depuis le " + fmtDateCourteAdmin(t) + portee;
+  }
+  window.__stiTexteHistoriqueAccesAdmin = texteHistoriqueAccesAdmin;
+  window.__stiDatePremiereActiviteAdmin = datePremiereActiviteAdmin;
 
   function lireCacheSessAdmin() {
     try {
@@ -3728,10 +3759,13 @@
   function ouvrirDbCacheAdmin() {
     return new Promise(function (resolve, reject) {
       if (!("indexedDB" in window)) { reject(new Error("IndexedDB indisponible")); return; }
-      var req = indexedDB.open(DB_CACHE_ADMIN, 1);
+      /* v582 : version 2 — second magasin pour les copies du journal `acces`
+         prises avant chaque suppression (l'ancien restait en version 1). */
+      var req = indexedDB.open(DB_CACHE_ADMIN, 2);
       req.onupgradeneeded = function () {
         var db = req.result;
         if (!db.objectStoreNames.contains("snapshots")) db.createObjectStore("snapshots");
+        if (!db.objectStoreNames.contains("sauvegardes")) db.createObjectStore("sauvegardes");
       };
       req.onsuccess = function () { resolve(req.result); };
       req.onerror = function () { reject(req.error || new Error("IndexedDB inaccessible")); };
@@ -3763,6 +3797,59 @@
       /* Secours pour les très anciens navigateurs uniquement. */
       try { localStorage.setItem("sti-admin-cache", JSON.stringify(snapshot)); } catch (e) {}
     });
+  }
+
+  /* ---------- v582 : copies locales du journal des connexions ----------
+     Avant chaque suppression, le tableau de bord dépose une copie du journal
+     dans le navigateur (magasin « sauvegardes ») en plus du fichier JSON
+     téléchargé et de la copie serveur (RPC admin_sauvegarder_acces). C'est ce
+     qui permet de proposer « Réimporter un instantané local ». */
+  function ecrireSauvegardeAccesLocaleAdmin(copie) {
+    if (!copie || !copie.cle) return Promise.resolve(false);
+    return ouvrirDbCacheAdmin().then(function (db) {
+      return new Promise(function (resolve) {
+        var tx = db.transaction("sauvegardes", "readwrite");
+        tx.objectStore("sauvegardes").put(copie, String(copie.cle));
+        tx.oncomplete = function () { db.close(); resolve(true); };
+        tx.onerror = function () { db.close(); resolve(false); };
+      });
+    }).catch(function () { return false; });
+  }
+
+  function lireSauvegardesAccesLocalesAdmin() {
+    return ouvrirDbCacheAdmin().then(function (db) {
+      return new Promise(function (resolve) {
+        var tx = db.transaction("sauvegardes", "readonly");
+        var req = tx.objectStore("sauvegardes").getAll();
+        req.onsuccess = function () { resolve(Array.isArray(req.result) ? req.result : []); };
+        req.onerror = function () { resolve([]); };
+        tx.oncomplete = function () { db.close(); };
+      });
+    }).catch(function () { return []; });
+  }
+
+  /* Les lignes d'un instantané du tableau de bord, réduites aux colonnes
+     réimportables (l'identifiant d'origine n'est pas repris : la base en
+     attribue un neuf, et l'idempotence se joue sur user_id/debut/page). */
+  function lignesAccesDepuisListeAdmin(liste) {
+    if (!Array.isArray(liste)) return [];
+    var vues = {};
+    var sortie = [];
+    liste.forEach(function (a) {
+      if (!a || !a.user_id || !a.debut || !a.page) return;
+      var cle = a.user_id + "|" + a.debut + "|" + a.page;
+      if (vues[cle]) return;
+      vues[cle] = true;
+      sortie.push({
+        user_id: a.user_id,
+        debut: a.debut,
+        fin: a.fin || null,
+        duree_sec: a.duree_sec != null ? Number(a.duree_sec) : null,
+        lieu: a.lieu || null,
+        page: a.page
+      });
+    });
+    return sortie;
   }
 
   function initialiserCacheAdminIndexedDb() {
@@ -5589,10 +5676,16 @@
     });
     var optTot = document.createElement("option");
     optTot.value = "*";
-    optTot.textContent = "Toutes les semaines (cumul)";
+    optTot.textContent = "🌍 Toutes les semaines (cumul)";
     selSemaine.appendChild(optTot);
     if (valPrec && (valPrec === "*" || semainesDispo.indexOf(valPrec) !== -1)) {
       selSemaine.value = valPrec;
+    } else {
+      /* v582 : par défaut, le tableau montre le cumul. Un élève qui n'a rien
+         fait cette semaine affichait « 0 connexion / 0 min » alors que son
+         travail restait enregistré ; la semaine se choisit maintenant
+         explicitement. */
+      selSemaine.value = "*";
     }
     majNoteCumulAcces();
   }
@@ -5627,7 +5720,7 @@
   window.__stiMajNoteCumulAdmin = majNoteCumulAcces;
 
   function dureePourAbonne(uid) {
-    var sk = selSemaine ? selSemaine.value : semainesDispo[0];
+    var sk = selSemaine ? selSemaine.value : "*";
     if (sk === "*") return dureesTotales[uid] || 0;
     return (dureesSemaine[sk] && dureesSemaine[sk][uid]) || 0;
   }
@@ -6060,7 +6153,8 @@
         "Scores Quiz / Bac",
         "Modules consultes",
         "Progression Videos & Audios",
-        "Inscrit le"
+        "Inscrit le",
+        "Historique connexions"
       ];
       var lignes = [entetes.join(";")];
       liste.forEach(function (p) {
@@ -6096,7 +6190,8 @@
           scTxt,
           mods,
           progCsvTxt,
-          fmtDate(p.cree_le)
+          fmtDate(p.cree_le),
+          texteHistoriqueAccesAdmin()
         ].map(function (v) {
           return '"' + String(v).replace(/"/g, '""') + '"';
         });
@@ -6163,6 +6258,15 @@
   }
 
   function rendAbonnes() {
+    /* v582 : l'en-tête de la colonne suit la période choisie (cumul par défaut). */
+    var thDureeAbonnes = document.querySelector("#wrap-table-abonnes thead th:nth-child(6)");
+    if (thDureeAbonnes) {
+      var enCumulAb = !selSemaine || selSemaine.value === "*";
+      thDureeAbonnes.textContent = enCumulAb ? "Durée (cumul)" : "Durée / semaine";
+      thDureeAbonnes.title = enCumulAb
+        ? "Temps actif cumulé depuis le début de l'historique (et part de la semaine en cours)"
+        : "Temps actif de la semaine choisie";
+    }
     majFiltreClasses();
     majBandeauEtCompteursClasse();
     var liste = obtenirListeFiltree();
@@ -6737,10 +6841,14 @@
       } else if (selSemaine && selSemaine.value === "*") {
         /* v581 : quand on choisit « Toutes les semaines », la colonne s'appelle
            toujours « Durée / semaine » alors qu'elle affiche le cumul. On le
-           dit dans la cellule, et on rappelle sur quoi il porte. */
+           dit dans la cellule, et on rappelle sur quoi il porte.
+           v582 : on affiche aussi la part de la semaine en cours, pour que
+           « 0 min cette semaine » ne se confonde pas avec « 0 min au total ». */
         var cumulSub = document.createElement("div");
         cumulSub.style.cssText = "font-size:10.5px;color:#5a5244;font-weight:700;margin-top:3px;";
-        cumulSub.textContent = "cumul toutes semaines · " + (counts[p.id] || 0) + " session(s)";
+        var secCetteSemaine = (dureesSemaine[cleSemaine(new Date().toISOString())] || {})[p.id] || 0;
+        cumulSub.textContent = "dont cette semaine : " + fmtDureeCumul(secCetteSemaine) +
+          " · " + (counts[p.id] || 0) + " session(s)";
         tdDur.appendChild(cumulSub);
       }
 
@@ -7103,6 +7211,7 @@
     var secSem = dureePourAbonne(p.id);
     var secTot = dureesTotales[p.id] || 0;
     var nbCon = counts[p.id] || 0;
+    var ficheEnCumul = !selSemaine || selSemaine.value === "*";
     var stQ = statsQuizPourUser(p.id);
     var mods = modulesConsultesPourUser(p.id);
     var msgsEl = collecterMessagesEleve(p.id);
@@ -7257,6 +7366,7 @@
             "<div style='font-size:16px;font-weight:900;color:#23201a;word-break:break-word'>" + echHtml(np) + "</div>" +
             "<div style='font-size:12px;color:#5a5244;font-weight:800'>🏛️ " + echHtml(lyceePropre(p)) + " · 🏫 <b>" + echHtml(p.classe || "—") + "</b></div>" +
             "<div style='font-size:11.5px;color:#7a6f5d;font-weight:700;margin-top:2px;word-break:break-word'>" + echHtml(ctc) + " · Inscrit le " + echHtml(fmtDate(p.cree_le)) + "</div>" +
+            "<div style='font-size:11px;color:#b45309;font-weight:800;margin-top:2px'>📅 Connexions : " + echHtml(texteHistoriqueAccesAdmin()) + "</div>" +
             "<div class='fiche-photo-actions'>" +
               "<button type='button' class='fiche-photo-btn' id='btn-fiche-upload-photo'>📷 " + (photoFicheVal ? "Photo / Recadrer" : "Ajouter photo") + "</button>" +
               "<button type='button' class='fiche-photo-btn' id='btn-fiche-carte-sti'>🪪 Carte STI V2.0</button>" +
@@ -7270,7 +7380,11 @@
         "</div>" +
       "</div>" +
       "<div class='fiche-kpis'>" +
-        "<div class='fiche-kpi'><small>⏱️ Temps (période)</small><b style='color:#d84315'>" + echHtml(fmtDureeCumul(secSem)) + "</b><span>Cumul total : " + echHtml(fmtDureeCumul(secTot)) + " (" + nbCon + " sess.)</span></div>" +
+        "<div class='fiche-kpi'><small>⏱️ Temps (" + (ficheEnCumul ? "cumul" : "période") + ")</small><b style='color:#d84315'>" + echHtml(fmtDureeCumul(secSem)) + "</b><span>" +
+          (ficheEnCumul
+            ? ("dont cette semaine : " + echHtml(fmtDureeCumul((dureesSemaine[cleSemaine(new Date().toISOString())] || {})[p.id] || 0)) + " · " + nbCon + " sess.)")
+            : ("Cumul total : " + echHtml(fmtDureeCumul(secTot)) + " (" + nbCon + " sess.)")) +
+          "</span></div>" +
         "<div class='fiche-kpi'><small>🏆 Moyenne Quiz / Bac</small><b style='color:#177245'>" + (stQ.moyenne20 != null ? (stQ.moyenne20 + " / 20") : "—") + "</b><span>" + stQ.nbQuizDifferents + " quiz visité(s) · " + stQ.nb + " épreuve(s) passée(s)</span></div>" +
         "<div class='fiche-kpi'><small>📄 Pages · Cours · Exos</small><b style='color:#0f766e'>" + bilanSuiviCompletEleve(p).nbPages + " / 124 p.</b><span>📚 " + bilanSuiviCompletEleve(p).nbCours + " cours · ✏️ " + bilanSuiviCompletEleve(p).nbExos + " exo(s)</span></div>" +
         "<div class='fiche-kpi'><small>🎬 Vidéos · 🔊 Audios · 💬 Msg</small><b>🎬 " + echHtml(bilFiche.resumeCourtVid) + "</b><span>🔊 " + echHtml(bilFiche.resumeCourtAud) + " · 💬 " + msgsEl.length + " msg</span></div>" +
@@ -7515,6 +7629,7 @@
         '"Compte Gold";"' + (estGold(p) ? "OUI" : "NON") + '"',
         '"Duree periode";"' + fmtDureeCumul(dureePourAbonne(p.id)) + '"',
         '"Duree cumulee";"' + fmtDureeCumul(dureesTotales[p.id] || 0) + '"',
+        '"Historique des connexions";"' + texteHistoriqueAccesAdmin().replace(/"/g, '""') + '"',
         '"Pages vues (/124)";"' + suivF.nbPages + '/124"',
         '"Cours consultes";"' + suivF.nbCours + '"',
         '"Exercices travailles";"' + suivF.nbExos + '"',
@@ -7935,6 +8050,8 @@
         wrapVoirPlusAcces.style.display = "none";
       }
     }
+    /* v582 : dire jusqu'où remonte l'historique, à chaque rafraîchissement. */
+    majNoteHistoriqueAccesAdmin();
   }
 
   /* ---------- Suppression des Dernières connexions par mois cible ---------- */
@@ -7957,7 +8074,187 @@
     var lib = ym === "*" ? "Tous les mois" : libelleMois(ym);
     resumePurgeAcces.innerHTML =
       "<span>📅 <strong>" + lib + "</strong></span>" +
-      "<span style='color:#c0392b'>🗑️ <strong>" + nb + " connexion(s)</strong> à supprimer</span>";
+      "<span style='color:#c0392b'>🗑️ <strong>" + nb + " connexion(s)</strong> à supprimer</span>" +
+      "<span style='flex:1 1 100%;color:#7a6f5d;font-size:11.5px;font-weight:700;margin-top:2px'>🛡️ Une copie de ces lignes est d'abord enregistrée : base (sauvegarde serveur), fichier JSON téléchargé et navigateur. Sans copie, la suppression est refusée.</span>";
+  }
+
+  /* ---------- v582 : outillage de sauvegarde / restauration du journal ---------- */
+  function telechargerJsonAdmin(nomFichier, donnees) {
+    try {
+      var blob = new Blob([JSON.stringify(donnees, null, 2)], { type: "application/json" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = nomFichier;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
+      return true;
+    } catch (e) { return false; }
+  }
+
+  function nomFichierSauvegardeAccesAdmin(ym) {
+    var d = new Date();
+    var jour = d.getFullYear() + ("0" + (d.getMonth() + 1)).slice(-2) + ("0" + d.getDate()).slice(-2);
+    var heure = ("0" + d.getHours()).slice(-2) + ("0" + d.getMinutes()).slice(-2);
+    return "STI_V2_connexions_" + (ym === "*" ? "tous_mois" : ym) + "_" + jour + "-" + heure + ".json";
+  }
+
+  /* Réimporte des lignes par paquets de 1 000 (le serveur plafonne à 20 000
+     lignes par appel et refuse tout doublon). */
+  function reimporterLignesAccesAdmin(lignes, origine) {
+    var total = { inseres: 0, ignores: 0 };
+    if (!lignes || !lignes.length) return Promise.resolve(total);
+    var paquets = [];
+    for (var i = 0; i < lignes.length; i += 1000) paquets.push(lignes.slice(i, i + 1000));
+    return paquets.reduce(function (p, paquet) {
+      return p.then(function () {
+        return sb.rpc("admin_reimporter_acces", { p_lignes: paquet }).then(function (r) {
+          if (r.error) throw r.error;
+          var res = r.data || {};
+          total.inseres += Number(res.inseres) || 0;
+          total.ignores += Number(res.ignores) || 0;
+        });
+      });
+    }, Promise.resolve()).then(function () {
+      msg("♻️ " + origine + " : " + total.inseres + " connexion(s) réinsérée(s), " +
+          total.ignores + " déjà présente(s) ou ignorée(s).", "ok");
+      if (total.inseres > 0) {
+        chargeAdminCompleteEnAttente = true;
+        charge(true, true);
+      }
+      return total;
+    });
+  }
+
+  function reimporterInstantaneLocalAccesAdmin() {
+    if (!navigator.onLine) {
+      msg("❌ Le réimport serveur exige une connexion Internet.", "err");
+      return;
+    }
+    Promise.all([lireCacheAdminIndexedDb(), lireSauvegardesAccesLocalesAdmin()]).then(function (res) {
+      var snap = res[0];
+      var copies = res[1] || [];
+      var lignes = [];
+      var details = [];
+      if (snap && Array.isArray(snap.tousAcces) && snap.tousAcces.length) {
+        var l1 = lignesAccesDepuisListeAdmin(snap.tousAcces);
+        lignes = lignes.concat(l1);
+        details.push("instantané du " + fmtDateCourteAdmin(snap.ts) + " (" + l1.length + ")");
+      }
+      copies.forEach(function (c) {
+        if (!c || !Array.isArray(c.lignes)) return;
+        var l2 = lignesAccesDepuisListeAdmin(c.lignes);
+        lignes = lignes.concat(l2);
+        details.push("copie du " + fmtDateCourteAdmin(c.ts) + " (" + l2.length + ")");
+      });
+      lignes = lignesAccesDepuisListeAdmin(lignes);
+      if (!lignes.length) {
+        msg("ℹ️ Aucun historique de connexions n'est conservé dans ce navigateur : rien à réimporter.", "err");
+        return;
+      }
+      msg("⏳ Réimport de " + lignes.length + " activité(s) — " + details.join(" · "), "ok");
+      reimporterLignesAccesAdmin(lignes, "Instantané local").catch(function (e) {
+        msg("❌ Réimport refusé : " + ((e && e.message) || "vérifiez la double authentification"), "err");
+      });
+    });
+  }
+
+  function afficherModalSauvegardesAccesAdmin(liste) {
+    var ancien = document.getElementById("modal-sauvegardes-acces-v582");
+    if (ancien) ancien.remove();
+    var voile = document.createElement("div");
+    voile.id = "modal-sauvegardes-acces-v582";
+    voile.style.cssText = "position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:10000020;display:flex;align-items:center;justify-content:center;padding:16px";
+    var boite = document.createElement("div");
+    boite.style.cssText = "background:#fffdf7;color:#23201a;border:2.5px solid #23201a;border-radius:16px;box-shadow:6px 6px 0 #23201a;max-width:660px;width:100%;max-height:86vh;overflow:auto;padding:16px";
+
+    var titre = document.createElement("h3");
+    titre.style.cssText = "margin:0 0 6px;font-size:16px";
+    titre.textContent = "🗂️ Sauvegardes du journal des connexions";
+    var expl = document.createElement("p");
+    expl.style.cssText = "margin:0 0 10px;font-size:12px;color:#5a5244;font-weight:700";
+    expl.textContent = "Copies prises automatiquement avant chaque suppression (les dix plus récentes sont conservées). Restaurer une copie ne crée jamais de doublon.";
+    boite.appendChild(titre);
+    boite.appendChild(expl);
+
+    if (!liste.length) {
+      var vide = document.createElement("p");
+      vide.style.cssText = "font-size:12.5px;font-weight:800;color:#b45309;margin:10px 0";
+      vide.textContent = "Aucune sauvegarde serveur pour le moment.";
+      boite.appendChild(vide);
+    }
+
+    liste.forEach(function (s) {
+      var ligne = document.createElement("div");
+      ligne.style.cssText = "display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border:2px solid #23201a;border-radius:12px;padding:8px 10px;margin-bottom:8px;background:#fff";
+      var txt = document.createElement("div");
+      txt.style.cssText = "font-size:12px;font-weight:800;min-width:0";
+      var quand = s.cree_le ? new Date(s.cree_le).toLocaleString("fr-FR") : "—";
+      txt.textContent = "📅 " + quand + " · " + (s.mois === "*" ? "tous les mois" : (s.mois || "?")) +
+        " · " + (Number(s.nb_lignes) || 0) + " ligne(s) · " + (s.motif || "purge");
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "btn-outil";
+      btn.style.cssText = "background:#e3f6e8;border-color:#177245;color:#14532d;box-shadow:2px 2px 0 #177245";
+      btn.textContent = "♻️ Restaurer";
+      btn.addEventListener("click", function () {
+        demanderConfirmationOperation({
+          titre: "♻️ Restaurer cette sauvegarde ?",
+          htmlDesc: "Les <b>" + (Number(s.nb_lignes) || 0) + " ligne(s)</b> de la sauvegarde du <b>" + echHtml(quand) +
+            "</b> seront réinsérées. Les lignes déjà présentes sont ignorées : aucune duplication.",
+          resumeTxt: "🗂️ Sauvegarde n°" + s.id + " · " + (s.mois === "*" ? "tous les mois" : (s.mois || "?")),
+          danger: false,
+          btnLabel: "♻️ Restaurer",
+          onConfirmer: function () {
+            sb.rpc("admin_reimporter_sauvegarde_acces", { p_id: s.id }).then(function (r) {
+              if (r.error) throw r.error;
+              var res = r.data || {};
+              msg("♻️ Sauvegarde n°" + s.id + " restaurée : " + (Number(res.inseres) || 0) +
+                  " ligne(s) réinsérée(s), " + (Number(res.ignores) || 0) + " ignorée(s).", "ok");
+              if (Number(res.inseres) > 0) {
+                chargeAdminCompleteEnAttente = true;
+                charge(true, true);
+              }
+            }).catch(function (e) {
+              msg("❌ Restauration refusée : " + ((e && e.message) || "vérifiez la double authentification"), "err");
+            });
+          }
+        });
+      });
+      ligne.appendChild(txt);
+      ligne.appendChild(btn);
+      boite.appendChild(ligne);
+    });
+
+    var pied = document.createElement("div");
+    pied.style.cssText = "display:flex;justify-content:flex-end;gap:8px;margin-top:8px";
+    var btnFermer = document.createElement("button");
+    btnFermer.type = "button";
+    btnFermer.className = "btn-outil";
+    btnFermer.textContent = "✖ Fermer";
+    btnFermer.addEventListener("click", function () { voile.remove(); });
+    pied.appendChild(btnFermer);
+    boite.appendChild(pied);
+
+    voile.appendChild(boite);
+    voile.addEventListener("click", function (e) { if (e.target === voile) voile.remove(); });
+    document.body.appendChild(voile);
+  }
+
+  function ouvrirSauvegardesAccesAdmin() {
+    if (!navigator.onLine) {
+      msg("❌ La liste des sauvegardes exige une connexion Internet.", "err");
+      return;
+    }
+    msg("⏳ Lecture des sauvegardes serveur…", "ok");
+    sb.rpc("admin_lister_sauvegardes_acces").then(function (r) {
+      if (r.error) throw r.error;
+      afficherModalSauvegardesAccesAdmin(Array.isArray(r.data) ? r.data : []);
+    }).catch(function (e) {
+      msg("❌ Liste indisponible : " + ((e && e.message) || "vérifiez la double authentification"), "err");
+    });
   }
 
   function remplirMoisPurge() {
@@ -8007,6 +8304,74 @@
       if (modalPurgeAcces) modalPurgeAcces.classList.remove("visible");
     });
   }
+  /* v582 : la suppression se fait en deux temps.
+     Premier clic : sauvegarde obligatoire (serveur + fichier JSON + navigateur),
+     puis une confirmation explicite qui exige la double authentification.
+     Si la copie serveur échoue ou revient vide, rien n'est supprimé. */
+  function executerPurgeAccesAdmin(ym, lib, ciblesChargees) {
+    if (!cfgEcoles.purgesMois || typeof cfgEcoles.purgesMois !== "object") cfgEcoles.purgesMois = {};
+    cfgEcoles.purgesMois[ym] = Date.now();
+    sauvegarderCfgEcoles();
+
+    var suppression = sb.from("acces").delete()
+      .neq("page", "PROG_MEDIA").neq("page", "CFG_ECOLES")
+      .neq("page", "SEC_CONFIG")
+      .neq("page", "SUPPR_ACCES")
+      .neq("page", "TABLEAU_BLANC")
+      .not("page", "like", "QUIZ:%")
+      .not("page", "like", "MSG_%")
+      .not("page", "like", "CTRL_%")
+      .not("page", "like", "FLASH_%")
+      .not("page", "like", "KAHOOT_%")
+      .not("page", "like", "COPIE_%")
+      .not("page", "like", "COFFRE_%");
+    if (ym === "*") {
+      suppression = suppression.gt("id", 0);
+    } else {
+      var morceaux = ym.split("-");
+      var an = parseInt(morceaux[0], 10);
+      var mois = parseInt(morceaux[1], 10) - 1;
+      var debutMois = new Date(an, mois, 1).toISOString();
+      var finMois = new Date(an, mois + 1, 1).toISOString();
+      suppression = suppression.gte("debut", debutMois).lt("debut", finMois);
+    }
+
+    if (btnConfirmerPurgeAcces) {
+      btnConfirmerPurgeAcces.disabled = true;
+      btnConfirmerPurgeAcces.textContent = "⏳ Suppression sécurisée…";
+    }
+    suppression.then(function (r) {
+      if (r.error) throw r.error;
+      var idsCharges = ciblesChargees.map(function (a) { return a.id; }).filter(Boolean);
+      var reste = accesBrutsAdmin.filter(function (a) {
+        var pgA = String((a && a.page) || "");
+        if (
+          pgA === "PROG_MEDIA" || pgA === "CFG_ECOLES" || pgA === "SEC_CONFIG" ||
+          pgA === "SUPPR_ACCES" || pgA === "TABLEAU_BLANC" ||
+          pgA.indexOf("QUIZ:") === 0 || pgA.indexOf("MSG_") === 0 ||
+          pgA.indexOf("CTRL_") === 0 || pgA.indexOf("FLASH_") === 0 ||
+          pgA.indexOf("KAHOOT_") === 0 || pgA.indexOf("COPIE_") === 0 ||
+          pgA.indexOf("COFFRE_") === 0
+        ) return true;
+        return ym === "*" ? false : (cleMois(a.debut) !== ym);
+      });
+      retirerAccesDuCacheAdmin(idsCharges);
+      var snap = sauvegarderSnapshotAdmin(profilsBrutsAdmin, reste, signauxCompatBrutAdmin);
+      appliquerDonneesAdmin(profilsBrutsAdmin, reste, signauxCompatBrutAdmin, false, snap.ts);
+      if (modalPurgeAcces) modalPurgeAcces.classList.remove("visible");
+      msg("🗑️ Connexions de " + lib + " supprimées côté serveur.", "ok");
+      chargeAdminCompleteEnAttente = true;
+      charge(true, true);
+    }).catch(function (e) {
+      msg("❌ Suppression refusée : " + ((e && e.message) || "vérifiez la MFA"), "err");
+    }).finally(function () {
+      if (btnConfirmerPurgeAcces) {
+        btnConfirmerPurgeAcces.disabled = false;
+        btnConfirmerPurgeAcces.textContent = "🗑️ Confirmer la suppression";
+      }
+    });
+  }
+
   if (btnConfirmerPurgeAcces) {
     btnConfirmerPurgeAcces.addEventListener("click", function () {
       if (!navigator.onLine) {
@@ -8016,65 +8381,101 @@
       var ym = selMoisPurge ? selMoisPurge.value : "*";
       var lib = ym === "*" ? "tous les mois" : libelleMois(ym);
       var ciblesChargees = connexionsDuMois(ym);
-      if (!cfgEcoles.purgesMois || typeof cfgEcoles.purgesMois !== "object") cfgEcoles.purgesMois = {};
-      cfgEcoles.purgesMois[ym] = Date.now();
-      sauvegarderCfgEcoles();
-
-      var suppression = sb.from("acces").delete()
-        .neq("page", "PROG_MEDIA").neq("page", "CFG_ECOLES")
-        .neq("page", "SEC_CONFIG")
-        .neq("page", "SUPPR_ACCES")
-        .neq("page", "TABLEAU_BLANC")
-        .not("page", "like", "QUIZ:%")
-        .not("page", "like", "MSG_%")
-        .not("page", "like", "CTRL_%")
-        .not("page", "like", "FLASH_%")
-        .not("page", "like", "KAHOOT_%")
-        .not("page", "like", "COPIE_%")
-        .not("page", "like", "COFFRE_%");
-      if (ym === "*") {
-        suppression = suppression.gt("id", 0);
-      } else {
-        var morceaux = ym.split("-");
-        var an = parseInt(morceaux[0], 10);
-        var mois = parseInt(morceaux[1], 10) - 1;
-        var debutMois = new Date(an, mois, 1).toISOString();
-        var finMois = new Date(an, mois + 1, 1).toISOString();
-        suppression = suppression.gte("debut", debutMois).lt("debut", finMois);
-      }
 
       btnConfirmerPurgeAcces.disabled = true;
-      btnConfirmerPurgeAcces.textContent = "⏳ Suppression sécurisée…";
-      suppression.then(function (r) {
-        if (r.error) throw r.error;
-        var idsCharges = ciblesChargees.map(function (a) { return a.id; }).filter(Boolean);
-        var reste = accesBrutsAdmin.filter(function (a) {
-          var pgA = String((a && a.page) || "");
-          if (
-            pgA === "PROG_MEDIA" || pgA === "CFG_ECOLES" || pgA === "SEC_CONFIG" ||
-            pgA === "SUPPR_ACCES" || pgA === "TABLEAU_BLANC" ||
-            pgA.indexOf("QUIZ:") === 0 || pgA.indexOf("MSG_") === 0 ||
-            pgA.indexOf("CTRL_") === 0 || pgA.indexOf("FLASH_") === 0 ||
-            pgA.indexOf("KAHOOT_") === 0 || pgA.indexOf("COPIE_") === 0 ||
-            pgA.indexOf("COFFRE_") === 0
-          ) return true;
-          return ym === "*" ? false : (cleMois(a.debut) !== ym);
-        });
-        retirerAccesDuCacheAdmin(idsCharges);
-        var snap = sauvegarderSnapshotAdmin(profilsBrutsAdmin, reste, signauxCompatBrutAdmin);
-        appliquerDonneesAdmin(profilsBrutsAdmin, reste, signauxCompatBrutAdmin, false, snap.ts);
-        if (modalPurgeAcces) modalPurgeAcces.classList.remove("visible");
-        msg("🗑️ Connexions de " + lib + " supprimées côté serveur.", "ok");
-        chargeAdminCompleteEnAttente = true;
-        charge(true, true);
-      }).catch(function (e) {
-        msg("❌ Suppression refusée : " + ((e && e.message) || "vérifiez la MFA"), "err");
-      }).finally(function () {
+      btnConfirmerPurgeAcces.textContent = "⏳ Sauvegarde obligatoire…";
+
+      var copie = {
+        cle: "purge-" + Date.now(),
+        ts: Date.now(),
+        motif: "avant purge " + ym,
+        mois: ym,
+        lignes: lignesAccesDepuisListeAdmin(ciblesChargees)
+      };
+      telechargerJsonAdmin(nomFichierSauvegardeAccesAdmin(ym), {
+        application: "STI V2.0",
+        nature: "sauvegarde du journal des connexions avant suppression",
+        mois: ym,
+        cree_le: new Date().toISOString(),
+        lignes: copie.lignes
+      });
+
+      Promise.all([
+        ecrireSauvegardeAccesLocaleAdmin(copie),
+        sb.rpc("admin_sauvegarder_acces", { p_motif: "purge tableau de bord", p_mois: ym })
+      ]).then(function (res) {
+        var rep = res[1];
+        if (rep && rep.error) throw rep.error;
+        var info = (rep && rep.data) || {};
+        var nbServeur = Number(info.nb_lignes) || 0;
+        if (nbServeur === 0 && ciblesChargees.length > 0) {
+          throw new Error("la copie serveur est vide");
+        }
         btnConfirmerPurgeAcces.disabled = false;
         btnConfirmerPurgeAcces.textContent = "🗑️ Confirmer la suppression";
+        demanderConfirmationOperation({
+          titre: "🗑️ Effacer les connexions de " + lib + " ?",
+          htmlDesc: "Vous allez supprimer <b>" + ciblesChargees.length + " connexion(s)</b> (" + echHtml(lib) + ")." +
+            "<br><br>🛡️ <b>Copie enregistrée avant de continuer :</b> " + nbServeur + " ligne(s) côté serveur" +
+            (info.id ? (" (sauvegarde n°" + info.id + ")") : "") +
+            ", un fichier JSON vient d'être téléchargé et une copie reste dans ce navigateur." +
+            "<br><br>La suppression est définitive ; la restauration se fait depuis « 🗂️ Sauvegardes ».",
+          resumeTxt: "📅 " + lib + " · 🗑️ " + ciblesChargees.length + " connexion(s) · 🛡️ " +
+            (info.id ? ("sauvegarde n°" + info.id) : "copie serveur incomplète"),
+          danger: true,
+          btnLabel: "🗑️ Supprimer définitivement",
+          onConfirmer: function () { executerPurgeAccesAdmin(ym, lib, ciblesChargees); }
+        });
+      }).catch(function (e) {
+        btnConfirmerPurgeAcces.disabled = false;
+        btnConfirmerPurgeAcces.textContent = "🗑️ Confirmer la suppression";
+        msg("❌ Suppression annulée : la sauvegarde préalable a échoué (" +
+            ((e && e.message) || "double authentification ?") + "). Aucune ligne n'a été effacée.", "err");
       });
     });
   }
+
+  /* ---------- v582 : réimport et sauvegardes, dans la section Connexions ---------- */
+  function majNoteHistoriqueAccesAdmin() {
+    var barre = document.getElementById("sec-dernieres-connexions");
+    if (!barre) return;
+    var note = document.getElementById("note-historique-acces");
+    if (!note) {
+      note = document.createElement("div");
+      note.id = "note-historique-acces";
+      note.style.cssText = "flex:1 1 100%;font-size:12px;font-weight:800;color:#7a6f5d;margin-top:2px";
+      barre.appendChild(note);
+    }
+    note.textContent = "📅 " + texteHistoriqueAccesAdmin() +
+      " — les compteurs de connexions, de durée et de pages ne peuvent pas remonter avant cette date.";
+  }
+  window.__stiMajNoteHistoriqueAccesAdmin = majNoteHistoriqueAccesAdmin;
+
+  (function initOutilsHistoriqueAccesAdmin() {
+    if (document.getElementById("btn-reimporter-acces")) return;
+    var ancre = btnOuvrirPurgeAcces && btnOuvrirPurgeAcces.parentNode;
+    if (!ancre) return;
+    var btnRe = document.createElement("button");
+    btnRe.type = "button";
+    btnRe.className = "btn-outil";
+    btnRe.id = "btn-reimporter-acces";
+    btnRe.title = "Réinsérer dans la base les connexions conservées dans ce navigateur (cache ou copie avant purge)";
+    btnRe.textContent = "♻️ Réimporter l'historique local";
+    btnRe.style.cssText = "background:#e3f6e8;border-color:#177245;color:#14532d;box-shadow:2px 2px 0 #177245";
+    btnRe.addEventListener("click", reimporterInstantaneLocalAccesAdmin);
+
+    var btnSv = document.createElement("button");
+    btnSv.type = "button";
+    btnSv.className = "btn-outil";
+    btnSv.id = "btn-sauvegardes-acces";
+    btnSv.title = "Consulter les copies du journal enregistrées dans la base et en restaurer une";
+    btnSv.textContent = "🗂️ Sauvegardes";
+    btnSv.addEventListener("click", ouvrirSauvegardesAccesAdmin);
+
+    ancre.insertBefore(btnSv, ancre.firstChild);
+    ancre.insertBefore(btnRe, ancre.firstChild);
+    majNoteHistoriqueAccesAdmin();
+  })();
 
   /* ---------- Point 8 : Tableau de suivi de lecture des messages + réponses & questions libres des élèves ---------- */
   var selSuiviMsg = document.getElementById("sel-suivi-msg");
