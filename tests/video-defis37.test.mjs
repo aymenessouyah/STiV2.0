@@ -145,7 +145,7 @@ test('le cache hors-ligne embarque la vidéo sans téléchargement automatique',
   /* v580 : le quiz STI ajoute 4 entrées au delta (268).
      v587 : capsules-vedettes.css, jusqu'ici sans révision propre, entre dans le
      delta (269) ; le plafond passe à 272 — une feuille de 12 Ko, pas un média. */
-  assert.ok(nbDelta <= 276, `delta trop long : ${nbDelta}`);
+  assert.ok(nbDelta <= 278, `delta trop long : ${nbDelta}`);
 });
 
 test('le manifeste complet décrit la vidéo et ses sous-titres', () => {

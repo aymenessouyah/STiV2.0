@@ -1,0 +1,217 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   STI V2.0 — Galerie des projets (v597)
+
+   Les réalisations des élèves et les projets du cours (carte bancaire, fleurs,
+   formulaire CAP, Tunisie Explorer, bureau de statistiques) n'étaient liés
+   depuis aucune page du site. Cette feuille habille leur vitrine.
+
+   Chaque carte porte une couleur propre (--projet-accent et ses dérivés), le
+   reste vient de theme.css : aucune couleur codée en dur, donc les trois modes
+   (clair, intermédiaire, sombre) sont respectés sans règle supplémentaire.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Grille de la galerie ── */
+.galerie {
+  display: grid;
+  gap: var(--space-5);
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  margin-top: var(--space-5);
+}
+
+.projet {
+  --projet-accent: var(--brand);
+  --projet-soft: var(--brand-soft);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-solid);
+  transition: transform var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) ease,
+              box-shadow var(--duration-fast) ease;
+}
+.projet:hover,
+.projet:focus-within {
+  transform: translateY(-3px);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+}
+
+/* Une couleur par projet, prise dans la palette des matières. */
+.projet--carte-bancaire { --projet-accent: var(--accent-js); --projet-soft: var(--accent-js-soft); }
+.projet--fleurs { --projet-accent: var(--accent-php); --projet-soft: var(--accent-php-soft); }
+.projet--formulaire { --projet-accent: var(--accent-html); --projet-soft: var(--accent-html-soft); }
+.projet--tunisie { --projet-accent: var(--accent-css); --projet-soft: var(--accent-css-soft); }
+.projet--sti0 { --projet-accent: var(--accent-gold); --projet-soft: var(--accent-gold-soft); }
+
+/* La signature du projet. Le bloc reste dans le HTML pour être rempli d'un
+   prénom sans toucher à la mise en page ; tant qu'il est vide, il est masqué. */
+.projet__auteur {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: .82rem;
+  color: var(--text-muted);
+}
+.projet__auteur strong { color: var(--text); font-weight: 700; }
+.projet__auteur[hidden] { display: none; }
+
+/* ── 2. L'aperçu dessiné ── */
+.projet__apercu {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+  aspect-ratio: 16 / 9;
+}
+.projet__apercu svg { display: block; width: 100%; height: 100%; }
+/* Le numéro d'ordre, discret, rappelle qu'on peut visiter dans l'ordre. */
+.projet__num {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: rgba(9, 14, 26, .62);
+  color: #f8fafc;
+  font: 800 .7rem/1.6 var(--font-mono);
+  letter-spacing: .06em;
+}
+
+/* ── 3. En-tête de la carte ── */
+.projet__entete { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.projet__techno {
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+  color: var(--text-secondary);
+  font: 700 .7rem/1.2 var(--font-mono);
+  letter-spacing: .02em;
+}
+.projet__niveau {
+  margin-inline-start: auto;
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--projet-accent);
+  background: var(--projet-soft);
+  color: var(--text);
+  font: 700 .7rem/1.2 var(--font-sans, system-ui, sans-serif);
+  white-space: nowrap;
+}
+
+.projet__titre { margin: 0; font-size: 1.12rem; line-height: 1.3; }
+.projet__resume { margin: 0; font-size: .9rem; color: var(--text-secondary); }
+
+/* ── 4. Ce qu'on y apprend ── */
+.projet__appris { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+.projet__appris li {
+  position: relative;
+  padding-inline-start: 18px;
+  font-size: .84rem;
+  color: var(--text-secondary);
+}
+.projet__appris li::before {
+  content: "▸";
+  position: absolute;
+  inset-inline-start: 2px;
+  color: var(--projet-accent);
+  font-weight: 800;
+}
+
+/* ── 5. Liens de la carte ── */
+.projet__liens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: var(--space-3);
+  border-top: 1px dashed var(--border);
+}
+.projet__lien {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 12px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--radius-full);
+  background: var(--bg-alt);
+  color: var(--text);
+  font-size: .8rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform var(--duration-fast) ease, background var(--duration-fast) ease;
+}
+.projet__lien:hover,
+.projet__lien:focus-visible {
+  background: var(--projet-soft);
+  border-color: var(--projet-accent);
+  transform: translateY(-1px);
+}
+.projet__lien--principal {
+  background: var(--projet-accent);
+  border-color: var(--projet-accent);
+  color: var(--text-inverse);
+}
+.projet__lien--principal:hover,
+.projet__lien--principal:focus-visible {
+  background: var(--projet-accent);
+  color: var(--text-inverse);
+  filter: brightness(1.08);
+}
+
+/* ── 6. Bandeau pédagogique de bas de page ── */
+.galerie-note {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  margin-top: var(--space-5);
+  padding: var(--space-4);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--bg-alt);
+  font-size: .89rem;
+  color: var(--text-secondary);
+}
+.galerie-note strong { color: var(--text); }
+.galerie-note .galerie-note__icone { font-size: 1.3rem; line-height: 1; }
+
+/* ── 7. Filtre par matière (boutons, sans JavaScript obligatoire) ── */
+.galerie-filtres { display: flex; flex-wrap: wrap; gap: 8px; margin-top: var(--space-4); }
+.galerie-filtre {
+  padding: 6px 13px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--radius-full);
+  background: var(--bg-alt);
+  color: var(--text-secondary);
+  font: 700 .8rem/1.2 inherit;
+  cursor: pointer;
+  transition: background var(--duration-fast) ease, color var(--duration-fast) ease;
+}
+.galerie-filtre:hover { background: var(--surface-hover); }
+.galerie-filtre[aria-pressed="true"] {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--brand-contrast);
+}
+/* Un projet masqué par le filtre disparaît sans laisser de trou dans la grille. */
+.projet[hidden] { display: none; }
+
+/* ── 8. Impression : une fiche par projet, sans décoration inutile ── */
+@media print {
+  .site-header, .site-footer, .back-to-top-fab, .reading-progress,
+  .galerie-filtres, .projet__apercu { display: none !important; }
+  .galerie { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .projet { break-inside: avoid; border: 1px solid #999; background: #fff; color: #000; }
+  .projet__resume, .projet__appris li, .projet__techno { color: #222; }
+}
+
+/* ── 9. Mouvement réduit ── */
+@media (prefers-reduced-motion: reduce) {
+  .projet, .projet__lien { transition: none; }
+  .projet:hover, .projet:focus-within { transform: none; }
+}
