@@ -12,7 +12,10 @@
   var LANGUES_VALIDES = { fr: true, en: true, ar: true };
   var TAILLES_VALIDES = { petite: true, normale: true, grande: true };
   var ETATS_CHAPITRE_VALIDES = { a_reviser: true, en_cours: true, revise: true };
-  var MATIERES_CLES = ["html5", "css3", "javascript", "sql", "php"];
+  /* v593 : « Systèmes, technologies et Internet » est un vrai cours de la
+     plateforme (3ème SI) : il doit compter comme les cinq autres, sinon il
+     n'apparaît ni dans « en cours » ni dans la progression par matière. */
+  var MATIERES_CLES = ["html5", "css3", "javascript", "sql", "php", "sti"];
 
   /* Les anciennes pages restent une source de visites, sans modifier leur journal. */
   var PAGES_COURS_HISTORIQUES = {
@@ -20,6 +23,7 @@
     css3: ["cours/css3.html", "cours/courscss3.html"],
     javascript: ["cours/javascript.html"],
     sql: ["cours/sql.html", "cours/sql-bases-ldd-lmd-lcd.html"],
+    sti: ["cours/systemes-technologies-internet.html"],
     php: ["cours/php.html", "cours/coursphp.html", "cours/php-mysqli.html"]
   };
 
@@ -68,28 +72,32 @@
         css3: false,
         javascript: false,
         sql: false,
-        php: false
+        php: false,
+        sti: false
       },
       chapitres: {
         html5: {},
         css3: {},
         javascript: {},
         sql: {},
-        php: {}
+        php: {},
+        sti: {}
       },
       exercicesFaits: {
         html5: [],
         css3: [],
         javascript: [],
         sql: [],
-        php: []
+        php: [],
+        sti: []
       },
       laboratoires: {
         html5: [],
         css3: [],
         javascript: [],
         sql: [],
-        php: []
+        php: [],
+        sti: []
       },
       quiz: [],
       videos: {
@@ -186,7 +194,8 @@
         css3: Boolean(prog.css3),
         javascript: Boolean(prog.javascript),
         sql: Boolean(prog.sql),
-        php: Boolean(prog.php)
+        php: Boolean(prog.php),
+        sti: Boolean(prog.sti)
       },
       chapitres: chapitresPropres,
       exercicesFaits: exosPropres,

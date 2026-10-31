@@ -19,7 +19,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);
   assert.equal(entrees.length, revisions.size, 'aucune URL de mise à jour en double');
   /* v520 : profil.js porte le plancher anti-recul des XP. */
-  assert.equal(revisions.get('./assets/js/profil.js'), 'xp-jamais-en-recul-v520');
+  assert.equal(revisions.get('./assets/js/profil.js'), 'matieres-sti-v593');
   for (const chemin of [
     'assets/icons/matieres.svg',
     'assets/js/suivi-profil.js'
@@ -60,7 +60,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   }
   assert.equal(revisions.get('./quiz/php.html'), 'plafond-a-v555');
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
-  assert.equal(revisions.get('./assets/js/app.js'), 'quiz-sauvegarde-v590');
+  assert.equal(revisions.get('./assets/js/app.js'), 'matieres-sti-v593');
   assert.equal(revisions.get('./index.html'), 'quiz-sauvegarde-v590');
   assert.equal(revisions.get('./offline-complete-manifest.json'), 'quiz-sauvegarde-v590');
   assert.equal(revisions.get('./README.md'), 'couverture-v583');

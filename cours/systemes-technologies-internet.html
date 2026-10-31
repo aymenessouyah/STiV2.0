@@ -17,7 +17,7 @@
   <link rel="manifest" href="../manifest.webmanifest">
   <link rel="stylesheet" href="../assets/css/theme.css">
   <link rel="stylesheet" href="../assets/css/cours.css">
-  <link rel="stylesheet" href="../assets/css/cours-sti.css?v=591">
+  <link rel="stylesheet" href="../assets/css/cours-sti.css?v=593">
   <link rel="stylesheet" href="../assets/css/protection.css?v=227">
   <!-- Dépendances de l’accès conservées telles quelles et exécutées dans cet ordre. -->
   <script src="../assets/js/config.js?v=479" defer></script>
@@ -28,6 +28,7 @@
   <script src="../assets/js/app.js" defer></script><script src="../assets/js/suivi-profil.js" defer></script><script src="../assets/js/reconnexion-profil.js" defer></script><script src="../assets/js/appel-quiz.js" defer></script>
 <script src="../assets/js/cours-onglets-mobile.js" defer></script>
   <script src="../assets/js/protection.js?v=227&amp;rev=479" defer></script><script src="../assets/js/lecteur-commun.js" defer></script>
+  <script src="../assets/js/cours-sti.js" defer></script>
 </head>
 <body class="sti-v2 course-page course-page--sti" data-course-unified="sti">
   <a class="skip-link" href="#contenu-principal">Aller au contenu principal</a>
@@ -101,12 +102,15 @@
             <div class="course-eyebrow"><span class="badge" style="background:var(--accent-gold-soft);border:1px solid var(--accent-gold-border);color:var(--accent-gold)">🖥️ Systèmes · Réseaux · IoT</span><span class="course-eyebrow__meta">COURS COMPLET · 3ÈME SI UNIQUEMENT</span></div>
             <h1 class="course-hero__title" id="titre-cours-sti">Comprendre la machine <span>avant le Web.</span></h1>
             <p class="course-hero__lead">Le cours qui précède HTML5 : comment un ordinateur fonctionne, comment les équipements communiquent entre eux, et comment les objets connectés envoient leurs mesures sur Internet. Trois chapitres, des schémas, des activités corrigées et une évaluation générale.</p>
-            <p class="course-reading-time" title="Estimation fondée sur le texte des chapitres, à 180 mots par minute."><span aria-hidden="true">⏱</span> Lecture estimée : <strong>22 min</strong> <span>· hors activités</span></p>
+            <p class="course-reading-time" title="Estimation fondée sur le texte des chapitres, à 180 mots par minute."><span aria-hidden="true">⏱</span> Lecture estimée : <strong data-estimation-lecture>22 min</strong> <span>· hors activités</span></p>
+            <!-- v593 : même anneau de progression que les cinq autres cours ;
+                 les trois chapitres se marquent « révisé » comme ailleurs. -->
+            <div class="course-progress-card"><div class="course-ring" aria-hidden="true"><svg viewBox="0 0 60 60"><circle class="course-ring__track" cx="30" cy="30" r="26"></circle><circle class="course-ring__fill" id="courseRingFill" cx="30" cy="30" r="26"></circle></svg><span class="course-ring__pct" id="courseRingPct">0%</span></div><div><strong id="courseRingCount" aria-live="polite">0 / 3 chapitres consultés</strong><p class="course-progress-card__hint"><span id="courseRevisedCount" aria-live="polite">0 / 3 chapitres révisés</span><br>Progression enregistrée sur cet appareil.</p></div></div>
             <div class="hero-actions">
               <a class="btn btn-course-primary" href="#introduction">📖 Commencer le cours</a>
               <a class="btn btn-secondary" href="#evaluation">📝 Aller à l’évaluation</a>
               <a class="btn btn-secondary" href="#video-cours" data-video-open="cours-sti">🎬 Voir la vidéo du cours</a>
-              <a class="btn btn-secondary" href="#audio-cours">🔊 Écouter le cours</a>
+              <button type="button" class="btn btn-secondary" id="heroListenBtn">🔊 Écouter le cours</button>
               <a class="hero-annexe-link" href="../livre-smart.html?livre=3si-2026&amp;page=5">📖 Ouvrir les pages 5 à 13 du manuel ↗</a>
             </div>
             <div class="course-hero__facts"><span>▦ 3 chapitres</span><span>✦ Activités corrigées</span><span>📝 Évaluation sur 10 points</span></div>
@@ -292,7 +296,7 @@
           </section>
 
           <!-- ══════════ CHAPITRE 1 ══════════ -->
-          <section class="course-chapter" id="ch1" aria-labelledby="titre-ch1">
+          <section class="course-chapter" id="ch1" data-chapter-id="ch1" aria-labelledby="titre-ch1">
             <header class="course-chapter__head">
               <h2 class="course-chapter__title" id="titre-ch1"><span class="course-chapter__num" aria-hidden="true">01</span> Les systèmes d’exploitation</h2>
               <span class="badge" style="background:var(--accent-gold-soft);border:1px solid var(--accent-gold-border);color:var(--accent-gold)">Gérer l’environnement de travail</span>
@@ -410,12 +414,13 @@
             </details>
 
             <footer class="chapter-footer">
+              <button type="button" class="btn-revise" data-toggle-revise="ch1" aria-pressed="false">☐ Marquer comme révisé</button>
               <nav aria-label="Navigation du chapitre"><span></span><a class="source-link" href="#ch2-definition">Chapitre 2 · Les réseaux informatiques →</a></nav>
             </footer>
           </section>
 
           <!-- ══════════ CHAPITRE 2 ══════════ -->
-          <section class="course-chapter" id="ch2" aria-labelledby="titre-ch2">
+          <section class="course-chapter" id="ch2" data-chapter-id="ch2" aria-labelledby="titre-ch2">
             <header class="course-chapter__head">
               <h2 class="course-chapter__title" id="titre-ch2"><span class="course-chapter__num" aria-hidden="true">02</span> Les réseaux informatiques</h2>
               <span class="badge" style="background:var(--accent-gold-soft);border:1px solid var(--accent-gold-border);color:var(--accent-gold)">Assurer la communication</span>
@@ -568,12 +573,13 @@
             </details>
 
             <footer class="chapter-footer">
+              <button type="button" class="btn-revise" data-toggle-revise="ch2" aria-pressed="false">☐ Marquer comme révisé</button>
               <nav aria-label="Navigation du chapitre"><a class="source-link" href="#ch1-se">← Chapitre 1 · Les systèmes d’exploitation</a><a class="source-link" href="#ch3-definition">Chapitre 3 · L’Internet des objets →</a></nav>
             </footer>
           </section>
 
           <!-- ══════════ CHAPITRE 3 ══════════ -->
-          <section class="course-chapter" id="ch3" aria-labelledby="titre-ch3">
+          <section class="course-chapter" id="ch3" data-chapter-id="ch3" aria-labelledby="titre-ch3">
             <header class="course-chapter__head">
               <h2 class="course-chapter__title" id="titre-ch3"><span class="course-chapter__num" aria-hidden="true">03</span> L’Internet des objets (IoT)</h2>
               <span class="badge" style="background:var(--accent-gold-soft);border:1px solid var(--accent-gold-border);color:var(--accent-gold)">Connecter des objets physiques</span>
@@ -676,6 +682,7 @@
             <div class="sti-note sti-note--attention"><b>Limite du programme.</b> <p>Pour l’IoT, les échanges sont étudiés en se limitant à <strong>HTTP et/ou MQTT</strong>, sans approfondir les différents concepts. La création du compte sur une plateforme IoT est effectuée par l’enseignant.</p></div>
 
             <footer class="chapter-footer">
+              <button type="button" class="btn-revise" data-toggle-revise="ch3" aria-pressed="false">☐ Marquer comme révisé</button>
               <nav aria-label="Navigation du chapitre"><a class="source-link" href="#ch2-definition">← Chapitre 2 · Les réseaux informatiques</a><a class="source-link" href="#synthese">Fiche de synthèse →</a></nav>
             </footer>
           </section>
