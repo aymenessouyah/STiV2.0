@@ -185,7 +185,8 @@
 
   /* Lecture des fichiers du site, par ordre de priorité, jusqu'au plafond.
      Au-delà, la raison exacte est écrite dans `omis` : l'archive reste donc
-     vérifiable, fichier par fichier. */
+     vérifiable, fichier par fichier. Les fichiers sont lus par vagues de
+     quatre : l'export reste rapide sans saturer la connexion de l'école. */
   function collecterFichiers(manifeste, plafond, onEtat) {
     var files = ((manifeste && manifeste.files) || []).filter(function (f) {
       return f && f.path && estTextuel(f.path);
@@ -196,39 +197,48 @@
       return String(a.path).localeCompare(String(b.path));
     });
 
-    var textes = [], omis = [], employe = 0, curseur = 0;
     var limite = Number(plafond) > 0 ? Number(plafond) : PLAFOND_OCTETS;
-
-    function suivant() {
-      if (curseur >= files.length) return Promise.resolve({ textes: textes, omis: omis });
-      var f = files[curseur++];
+    var retenus = [], omis = [], employe = 0;
+    files.forEach(function (f) {
       var taille = Number(f.bytes) || 0;
       if (taille > MAX_FICHIER) {
         omis.push({ chemin: f.path, octets: taille, raison: "fichier de plus de " + Math.round(MAX_FICHIER / 1024) + " Ko" });
-        if (onEtat) onEtat({ fait: curseur, total: files.length });
-        return suivant();
+        return;
       }
       if (employe + taille > limite) {
         omis.push({ chemin: f.path, octets: taille, raison: "plafond de " + Math.round(limite / (1024 * 1024)) + " Mo atteint" });
-        if (onEtat) onEtat({ fait: curseur, total: files.length });
-        return suivant();
+        return;
       }
-      return lireTexte(f.path).then(function (texte) {
-        if (!texte) {
-          omis.push({ chemin: f.path, octets: taille, raison: "lecture impossible" });
-          return null;
-        }
-        employe += texte.length;
-        return empreinte(texte).then(function (sha) {
-          textes.push({ chemin: f.path, texte: texte, sha256: sha });
+      employe += taille;
+      retenus.push(f);
+    });
+
+    var textes = [], curseur = 0;
+    function vague() {
+      if (curseur >= retenus.length) {
+        return Promise.resolve({ textes: textes.filter(Boolean), omis: omis });
+      }
+      var debut = curseur;
+      var lot = retenus.slice(debut, debut + 4);
+      return Promise.all(lot.map(function (f, i) {
+        return lireTexte(f.path).then(function (texte) {
+          if (!texte) {
+            omis.push({ chemin: f.path, octets: Number(f.bytes) || 0, raison: "lecture impossible" });
+            return null;
+          }
+          return empreinte(texte).then(function (sha) {
+            /* Index fixe : l'ordre de l'archive ne dépend pas du réseau. */
+            textes[debut + i] = { chemin: f.path, texte: texte, sha256: sha };
+          });
         });
-      }).then(function () {
-        if (onEtat) onEtat({ fait: curseur, total: files.length });
-        return suivant();
+      })).then(function () {
+        curseur += lot.length;
+        if (onEtat) onEtat({ fait: curseur, total: retenus.length });
+        return vague();
       });
     }
 
-    return suivant();
+    return vague();
   }
 
   function preparer(collecterDonnees, options, onEtat) {
