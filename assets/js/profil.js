@@ -568,6 +568,20 @@
     return "AB";
   }
 
+  /* v602 : la photo validée du compte (bucket « photos-profils » ou image
+     locale), telle que l'a mémorisée acces.js dans le cache de session.
+     app.js ne touche jamais au stockage : il demande la photo ici, ce qui garde
+     une seule porte d'entrée vers les données du compte. */
+  function photoCompte() {
+    try {
+      var cacheAcces = JSON.parse((global.localStorage && global.localStorage.getItem("sti-session-cache")) || "null");
+      var url = String((cacheAcces && (cacheAcces.photo_url || cacheAcces.photo_attente)) || "").trim();
+      return /^(https:\/\/|data:image\/)/i.test(url) ? url : "";
+    } catch (e) {
+      return "";
+    }
+  }
+
   /* Session et GOLD : lecture seule des scripts d’accès existants. */
   function lireEtatSession() {
     var profil = chargerProfil();
@@ -960,6 +974,7 @@
     reinitialiser: reinitialiser,
     appliquerPreferencesDOM: appliquerPreferencesDOM,
     lireEtatSession: lireEtatSession,
+    photoCompte: photoCompte,
     /* Les deux journaux historiques ne remplacent pas le profil unique. */
     projectionSuivi: function (cle, valeur) {
       if (["sti-exos-faits", "sti-pages-vues-v432", "sti-media-prog-v1"].indexOf(cle) < 0) return {};

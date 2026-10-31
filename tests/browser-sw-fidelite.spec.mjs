@@ -78,7 +78,7 @@ for (const ancienne of ['340','341','342','343','344','345','346','347','348','3
           await cache.put(chemin, await fetch(chemin));
         }
         for (const chemin of ['./assets/js/roue-initiales.js', './assets/css/badge-compte.css', './assets/images/badge-compte-vierge.png']) {
-          await revisions.put('/__sti_revision__/' + encodeURIComponent(chemin) + '?rev=badge-image-v488', new Response('révision conservée'));
+          await revisions.put('/__sti_revision__/' + encodeURIComponent(chemin) + '?rev=roue-compte-v602', new Response('révision conservée'));
         }
         await revisions.put('/__sti_revision__/' + encodeURIComponent('./assets/js/quiz-sync.js') + '?rev=xp-operations-v487', new Response('révision conservée'));
       }

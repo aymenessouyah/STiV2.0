@@ -850,6 +850,49 @@
 
   /** Utiliser les éléments vivants créés par acces.js, sans recréer le compte.
    * Les mêmes bouton, avatar, état GOLD, écouteurs et panneau restent en place. */
+  /* v602 : photo du compte (bucket privé « photos-profils » ou image locale) —
+     même contrôle de sûreté que la roue historique : un lien signé expiré ou
+     une URL douteuse ne doit jamais laisser une image cassée dans l'en-tête. */
+  function photoBadgeCompte(etat) {
+    if (!etat || !etat.connecte) return "";
+    try {
+      /* La photo est demandée au profil : app.js n'accède jamais lui-même au
+         stockage du navigateur (règle unique de la plateforme). */
+      var url = "";
+      if (global.STIProfil && typeof global.STIProfil.photoCompte === "function") {
+        url = global.STIProfil.photoCompte() || "";
+      }
+      url = typeof global.__stiPhotoUrlSure === "function" ? global.__stiPhotoUrlSure(url) : String(url || "").trim();
+      return /^(https:\/\/|data:image\/)/i.test(url) ? url : "";
+    } catch (e) {
+      return "";
+    }
+  }
+
+  /* v602 : première lettre du prénom + première lettre du nom (« Aymen
+     Essouyah » → « AE »). Quand le nom manque, on garde les deux premières
+     lettres du prénom ; sans prénom connu, aucune initiale. */
+  function initialesBadgeCompte(etat) {
+    var prenom = "";
+    var nom = "";
+    try {
+      if (etat && etat.prenom && etat.prenom !== "Abonné") prenom = etat.prenom;
+      if (etat && etat.nom) nom = etat.nom;
+      if (!prenom && global.STIProfil && typeof global.STIProfil.chargerProfil === "function") {
+        prenom = (global.STIProfil.chargerProfil() || {}).prenom || "";
+      }
+    } catch (e) {}
+    prenom = String(prenom || "").trim();
+    nom = String(nom || "").trim();
+    if (prenom && nom) return (prenom.charAt(0) + nom.charAt(0)).toUpperCase();
+    if (prenom) {
+      var morceaux = prenom.split(/\s+/).filter(Boolean);
+      if (morceaux.length >= 2) return (morceaux[0].charAt(0) + morceaux[1].charAt(0)).toUpperCase();
+      return prenom.slice(0, 2).toUpperCase();
+    }
+    return "";
+  }
+
   function rendreBadgeAbonne() {
     var slot = document.querySelector("[data-subscriber-slot]");
     if (!slot || !global.STIProfil) return;
@@ -866,11 +909,23 @@
     var etat = global.STIProfil.lireEtatSession();
     var texte = etat.connecte ? "Mon compte" : traduire("sub.connecter");
     var href = obtenirPrefixeRacine() + "portail.html";
-    if (slot.dataset.etatRoue === texte && slot.firstElementChild) return;
-    slot.dataset.etatRoue = texte;
-    slot.innerHTML = '<a class="sub-login-btn" href="' + echapperHtml(href) + '">' +
-      '<span aria-hidden="true">🔐</span><span class="sub-login-btn__long">' + echapperHtml(texte) + '</span>' +
-      '<span class="sub-login-btn__short">Compte</span></a>';
+
+    /* v602 : le badge de compte devient une roue — la photo de l'élève, sinon
+       la première lettre du prénom et la première lettre du nom. Sans nom
+       connu, le cadenas d'origine reste affiché. */
+    var photo = photoBadgeCompte(etat);
+    var initiales = photo ? "" : initialesBadgeCompte(etat);
+    var cleRoue = texte + "|" + photo + "|" + initiales;
+    if (slot.dataset.etatRoue === cleRoue && slot.firstElementChild) return;
+    slot.dataset.etatRoue = cleRoue;
+    var interieur = photo
+      ? '<img class="sub-login-btn__photo" src="' + echapperHtml(photo) + '" alt="" decoding="async" />'
+      : initiales
+        ? '<span class="sub-login-btn__initiales" aria-hidden="true">' + echapperHtml(initiales) + '</span>'
+        : '<span class="sub-login-btn__picto" aria-hidden="true">🔐</span>';
+    slot.innerHTML = '<a class="sub-login-btn" href="' + echapperHtml(href) + '" title="' + echapperHtml(texte) +
+      '" aria-label="' + echapperHtml(texte) + '">' + interieur +
+      '<span class="sub-login-btn__long">' + echapperHtml(texte) + '</span></a>';
   }
 
   function initialiserClicBadgeAbonne() {
@@ -2634,17 +2689,47 @@
      quarts de l'écran alors que la barre du bas occupe toute la largeur.
      Ce garde-fou rend la page à sa largeur naturelle dès qu'aucun de ces deux
      panneaux n'est présent. Le zoom volontaire des outils PC est conservé. */
+  /* v602 : un panneau encore présent dans la page mais MASQUÉ (fermé sans être
+     retiré du document) ne doit pas compter comme ouvert. On ne regarde donc
+     plus seulement son existence, mais sa largeur réelle à l'écran. Sans cela,
+     la largeur de la page restait bloquée à 76 % et le contenu s'arrêtait net
+     aux trois quarts de l'écran, comme si la page était coupée à droite. */
+  function panneauOutilVisible(id) {
+    var el = document.getElementById(id);
+    if (!el) return false;
+    if (el.hidden) return false;
+    try {
+      var st = global.getComputedStyle(el);
+      if (st && (st.display === "none" || st.visibility === "hidden")) return false;
+    } catch (e) {}
+    if (el.getBoundingClientRect) {
+      var r = el.getBoundingClientRect();
+      if (r && r.width <= 1) return false;
+    }
+    return true;
+  }
+
   function assainirLargeurDocument() {
     var racine = document.documentElement;
     if (!racine) return;
-    if (document.getElementById("sti-split-view-panel") || document.getElementById("sti-browser-console-panel")) return;
+    if (document.getElementById("sti-split-view-panel") || document.getElementById("sti-browser-console-panel")) {
+      /* Le panneau est encore là : on ne rend la page à sa largeur que s'il est
+         réellement invisible (fermé sans avoir été retiré du document). */
+      if (panneauOutilVisible("sti-split-view-panel") || panneauOutilVisible("sti-browser-console-panel")) return;
+    }
     if (racine.style.width) racine.style.width = "";
     if (racine.style.overflowX) racine.style.overflowX = "";
     var corps = document.body;
     if (!corps) return;
     var largeurEcran = global.innerWidth || 0;
-    if (largeurEcran && largeurEcran <= 900 && corps.style.zoom && !document.getElementById("sti-pc-win-tools")) {
-      corps.style.zoom = "";
+    /* Même réparation sur <body>, au cas où un outil y aurait posé la largeur
+       en vw ou en % : sur un téléphone, la page doit toujours occuper l'écran. */
+    if (largeurEcran && largeurEcran <= 900) {
+      var largCorps = corps.style.width || "";
+      if (largCorps && /(vw|%)$/.test(largCorps)) corps.style.width = "";
+      if (corps.style.zoom && !document.getElementById("sti-pc-win-tools")) {
+        corps.style.zoom = "";
+      }
     }
   }
 
@@ -2655,6 +2740,11 @@
       if (!document.hidden) assainirLargeurDocument();
     });
     global.addEventListener("resize", assainirLargeurDocument);
+    /* Les panneaux d'outils se construisent parfois après le chargement : on
+       repasse une fois la page posée, puis on laisse les événements faire foi. */
+    global.setTimeout(assainirLargeurDocument, 400);
+    global.setTimeout(assainirLargeurDocument, 1500);
+    global.setTimeout(assainirLargeurDocument, 4000);
   }
 
   function demarrerApplication() {
