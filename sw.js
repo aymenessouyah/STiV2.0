@@ -12,8 +12,8 @@ var UPDATE_ID = "v582-journal-connexions";
    à chaque livraison, avec la date et l'heure UTC du commit de fusion.
    Ce n'est PAS le jeton de cache : UPDATE_ID et CACHE restent volontairement stables,
    sinon les 778 entrées de chaîne du delta seraient re-téléchargées en entier. */
-var VERSION_PUBLIEE = "v597";
-var PUBLIEE_LE = "2026-10-31T19:20:00Z";
+var VERSION_PUBLIEE = "v598";
+var PUBLIEE_LE = "2026-10-31T20:40:00Z";
 /* Historique caches : sti-atelier-v379, sti-atelier-v373, sti-atelier-v372, sti-atelier-v371, sti-atelier-v370, sti-atelier-v369, sti-atelier-v368, sti-atelier-v367, sti-atelier-v366, sti-atelier-v365, sti-atelier-v364, sti-atelier-v363, sti-atelier-v362, sti-atelier-v361, sti-atelier-v360, sti-atelier-v359, sti-atelier-v358, sti-atelier-v357, sti-atelier-v356, sti-atelier-v355, sti-atelier-v354, sti-atelier-v353, sti-atelier-v352, sti-atelier-v351, sti-atelier-v350, sti-atelier-v349, sti-atelier-v348, sti-atelier-v347, sti-atelier-v346, sti-atelier-v345, sti-atelier-v344, sti-atelier-v343, sti-atelier-v342, sti-atelier-v341, sti-atelier-v340, sti-atelier-v339, sti-atelier-v338, sti-atelier-v337, sti-atelier-v336, sti-atelier-v335, sti-atelier-v334, sti-atelier-v333, sti-atelier-v332, sti-atelier-v331, sti-atelier-v330, sti-atelier-v329, sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v547-boucles-php-20261030, v546-boucles-tableau-20261030, v545-boucles-media-20261030, v544-boucles-intro-fin-20261030, v543-boucles-trois-20261030, v542-boucle-pour-grille-20261030, v541-boucle-pour-brouillon-20261030, v540-boucle-pour-variable-20261030, v537-boucle-pour-20261029, v536-classe-nav-active-20261029, v535-volet-sans-fiches-20261029, v534-pastille-sync-2s-20261029, v533-tableau-de-bord-mobile-20261029, v532-barre-mobile-moderne-20261029, v531-vues-videos-periode-20261029, v530-vues-videos-classe-20261029, v529-vues-videos-20261029, v519-tirage-xp-rapide-20261029, v513-compteurs-videos-20261029, v512-tp-transitions-20261028, v511-tp-display-lecteur-20261028, v510-tp-display-20261028, v509-drapeau-vent-20261028, v508-retrait-fond-cours-20261028, v507-accueil-video-fond-20261028, v506-fond-cours-20261028, v505-tp-formulaire-long-20261028, v504-tp-capsules-longues-20261028, v503-accueil-lycee-20261028, v502-tp-formulaire-20261028, v501-tp-voix-20261028, v500-tp-evenements-liens-20261028, v499-ruban-orange-20261028, v498-accueil-drapeau-ruban-20261028, v497-news-niveaux-20261028, v496-news-perso-20261028, v495-video-alea-xp-20261028, v494-retour-quiz-intelligent-20261028, v493-onglets-mobile-20261028, v492-progression-chapitres-20261028, v491-suivi-contextes-20261028, v490-xp-parties-pwa-20261028, v489-reconnexion-delta-20261028, v488-badge-image-20261028, v486-cours-retour-xp-20261027, v485-video-js-validation-20261027, v484-navigation-videos-mobile-20261027, v479-compteur-media-monotone, v478-refonte-sql-php-20261027, v478-xp-quiz-monotone, xp-quiz-monotone-v478, v477-maj-version-cache-direct, maj-version-v477, v476-retour-accueil-quiz-exo, retour-quiz-v476, v476-retour-exercices-accueil, retour-exo-v476, v475-nav-fluide-instant, nav-fluide-v475, v474-perf-quiz-php, perf-quiz-php-v474, v473-perf-fluide, sauvegarde-18-v590, v472-test-plateforme-complet, v471-tester-tout-e2e, v470-audit-fonctionnel-readme, v469-pagination-integrale, v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, compteurs-media-v461, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, quiz-lots-abc-v456, revision-quiz-v455, retrait-nav-conseils-v454, unif-acces-themes-v453, conseil-classe-nouveautes-marque-v451, messenger-roue-admin-only-v450, rayonsx-surligneur-v449, trombi-carte-recadrage-v448, zoom-photo-v447, ruban-modes-v446, student-photos-v445, v358-quiz-sync
    Manifeste cumulatif dédupliqué : une révision déjà appliquée est ignorée localement,
    et aucun fichier non présent dans le cache local n'est pré-téléchargé inutilement à l'installation. */
@@ -162,7 +162,7 @@ var UPDATE_FILES = [
   { url: "./assets/js/cours-html5.js", revision: "tp-display-v510", refreshIfCached: true },
   { url: "./index.html", revision: "cours-sti-v596" },
   { url: "./dashboard.html", revision: "livre-3si-81p-v585", refreshIfCached: true },
-  { url: "./admin.html", revision: "publication-v590" },
+  { url: "./admin.html", revision: "secours-plateforme-v598" },
   { url: "./README.md", revision: "couverture-v583" },
   { url: "./package.json", revision: "xp-operations-v487" },
   { url: "./package-lock.json", revision: "xp-operations-v487" },
@@ -207,12 +207,12 @@ var UPDATE_FILES = [
   { url: "./exercices/html-css/tp-formulaire-tableau-autre/drapeau.png", revision: "tp-formulaire-v502" },
   { url: "./exercices/html-css/tp-evenements-liens/drapeau.png", revision: "tp-evenements-v500" },
   { url: "./ma-fiche-revision.html", revision: "fidelite-origine-v481" },
-  { url: "./assets/js/roue-couverture.js", revision: "couverture-v596", bootstrapBySize: true, bytes: 13932, sha256: "4af89e67cac0f66274b3d4f6d8aa7c9ef0285efce02c6f9df4c79254f8a4a403" },
+  { url: "./assets/js/roue-couverture.js", revision: "couverture-v598", bootstrapBySize: true, bytes: 13954, sha256: "581824de88f82616bbae91d66e59d30d32a8725e2e6208afe943556ab3e5ac33" },
   { url: "./assets/js/roue-revision.js", revision: "tp-train-v523" },
   { url: "./assets/js/roue-plan.js", revision: "sauvegarde-18-v590" },
   { url: "./assets/js/sync-progressions.js", revision: "pastille-sync-v534" },
   { url: "./assets/js/xp-plancher.js", revision: "xp-jamais-en-recul-v520" },
-  { url: "./assets/js/admin.js", revision: "connexions-gz-v592" },
+  { url: "./assets/js/admin.js", revision: "secours-plateforme-v598" },
   { url: "./assets/js/quiz-admin.js", revision: "nav-fluide-v475" },
   { url: "./assets/js/sauvegarde.js", revision: "sauvegarde-18-v590" },
   { url: "./assets/js/reprendre.js", revision: "vues-videos-v531" },
@@ -240,7 +240,7 @@ var UPDATE_FILES = [
   { url: "./assets/js/admin-couverture.js", revision: "couverture-v583" },
   { url: "./assets/js/admin-revision.js", revision: "couverture-v583" },
   { url: "./assets/js/graphiques-activite.js", revision: "nav-fluide-v475" },
-  { url: "./assets/js/analytique.js", revision: "couverture-v583" },
+  { url: "./assets/js/analytique.js", revision: "secours-plateforme-v598" },
   { url: "./quiz/pp.html", revision: "meta-seo-v521" },
   { url: "./quiz/tableaux.html", revision: "plafond-a-v555", refreshIfCached: true },
   { url: "./manifest.webmanifest", revision: "dbsupbase-v466" },
@@ -257,7 +257,7 @@ var UPDATE_FILES = [
   { url: "./exercices/sql/CommentConstruireunerequêteSQL.html", revision: "barre-mobile-v532" },
   { url: "./assets/css/admin-saas.css", revision: "nav-fluide-v475" },
   { url: "./assets/data/quiz-banque.json", revision: "quiz-bases-v590" },
-  { url: "./assets/pages-couverture.json", revision: "couverture-v583" },
+  { url: "./assets/pages-couverture.json", revision: "secours-plateforme-v598" },
   { url: "./assets/js/quiz-tableaux-boot.js", revision: "quiz-lots-abc-v456" },
   { url: "./glossaire.html", revision: "glossaire-sti-v578" },
   { url: "./404.html", revision: "meta-seo-v521" },

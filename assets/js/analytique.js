@@ -11,7 +11,7 @@
   /* v583 : le dénominateur des pages vient du manifeste de couverture
      (assets/pages-couverture.json, régénéré par outils/couverture/generer-couverture.py).
      La valeur ci-dessous n'est qu'un repli hors-ligne, tenu égal au manifeste par les tests. */
-  var TOTAL_PAGES_SITE = 150;
+  var TOTAL_PAGES_SITE = 151;
   function chargerTotalPagesSite() {
     return fetch("assets/pages-couverture.json", { cache: "no-cache" }).then(function (r) {
       return r && r.ok ? r.json() : null;

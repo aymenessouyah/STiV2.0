@@ -1,6 +1,6 @@
 {
 "gen": "v583",
-"n": 150,
+"n": 151,
 "regle": "toutes les pages HTML du site suivies par Git, hors tests/ (pages de test non livrées)",
 "pages": [
 "404.html",
@@ -131,6 +131,7 @@
 "projets/fleurs/media/projet-fleurs-4sti-eleve.pdf.html",
 "projets/formulaire-inscription/cvFleurs.html",
 "projets/formulaire-inscription/enonce/cvFleurs-énoncé/formulaire inscription.pdf.html",
+"projets/index.html",
 "projets/site-tunisie/correction-details/carte-timbre-droite-haut.html",
 "projets/site-tunisie/enonce.html",
 "projets/site-tunisie/index.html",

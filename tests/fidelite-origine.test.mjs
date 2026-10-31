@@ -68,9 +68,9 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
     'portail.html': '7ea8179bed2a6eac89f6852352c224d83b34d2215cfb6f6acf9d01b657a03ad1',
     /* v587 : badge « Version V2.0 · v587 · 31/10/2026 11:31 » (date de mise à jour). */
-    /* v596 : le guide d'administration annonce 150 pages de couverture (145 + les
-       cinq ateliers « Systèmes »). */
-    'admin.html': '4929b9e3cb5568935037ab6e940dbdde004efd13bc774c1a75bc481a93811720',
+    /* v597 : le guide d'administration annonce 151 pages de couverture (145 + les
+       cinq ateliers « Systèmes » + la galerie des projets). */
+    'admin.html': '5423f69b69bedd5917b1fac1e2ae6804f2d79e9867141d78b853df351d36597d',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };
@@ -239,7 +239,7 @@ test('commandes d’administration : scripts et fonctions de la barre PC inchang
      18 tables), décompressées dans le navigateur avant la fouille des connexions ;
      empreinte d'admin.js réactualisée. */
   /* v596 : TOTAL_PAGES_SITE_ADMIN passe à 150 (repli hors manifeste). */
-  assert.equal(sha('assets/js/admin.js'), '177305b6828a8bc6e562af8d64772280604569ca5195e9f65a7c20588b29c63f');
+  assert.equal(sha('assets/js/admin.js'), '90e20101b99ce9f15d1e5f663e3411d252e1749e0c61ac666d91362dc1a798a1');
   assert.equal(sha('assets/js/rayonsx-surligneur.js'), '1b7fe2067629766ef4043fa3060199b71124d8486e36d92aaac0b45bd861847c');
   const protection = lire('assets/js/protection.js');
   const debut = protection.indexOf('  function estAppareilPC()');
@@ -264,8 +264,8 @@ test('banques et données JSON d’origine conservées ; retour de quiz ajouté 
     /* v573 : édition 2026 du manuel 3ème SI — 81 pages, la partie « Systèmes,
        technologies et Internet » (p. 5 à 13) précède les 53 fiches. */
     'assets/data/smart-book-3si-2026.json': 'fc31d42ecaa3eaa0e7b9253de98ae1e50261d6d6f4f4bacc33aaf56375f7b0ab',
-        /* v596 : 150 pages réelles (145 + les cinq ateliers d'exercices « Systèmes »). */
-    'assets/pages-couverture.json': '69122c71bbd71974a0843f9512137920cd12c984ec5db472b5131f6ecce6e5bc',
+        /* v597 : 151 pages réelles (145 + cinq ateliers « Systèmes » + galerie). */
+    'assets/pages-couverture.json': 'bd8ceb9202390bbc702aefbb9b51b159deecc00cfb6d96ddb0cb90433893aa20',
     'manifest.webmanifest': '9803f124c0bb3736f3749ffcf9f0ffd63930a6a2a23e6cafeccfde0d61892e1f'
   };
   for (const [chemin, empreinte] of Object.entries(json)) {
