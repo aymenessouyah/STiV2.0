@@ -211,6 +211,29 @@
 .featured-video-card.sti-capsule-vedette,
 .matiere-video-card.sti-capsule-vedette { position: relative; }
 
+/* v587 — l'étiquette ne peut plus « échapper » à sa carte.
+   ────────────────────────────────────────────────────────────
+   `position: absolute` se pose sur le premier ancêtre positionné. Les cartes de
+   cours n'étaient des repères QUE si elles portaient la classe
+   `sti-capsule-vedette` : une carte ajoutée à la main, ou dont la classe avait
+   sauté, laissait l'étiquette filer hors de la vignette. On déclare le repère
+   sur les trois familles de cartes, sans condition, puis on borne l'étiquette
+   à la largeur de sa carte (elle ne peut plus déborder horizontalement). */
+.featured-video-card,
+.matiere-video-card,
+.video-card { position: relative; }
+
+.sti-etiquette-capsule {
+  max-inline-size: calc(100% - 12px);
+}
+
+/* Filet de sécurité pour toute carte future qui porterait l'étiquette. */
+@supports selector(:has(*)) {
+  .featured-video-card:has(.sti-etiquette-capsule),
+  .matiere-video-card:has(.sti-etiquette-capsule),
+  .video-card:has(.sti-etiquette-capsule) { position: relative; }
+}
+
 .sti-capsule-vedette .sti-etiquette-capsule {
   inset-block-start: 10px;
   inset-inline-start: 10px;

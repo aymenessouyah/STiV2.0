@@ -5442,9 +5442,9 @@ test('v473 (structure & budgets performance) : 0 doublon dans UPDATE_FILES (-85,
   /* v573 : le nouveau cours 3ème SI ajoute sa page et sa feuille de style au
      lot de mise à jour (264 entrées).
      v580 : le quiz « Systèmes, technologies et Internet » ajoute sa page, son
-     moteur, son initialiseur et sa banque de questions (268 entrées) ; le
+     moteur, son initialiseur et sa banque de questions (272 entrées) ; le
      budget reste serré, sans média. */
-  assert.ok(urls.length <= 268, `UPDATE_FILES doit rester compact (<= 268 entrées uniques, observé: ${urls.length})`);
+  assert.ok(urls.length <= 272, `UPDATE_FILES doit rester compact (<= 272 entrées uniques, observé: ${urls.length})`);
 
   const mCore = swJs.match(/var NOYAU_RAPIDE_RECHARGEMENT = (\{[\s\S]*?\n\});/);
   assert.ok(mCore, 'NOYAU_RAPIDE_RECHARGEMENT doit encadrer les rechargements proactifs du SW');

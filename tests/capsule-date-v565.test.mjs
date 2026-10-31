@@ -225,8 +225,8 @@ test('la capsule est dans le paquet hors-ligne et versionnée', () => {
   assert.ok(sw.includes(`"./assets/videos/DateJS-v565.mp4"`), 'MP4 hors-ligne');
   assert.ok(sw.includes(`"./assets/subtitles/DateJS-fr-v565.vtt"`), 'VTT hors-ligne');
   /* v573 : l'accueil et le livre connecté repartent au lot « 3ème SI 2026 ». */
-  const REV_PAGES = { './index.html': 'quiz-systemes-v580', './cours/javascript.html': 'etiquette-relief-v572',
-    './cours/php.html': 'etiquette-relief-v572', './assets/js/app.js': 'vitrine-sti-v579' };
+  const REV_PAGES = { './index.html': 'etiquette-capsule-v587', './cours/javascript.html': 'etiquette-capsule-v587',
+    './cours/php.html': 'etiquette-capsule-v587', './assets/js/app.js': 'etiquette-capsule-v587' };
   const attendu = (page) => REV_PAGES[page] || 'cours-sti-v578';
   for (const page of ['./index.html', './cours/javascript.html', './assets/js/app.js',
     './assets/js/protection.js', './assets/js/lecteur-commun.js',

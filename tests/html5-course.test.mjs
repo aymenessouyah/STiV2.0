@@ -79,12 +79,12 @@ test('hors ligne : nouvelles ressources présentes et anciennes révisions inval
     'cours/html5.html', 'dashboard.html', 'assets/css/theme.css', 'assets/css/cours.css',
     'assets/js/app.js', 'assets/js/profil.js', 'assets/js/cours-html5.js'
   ]) {
-    const revision = path === 'assets/js/app.js' ? 'vitrine-sti-v579' :
+    const revision = path === 'assets/js/app.js' ? 'etiquette-capsule-v587' :
       path === 'cours/html5.html' ? 'sti-3si-v573' :
       path === 'assets/css/cours.css' ? 'retrait-fond-cours-v508' :
       path === 'dashboard.html' ? 'livre-3si-81p-v585' :
       path === 'assets/js/cours-html5.js' ? 'tp-display-v510' :
-      path === 'assets/css/theme.css' ? 'classe-nav-v536' :
+      path === 'assets/css/theme.css' ? 'etiquette-capsule-v587' :
       path === 'assets/js/profil.js' ? 'xp-jamais-en-recul-v520' : 'suivi-contextes-v491';
     assert.ok(delta.includes(`url: "./${path}", revision: "${revision}"`), path);
     assert.ok(offline.includes(`"./${path}"`), path);

@@ -60,9 +60,9 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   }
   assert.equal(revisions.get('./quiz/php.html'), 'plafond-a-v555');
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
-  assert.equal(revisions.get('./assets/js/app.js'), 'vitrine-sti-v579');
-  assert.equal(revisions.get('./index.html'), 'quiz-systemes-v580');
-  assert.equal(revisions.get('./offline-complete-manifest.json'), 'classe-nav-v536');
+  assert.equal(revisions.get('./assets/js/app.js'), 'etiquette-capsule-v587');
+  assert.equal(revisions.get('./index.html'), 'etiquette-capsule-v587');
+  assert.equal(revisions.get('./offline-complete-manifest.json'), 'etiquette-capsule-v587');
   assert.equal(revisions.get('./README.md'), 'couverture-v583');
   /* v585 : le tableau de bord annonce le Smart Book 3ᵉ SI à 81 pages ; le drapeau reste au lot v503. */
   assert.equal(revisions.get('./dashboard.html'), 'livre-3si-81p-v585');
@@ -70,19 +70,19 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v517 : le ruban lit mieux la classe — la 4e SI passe au vert. */
   assert.equal(revisions.get('./assets/js/news-perso.js'), 'ruban-vert-v517');
   /* v507 : ruban sans logo et compteurs de vidéos. */
-  assert.equal(revisions.get('./assets/css/theme.css'), 'classe-nav-v536');
-  assert.equal(revisions.get('./admin.html'), 'livre-3si-81p-v585');
+  assert.equal(revisions.get('./assets/css/theme.css'), 'etiquette-capsule-v587');
+  assert.equal(revisions.get('./admin.html'), 'publication-v587');
   assert.equal(revisions.get('./assets/js/sante.js'), 'tp-transitions-v512');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */
-  assert.equal(revisions.get('./index.html'), 'quiz-systemes-v580');
-  assert.equal(revisions.get('./assets/js/admin.js'), 'recherche-connexions-v584');
+  assert.equal(revisions.get('./index.html'), 'etiquette-capsule-v587');
+  assert.equal(revisions.get('./assets/js/admin.js'), 'publication-v587');
   assert.equal(revisions.get('./assets/css/cours.css'), 'retrait-fond-cours-v508');
   /* v563 : le cours SQL accueille la convention d'écriture d'un schéma. */
   assert.equal(revisions.get('./cours/sql.html'), 'schema-notation-v563');
   /* v549 : la page PHP reçoit la capsule des variables. */
-  assert.equal(revisions.get('./cours/php.html'), 'etiquette-relief-v572');
+  assert.equal(revisions.get('./cours/php.html'), 'etiquette-capsule-v587');
   /* v523 : le cours JavaScript reçoit les liens du TP Train. */
-  assert.equal(revisions.get('./cours/javascript.html'), 'etiquette-relief-v572');
+  assert.equal(revisions.get('./cours/javascript.html'), 'etiquette-capsule-v587');
   assert.equal(revisions.get('./cours/html5.html'), 'sti-3si-v573');
   assert.equal(revisions.get('./cours/css3.html'), 'tp-transitions-v512');
   assert.equal(revisions.get('./assets/js/cours-onglets-mobile.js'), 'onglets-mobile-v493');
