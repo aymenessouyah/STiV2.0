@@ -53,7 +53,7 @@ test('v585 : le Service Worker sert les deux pages corrigées', () => {
   const sw = read('sw.js');
   /* v587 : admin.html repart au lot « publication-v590 » (version + date de mise à
      jour dans le badge) ; le tableau de bord élève reste au lot v585. */
-  for (const [url, revision] of [['./dashboard.html', 'livre-3si-81p-v585'], ['./admin.html', 'export-trouvable-v606']]) {
+  for (const [url, revision] of [['./dashboard.html', 'livre-3si-81p-v585'], ['./admin.html', 'journal-acces-v607']]) {
     const ligne = sw.split('\n').find((l) => l.includes('url: "' + url + '"'));
     assert.ok(ligne, 'entrée sw.js absente : ' + url);
     assert.ok(ligne.includes('revision: "' + revision + '"'), 'révision à jour attendue pour ' + url + ' (' + revision + ')');

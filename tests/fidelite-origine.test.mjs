@@ -63,14 +63,14 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
     'assets/js/supabase-umd.js': '2eebfe06b1b5309985dc1526e8981ea3a18b71beeef83e7f38e04c303e142d6d',
     /* v595 : l'index de recherche et le fil « dernière lecture » accueillent
        les quatre ateliers d'exercices « Systèmes » ; empreinte réactualisée. */
-    'assets/js/acces.js': '45b0e16e7bfb8f42e055ed6d889175432cac06258cae8e20d614b08fe69fee57',
+    'assets/js/acces.js': '857288884081ac9e17a616adfcac79116cb5acb9473a34e53f6d166f3994588d',
     'assets/js/sync-progressions.js': 'c6e36a6f0ebea5e481cfb1b16afb9c0cfefc595ed4de21a1becff5a096d327b6',
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
     'portail.html': '7ea8179bed2a6eac89f6852352c224d83b34d2215cfb6f6acf9d01b657a03ad1',
     /* v587 : badge « Version V2.0 · v587 · 31/10/2026 11:31 » (date de mise à jour). */
     /* v597 : le guide d'administration annonce 151 pages de couverture (145 + les
        cinq ateliers « Systèmes » + la galerie des projets). */
-    'admin.html': '6362766a107f4b13f04359dcd09105d6a6363555d447285acd5c4d8e7a953c24',
+    'admin.html': '0c0ded79c49efb8a44e6b80f2d013d7aa714499c08c43523587c100efa0883a4',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };
@@ -239,7 +239,7 @@ test('commandes d’administration : scripts et fonctions de la barre PC inchang
      18 tables), décompressées dans le navigateur avant la fouille des connexions ;
      empreinte d'admin.js réactualisée. */
   /* v596 : TOTAL_PAGES_SITE_ADMIN passe à 150 (repli hors manifeste). */
-  assert.equal(sha('assets/js/admin.js'), '7210f9afdf355b628daa5a1a125ca0c2f4ea4bf05ad6cd7bedcf90308d0070b8');
+  assert.equal(sha('assets/js/admin.js'), '7f053f05c77dd3da7ae2fe33252ce518d6d827c223bbe3360be1849de550d22b');
   assert.equal(sha('assets/js/rayonsx-surligneur.js'), '1b7fe2067629766ef4043fa3060199b71124d8486e36d92aaac0b45bd861847c');
   const protection = lire('assets/js/protection.js');
   const debut = protection.indexOf('  function estAppareilPC()');

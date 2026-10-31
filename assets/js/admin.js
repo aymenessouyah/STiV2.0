@@ -6503,9 +6503,14 @@
       sb.from("acces").select("page,debut,fin,duree_sec").eq("user_id", p.id)
         .order("id", { ascending: false }).limit(5)
         .then(function (r) { return r && !r.error ? (r.data || []) : null; })
+        .catch(function () { return null; }),
+      /* v607 : l'élève signale lui-même une écriture refusée (genre journal_acces). */
+      sb.from("sti_diagnostics").select("genre,message,detail,cree_le").eq("user_id", p.id)
+        .eq("genre", "journal_acces").order("cree_le", { ascending: false }).limit(3)
+        .then(function (r) { return r && !r.error ? (r.data || []) : null; })
         .catch(function () { return null; })
     ]).then(function (res) {
-      var totalBase = res[0], sansProg = res[1], sur24 = res[2], dernieres = res[3];
+      var totalBase = res[0], sansProg = res[1], sur24 = res[2], dernieres = res[3], pannes = res[4];
       var chargees = 0;
       acces.forEach(function (a) { if (a && a.user_id === p.id) chargees++; });
       var file = 0, fileEleve = 0;
@@ -6540,6 +6545,15 @@
       lignes.push("   • lignes de cet élève ....... " + chargees);
       lignes.push("   • file hors-ligne locale .... " + file + " événement(s), dont " + fileEleve + " pour cet élève");
       lignes.push("");
+      if (pannes && pannes.length) {
+        lignes.push("");
+        lignes.push("2 bis. Pannes signalées par SON appareil (sti_diagnostics)");
+        pannes.forEach(function (d) {
+          lignes.push("   • " + new Date(d.cree_le).toLocaleString("fr-FR") + " · " + String(d.message || "").slice(0, 120));
+          if (d.detail) lignes.push("     " + String(d.detail).slice(0, 160));
+        });
+      }
+      lignes.push("");
       lignes.push("3. Ce que la carte affiche");
       lignes.push("   • Connexions ................ " + (counts[p.id] || 0));
       lignes.push("   • Durée ..................... " + Math.round((dureesTotales[p.id] || 0) / 60) + " min");
@@ -6554,8 +6568,16 @@
       lignes.push("");
       lignes.push("4. Conclusion");
       if (totalBase === 0) {
-        lignes.push("   → L'élève n'a AUCUNE ligne dans la base : son navigateur n'arrive pas à écrire le journal.");
-        lignes.push("     Vérifiez avec lui qu'il a bien accepté la connexion, puis rechargez la page sur son appareil.");
+        lignes.push("   → L'élève n'a AUCUNE ligne dans le journal `acces` : son navigateur n'arrive pas à l'écrire.");
+        var suivDiag = bilanSuiviCompletEleve(p);
+        if (suivDiag.nbPages) {
+          lignes.push("     Or " + suivDiag.nbPages + " page(s) vue(s) et " + suivDiag.nbExos + " exercice(s) sont bien arrivés par");
+          lignes.push("     `sti_progressions` : c'est donc le journal de sessions qui échoue, pas sa connexion.");
+          lignes.push("     Depuis la v607, l'appareil de l'élève remonte l'erreur exacte (voir « 2 bis » plus haut),");
+          lignes.push("     et la page retente l'écriture sans exiger que la base renvoie la ligne.");
+        } else {
+          lignes.push("     Vérifiez avec lui qu'il a bien accepté la connexion, puis rechargez la page sur son appareil.");
+        }
         if (fileEleve > 0) lignes.push("     " + fileEleve + " événement(s) attendent sur SON appareil (file hors-ligne).");
       } else if (totalBase > 0 && chargees === 0) {
         lignes.push("   → Les lignes existent en base, mais la page n'en a chargé aucune pour lui :");
@@ -7645,7 +7667,17 @@
     var htmlAcces = "";
     var limAccFiche = toutVoirAccesFiche ? sesAcces.length : 10;
     if (!sesAcces.length) {
-      htmlAcces = "<div style='color:#7a6f5d;font-size:12px;padding:8px 0'>Aucune connexion enregistrée.</div>";
+      /* v607 : « aucune connexion » n'est pas « aucune activité ». Les pages, les
+         cours, les vidéos et les quiz viennent de sti_progressions ; le temps et
+         les sessions viennent de `acces`. Quand la seconde source est vide et pas
+         la première, il faut le dire — et donner le moyen de vérifier. */
+      htmlAcces = "<div style='color:#7a6f5d;font-size:12px;padding:8px 0'>"
+        + "Aucune connexion enregistrée dans le journal."
+        + (bilanSuiviCompletEleve(p).nbPages
+          ? "<br><b style='color:#b45309'>Cet élève a pourtant " + bilanSuiviCompletEleve(p).nbPages + " page(s) vue(s) : ses progressions arrivent, son journal de sessions non.</b>"
+          : "")
+        + "</div>"
+        + "<div style='margin:2px 0 8px'><button type='button' class='btn-outil' id='btn-fiche-diag-journal' style='font-size:11.5px;padding:5px 12px'>🔎 Vérifier le journal de cet élève</button></div>";
     } else {
       htmlAcces = "<div class='fiche-table-wrap'><table class='fiche-mini-table'><thead><tr><th>Début</th><th>Fin</th><th>Durée</th><th>Page consultée</th><th>Appareil &amp; Lieu</th></tr></thead><tbody>" +
         sesAcces.slice(0, limAccFiche).map(function (a) {
@@ -7720,8 +7752,10 @@
       "<div class='fiche-kpis'>" +
         "<div class='fiche-kpi'><small>⏱️ Temps (" + (ficheEnCumul ? "cumul" : "période") + ")</small><b style='color:#d84315'>" + echHtml(fmtDureeCumul(secSem)) + "</b><span>" +
           (ficheEnCumul
-            ? ("dont cette semaine : " + echHtml(fmtDureeCumul((dureesSemaine[cleSemaine(new Date().toISOString())] || {})[p.id] || 0)) + " · " + nbCon + " sess.)")
-            : ("Cumul total : " + echHtml(fmtDureeCumul(secTot)) + " (" + nbCon + " sess.)")) +
+            ? ("dont cette semaine : " + echHtml(fmtDureeCumul((dureesSemaine[cleSemaine(new Date().toISOString())] || {})[p.id] || 0)) + " · " + nbCon + " sess."
+                + (nbCon === 0 ? " — <b style='color:#b45309'>journal absent</b>" : "") + ")")
+            : ("Cumul total : " + echHtml(fmtDureeCumul(secTot)) + " (" + nbCon + " sess."
+                + (nbCon === 0 ? " — <b style='color:#b45309'>journal absent</b>" : "") + ")")) +
           "</span></div>" +
         "<div class='fiche-kpi'><small>🏆 Moyenne Quiz / Bac</small><b style='color:#177245'>" + (stQ.moyenne20 != null ? (stQ.moyenne20 + " / 20") : "—") + "</b><span>" + stQ.nbQuizDifferents + " quiz visité(s) · " + stQ.nb + " épreuve(s) passée(s)</span></div>" +
         "<div class='fiche-kpi'><small>📄 Pages · Cours · Exos</small><b style='color:#0f766e'>" + bilanSuiviCompletEleve(p).nbPages + " / " + TOTAL_PAGES_SITE_ADMIN + " p.</b><span>📚 " + bilanSuiviCompletEleve(p).nbCours + " cours · ✏️ " + bilanSuiviCompletEleve(p).nbExos + " exo(s)</span></div>" +
@@ -7747,6 +7781,13 @@
           "<button type='button' class='btn-outil' id='btn-fiche-obs-ajouter'>➕ Ajouter</button>" +
         "</div>" +
       "</div>";
+
+    /* v607 : depuis la fiche, un clic explique un journal vide (même diagnostic
+       que les compteurs de la carte). */
+    var btnDiagJournalFiche = document.getElementById("btn-fiche-diag-journal");
+    if (btnDiagJournalFiche) {
+      btnDiagJournalFiche.addEventListener("click", function () { diagCompteursAbonne(p); });
+    }
 
     var btnPlusAccFiche = document.getElementById("btn-fiche-voir-plus-acces");
     if (btnPlusAccFiche) {
