@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-10-31T13:25:52Z",
+  "generatedAt": "2026-10-31T14:10:13Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 770,
-  "totalBytes": 1113965072,
+  "totalBytes": 1113968239,
   "files": [
     {
       "path": "404.html",
@@ -63,12 +63,12 @@
     {
       "path": "README.md",
       "bytes": 62980,
-      "gitSha": "18e347935d22a083d97de2bb1038df8717467c68"
+      "gitSha": "52d7ec7986adcdaf3ab767683ef6bd6792e3a64c"
     },
     {
       "path": "admin.html",
       "bytes": 346703,
-      "gitSha": "0e63c4e7dc80833f423c489f126c1ad0f67ea92e"
+      "gitSha": "a266c7ce79b77888310bc40cdf6beb730d35cc16"
     },
     {
       "path": "assets/audio/cours-sti-ch1.mp3",
@@ -327,8 +327,8 @@
     },
     {
       "path": "assets/css/theme.css",
-      "bytes": 81397,
-      "gitSha": "f415abc9cc3f5019dce35cc2e9eaa6a09c8e8132"
+      "bytes": 82537,
+      "gitSha": "0322014b92d0b407a0bb7c98f472986e17de9e1e"
     },
     {
       "path": "assets/css/visionneuse-exercices.css",
@@ -477,8 +477,8 @@
     },
     {
       "path": "assets/icons/matieres.svg",
-      "bytes": 2261,
-      "gitSha": "7502498487046b144e9c7cff755a8732ae0ce04b"
+      "bytes": 2744,
+      "gitSha": "4fd381816a8ffc28c699be02e8ad4cb3bb20eb9a"
     },
     {
       "path": "assets/icons/sti-icon-192.png",
@@ -723,17 +723,17 @@
     {
       "path": "assets/js/admin.js",
       "bytes": 772002,
-      "gitSha": "3ae9a8296b961eec6d5b2185ab0e7395defb2842"
+      "gitSha": "9fe41e5186ae227107750085026d4ce6bc94a8b2"
     },
     {
       "path": "assets/js/analytique.js",
       "bytes": 18719,
-      "gitSha": "8577ec9a109a246c3b58aa668e4f867b2decc328"
+      "gitSha": "d56ba8161c421e8bda4e0461ae61b7014b0a4782"
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 128706,
-      "gitSha": "5580b6d3a0dcfca80e49c4d10aa2efcbe1826fea"
+      "bytes": 128982,
+      "gitSha": "5a737df9b3a5e5dc29bc551ab7636d6675e8fb4f"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -947,8 +947,8 @@
     },
     {
       "path": "assets/js/roue-couverture.js",
-      "bytes": 13682,
-      "gitSha": "69f9f33453705b9ee2038e0235fa8055b1ce1f43"
+      "bytes": 13932,
+      "gitSha": "108138c763c25cb8470af2c9e30b1ff2cd828991"
     },
     {
       "path": "assets/js/roue-habillage.js",
@@ -1047,8 +1047,8 @@
     },
     {
       "path": "assets/pages-couverture.json",
-      "bytes": 5858,
-      "gitSha": "edfeaae2ee2cead493794bb547bd402d1e454ee4"
+      "bytes": 6104,
+      "gitSha": "8061a73abe9ecb091cc242199d2accc2c8796846"
     },
     {
       "path": "assets/streams/css3-v302/css3-1080p.m3u8",
@@ -1447,8 +1447,8 @@
     },
     {
       "path": "cours/systemes-technologies-internet.html",
-      "bytes": 71476,
-      "gitSha": "b3ed76c96139e0868e11428d5d3ce12fa82be5de"
+      "bytes": 71570,
+      "gitSha": "9ae4238ae34913bf5546d5d54c31d7263e2c4cf9"
     },
     {
       "path": "cssanimee/cours.js",
@@ -3217,28 +3217,28 @@
     },
     {
       "path": "exercices/systemes/atelier-1-systemes-exploitation.html",
-      "bytes": 20791,
-      "gitSha": "45a120a66f4d167c7a87a0bb90a7c6ffdd02cf56"
+      "bytes": 20888,
+      "gitSha": "62ec8541ea33a8d9f84e4990970c344283db54c3"
     },
     {
       "path": "exercices/systemes/atelier-2-reseaux.html",
-      "bytes": 20293,
-      "gitSha": "f6b655153e78ee2a326e471ed891705b4584dae8"
+      "bytes": 20390,
+      "gitSha": "b4185a2ce6184302df150974dbc83ea5c3b7973e"
     },
     {
       "path": "exercices/systemes/atelier-3-machine-virtuelle.html",
-      "bytes": 18204,
-      "gitSha": "5940d80ad35e6c751d07d10ba9668d78944b2a6b"
+      "bytes": 18301,
+      "gitSha": "19285c0ee51792223792ec2000e8439828a043c7"
     },
     {
       "path": "exercices/systemes/atelier-4-objets-connectes.html",
-      "bytes": 20270,
-      "gitSha": "aff50c933666623859c1c2108af9344500bffb13"
+      "bytes": 20367,
+      "gitSha": "2c1802284a746dbb6d3b82395590f44a30f05e4e"
     },
     {
       "path": "exercices/systemes/index.html",
-      "bytes": 11543,
-      "gitSha": "a420603a954a548af0d032aef47c9116463c9745"
+      "bytes": 11640,
+      "gitSha": "559d18f30a52029f144e091a113f2e4444070974"
     },
     {
       "path": "glossaire.html",
@@ -3247,8 +3247,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 64986,
-      "gitSha": "91e78d1a14fe93ea2308be4d4fd9e992e9a5e9e4"
+      "bytes": 64919,
+      "gitSha": "d026ae0b55e1ac2f2e1bb7fa76f0dbaf3d790c67"
     },
     {
       "path": "livre-smart.html",
@@ -3852,8 +3852,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 102251,
-      "gitSha": "701d8fd486f2a992e879907f2420115ad9cb74e8"
+      "bytes": 102511,
+      "gitSha": "d85f582018595772c438ef50e3b604c2d698e2d4"
     }
   ]
 }

@@ -1,7 +1,7 @@
 /* STI v432 (consigne auteur : « la partie qui tourne autour de la roue montre le niveau de
    couverture du site ») — l'ANNEAU orange qui entoure le ⚙️ ne mesure plus la seule
    progression des leçons : il montre la COUVERTURE DU SITE, c'est-à-dire le nombre de pages
-   de contenu réellement consultées par le compte, sur la totalité du site (145 pages : cours,
+   de contenu réellement consultées par le compte, sur la totalité du site (150 pages : cours,
    exercices, quiz, projets, documents, annexes d'entraînement — hors navigation portail/index
    et hors 404).
    - Journal des pages vues : localStorage « sti-pages-vues-v432 » ({slug:1,…}), alimenté à
@@ -15,7 +15,7 @@
      repeint « Progression » à chaque ouverture du panneau — les deux mesures coexistent :
      le PANNEAU garde sa ligne « 📈 Progression » intacte, seul l'anneau change de sens.
    PAGES est le repli hors-ligne : il doit rester identique, EN MINUSCULES, à la liste de
-   assets/pages-couverture.json (145 pages, générée par outils/couverture/generer-couverture.py
+   assets/pages-couverture.json (150 pages, générée par outils/couverture/generer-couverture.py
    et vérifiée par les tests). Ce repli ne sert que si le manifeste n'a pas pu être lu. */
 (function () {
   "use strict";
@@ -51,17 +51,18 @@
     "exercices/sql/sql-correction.html", "exercices/sql/sql.html", "exercices/sql/tp-bd-jointure-sous-requetes-group-by.html", "exercices/sql/tp-date-ssr-j-gp-bd.html",
     "exercices/sql/tp-date-ssr-j-gp-correction-bd.html", "exercices/sql/tp-groupby-bd.html", "exercices/sql/tp1-bd.html", "exercices/sql/tp1-correction-bd.html",
     "exercices/sql/tp2-bd.html", "exercices/sql/tp2-correction-bd.html", "exercices/sql/tp3-correction-bd.html", "exercices/sql/tp4-correction-bd.html",
-    "glossaire.html", "index.html", "livre-smart.html", "ma-fiche-revision.html",
-    "memo-veille-bac.html", "migration-photos-bucket.html", "nouveautes.html", "outils-js-bac.html",
-    "pieges-bac.html", "portail.html", "positionnement-animee/index.html", "projets/carte-bancaire/cb.html",
-    "projets/carte-bancaire/enonce-tp-carte-bancaire.html", "projets/fleurs/corrections.html", "projets/fleurs/index.html", "projets/fleurs/inscription.html",
-    "projets/fleurs/media/projet-fleurs-4sti-eleve.pdf.html", "projets/formulaire-inscription/cvfleurs.html", "projets/formulaire-inscription/enonce/cvfleurs-énoncé/formulaire inscription.pdf.html", "projets/site-tunisie/correction-details/carte-timbre-droite-haut.html",
-    "projets/site-tunisie/enonce.html", "projets/site-tunisie/index.html", "projets/site-tunisie/pages/accueil.html", "projets/site-tunisie/pages/centre.html",
-    "projets/site-tunisie/pages/nord.html", "projets/site-tunisie/pages/sud.html", "projets/site-tunisie/site-tunisie-correction-animation-html-css.html", "projets/sti0/index.html",
-    "projets/sti0/projetsti0.pdf.html", "projets/sti0/sondage.html", "projets/sti0/sondage.html", "projets/sti0/statistiques.html",
-    "projets/sti0/statistiques.html", "quiz/html-css.html", "quiz/javascript.html", "quiz/php.html",
-    "quiz/pp.html", "quiz/sql.html", "quiz/systemes-internet.html", "quiz/tableaux.html",
-    "revision-erreurs.html"
+    "exercices/systemes/atelier-1-systemes-exploitation.html", "exercices/systemes/atelier-2-reseaux.html", "exercices/systemes/atelier-3-machine-virtuelle.html", "exercices/systemes/atelier-4-objets-connectes.html",
+    "exercices/systemes/index.html", "glossaire.html", "index.html", "livre-smart.html",
+    "ma-fiche-revision.html", "memo-veille-bac.html", "migration-photos-bucket.html", "nouveautes.html",
+    "outils-js-bac.html", "pieges-bac.html", "portail.html", "positionnement-animee/index.html",
+    "projets/carte-bancaire/cb.html", "projets/carte-bancaire/enonce-tp-carte-bancaire.html", "projets/fleurs/corrections.html", "projets/fleurs/index.html",
+    "projets/fleurs/inscription.html", "projets/fleurs/media/projet-fleurs-4sti-eleve.pdf.html", "projets/formulaire-inscription/cvfleurs.html", "projets/formulaire-inscription/enonce/cvfleurs-énoncé/formulaire inscription.pdf.html",
+    "projets/site-tunisie/correction-details/carte-timbre-droite-haut.html", "projets/site-tunisie/enonce.html", "projets/site-tunisie/index.html", "projets/site-tunisie/pages/accueil.html",
+    "projets/site-tunisie/pages/centre.html", "projets/site-tunisie/pages/nord.html", "projets/site-tunisie/pages/sud.html", "projets/site-tunisie/site-tunisie-correction-animation-html-css.html",
+    "projets/sti0/index.html", "projets/sti0/projetsti0.pdf.html", "projets/sti0/sondage.html", "projets/sti0/sondage.html",
+    "projets/sti0/statistiques.html", "projets/sti0/statistiques.html", "quiz/html-css.html", "quiz/javascript.html",
+    "quiz/php.html", "quiz/pp.html", "quiz/sql.html", "quiz/systemes-internet.html",
+    "quiz/tableaux.html", "revision-erreurs.html"
   ];
   /* v434 (gain d'audit A5) : la liste embarquée est d'abord PURGÉE des doublons et
      normalisée en minuscules (le journal est en minuscules : « PHP-recap » y était mort),

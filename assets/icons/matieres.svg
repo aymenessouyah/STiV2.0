@@ -25,4 +25,10 @@
     <rect x="5" y="13" width="38" height="22" rx="11" fill="none" stroke="var(--surface-solid)" opacity=".4"/>
     <path fill="none" stroke="var(--surface-solid)" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" d="m9 31 2.7-14h4c4.5 0 4 6.6-1 6.6h-4M20 17l-2.5 14m1.4-7.5h6m1.2-6.5L23.5 31m5.5 0 2.7-14h4c4.5 0 4 6.6-1 6.6h-4"/>
   </symbol>
+  <symbol id="sti" viewBox="0 0 48 48">
+    <rect x="3" y="6" width="42" height="29" rx="8" fill="currentColor"/>
+    <path fill="none" stroke="var(--surface-solid)" stroke-width="2.6" stroke-linecap="round" d="M18.36 32.05a6 6 0 0 1 11.28 0M13.66 33.76a11 11 0 0 1 20.68 0M9.9 35.13a15 15 0 0 1 28.2 0"/>
+    <circle cx="24" cy="29.6" r="1.9" fill="var(--surface-solid)"/>
+    <path fill="currentColor" d="M21 35h6v5.5h6.5a2.5 2.5 0 0 1 0 5h-19a2.5 2.5 0 0 1 0-5H21z"/>
+  </symbol>
 </svg>

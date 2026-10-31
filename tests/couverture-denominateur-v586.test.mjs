@@ -59,11 +59,12 @@ function chargerRoue(visites) {
   return { contexte, titre, stockage };
 }
 
-test('v586 : le manifeste contient 145 pages mais 142 chemins distincts en minuscules', () => {
-  assert.equal(manifeste.n, 145);
-  assert.equal(manifeste.pages.length, 145);
+test('v586 : le manifeste contient 150 pages mais 147 chemins distincts en minuscules', () => {
+  /* v596 : 145 + les cinq ateliers d'exercices « Systèmes » (v595). */
+  assert.equal(manifeste.n, 150);
+  assert.equal(manifeste.pages.length, 150);
   const distincts = new Set(manifeste.pages.map((p) => p.toLowerCase()));
-  assert.equal(distincts.size, 142, 'trois paires ne diffèrent que par la casse');
+  assert.equal(distincts.size, 147, 'trois paires ne diffèrent que par la casse');
   /* C'est bien ce qui créait l'écart 142 ↔ 145 : le test n'a de sens que si les deux
      nombres diffèrent. */
   assert.notEqual(distincts.size, manifeste.pages.length);
@@ -71,8 +72,8 @@ test('v586 : le manifeste contient 145 pages mais 142 chemins distincts en minus
 
 test('v586 : le repli embarqué annonce le total du site, pas celui des chemins distincts', () => {
   const { contexte, titre } = chargerRoue();
-  assert.equal(contexte.__STI_COUV_TOTAL, 145, 'le total doit être la longueur de la liste');
-  assert.match(titre.valeur, /sur 145 ·/, 'l’infobulle de l’anneau annonce le même total que le tableau de bord');
+  assert.equal(contexte.__STI_COUV_TOTAL, 150, 'le total doit être la longueur de la liste');
+  assert.match(titre.valeur, /sur 150 ·/, 'l’infobulle de l’anneau annonce le même total que le tableau de bord');
   assert.match(titre.valeur, /Couverture du site/);
 });
 
@@ -82,7 +83,7 @@ test('v586 : une paire de fichiers en double casse ne compte qu’une page vue',
     'cours/PHP-recap.html': 1
   });
   /* Deux fichiers vus, un seul chemin distinct : 1 page vue sur 145 (et non 1 sur 142). */
-  assert.match(titre.valeur, /1 page vue sur 145 ·/);
+  assert.match(titre.valeur, /1 page vue sur 150 ·/);
 });
 
 test('v586 : cinq pages vues restent cinq pages vues', () => {
@@ -93,7 +94,7 @@ test('v586 : cinq pages vues restent cinq pages vues', () => {
     'exercices/html-css/box-shadow-text-shadow-css3.html': 1,
     'projets/sti0/sondage.html': 1
   });
-  assert.match(titre.valeur, /5 pages vues sur 145 ·/);
+  assert.match(titre.valeur, /5 pages vues sur 150 ·/);
 });
 
 test('v586 : le code source garde la bonne règle aux deux endroits', () => {

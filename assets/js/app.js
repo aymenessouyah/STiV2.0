@@ -76,6 +76,19 @@
     return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
   }
 
+  /* v596 : les six matières ont leur pictogramme dans assets/icons/matieres.svg.
+     Il prend la couleur de la matière et suit le thème clair / sombre. L'émoji
+     ne reste qu'en secours si un symbole venait à manquer. */
+  var SYMBOLES_MATIERES = { html5: 1, css3: 1, javascript: 1, sql: 1, php: 1, sti: 1 };
+  function iconeMatiere(id, icone, taille, prefixe) {
+    if (!SYMBOLES_MATIERES[id]) {
+      return '<span aria-hidden="true" style="font-size:' + Math.round(taille * 0.8) + 'px">' + icone + "</span>";
+    }
+    return '<svg class="matiere-logo matiere-logo--' + id + '" width="' + taille + '" height="' + taille +
+      '" viewBox="0 0 48 48" aria-hidden="true"><use href="' + prefixe + 'assets/icons/matieres.svg#' + id +
+      '"></use></svg>';
+  }
+
   /* 2. Catalogue des matières */
   var MATIERES = {
     html5: {
@@ -189,9 +202,8 @@
       id: "sti",
       nom: "Systèmes & Internet",
       icone: "🖥️",
-      /* v594 : logo fourni par le professeur (loupe sur les réseaux, le cloud
-         et la clé) — il remplace l'émoji dans le tableau de bord et les cartes. */
-      image: "assets/images/systemes-technologies-internet-96.png",
+      /* v596 : le cours a son pictogramme dans matieres.svg, dessiné comme ceux
+         des cinq autres matières (couleur du thème, lisible à 20 px). */
       badgeClasse: "badge-sti",
       couleur: "#22d3ee",
       nbVideos: 1,
@@ -2199,9 +2211,7 @@
         return (
           '<div class="dash-row">' +
             '<div style="display:flex;align-items:center;gap:10px">' +
-              (m.image
-                ? '<img src="' + pref + m.image + '" alt="" width="26" height="26" style="border-radius:7px;background:#fff;object-fit:cover;display:block">'
-                : '<span style="font-size:1.3rem">' + m.icone + "</span>") +
+              iconeMatiere(m.id, m.icone, 26, pref) +
               "<div>" +
                 '<strong style="display:block">' + echapperHtml(m.nom) + "</strong>" +
                 '<div style="display:flex;gap:8px;font-size:.76rem;color:var(--text-muted);margin-top:2px">' +
@@ -2577,9 +2587,8 @@
     zone.innerHTML = cartes.map(function (c) {
       var matiere = MATIERES[c.id] || {};
       return '<a class="welcome-course welcome-course--' + c.id + '" data-welcome-course="' + c.id + '" href="' + c.href + '">' +
-        '<span class="welcome-course__cover"><span class="welcome-course__icon" aria-hidden="true">' + (matiere.image
-          ? '<img src="' + pref + matiere.image + '" alt="" width="34" height="34" style="border-radius:8px;background:#fff;object-fit:cover;display:block">'
-          : '<svg><use href="' + pref + 'assets/icons/matieres.svg#' + c.id + '"></use></svg>') + '</span></span>' +
+        '<span class="welcome-course__cover"><span class="welcome-course__icon" aria-hidden="true">' +
+          iconeMatiere(c.id, matiere.icone, 20, pref) + '</span></span>' +
         '<span class="welcome-course__body"><strong class="welcome-course__title">' + echapperHtml(c.titre) + '</strong>' +
         '<span class="welcome-course__details">Cours · ' + c.consultes + ' / ' + c.total + ' chapitres consultés · Continuer →</span></span>' +
         '<span class="welcome-course__state">' + (c.revises ? c.revises + " / " + c.total + " révisés" : "Consulté") + '</span></a>';

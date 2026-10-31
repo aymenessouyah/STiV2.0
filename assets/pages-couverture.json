@@ -1,6 +1,6 @@
 {
 "gen": "v583",
-"n": 145,
+"n": 150,
 "regle": "toutes les pages HTML du site suivies par Git, hors tests/ (pages de test non livrées)",
 "pages": [
 "404.html",
@@ -107,6 +107,11 @@
 "exercices/sql/Tp2-Correction-bd.html",
 "exercices/sql/Tp3-Correction-bd.html",
 "exercices/sql/Tp4-correction-bd.html",
+"exercices/systemes/atelier-1-systemes-exploitation.html",
+"exercices/systemes/atelier-2-reseaux.html",
+"exercices/systemes/atelier-3-machine-virtuelle.html",
+"exercices/systemes/atelier-4-objets-connectes.html",
+"exercices/systemes/index.html",
 "glossaire.html",
 "index.html",
 "livre-smart.html",

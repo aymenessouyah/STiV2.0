@@ -1475,6 +1475,9 @@ body.sti-v2 .welcome-return__empty { font-size: .9rem; }
 .subject-card[data-subject="javascript"] { --matiere-accent: var(--accent-js); --matiere-soft: var(--accent-js-soft); --matiere-border: var(--accent-js-border); }
 .subject-card[data-subject="sql"] { --matiere-accent: var(--accent-sql); --matiere-soft: var(--accent-sql-soft); --matiere-border: var(--accent-sql-border); }
 .subject-card[data-subject="php"] { --matiere-accent: var(--accent-php); --matiere-soft: var(--accent-php-soft); --matiere-border: var(--accent-php-border); }
+/* v596 : la carte « Systèmes, technologies et Internet » reçoit l’or du matériel,
+   comme la page du cours, pour que sa pastille se lise comme les cinq autres. */
+.subject-card[data-subject="sti"] { --matiere-accent: var(--accent-gold); --matiere-soft: var(--accent-gold-soft); --matiere-border: var(--accent-gold-border); }
 
 .subject-card__top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); }
 .subject-card__icon {
@@ -2175,6 +2178,16 @@ body.sti-v2 #sti-reprendre-x {
 
 /* Identités vectorielles locales des cinq matières. */
 .matiere-logo { display: block; width: 32px; height: 32px; color: var(--matiere-accent, var(--brand)); }
+/* v596 : chaque pictogramme prend la couleur de sa matière, y compris hors des
+   cartes (tableau de bord, listes) où --matiere-accent n'est pas défini. */
+.matiere-logo--html5 { color: var(--matiere-accent, var(--accent-html)); }
+.matiere-logo--css3 { color: var(--matiere-accent, var(--accent-css)); }
+.matiere-logo--javascript { color: var(--matiere-accent, var(--accent-js)); }
+.matiere-logo--sql { color: var(--matiere-accent, var(--accent-sql)); }
+.matiere-logo--php { color: var(--matiere-accent, var(--accent-php)); }
+.matiere-logo--sti { color: var(--matiere-accent, var(--accent-gold)); }
+/* Pastille de titre : le pictogramme se pose dans un badge, à la taille du texte. */
+.matiere-logo--pastille { display: inline-block; width: 18px; height: 18px; margin: 0 6px -3px 0; color: inherit; }
 .matiere-logo--hero { float: right; width: 32px; height: 32px; margin: 0 0 var(--space-2) var(--space-3); color: var(--course-accent, var(--brand)); }
 .course-page--sql .matiere-logo--hero { color: var(--accent-sql); }
 .course-page--php .matiere-logo--hero { color: var(--accent-php); }

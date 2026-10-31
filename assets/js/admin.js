@@ -36,7 +36,7 @@
      outils/couverture/generer-couverture.py (toutes les pages HTML du site hors
      tests/, casse réelle, n calculé). TOTAL_PAGES_SITE_ADMIN n'est qu'un repli
      hors-ligne : un test vérifie qu'il reste égal au manifeste. */
-  var TOTAL_PAGES_SITE_ADMIN = 145;
+  var TOTAL_PAGES_SITE_ADMIN = 150;
   function chargerTotalPagesSiteAdmin() {
     return fetch("assets/pages-couverture.json", { cache: "no-cache" }).then(function (r) {
       return r && r.ok ? r.json() : null;

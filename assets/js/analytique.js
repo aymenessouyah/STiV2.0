@@ -1,6 +1,6 @@
 /* ═══ STI ANALYTIQUE (v463) — Agrégation complète des progressions cloud (admin) ═══
    Lit sti_progressions + profiles + sti_quiz_parties pour synthétiser :
-   pages vues (/145), cours/chapitres, exercices, vidéos (.mp4 /27), audios (.mp3 /16) et quiz. */
+   pages vues (/150), cours/chapitres, exercices, vidéos (.mp4 /27), audios (.mp3 /16) et quiz. */
 (function () {
   "use strict";
   var cfg = window.STI_AUTH || { URL: "https://vywujxmepvcbgedgmger.supabase.co", CLE: "sb_publishable_FI5FimytONd5VdWK6GfXLA_I6vPTrvn" };
@@ -11,7 +11,7 @@
   /* v583 : le dénominateur des pages vient du manifeste de couverture
      (assets/pages-couverture.json, régénéré par outils/couverture/generer-couverture.py).
      La valeur ci-dessous n'est qu'un repli hors-ligne, tenu égal au manifeste par les tests. */
-  var TOTAL_PAGES_SITE = 145;
+  var TOTAL_PAGES_SITE = 150;
   function chargerTotalPagesSite() {
     return fetch("assets/pages-couverture.json", { cache: "no-cache" }).then(function (r) {
       return r && r.ok ? r.json() : null;
