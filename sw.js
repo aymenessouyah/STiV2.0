@@ -202,7 +202,7 @@ var UPDATE_FILES = [
   { url: "./assets/js/roue-plan.js", revision: "perf-fluide-v473" },
   { url: "./assets/js/sync-progressions.js", revision: "pastille-sync-v534" },
   { url: "./assets/js/xp-plancher.js", revision: "xp-jamais-en-recul-v520" },
-  { url: "./assets/js/admin.js", revision: "couverture-v583" },
+  { url: "./assets/js/admin.js", revision: "recherche-connexions-v584" },
   { url: "./assets/js/quiz-admin.js", revision: "nav-fluide-v475" },
   { url: "./assets/js/sauvegarde.js", revision: "perf-fluide-v473" },
   { url: "./assets/js/reprendre.js", revision: "vues-videos-v531" },

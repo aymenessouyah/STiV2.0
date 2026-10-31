@@ -8183,6 +8183,309 @@
     });
   }
 
+  /* ---------- v584 : retrouver d'anciennes connexions (navigateur ou fichier) ----------
+     Avant la v582, AUCUNE copie du journal `acces` n'était faite : les seules traces
+     d'avant le 25/10/2026 ne peuvent donc se trouver que sur un poste, à trois endroits :
+       1. IndexedDB « sti-admin-dashboard-v1 » (instantané du tableau de bord + copies
+          déposées avant chaque purge) ;
+       2. localStorage / sessionStorage (ancien secours « sti-admin-cache ») ;
+       3. un fichier JSON de connexions téléchargé par le professeur (STI_V2_connexions_*.json).
+     La fouille est strictement en LECTURE : rien n'est écrit ni supprimé tant que le
+     professeur n'a pas confirmé ; le réimport passe ensuite par la même RPC idempotente
+     (admin_reimporter_acces) que le bouton ♻️ de la v582. */
+  var DATE_PERTE_ACCES_V584 = "2026-10-25";
+
+  function normaliserLigneAccesV584(o) {
+    if (!o || typeof o !== "object" || Array.isArray(o)) return null;
+    var uid = o.user_id || o.userId || o.uid || o.eleve_id;
+    var debut = o.debut || o.start || o.date_debut || o.entree_le;
+    var page = o.page || o.url || o.chemin;
+    if (uid == null || debut == null || page == null) return null;
+    if (typeof uid !== "string" && typeof uid !== "number") return null;
+    if (typeof page !== "string" && typeof page !== "number") return null;
+    if (String(uid).trim() === "" || String(page).trim() === "") return null;
+    var duree = o.duree_sec != null ? o.duree_sec : (o.dureeSec != null ? o.dureeSec : o.duree);
+    return {
+      user_id: String(uid),
+      debut: String(debut),
+      fin: o.fin || o.end || null,
+      duree_sec: duree != null && isFinite(Number(duree)) ? Number(duree) : null,
+      lieu: o.lieu || o.appareil || null,
+      page: String(page)
+    };
+  }
+
+  /* Parcourt n'importe quelle structure (tableau, objet imbriqué, {lignes:[…]},
+     instantané {tousAcces:[…]}, copie {lignes:[…]}) et en sort les lignes de connexion
+     reconnaissables, dédoublonnées sur user_id/debut/page. */
+  function extraireLignesAccesV584(valeur, profondeurMax) {
+    var sortie = [];
+    var vues = {};
+    var max = profondeurMax > 0 ? profondeurMax : 6;
+    var plafond = 60000;
+    function ajouter(l) {
+      var cle = l.user_id + "|" + l.debut + "|" + l.page;
+      if (vues[cle]) return;
+      vues[cle] = true;
+      sortie.push(l);
+    }
+    function marcher(v, prof) {
+      if (v == null || prof > max || sortie.length >= plafond) return;
+      if (Array.isArray(v)) {
+        for (var i = 0; i < v.length && sortie.length < plafond; i++) marcher(v[i], prof + 1);
+        return;
+      }
+      if (typeof v !== "object") return;
+      var l = normaliserLigneAccesV584(v);
+      if (l) { ajouter(l); return; }
+      for (var k in v) {
+        if (Object.prototype.hasOwnProperty.call(v, k)) marcher(v[k], prof + 1);
+      }
+    }
+    marcher(valeur, 0);
+    return lignesAccesDepuisListeAdmin(sortie);
+  }
+
+  function statistiquesLignesAccesV584(lignes) {
+    var dates = [];
+    var avant = 0;
+    (lignes || []).forEach(function (l) {
+      var d = String(l && l.debut || "");
+      if (!d) return;
+      dates.push(d);
+      if (d.slice(0, 10) < DATE_PERTE_ACCES_V584) avant++;
+    });
+    dates.sort();
+    return {
+      nb: (lignes || []).length,
+      avant: avant,
+      premiere: dates.length ? dates[0] : null,
+      derniere: dates.length ? dates[dates.length - 1] : null
+    };
+  }
+
+  /* Analyse pure : `sources` = [{ nom, valeurs }], où `valeurs` est n'importe quel
+     contenu lu (JSON d'un fichier, tableau d'un magasin IndexedDB, valeur d'un
+     stockage web). Aucun accès navigateur ici — c'est ce qui est testé hors ligne. */
+  function analyserSourcesAccesV584(sources) {
+    var liste = [];
+    var retenues = [];
+    (sources || []).forEach(function (s) {
+      if (!s) return;
+      var lignes = extraireLignesAccesV584(s.valeurs);
+      if (!lignes.length) return;
+      var st = statistiquesLignesAccesV584(lignes);
+      liste.push({
+        nom: String(s.nom || "source"),
+        nb: st.nb,
+        avant: st.avant,
+        premiere: st.premiere,
+        derniere: st.derniere
+      });
+      retenues = retenues.concat(lignes);
+    });
+    var toutes = lignesAccesDepuisListeAdmin(retenues);
+    return { sources: liste, lignes: toutes, stats: statistiquesLignesAccesV584(toutes) };
+  }
+
+  function lignesDepuisTexteJsonV584(texte) {
+    var brut;
+    try { brut = JSON.parse(String(texte)); } catch (e) { return []; }
+    return extraireLignesAccesV584(brut);
+  }
+
+  /* Lecture seule d'une base IndexedDB (jamais créée : si elle n'existe pas, ou si le
+     navigateur propose une mise à niveau, on annule). */
+  function lireBaseIndexedDbV584(nom, sources) {
+    return new Promise(function (resolve) {
+      var req;
+      try { req = indexedDB.open(nom); } catch (e) { resolve(); return; }
+      /* Jamais de création : si la base n'existe pas, le navigateur demande une mise à
+         niveau — on l'annule, on ne laisse aucune trace. */
+      req.onupgradeneeded = function () {
+        try { req.transaction.abort(); } catch (e) {}
+      };
+      req.onerror = function () { resolve(); };
+      req.onsuccess = function () {
+        var db = req.result;
+        var magasins = [];
+        try { magasins = Array.prototype.slice.call(db.objectStoreNames || []); } catch (e) {}
+        var suite = magasins.reduce(function (p, mag) {
+          return p.then(function () {
+            return new Promise(function (ok) {
+              var vals = [];
+              var termine = false;
+              function finir() {
+                if (termine) return;
+                termine = true;
+                if (vals.length) sources.push({ nom: "IndexedDB « " + nom + " » / " + mag, valeurs: vals });
+                ok();
+              }
+              try {
+                var tx = db.transaction(mag, "readonly");
+                var curseur = tx.objectStore(mag).openCursor();
+                curseur.onsuccess = function (ev) {
+                  var c = ev.target.result;
+                  if (!c) { finir(); return; }
+                  vals.push(c.value);
+                  if (vals.length >= 40000) { finir(); return; }
+                  try { c.continue(); } catch (e) { finir(); }
+                };
+                curseur.onerror = finir;
+              } catch (e) { finir(); }
+            });
+          });
+        }, Promise.resolve());
+        suite.then(function () { try { db.close(); } catch (e) {} resolve(); });
+      };
+    });
+  }
+
+  function lireStockagesWebV584() {
+    var sources = [];
+    [["localStorage", "localStorage"], ["sessionStorage", "sessionStorage"]].forEach(function (paire) {
+      var stockage = null;
+      try { stockage = window[paire[0]]; } catch (e) { stockage = null; }
+      if (!stockage) return;
+      var valeurs = [];
+      try {
+        for (var i = 0; i < stockage.length; i++) {
+          var cle = stockage.key(i);
+          var brut = stockage.getItem(cle);
+          if (!brut || brut.length > 8000000) continue;
+          if (brut.charAt(0) !== "{" && brut.charAt(0) !== "[") continue;
+          try { valeurs.push(JSON.parse(brut)); } catch (e) {}
+        }
+      } catch (e) {}
+      if (valeurs.length) sources.push({ nom: "Stockage navigateur « " + paire[1] + " »", valeurs: valeurs });
+    });
+    return sources;
+  }
+
+  function fouillerSourcesNavigateurV584() {
+    var sources = lireStockagesWebV584();
+    return new Promise(function (resolve) {
+      var noms = null;
+      try {
+        if (typeof indexedDB !== "undefined" && typeof indexedDB.databases === "function") {
+          noms = indexedDB.databases().then(function (infos) {
+            return (infos || []).map(function (i) { return i && i.name; }).filter(Boolean);
+          }).catch(function () { return ["sti-admin-dashboard-v1"]; });
+        }
+      } catch (e) { noms = null; }
+      if (!noms) noms = Promise.resolve(["sti-admin-dashboard-v1"]);
+      noms.then(function (liste) {
+        return (liste || []).reduce(function (p, nom) {
+          return p.then(function () { return lireBaseIndexedDbV584(nom, sources); });
+        }, Promise.resolve());
+      }).then(function () { resolve(sources); }).catch(function () { resolve(sources); });
+    });
+  }
+
+  function libelleSourceAccesV584(s) {
+    var debut = s.premiere ? fmtDateCourteAdmin(s.premiere) : "—";
+    var fin = s.derniere ? fmtDateCourteAdmin(s.derniere) : "—";
+    return "• <b>" + echHtml(s.nom) + "</b> : " + s.nb + " connexion(s) du " + debut +
+      " au " + fin + (s.avant ? " — <b style='color:#b91c1c'>" + s.avant +
+      " antérieure(s) au 25/10/2026</b>" : "");
+  }
+
+  function proposerReimportConnexionsV584(analyse, origine) {
+    if (!analyse || !analyse.lignes || !analyse.lignes.length) {
+      msg("ℹ️ Aucune connexion retrouvée (" + (origine || "recherche") + "). Rien n'a été modifié.", "err");
+      return;
+    }
+    var details = analyse.sources.map(libelleSourceAccesV584).join("<br>");
+    var vieux = analyse.stats.avant;
+    demanderConfirmationOperation({
+      titre: "♻️ Réimporter " + analyse.lignes.length + " connexion(s) ?",
+      htmlDesc: (origine || "Cette recherche") + " a retrouvé :<br>" + details +
+        (vieux ? "<br><br>✅ <b>" + vieux + " connexion(s) datent d'AVANT le 25/10/2026</b> : ce sont celles que la base a perdues."
+               : "<br><br>⚠️ Aucune ligne antérieure au 25/10/2026 : cette source ne compense pas la perte.") +
+        "<br><br>Le réimport est <b>idempotent</b> : les lignes déjà présentes sont ignorées, aucun doublon n'est créé.",
+      resumeTxt: "♻️ " + analyse.lignes.length + " ligne(s) · " + (vieux ? vieux + " avant le 25/10" : "aucune avant le 25/10"),
+      btnLabel: "♻️ Réimporter",
+      onConfirmer: function () {
+        msg("⏳ Réimport de " + analyse.lignes.length + " connexion(s)…", "ok");
+        reimporterLignesAccesAdmin(analyse.lignes, origine || "Recherche locale").catch(function (e) {
+          msg("❌ Réimport refusé : " + ((e && e.message) || "double authentification ?"), "err");
+        });
+      }
+    });
+  }
+
+  function fouillerConnexionsNavigateurAdmin() {
+    if (!navigator.onLine) {
+      msg("❌ La fouille peut se faire hors ligne, mais le réimport lui-même exige Internet.", "err");
+    }
+    msg("⏳ Fouille du navigateur : instantané du tableau de bord, copies avant purge, stockages locaux…", "ok");
+    fouillerSourcesNavigateurV584().then(function (sources) {
+      var analyse = analyserSourcesAccesV584(sources);
+      proposerReimportConnexionsV584(analyse, "La fouille de ce navigateur");
+    }).catch(function (e) {
+      msg("❌ Fouille impossible : " + ((e && e.message) || "navigateur trop ancien") + ".", "err");
+    });
+  }
+
+  function importerFichierConnexionsAdmin() {
+    var inp = document.createElement("input");
+    inp.type = "file";
+    inp.accept = ".json,application/json";
+    inp.style.display = "none";
+    document.body.appendChild(inp);
+    inp.addEventListener("change", function () {
+      var f = inp.files && inp.files[0];
+      try { document.body.removeChild(inp); } catch (e) {}
+      if (!f) return;
+      msg("⏳ Lecture de « " + f.name + " »…", "ok");
+      var lecteur = new FileReader();
+      lecteur.onerror = function () { msg("❌ Fichier illisible.", "err"); };
+      lecteur.onload = function () {
+        var valeurs;
+        try { valeurs = JSON.parse(String(lecteur.result)); }
+        catch (e) { msg("❌ Ce fichier n'est pas un JSON valide : " + f.name, "err"); return; }
+        var analyse = analyserSourcesAccesV584([{ nom: "fichier " + f.name, valeurs: valeurs }]);
+        proposerReimportConnexionsV584(analyse, "Le fichier « " + f.name + " »");
+      };
+      try { lecteur.readAsText(f); } catch (e) { msg("❌ Lecture impossible de ce fichier.", "err"); }
+    });
+    inp.click();
+  }
+
+  window.__stiRechercheConnexionsV584 = {
+    DATE_PERTE: DATE_PERTE_ACCES_V584,
+    normaliserLigneAcces: normaliserLigneAccesV584,
+    extraireLignesAcces: extraireLignesAccesV584,
+    analyserSources: analyserSourcesAccesV584,
+    statistiquesLignes: statistiquesLignesAccesV584,
+    lignesDepuisTexteJson: lignesDepuisTexteJsonV584
+  };
+
+  (function initOutilsRechercheAccesV584() {
+    if (document.getElementById("btn-fouiller-acces")) return;
+    var ancre = btnOuvrirPurgeAcces && btnOuvrirPurgeAcces.parentNode;
+    if (!ancre) return;
+    var btnF = document.createElement("button");
+    btnF.type = "button";
+    btnF.className = "btn-outil";
+    btnF.id = "btn-fouiller-acces";
+    btnF.title = "Chercher dans CE navigateur (cache du tableau de bord, copies avant purge, stockages locaux) d'anciennes connexions, puis les réimporter";
+    btnF.textContent = "🔎 Fouiller ce navigateur";
+    btnF.style.cssText = "background:#eef2ff;border-color:#4338ca;color:#312e81;box-shadow:2px 2px 0 #4338ca";
+    btnF.addEventListener("click", fouillerConnexionsNavigateurAdmin);
+
+    var btnI = document.createElement("button");
+    btnI.type = "button";
+    btnI.className = "btn-outil";
+    btnI.id = "btn-importer-fichier-acces";
+    btnI.title = "Réimporter un fichier JSON de connexions (STI_V2_connexions_*.json, sauvegarde avant purge)";
+    btnI.textContent = "📂 Importer un fichier";
+    btnI.addEventListener("click", importerFichierConnexionsAdmin);
+
+    ancre.insertBefore(btnI, ancre.firstChild);
+    ancre.insertBefore(btnF, ancre.firstChild);
+  })();
+
   function afficherModalSauvegardesAccesAdmin(liste) {
     var ancien = document.getElementById("modal-sauvegardes-acces-v582");
     if (ancien) ancien.remove();

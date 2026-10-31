@@ -111,17 +111,20 @@ test('v583 : le repli hors-ligne de la roue reflète le manifeste et le Service 
   );
 
   const sw = read('sw.js');
-  for (const url of [
-    './assets/pages-couverture.json',
-    './assets/js/admin.js',
-    './assets/js/analytique.js',
-    './assets/js/admin-couverture.js',
-    './assets/js/roue-couverture.js',
-    './admin.html'
-  ]) {
+  /* v584 : admin.js repart au lot « recherche-connexions-v584 » (fouille du navigateur),
+     les autres fichiers du décompte restent au lot v583. */
+  const revisionsAttendues = {
+    './assets/pages-couverture.json': 'couverture-v583',
+    './assets/js/admin.js': 'recherche-connexions-v584',
+    './assets/js/analytique.js': 'couverture-v583',
+    './assets/js/admin-couverture.js': 'couverture-v583',
+    './assets/js/roue-couverture.js': 'couverture-v583',
+    './admin.html': 'couverture-v583'
+  };
+  for (const [url, revision] of Object.entries(revisionsAttendues)) {
     const ligne = sw.split('\n').find((l) => l.includes('url: "' + url + '"'));
     assert.ok(ligne, 'entrée sw.js absente : ' + url);
-    assert.match(ligne, /revision: "couverture-v583"/, 'révision à jour attendue pour ' + url);
+    assert.ok(ligne.includes('revision: "' + revision + '"'), 'révision à jour attendue pour ' + url);
   }
   /* Pas de changement d'UPDATE_ID : les 778 entrées de chaîne du delta ne sont pas
      retéléchargées, seules les six révisions ci-dessus changent. */
