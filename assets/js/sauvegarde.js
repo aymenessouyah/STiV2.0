@@ -527,9 +527,16 @@
     });
   }
 
-  function panneau() {
+  function panneau(options) {
+    /* v606 : le panneau est aussi appelé directement par un bouton de la page
+       (et non seulement par la pastille flottante). Dans ce cas on amène tout
+       de suite la vue sur l'encadré « 📦 Export vers Drive ». */
+    var opts = (options && typeof options === "object" && !options.type) ? options : {};
     var exist = document.getElementById("sti-sauvegarde");
-    if (exist) { exist.remove(); return; }
+    if (exist) {
+      exist.remove();
+      if (!opts.focusExport) return;
+    }
     var ov = document.createElement("div");
     ov.id = "sti-sauvegarde";
     ov.setAttribute("role", "dialog");
@@ -622,6 +629,19 @@
       });
     });
 
+    if (opts.focusExport) {
+      setTimeout(function () {
+        var boite = document.getElementById("sti-sauv-drive-export");
+        if (!boite) return;
+        try { boite.scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) {}
+        var halo = "0 0 0 5px #1d4ed8";
+        var avant = boite.style.boxShadow;
+        boite.style.boxShadow = halo;
+        boite.focus({ preventScroll: true });
+        setTimeout(function () { boite.style.boxShadow = avant; }, 2200);
+      }, 120);
+    }
+
     var btnExportDrive = document.getElementById("sti-sauv-drive-export");
     if (btnExportDrive) btnExportDrive.addEventListener("click", function () {
       var caseCode = document.getElementById("sti-sauv-export-code");
@@ -660,14 +680,36 @@
     });
   }
 
+  /* v606 — « Je ne trouve pas le bouton export vers Drive » : la pastille
+     flottante portait l'identifiant #sti-btn-sauvegarde, que le ruban
+     « Services » de l'administration déplace dans son dock replié… où tout
+     bouton autre que la bascule est masqué (display:none). Le bouton
+     disparaissait donc quelques centièmes de seconde après l'ouverture.
+     Un identifiant propre le rend invulnérable, et les vrais boutons de la
+     page ouvrent le panneau, export Drive en évidence. */
+  function lierOuvreursExport() {
+    ["sti-btn-sauvegarde", "btn-export-drive-admin"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el || el.getAttribute("data-sti-sauvegarde-lie") === "1") return;
+      el.setAttribute("data-sti-sauvegarde-lie", "1");
+      el.addEventListener("click", function (ev) {
+        if (ev && typeof ev.preventDefault === "function") ev.preventDefault();
+        panneau({ focusExport: true });
+      });
+    });
+  }
+
   function bouton() {
-    if (document.getElementById("sti-btn-sauvegarde")) return;
-    var b = document.createElement("button");
-    b.id = "sti-btn-sauvegarde";
+    lierOuvreursExport();
+    var b = document.getElementById("sti-sauv-btn-flottant");
+    if (b) return;
+    b = document.createElement("button");
+    b.id = "sti-sauv-btn-flottant";
     b.type = "button";
     b.textContent = "💾 Sauvegarde complète";
     b.setAttribute("style", 'position:fixed;left:14px;bottom:114px;z-index:99999;padding:11px 16px;border-radius:999px;border:3px solid #1a1a2e;background:#15803d;color:#fff;font-family:"Comic Sans MS","Comic Sans","Comic Neue","Chalkboard SE",cursive,sans-serif;font-weight:800;font-size:14px;cursor:pointer;box-shadow:4px 4px 0 #1a1a2e;');
-    b.addEventListener("click", panneau);
+    b.setAttribute("aria-label", "Sauvegarde complète — ouvrir l’export vers Drive");
+    b.addEventListener("click", function () { panneau({ focusExport: true }); });
     document.body.appendChild(b);
     setTimeout(function () {
       try { verifierSyncAutoDrive(); } catch (e) {}
@@ -709,5 +751,11 @@
     document.addEventListener("DOMContentLoaded", bouton);
   } else {
     bouton();
+  }
+  /* v606 : le ruban « Services » est construit après nous (DOMContentLoaded,
+     puis +250 ms et +900 ms) : on relie nos boutons à chaque passage. */
+  if (typeof window !== "undefined" && typeof window.addEventListener === "function") {
+    setTimeout(lierOuvreursExport, 1000);
+    setTimeout(lierOuvreursExport, 2500);
   }
 })();
