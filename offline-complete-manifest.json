@@ -1,9 +1,9 @@
 {
-  "version": "v575-sti-atelier-v386",
-  "generatedAt": "2026-10-30T23:24:29Z",
+  "version": "v577-sti-atelier-v386",
+  "generatedAt": "2026-10-31T00:05:25Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 751,
-  "totalBytes": 1059999151,
+  "totalFiles": 753,
+  "totalBytes": 1105192658,
   "files": [
     {
       "path": "404.html",
@@ -682,8 +682,8 @@
     },
     {
       "path": "assets/js/admin-vues-videos.js",
-      "bytes": 29865,
-      "gitSha": "2ae29a5e37cdc9b9478da50405516c9da77acba9"
+      "bytes": 29980,
+      "gitSha": "8141aff521060f64464592f9a871c91ea2c14445"
     },
     {
       "path": "assets/js/admin.js",
@@ -772,8 +772,8 @@
     },
     {
       "path": "assets/js/lecteur-commun.js",
-      "bytes": 14326,
-      "gitSha": "2707b55623aff77cb7ce8867c69d65e8a6b657ee"
+      "bytes": 14642,
+      "gitSha": "5cd5b58a3565d663914b349fe4405b3116dc7a3d"
     },
     {
       "path": "assets/js/mobile-nav.js",
@@ -832,8 +832,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 248872,
-      "gitSha": "85b1b5ed3829c47a6ed01e0bd83ccdeab7e1eea0"
+      "bytes": 251226,
+      "gitSha": "e093da837599e674846705875dcd88a9e9ebbb55"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -1041,6 +1041,11 @@
       "gitSha": "adc00b86c8f890a1b603899afd0a0ea3f81935e8"
     },
     {
+      "path": "assets/subtitles/CoursSystemesInternet-fr-v577.vtt",
+      "bytes": 18741,
+      "gitSha": "86db9fa0a5e7247ab7beec8687fba759ccf7b216"
+    },
+    {
       "path": "assets/subtitles/DateJS-fr-v565.vtt",
       "bytes": 12219,
       "gitSha": "77f7889881d9fc13c9b4899c2d6e98804b4d20a6"
@@ -1134,6 +1139,11 @@
       "path": "assets/videos/ConsoleVariables-v548.mp4",
       "bytes": 33889151,
       "gitSha": "33aca5a190d9b0e51e48e6c5a6427b41efaa5e80"
+    },
+    {
+      "path": "assets/videos/CoursSystemesInternet-v577.mp4",
+      "bytes": 45169355,
+      "gitSha": "cb551f3bae30c4a392b5af99978915bf2cdb7d85"
     },
     {
       "path": "assets/videos/DateJS-v565.mp4",
@@ -1382,8 +1392,8 @@
     },
     {
       "path": "cours/systemes-technologies-internet.html",
-      "bytes": 55403,
-      "gitSha": "3247605061c639fb41a895cec597649965c87060"
+      "bytes": 57923,
+      "gitSha": "d65c270e830b9ecf933196388df21fb768a34fce"
     },
     {
       "path": "cssanimee/cours.js",
@@ -3757,8 +3767,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 99581,
-      "gitSha": "bfe6c4268b367153a9500313ee034c3bb7045e84"
+      "bytes": 99687,
+      "gitSha": "da5a6379da582c377c4d13e3b4b8d87cf0c3b087"
     }
   ]
 }

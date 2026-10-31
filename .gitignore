@@ -68,3 +68,11 @@ build/
 /outils/phpchaines/voix-off.wav
 /outils/phpchaines/voix/*.wav
 /outils/phpchaines/rendu.log
+
+# Vidéo du cours « Systèmes, technologies et Internet » (outils/courssti) :
+# les MP3 de la voix off sont livrés avec les outils, le reste est intermédiaire.
+/outils/courssti/__pycache__/
+/outils/courssti/sortie_*.mp4
+/outils/courssti/voix-off.wav
+/outils/courssti/voix/*.wav
+/outils/courssti/rendu.log

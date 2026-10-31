@@ -113,7 +113,7 @@ test('cache-buster, révision du service worker et outil manuel restent cohéren
   assert.match(sw, /url: "\.\/admin\.html", revision: "photo-secours-v562"/);
   assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "photo-secours-v562"/);
   /* Le cache et le lot général ne bougent pas. */
-  assert.match(sw, /var UPDATE_ID = "v575-livre-accueil-20261031"/);
+  assert.match(sw, /var UPDATE_ID = "v577-video-cours-sti-20261031"/);
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
 
   /* L'outil manuel existe toujours : il sert à vérifier et à révoquer. */

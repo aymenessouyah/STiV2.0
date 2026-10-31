@@ -139,7 +139,8 @@ test('v574 : les nouveaux termes sont aussi cherchables en Ctrl+K', () => {
 
 test('v574 : les versions hors-ligne suivent la mise à jour', () => {
   assert.match(sw, /url: "\.\/assets\/js\/acces\.js", revision: "sti-glossaire-v574"/);
-  assert.match(sw, /url: "\.\/glossaire\.html", revision: "glossaire-sti-v574"/);
-  assert.match(sw, /url: "\.\/cours\/systemes-technologies-internet\.html", revision: "sti-3si-v574"/);
+  assert.match(sw, /url: "\.\/glossaire\.html", revision: "glossaire-sti-v577"/);
+  assert.match(sw, /url: "\.\/cours\/systemes-technologies-internet\.html", revision: "sti-3si-v577"/);
+  /* v577 : les révisions du glossaire et du cours STI suivent le lot de la vidéo. */
   assert.match(lire('tests/main-integration.test.mjs'), /assert\.equal\(revisions\.get\('\.\/assets\/js\/acces\.js'\), 'sti-glossaire-v574'\);/);
 });

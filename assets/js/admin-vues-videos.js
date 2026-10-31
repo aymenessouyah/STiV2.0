@@ -57,6 +57,7 @@
     { id: "date-js", titre: "L'objet Date", matiere: "javascript", icone: "📅" },
     { id: "php-variables", titre: "PHP — Variables, portée et types", matiere: "php", icone: "🐘" },
     { id: "php-chaines", titre: "PHP — Chaînes, transtypage et dates", matiere: "php", icone: "🔤" },
+    { id: "cours-sti", titre: "Cours — Systèmes, technologies et Internet", matiere: "sti", icone: "🖥️" },
     { id: "tp-evenements-liens", titre: "TP — Événements & liens", matiere: "javascript", icone: "⚡" },
     { id: "tp-formulaire-tableau-autre", titre: "TP — Formulaire & tableau", matiere: "javascript", icone: "⚡" },
     { id: "tp-display-float-position", titre: "TP — display, float, position", matiere: "javascript", icone: "⚡" },

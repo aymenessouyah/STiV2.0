@@ -20,6 +20,7 @@
     'date-js': ['javascript','L\'objet Date — le jour, le mois, l\'année'],
     'php-variables': ['php','PHP — Les variables, la portée et les types'],
     'php-chaines': ['php','PHP — Chaînes, transtypage et date/heure'],
+    'cours-sti': ['sti','Cours — Systèmes, technologies et Internet'],
     'sql-cours': ['sql','Cours SQL'],
     'sql-initiation': ['sql','Construire une requête SQL'],
     'sql-serie4': ['sql','Série 4 SQL'],
@@ -204,6 +205,8 @@
       else if ((bouton = t.closest('[data-fullscreen-video]'))) { v = document.getElementById(bouton.dataset.fullscreenVideo); slug = slugVideo(v); plein = true; }
       else if ((bouton = t.closest('[data-resume-video]'))) { var carte = bouton.closest('.featured-video-card,.js-video-modal__body'); v = carte && carte.querySelector('video'); slug = slugVideo(v); temps = position(slug); }
       else if ((bouton = t.closest('[data-play-display]'))) { slug = 'css3-display'; }
+      /* v577 : les cartes du cours STI ouvrent la vidéo de leur chapitre. */
+      else if ((bouton = t.closest('[data-video-open]'))) { slug = bouton.getAttribute('data-video-open'); temps = bouton.getAttribute('data-video-start') || 0; }
       if (!slug) return;
       e.preventDefault(); e.stopImmediatePropagation(); lancer(slug, temps, plein);
     }, true);
