@@ -1170,7 +1170,7 @@
       { icone: "⚡", texte: "JavaScript : fonctions de contrôle Bac & DOM" },
       { icone: "🗄️", texte: "SQL : requêtes SELECT, jointures & agrégations" },
       { icone: "🐘", texte: "PHP & MySQLi : traitement serveur 4e SI", reserve4si: true },
-      { icone: "🎯", texte: "1 244 questions auto-corrigées & révision de mes erreurs" }
+      { icone: "🎯", texte: "1 269 questions auto-corrigées & révision de mes erreurs" }
     ];
 
     var index = 0;

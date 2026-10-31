@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-10-31T11:05:39Z",
+  "generatedAt": "2026-10-31T11:25:27Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 757,
-  "totalBytes": 1110722207,
+  "totalBytes": 1110766585,
   "files": [
     {
       "path": "404.html",
@@ -62,13 +62,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 62507,
-      "gitSha": "c9caa9a7986735d7d9a53d229af1bee6f13fa29c"
+      "bytes": 62882,
+      "gitSha": "41da4c606fdd228c2d9597a5120a04d198d60da0"
     },
     {
       "path": "admin.html",
-      "bytes": 346570,
-      "gitSha": "ec8675f85caed9c8250dfb1e048fac322925bfb4"
+      "bytes": 346703,
+      "gitSha": "0e63c4e7dc80833f423c489f126c1ad0f67ea92e"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -322,13 +322,13 @@
     },
     {
       "path": "assets/data/quiz-banque.json",
-      "bytes": 319995,
-      "gitSha": "63f5ec696fd37511642fc4dfb5e7e0d38954ad2e"
+      "bytes": 332496,
+      "gitSha": "2fe6584b07f18b010de6e3ed91435a76690f5ad5"
     },
     {
       "path": "assets/data/quiz-systemes-internet.json",
-      "bytes": 10720,
-      "gitSha": "147790188e7267921ecc5b1d26bd0e2e36e41ab5"
+      "bytes": 41003,
+      "gitSha": "97731e147818b8298edba39fa5311dd9ca7909ce"
     },
     {
       "path": "assets/data/smart-book-2026.json",
@@ -692,8 +692,8 @@
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 770805,
-      "gitSha": "aaa19e638e59d75285432d497190ee9b25d420fe"
+      "bytes": 770434,
+      "gitSha": "b53e5fabb0e58b4d28264b94a725cddd76db7fde"
     },
     {
       "path": "assets/js/analytique.js",
@@ -703,7 +703,7 @@
     {
       "path": "assets/js/app.js",
       "bytes": 125659,
-      "gitSha": "0dee990ae9a9a1e16e64a5f2c003fc91befc37a1"
+      "gitSha": "ee73ad0de9c9b0d9a5b36cec1c3744422d67cfda"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -942,8 +942,8 @@
     },
     {
       "path": "assets/js/sauvegarde.js",
-      "bytes": 32351,
-      "gitSha": "eccdafa5172f84fc716bc9cac391d116b01ec9d5"
+      "bytes": 33303,
+      "gitSha": "8bedc482b35caa96777ed6a3818d0a7e88cb58b6"
     },
     {
       "path": "assets/js/smart-book.js",
@@ -2462,8 +2462,8 @@
     },
     {
       "path": "documents/sql/sauvegarde-auto-drive.gs",
-      "bytes": 16957,
-      "gitSha": "17601dcb4aef4cd060371a5d3a4ee34a96347cc1"
+      "bytes": 17481,
+      "gitSha": "f68a05569cb422af360d932ec74f475440262a38"
     },
     {
       "path": "documents/sql/sti_diagnostics.sql",
@@ -3183,7 +3183,7 @@
     {
       "path": "index.html",
       "bytes": 64532,
-      "gitSha": "bfa1408fbb1a42ef2c5cef1f5646da1357b6a584"
+      "gitSha": "ee952d343ff12bf95ac121676697a08077ccae6a"
     },
     {
       "path": "livre-smart.html",
@@ -3787,8 +3787,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 100993,
-      "gitSha": "42bfde0644d6c7ab199b01710e0d7ec709aa7c48"
+      "bytes": 100974,
+      "gitSha": "72817f6c2edf97e60b606ba5f8ea3b1431d2be34"
     }
   ]
 }

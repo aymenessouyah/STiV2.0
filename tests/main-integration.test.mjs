@@ -40,7 +40,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   }
   /* v521 : les pages HTML gagnent leur meta description ; seules les pages
      réellement modifiées changent de révision, les modules restent sur leur lot. */
-  assert.equal(revisions.get('./revision-erreurs.html'), 'quiz-systemes-v580');
+  assert.equal(revisions.get('./revision-erreurs.html'), 'quiz-syst-71-v590');
   /* v519 : le tirage aléatoire des quiz. */
   for (const chemin of ['assets/js/quiz-tableaux.js', 'assets/js/quiz-alea.js']) {
     assert.equal(revisions.get('./' + chemin), 'plafond-a-v555', chemin);
@@ -50,7 +50,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
      v580 : le synchroniseur apprend le quiz « Systèmes & Internet » (nom dans
      l'historique, purge des sessions) ; il porte donc sa propre révision. */
   assert.equal(revisions.get('./assets/js/xp-plancher.js'), 'xp-jamais-en-recul-v520');
-  assert.equal(revisions.get('./assets/js/quiz-sync.js'), 'quiz-systemes-v580');
+  assert.equal(revisions.get('./assets/js/quiz-sync.js'), 'quiz-syst-71-v590');
   /* v529 : le synchroniseur fusionne aussi les compteurs de vues vidéo. */
   assert.equal(revisions.get('./assets/js/sync-progressions.js'), 'pastille-sync-v534');
   /* v521 : les cinq pages de quiz gardent le garde-fou XP et gagnent leur meta description.
@@ -60,9 +60,9 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   }
   assert.equal(revisions.get('./quiz/php.html'), 'plafond-a-v555');
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
-  assert.equal(revisions.get('./assets/js/app.js'), 'etiquette-capsule-v587');
-  assert.equal(revisions.get('./index.html'), 'etiquette-capsule-v587');
-  assert.equal(revisions.get('./offline-complete-manifest.json'), 'etiquette-capsule-v587');
+  assert.equal(revisions.get('./assets/js/app.js'), 'quiz-sauvegarde-v590');
+  assert.equal(revisions.get('./index.html'), 'quiz-sauvegarde-v590');
+  assert.equal(revisions.get('./offline-complete-manifest.json'), 'quiz-sauvegarde-v590');
   assert.equal(revisions.get('./README.md'), 'couverture-v583');
   /* v585 : le tableau de bord annonce le Smart Book 3ᵉ SI à 81 pages ; le drapeau reste au lot v503. */
   assert.equal(revisions.get('./dashboard.html'), 'livre-3si-81p-v585');
@@ -70,19 +70,19 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v517 : le ruban lit mieux la classe — la 4e SI passe au vert. */
   assert.equal(revisions.get('./assets/js/news-perso.js'), 'ruban-vert-v517');
   /* v507 : ruban sans logo et compteurs de vidéos. */
-  assert.equal(revisions.get('./assets/css/theme.css'), 'etiquette-capsule-v587');
-  assert.equal(revisions.get('./admin.html'), 'publication-v587');
+  assert.equal(revisions.get('./assets/css/theme.css'), 'quiz-sauvegarde-v590');
+  assert.equal(revisions.get('./admin.html'), 'publication-v590');
   assert.equal(revisions.get('./assets/js/sante.js'), 'tp-transitions-v512');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */
-  assert.equal(revisions.get('./index.html'), 'etiquette-capsule-v587');
-  assert.equal(revisions.get('./assets/js/admin.js'), 'videos-admin-v589');
+  assert.equal(revisions.get('./index.html'), 'quiz-sauvegarde-v590');
+  assert.equal(revisions.get('./assets/js/admin.js'), 'videos-admin-v590');
   assert.equal(revisions.get('./assets/css/cours.css'), 'retrait-fond-cours-v508');
   /* v563 : le cours SQL accueille la convention d'écriture d'un schéma. */
   assert.equal(revisions.get('./cours/sql.html'), 'schema-notation-v563');
   /* v549 : la page PHP reçoit la capsule des variables. */
-  assert.equal(revisions.get('./cours/php.html'), 'etiquette-capsule-v587');
+  assert.equal(revisions.get('./cours/php.html'), 'quiz-sauvegarde-v590');
   /* v523 : le cours JavaScript reçoit les liens du TP Train. */
-  assert.equal(revisions.get('./cours/javascript.html'), 'etiquette-capsule-v587');
+  assert.equal(revisions.get('./cours/javascript.html'), 'quiz-sauvegarde-v590');
   assert.equal(revisions.get('./cours/html5.html'), 'sti-3si-v573');
   assert.equal(revisions.get('./cours/css3.html'), 'tp-transitions-v512');
   assert.equal(revisions.get('./assets/js/cours-onglets-mobile.js'), 'onglets-mobile-v493');
@@ -102,7 +102,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   for (const chemin of ['assets/css/theme-patrimoine.css']) {
     assert.equal(revisions.get('./' + chemin), 'fidelite-origine-v481', chemin);
   }
-  assert.equal(revisions.get('./assets/js/acces.js'), 'videos-admin-v589');
+  assert.equal(revisions.get('./assets/js/acces.js'), 'videos-admin-v590');
   /* v529 : masquer la reprise ne doit pas effacer le compteur de vues vidéo. */
   assert.equal(revisions.get('./assets/js/reprendre.js'), 'vues-videos-v531');
   assert.equal(revisions.get('./assets/js/config.js'), 'portail-sans-barre-v579');

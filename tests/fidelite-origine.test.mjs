@@ -66,7 +66,7 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
     'portail.html': '7ea8179bed2a6eac89f6852352c224d83b34d2215cfb6f6acf9d01b657a03ad1',
     /* v587 : badge « Version V2.0 · v587 · 31/10/2026 11:31 » (date de mise à jour). */
-    'admin.html': '53784e296ee1e008e866671913dff6ad1fbabf61815b60f7322ae4ab96b16dae',
+    'admin.html': '89787096cfff1a09d7bc08f829cf80b03b23976a27ea01727827bbd7ee9aec00',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };
@@ -165,12 +165,12 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
   }
   assert.doesNotMatch(delta, /"\.\/[^"\n]+\.(?:mp4|mp3|pdf|wasm)"/i);
   for (const chemin of ['assets/css/cours.css','assets/js/app.js','assets/js/cours-matieres.js','cours/html5.html','cours/css3.html','cours/javascript.html','cours/sql.html','cours/php.html']) {
-    const revision = chemin === 'assets/js/app.js' ? 'etiquette-capsule-v587'
+    const revision = chemin === 'assets/js/app.js' ? 'quiz-sauvegarde-v590'
       : chemin === 'assets/css/cours.css' ? 'retrait-fond-cours-v508'
       : chemin === 'cours/css3.html' ? 'tp-transitions-v512'
       : chemin === 'cours/html5.html' ? 'sti-3si-v573'
-      : chemin === 'cours/javascript.html' ? 'etiquette-capsule-v587'
-      : chemin === 'cours/php.html' ? 'etiquette-capsule-v587'
+      : chemin === 'cours/javascript.html' ? 'quiz-sauvegarde-v590'
+      : chemin === 'cours/php.html' ? 'quiz-sauvegarde-v590'
       /* v563 : cours/sql.html reçoit la convention d'écriture d'un schéma. */
       : chemin === 'cours/sql.html' ? 'schema-notation-v563'
       : chemin.startsWith('cours/') ? 'retrait-fond-cours-v508' : 'progression-chapitres-v492';
@@ -224,8 +224,12 @@ test('commandes d’administration : scripts et fonctions de la barre PC inchang
      admin.js et d'acces.js réactualisées.
      v589 : le bilan vidéo suit l'inventaire complet (27 capsules + 6 vidéos de cours) et
      ramène les anciennes clés (bouclepour, php-guichet-v10) sur la clé officielle ;
-     empreinte d'admin.js réactualisée. */
-  assert.equal(sha('assets/js/admin.js'), 'cdeab5fd1983901031e2ca5834a15b84921ed78425cdf2cf65e30c7aec69c2ca');
+     empreinte d'admin.js réactualisée.
+     v590 : bilan vidéo limité aux 27 capsules de la vitrine, mesures du tableau de bord
+     (durées plafonnées, quiz dédoublonnés, STI compté) et banque de questions étoffée
+     (SQL 61 → 86, cours STI 18 → 71) ; empreintes d'admin.html, d'admin.js et de
+     quiz-banque.json réactualisées. */
+  assert.equal(sha('assets/js/admin.js'), '83e5ae4d156cd86e914ee11181d340c817a173f15d7122fad1baa11780a80765');
   assert.equal(sha('assets/js/rayonsx-surligneur.js'), '1b7fe2067629766ef4043fa3060199b71124d8486e36d92aaac0b45bd861847c');
   const protection = lire('assets/js/protection.js');
   const debut = protection.indexOf('  function estAppareilPC()');
@@ -244,7 +248,7 @@ test('banques et données JSON d’origine conservées ; retour de quiz ajouté 
     /* v583 : pages-couverture.json n'est plus une liste de 124 entrées à casse
        minuscules : 145 pages réelles, casse exacte, n calculé. */
     'assets/data/nouveautes.json': '24c3eb9e3611e39e63f0d3b5b039c17a6932c6514d49e06b96c7c17462601e51',
-    'assets/data/quiz-banque.json': '2696942ae18a009e315239561a576ad6f2ff33db0609990082db418a45796c67',
+    'assets/data/quiz-banque.json': '04a76ac1dd25d0b3817f44e8edd518fd944ea8275f9a450024ecf572800860a5',
     'assets/data/smart-book-2026.json': '2d2b3ddcf1d6b345c82de99eac119ab5be301c1e7ebfdaa577c19b2c88196a68',
     /* v573 : édition 2026 du manuel 3ème SI — 81 pages, la partie « Systèmes,
        technologies et Internet » (p. 5 à 13) précède les 53 fiches. */

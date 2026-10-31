@@ -10591,6 +10591,417 @@
         "Elles restent dans le navigateur",
         "Elles sont stockées dans un cookie"
       ]
+    },
+    {
+      "id": "sql-bd-definition",
+      "module": "sql",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "type": "def",
+      "ref": "Qu’est-ce qu’une base de données et le SQL ?",
+      "q": "Qu’appelle-t-on une base de données (BD) ?",
+      "bonne": "Un ensemble organisé de données que l’on peut interroger et mettre à jour.",
+      "choix_faux": [
+        "Un fichier texte unique où les données sont écrites à la main.",
+        "Le logiciel qui affiche les pages web du site.",
+        "Un langage de programmation pour créer des sites."
+      ]
+    },
+    {
+      "id": "sql-sgbd-definition",
+      "module": "sql",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "type": "def",
+      "ref": "Qu’est-ce qu’une base de données et le SQL ?",
+      "q": "À quoi sert un SGBD (système de gestion de base de données) ?",
+      "bonne": "À gérer la base : stocker, organiser et sécuriser l’accès aux données.",
+      "choix_faux": [
+        "À dessiner les schémas du cours.",
+        "À compiler le code PHP de l’application.",
+        "À héberger les vidéos du site."
+      ]
+    },
+    {
+      "id": "sql-sous-langages",
+      "module": "sql",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "type": "def",
+      "ref": "Les sous-langages du SQL",
+      "q": "Que signifie LDD ?",
+      "bonne": "Langage de Définition des Données (CREATE, ALTER, DROP).",
+      "choix_faux": [
+        "Langage de Découpage des Données.",
+        "Langage de Distribution des Données.",
+        "Langage de Démonstration des Données."
+      ]
+    },
+    {
+      "id": "sql-lmd-definition",
+      "module": "sql",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "type": "def",
+      "ref": "Les sous-langages du SQL",
+      "q": "Que signifie LMD ?",
+      "bonne": "Langage de Manipulation des Données (INSERT, UPDATE, DELETE, SELECT).",
+      "choix_faux": [
+        "Langage de Modification du Disque.",
+        "Langage de Mesure des Données.",
+        "Langage de Mise à Disposition."
+      ]
+    },
+    {
+      "id": "sql-cle-primaire-role",
+      "module": "sql",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "type": "def",
+      "ref": "Clé primaire & clé étrangère",
+      "q": "À quoi sert une clé primaire ?",
+      "bonne": "À identifier de façon unique chaque ligne d’une table.",
+      "choix_faux": [
+        "À relier deux tables entre elles.",
+        "À trier automatiquement les colonnes par ordre alphabétique.",
+        "À autoriser les doublons dans la table."
+      ]
+    },
+    {
+      "id": "sql-cle-etrangere-role",
+      "module": "sql",
+      "niveaux": [
+        "4si"
+      ],
+      "type": "def",
+      "ref": "Clé primaire & clé étrangère",
+      "q": "À quoi sert une clé étrangère ?",
+      "bonne": "À faire référence à la clé primaire d’une autre table pour créer une relation.",
+      "choix_faux": [
+        "À remplacer la clé primaire quand elle est absente.",
+        "À chiffrer les données sensibles de la table.",
+        "À supprimer automatiquement les lignes inutiles."
+      ]
+    },
+    {
+      "id": "sql-integrite-reference",
+      "module": "sql",
+      "niveaux": [
+        "4si"
+      ],
+      "type": "def",
+      "ref": "Clé primaire & clé étrangère",
+      "q": "Que garantit l’intégrité référentielle ?",
+      "bonne": "Qu’une valeur de clé étrangère correspond à une ligne existante dans la table référencée.",
+      "choix_faux": [
+        "Que toutes les colonnes sont remplies.",
+        "Que les noms des tables commencent par une majuscule.",
+        "Que chaque table possède au moins deux clés primaires."
+      ]
+    },
+    {
+      "id": "sql-contrainte-colonne",
+      "module": "sql",
+      "niveaux": [
+        "4si"
+      ],
+      "type": "def",
+      "ref": "Contrainte de colonne vs contrainte de table",
+      "q": "Une contrainte de colonne s’écrit…",
+      "bonne": "directement sur la ligne de définition de la colonne.",
+      "choix_faux": [
+        "toujours après la clause WHERE.",
+        "obligatoirement dans une table séparée.",
+        "uniquement dans le fichier PHP de connexion."
+      ]
+    },
+    {
+      "id": "sql-relations-types",
+      "module": "sql",
+      "niveaux": [
+        "4si"
+      ],
+      "type": "def",
+      "ref": "Relations et types de relations",
+      "q": "Une relation « un à plusieurs » (1:N) signifie que…",
+      "bonne": "une ligne de la première table peut être référencée par plusieurs lignes de la seconde.",
+      "choix_faux": [
+        "chaque ligne est reliée à exactement une ligne de l’autre table.",
+        "les deux tables n’ont aucune clé étrangère.",
+        "les deux tables doivent avoir le même nombre de colonnes."
+      ]
+    },
+    {
+      "id": "sql-insert-syntaxe",
+      "module": "sql",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "type": "cmd",
+      "ref": "INSERT INTO",
+      "q": "Quelle commande ajoute une ligne dans la table `eleve` ?",
+      "bonne": "INSERT INTO eleve (nom, classe) VALUES ('Ali', '3SI1');",
+      "choix_faux": [
+        "AJOUTE eleve (nom, classe) VALEURS ('Ali', '3SI1');",
+        "UPDATE eleve (nom, classe) VALUES ('Ali', '3SI1');",
+        "CREATE ROW eleve (nom, classe) VALUES ('Ali', '3SI1');"
+      ]
+    },
+    {
+      "id": "sql-delete-role",
+      "module": "sql",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "type": "cmd",
+      "ref": "DELETE",
+      "q": "Que fait la commande DELETE FROM eleve WHERE classe = '3SI1' ; ?",
+      "bonne": "Elle supprime les lignes dont la classe vaut 3SI1.",
+      "choix_faux": [
+        "Elle supprime la table eleve en entier.",
+        "Elle vide la colonne classe pour toutes les lignes.",
+        "Elle affiche les lignes de la classe 3SI1."
+      ]
+    },
+    {
+      "id": "sql-delete-sans-where",
+      "module": "sql",
+      "niveaux": [
+        "4si"
+      ],
+      "type": "cmd",
+      "ref": "DELETE",
+      "q": "Que se passe-t-il si l’on écrit DELETE FROM eleve ; sans clause WHERE ?",
+      "bonne": "Toutes les lignes de la table sont supprimées (la table reste).",
+      "choix_faux": [
+        "La table est supprimée avec sa structure.",
+        "La commande est refusée par le SGBD.",
+        "Seule la première ligne est supprimée."
+      ]
+    },
+    {
+      "id": "sql-update-sans-where",
+      "module": "sql",
+      "niveaux": [
+        "4si"
+      ],
+      "type": "cmd",
+      "ref": "UPDATE simple",
+      "q": "Quel est le risque d’un UPDATE sans clause WHERE ?",
+      "bonne": "Toutes les lignes de la table sont modifiées.",
+      "choix_faux": [
+        "La commande ne modifie aucune ligne.",
+        "Le SGBD crée une sauvegarde automatique.",
+        "Seule la première ligne est modifiée."
+      ]
+    },
+    {
+      "id": "sql-select-where",
+      "module": "sql",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "type": "cmd",
+      "ref": "SELECT, Clauses & Opérateurs",
+      "q": "Quelle requête affiche uniquement le nom des élèves de la classe 4SI2 ?",
+      "bonne": "SELECT nom FROM eleve WHERE classe = '4SI2';",
+      "choix_faux": [
+        "SELECT nom FROM eleve HAVING classe = '4SI2';",
+        "SELECT nom FROM eleve ORDER BY classe = '4SI2';",
+        "SELECT nom FROM eleve GROUP BY classe = '4SI2';"
+      ]
+    },
+    {
+      "id": "sql-select-etoile",
+      "module": "sql",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "type": "cmd",
+      "ref": "SELECT, Clauses & Opérateurs",
+      "q": "Que renvoie SELECT * FROM eleve ; ?",
+      "bonne": "Toutes les colonnes de toutes les lignes de la table.",
+      "choix_faux": [
+        "Uniquement la première colonne de chaque ligne.",
+        "Le nombre total de lignes de la table.",
+        "La structure de la table sans aucune donnée."
+      ]
+    },
+    {
+      "id": "sql-order-by",
+      "module": "sql",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "type": "cmd",
+      "ref": "SELECT, Clauses & Opérateurs",
+      "q": "Quelle clause trie le résultat du plus grand au plus petit ?",
+      "bonne": "ORDER BY colonne DESC",
+      "choix_faux": [
+        "GROUP BY colonne DESC",
+        "SORT BY colonne DESC",
+        "WHERE colonne DESC"
+      ]
+    },
+    {
+      "id": "sql-op-like",
+      "module": "sql",
+      "niveaux": [
+        "4si"
+      ],
+      "type": "cmd",
+      "ref": "Opérateurs",
+      "q": "À quoi sert l’opérateur LIKE ?",
+      "bonne": "À comparer une chaîne à un modèle (par exemple '%a%').",
+      "choix_faux": [
+        "À additionner deux valeurs numériques.",
+        "À compter les lignes d’une table.",
+        "À convertir une date en texte."
+      ]
+    },
+    {
+      "id": "sql-op-between",
+      "module": "sql",
+      "niveaux": [
+        "4si"
+      ],
+      "type": "cmd",
+      "ref": "Opérateurs",
+      "q": "Que teste l’expression note BETWEEN 10 AND 15 ?",
+      "bonne": "Si la note est comprise entre 10 et 15 inclus.",
+      "choix_faux": [
+        "Si la note vaut exactement 10 ou exactement 15.",
+        "Si la note est supérieure à 15 seulement.",
+        "Si la note est un texte contenant 10 ou 15."
+      ]
+    },
+    {
+      "id": "sql-jointure-role",
+      "module": "sql",
+      "niveaux": [
+        "4si"
+      ],
+      "type": "cmd",
+      "ref": "Jointure entre 2 tables",
+      "q": "À quoi sert une jointure entre deux tables ?",
+      "bonne": "À combiner les lignes des deux tables grâce à une colonne commune.",
+      "choix_faux": [
+        "À fusionner les deux tables en une seule, définitivement.",
+        "À supprimer les doublons de la première table.",
+        "À remplacer la clé primaire par une clé étrangère."
+      ]
+    },
+    {
+      "id": "sql-jointure-syntaxe",
+      "module": "sql",
+      "niveaux": [
+        "4si"
+      ],
+      "type": "cmd",
+      "ref": "Jointure entre 2 tables",
+      "q": "Quelle jointure garde uniquement les lignes présentes des deux côtés ?",
+      "bonne": "INNER JOIN",
+      "choix_faux": [
+        "LEFT JOIN",
+        "FULL JOIN",
+        "CROSS JOIN"
+      ]
+    },
+    {
+      "id": "sql-group-by",
+      "module": "sql",
+      "niveaux": [
+        "4si"
+      ],
+      "type": "cmd",
+      "ref": "La clause GROUP BY",
+      "q": "À quoi sert GROUP BY ?",
+      "bonne": "À regrouper les lignes qui ont la même valeur pour calculer des statistiques.",
+      "choix_faux": [
+        "À trier le résultat par ordre alphabétique.",
+        "À filtrer les lignes avant tout calcul.",
+        "À créer une nouvelle table à partir du résultat."
+      ]
+    },
+    {
+      "id": "sql-having",
+      "module": "sql",
+      "niveaux": [
+        "4si"
+      ],
+      "type": "cmd",
+      "ref": "La clause HAVING",
+      "q": "Quelle clause filtre les groupes après un GROUP BY ?",
+      "bonne": "HAVING",
+      "choix_faux": [
+        "WHERE",
+        "ORDER BY",
+        "LIMIT"
+      ]
+    },
+    {
+      "id": "sql-count-role",
+      "module": "sql",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "type": "fonction",
+      "ref": "Fonctions d’agrégation",
+      "q": "Que renvoie SELECT COUNT(*) FROM eleve ; ?",
+      "bonne": "Le nombre de lignes de la table eleve.",
+      "choix_faux": [
+        "La somme des valeurs de la première colonne.",
+        "La moyenne des notes des élèves.",
+        "La liste des noms des élèves."
+      ]
+    },
+    {
+      "id": "sql-count-distinct",
+      "module": "sql",
+      "niveaux": [
+        "4si"
+      ],
+      "type": "fonction",
+      "ref": "Fonctions d’agrégation",
+      "q": "Que renvoie SELECT COUNT(DISTINCT classe) FROM eleve ; ?",
+      "bonne": "Le nombre de classes différentes présentes dans la table.",
+      "choix_faux": [
+        "Le nombre total d’élèves de la table.",
+        "La liste des classes, séparées par des virgules.",
+        "Le nombre de colonnes de la table."
+      ]
+    },
+    {
+      "id": "sql-null-is",
+      "module": "sql",
+      "niveaux": [
+        "4si"
+      ],
+      "type": "cmd",
+      "ref": "SELECT, Clauses & Opérateurs",
+      "q": "Comment tester qu’une colonne est vide (NULL) ?",
+      "bonne": "colonne IS NULL",
+      "choix_faux": [
+        "colonne = NULL",
+        "colonne == '' AND NULL",
+        "colonne LIKE NULL"
+      ]
     }
   ]
 }

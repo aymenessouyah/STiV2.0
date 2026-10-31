@@ -6,7 +6,10 @@
     {
       "id": "sys-os-definition",
       "module": "systemes",
-      "niveaux": ["3si", "4si"],
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
       "ref": "Chapitre 1 · 1.1 Définition",
       "ancre": "cours/systemes-technologies-internet.html#ch1-se",
       "q": "Que fait le système d’exploitation d’un ordinateur ?",
@@ -20,27 +23,44 @@
     {
       "id": "sys-roles-securite",
       "module": "systemes",
-      "niveaux": ["3si", "4si"],
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
       "ref": "Chapitre 1 · 1.2 Les rôles",
       "ancre": "cours/systemes-technologies-internet.html#ch1-roles",
       "q": "Parmi les six rôles du système d’exploitation, lequel protège le système et les données (pare-feu, mises à jour) ?",
       "bonne": "Assurer la sécurité",
-      "choix_faux": ["Gérer les fichiers", "Gérer les périphériques", "Gérer les utilisateurs"]
+      "choix_faux": [
+        "Gérer les fichiers",
+        "Gérer les périphériques",
+        "Gérer les utilisateurs"
+      ]
     },
     {
       "id": "sys-types-macos",
       "module": "systemes",
-      "niveaux": ["3si", "4si"],
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
       "ref": "Chapitre 1 · 1.3 Types",
       "ancre": "cours/systemes-technologies-internet.html#ch1-types",
       "q": "Quel système d’exploitation équipe les ordinateurs Mac d’Apple ?",
       "bonne": "macOS",
-      "choix_faux": ["Windows", "Ubuntu", "Android"]
+      "choix_faux": [
+        "Windows",
+        "Ubuntu",
+        "Android"
+      ]
     },
     {
       "id": "sys-types-embarques",
       "module": "systemes",
-      "niveaux": ["3si", "4si"],
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
       "ref": "Chapitre 1 · 1.3 Types",
       "ancre": "cours/systemes-technologies-internet.html#ch1-types",
       "q": "watchOS, tvOS et QNX sont des exemples de systèmes d’exploitation…",
@@ -54,7 +74,10 @@
     {
       "id": "sys-licence-libre-droits",
       "module": "systemes",
-      "niveaux": ["3si", "4si"],
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
       "ref": "Chapitre 1 · 1.4 Licences",
       "ancre": "cours/systemes-technologies-internet.html#ch1-licences",
       "q": "Avec un logiciel libre, que garantit la licence ?",
@@ -68,7 +91,10 @@
     {
       "id": "sys-licence-libre-gratuit",
       "module": "systemes",
-      "niveaux": ["3si", "4si"],
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
       "ref": "Chapitre 1 · 1.4 Licences",
       "ancre": "cours/systemes-technologies-internet.html#ch1-licences",
       "q": "Un logiciel libre est-il forcément gratuit ?",
@@ -82,7 +108,10 @@
     {
       "id": "sys-machine-virtuelle",
       "module": "systemes",
-      "niveaux": ["3si", "4si"],
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
       "ref": "Chapitre 1 · La machine virtuelle",
       "ancre": "cours/systemes-technologies-internet.html#ch1-vm",
       "q": "Qu’est-ce qu’une machine virtuelle ?",
@@ -96,7 +125,10 @@
     {
       "id": "sys-deployer",
       "module": "systemes",
-      "niveaux": ["3si", "4si"],
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
       "ref": "Chapitre 1 · 1.5 Déployer",
       "ancre": "cours/systemes-technologies-internet.html#ch1-deploiement",
       "q": "Déployer un système d’exploitation, c’est…",
@@ -110,7 +142,10 @@
     {
       "id": "res-lan-lycee",
       "module": "reseaux",
-      "niveaux": ["3si", "4si"],
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
       "ref": "Chapitre 2 · 2.2 Étendue",
       "ancre": "cours/systemes-technologies-internet.html#ch2-classes",
       "q": "Le réseau d’un lycée ou d’une salle informatique est un…",
@@ -124,17 +159,27 @@
     {
       "id": "res-masque-adresse-reseau",
       "module": "reseaux",
-      "niveaux": ["3si", "4si"],
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
       "ref": "Chapitre 2 · 2.4 Paramètres",
       "ancre": "cours/systemes-technologies-internet.html#ch2-parametres",
       "q": "Adresse IP 192.168.1.20 et masque 255.255.255.0 : quelle est l’adresse réseau ?",
       "bonne": "192.168.1.0",
-      "choix_faux": ["192.168.1.20", "255.255.255.0", "192.168.0.1"]
+      "choix_faux": [
+        "192.168.1.20",
+        "255.255.255.0",
+        "192.168.0.1"
+      ]
     },
     {
       "id": "res-dns-role",
       "module": "reseaux",
-      "niveaux": ["3si", "4si"],
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
       "ref": "Chapitre 2 · 2.4 Paramètres",
       "ancre": "cours/systemes-technologies-internet.html#ch2-parametres",
       "q": "À quoi sert un serveur DNS ?",
@@ -148,7 +193,10 @@
     {
       "id": "res-adresse-mac",
       "module": "reseaux",
-      "niveaux": ["3si", "4si"],
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
       "ref": "Chapitre 2 · 2.4 Paramètres",
       "ancre": "cours/systemes-technologies-internet.html#ch2-parametres",
       "q": "L’adresse A4-B1-C1-2D-3E-4F identifie…",
@@ -162,7 +210,10 @@
     {
       "id": "res-client-serveur-inconvenient",
       "module": "reseaux",
-      "niveaux": ["3si", "4si"],
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
       "ref": "Chapitre 2 · 2.5 Architectures",
       "ancre": "cours/systemes-technologies-internet.html#ch2-architectures",
       "q": "Quel est l’inconvénient principal de l’architecture client / serveur ?",
@@ -176,17 +227,27 @@
     {
       "id": "res-https-securise",
       "module": "reseaux",
-      "niveaux": ["3si", "4si"],
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
       "ref": "Chapitre 2 · 2.6 Protocoles",
       "ancre": "cours/systemes-technologies-internet.html#ch2-protocoles",
       "q": "Quel protocole est la version sécurisée de HTTP ?",
       "bonne": "HTTPS : il utilise TLS pour chiffrer l’échange et authentifier le serveur.",
-      "choix_faux": ["MQTT", "TCP/IP", "DNS"]
+      "choix_faux": [
+        "MQTT",
+        "TCP/IP",
+        "DNS"
+      ]
     },
     {
       "id": "iot-definition",
       "module": "iot",
-      "niveaux": ["3si", "4si"],
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
       "ref": "Chapitre 3 · 3.1 Définition",
       "ancre": "cours/systemes-technologies-internet.html#ch3-definition",
       "q": "Que désigne l’Internet des objets (IoT) ?",
@@ -200,7 +261,10 @@
     {
       "id": "iot-composants",
       "module": "iot",
-      "niveaux": ["3si", "4si"],
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
       "ref": "Chapitre 3 · 3.2 Composants",
       "ancre": "cours/systemes-technologies-internet.html#ch3-composants",
       "q": "Quels sont les composants fondamentaux d’un objet connecté ?",
@@ -214,22 +278,937 @@
     {
       "id": "iot-capteur-serre",
       "module": "iot",
-      "niveaux": ["3si", "4si"],
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
       "ref": "Chapitre 3 · La serre intelligente",
       "ancre": "cours/systemes-technologies-internet.html#ch3-tester",
       "q": "Dans une serre intelligente, quel élément mesure l’humidité du sol ?",
       "bonne": "Le capteur : il mesure une grandeur physique, ici l’humidité.",
-      "choix_faux": ["Le broker MQTT", "Le routeur Wi-Fi", "L’application du téléphone"]
+      "choix_faux": [
+        "Le broker MQTT",
+        "Le routeur Wi-Fi",
+        "L’application du téléphone"
+      ]
     },
     {
       "id": "iot-broker-mqtt",
       "module": "iot",
-      "niveaux": ["3si", "4si"],
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
       "ref": "Chapitre 3 · 3.4 Échanger",
       "ancre": "cours/systemes-technologies-internet.html#ch3-echanges",
       "q": "Dans MQTT, qui reçoit et distribue les messages entre le publisher et le subscriber ?",
       "bonne": "Le broker : il reçoit les messages publiés et les distribue aux abonnés.",
-      "choix_faux": ["Le capteur de température", "Le serveur DNS du lycée", "Le navigateur du client"]
+      "choix_faux": [
+        "Le capteur de température",
+        "Le serveur DNS du lycée",
+        "Le navigateur du client"
+      ]
+    },
+    {
+      "id": "sys-materiel-logiciel",
+      "module": "systemes",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 1 · 1.1 Définition",
+      "ancre": "cours/systemes-technologies-internet.html#ch1-se",
+      "q": "Que désigne le matériel (hardware) d’un ordinateur ?",
+      "bonne": "Les éléments physiques : écran, clavier, souris, processeur, mémoire vive et disque.",
+      "choix_faux": [
+        "Les programmes utilisés par l’utilisateur.",
+        "Les logiciels de base installés par le fabricant.",
+        "Les dossiers et fichiers créés par l’utilisateur."
+      ]
+    },
+    {
+      "id": "sys-six-roles",
+      "module": "systemes",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 1 · 1.2 Les rôles",
+      "ancre": "cours/systemes-technologies-internet.html#ch1-roles",
+      "q": "Combien de rôles du système d’exploitation le cours présente-t-il ?",
+      "bonne": "Six rôles.",
+      "choix_faux": [
+        "Quatre rôles.",
+        "Cinq rôles.",
+        "Huit rôles."
+      ]
+    },
+    {
+      "id": "sys-role-memoire",
+      "module": "systemes",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 1 · 1.2 Les rôles",
+      "ancre": "cours/systemes-technologies-internet.html#ch1-roles",
+      "q": "« Gérer la mémoire » signifie…",
+      "bonne": "répartir la mémoire entre les applications ouvertes.",
+      "choix_faux": [
+        "créer, déplacer et organiser les dossiers du disque.",
+        "contrôler les comptes et les autorisations des utilisateurs.",
+        "installer les mises à jour de sécurité du système."
+      ]
+    },
+    {
+      "id": "sys-role-fichiers",
+      "module": "systemes",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 1 · 1.2 Les rôles",
+      "ancre": "cours/systemes-technologies-internet.html#ch1-roles",
+      "q": "Créer, supprimer, déplacer et organiser des fichiers correspond au rôle…",
+      "bonne": "gérer les fichiers.",
+      "choix_faux": [
+        "gérer le processeur.",
+        "gérer les périphériques.",
+        "assurer la sécurité."
+      ]
+    },
+    {
+      "id": "sys-role-utilisateurs",
+      "module": "systemes",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 1 · 1.2 Les rôles",
+      "ancre": "cours/systemes-technologies-internet.html#ch1-roles",
+      "q": "Contrôler les comptes et les autorisations correspond au rôle…",
+      "bonne": "gérer les utilisateurs.",
+      "choix_faux": [
+        "gérer le processeur.",
+        "gérer la mémoire.",
+        "gérer les fichiers."
+      ]
+    },
+    {
+      "id": "sys-role-peripheriques",
+      "module": "systemes",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 1 · 1.2 Les rôles",
+      "ancre": "cours/systemes-technologies-internet.html#ch1-roles",
+      "q": "Faire communiquer l’ordinateur avec une imprimante ou un clavier relève de…",
+      "bonne": "la gestion des périphériques.",
+      "choix_faux": [
+        "la gestion du processeur.",
+        "la gestion des utilisateurs.",
+        "la gestion de la mémoire."
+      ]
+    },
+    {
+      "id": "sys-windows",
+      "module": "systemes",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 1 · 1.3 Types",
+      "ancre": "cours/systemes-technologies-internet.html#ch1-types",
+      "q": "Windows est un système d’exploitation…",
+      "bonne": "propriétaire, développé par Microsoft.",
+      "choix_faux": [
+        "libre, développé par la communauté GNU.",
+        "embarqué, réservé aux montres connectées.",
+        "libre, de la famille Linux."
+      ]
+    },
+    {
+      "id": "sys-linux-ubuntu",
+      "module": "systemes",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 1 · 1.3 Types",
+      "ancre": "cours/systemes-technologies-internet.html#ch1-types",
+      "q": "Ubuntu est…",
+      "bonne": "une distribution de la famille des systèmes Linux.",
+      "choix_faux": [
+        "un système propriétaire d’Apple.",
+        "un système embarqué utilisé dans l’automobile.",
+        "le nom du noyau du système Android."
+      ]
+    },
+    {
+      "id": "sys-ios",
+      "module": "systemes",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 1 · 1.3 Types",
+      "ancre": "cours/systemes-technologies-internet.html#ch1-types",
+      "q": "iOS est le système d’exploitation…",
+      "bonne": "des iPhone.",
+      "choix_faux": [
+        "des ordinateurs Mac.",
+        "des tablettes Android.",
+        "des appareils Apple TV."
+      ]
+    },
+    {
+      "id": "sys-android",
+      "module": "systemes",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 1 · 1.3 Types",
+      "ancre": "cours/systemes-technologies-internet.html#ch1-types",
+      "q": "Android est un système d’exploitation…",
+      "bonne": "pour mobiles : smartphones et tablettes.",
+      "choix_faux": [
+        "pour PC de bureau uniquement.",
+        "embarqué, utilisé dans l’automobile.",
+        "propriétaire, développé par Microsoft."
+      ]
+    },
+    {
+      "id": "sys-qnx",
+      "module": "systemes",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 1 · 1.3 Types",
+      "ancre": "cours/systemes-technologies-internet.html#ch1-types",
+      "q": "QNX est un système embarqué utilisé notamment…",
+      "bonne": "dans l’automobile.",
+      "choix_faux": [
+        "dans les montres Apple.",
+        "sur les iPhone.",
+        "sur les ordinateurs Mac."
+      ]
+    },
+    {
+      "id": "sys-embarque",
+      "module": "systemes",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 1 · 1.3 Types",
+      "ancre": "cours/systemes-technologies-internet.html#ch1-types",
+      "q": "Un système embarqué est…",
+      "bonne": "intégré dans un appareil spécialisé qui réalise des fonctions précises.",
+      "choix_faux": [
+        "installé dans une machine virtuelle sur un serveur.",
+        "le système principal d’un poste de travail du lycée.",
+        "un logiciel libre de bureautique en ligne."
+      ]
+    },
+    {
+      "id": "sys-code-source-proprietaire",
+      "module": "systemes",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 1 · 1.4 Licences",
+      "ancre": "cours/systemes-technologies-internet.html#ch1-licences",
+      "q": "Dans un logiciel propriétaire, le code source est…",
+      "bonne": "généralement non accessible librement.",
+      "choix_faux": [
+        "toujours publié sur Internet.",
+        "obligatoirement modifiable par l’utilisateur.",
+        "remis à chaque installation du logiciel."
+      ]
+    },
+    {
+      "id": "sys-deployer-configurer",
+      "module": "systemes",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 1 · 1.5 Déployer",
+      "ancre": "cours/systemes-technologies-internet.html#ch1-deploiement",
+      "q": "Après l’installation, l’étape de configuration sert à…",
+      "bonne": "adapter les paramètres du système selon les besoins.",
+      "choix_faux": [
+        "installer les améliorations et les corrections disponibles.",
+        "chiffrer obligatoirement le disque dur.",
+        "créer une machine virtuelle sur le poste."
+      ]
+    },
+    {
+      "id": "sys-vm-logiciels",
+      "module": "systemes",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 1 · La machine virtuelle",
+      "ancre": "cours/systemes-technologies-internet.html#ch1-vm",
+      "q": "Quels logiciels de virtualisation le cours cite-t-il ?",
+      "bonne": "VMware et VirtualBox.",
+      "choix_faux": [
+        "Windows et macOS.",
+        "Ubuntu et Debian.",
+        "HTTP et MQTT."
+      ]
+    },
+    {
+      "id": "sys-vm-sans-remplacer",
+      "module": "systemes",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 1 · La machine virtuelle",
+      "ancre": "cours/systemes-technologies-internet.html#ch1-vm",
+      "q": "Une machine virtuelle permet d’installer un système…",
+      "bonne": "dans une fenêtre, sans remplacer directement le système principal.",
+      "choix_faux": [
+        "à la place du système principal, qui est effacé.",
+        "uniquement sur un serveur distant, jamais sur un PC.",
+        "seulement si l’ordinateur possède deux disques durs."
+      ]
+    },
+    {
+      "id": "sys-securite-quatre-moyens",
+      "module": "systemes",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 1 · 1.6 Sécuriser",
+      "ancre": "cours/systemes-technologies-internet.html#ch1-securite",
+      "q": "Quels sont les quatre moyens de sécuriser un ordinateur cités par le cours ?",
+      "bonne": "Antivirus, pare-feu, mises à jour et mot de passe.",
+      "choix_faux": [
+        "Antivirus, VPN, cloud et sauvegarde.",
+        "Pare-feu, DNS, adresse MAC et adresse IP.",
+        "Mot de passe, switch, routeur et serveur."
+      ]
+    },
+    {
+      "id": "sys-antivirus-limite",
+      "module": "systemes",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 1 · 1.6 Sécuriser",
+      "ancre": "cours/systemes-technologies-internet.html#ch1-securite",
+      "q": "Un antivirus suffit-il à sécuriser un ordinateur ?",
+      "bonne": "Non : il ne remplace ni le pare-feu, ni les mises à jour, ni les mots de passe.",
+      "choix_faux": [
+        "Oui, à condition de le mettre à jour chaque jour.",
+        "Oui, s’il a été installé par l’administrateur.",
+        "Oui, à condition de désactiver le pare-feu."
+      ]
+    },
+    {
+      "id": "sys-pare-feu",
+      "module": "systemes",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 1 · 1.6 Sécuriser",
+      "ancre": "cours/systemes-technologies-internet.html#ch1-securite",
+      "q": "Le rôle d’un pare-feu est de…",
+      "bonne": "contrôler les communications réseau selon des règles.",
+      "choix_faux": [
+        "détecter et traiter les logiciels malveillants.",
+        "répartir la mémoire entre les applications.",
+        "traduire un nom de domaine en adresse IP."
+      ]
+    },
+    {
+      "id": "res-definition",
+      "module": "reseaux",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 2 · 2.1 Définition",
+      "ancre": "cours/systemes-technologies-internet.html#ch2-definition",
+      "q": "Un réseau informatique est…",
+      "bonne": "un ensemble d’équipements reliés entre eux pour échanger des données et partager des ressources.",
+      "choix_faux": [
+        "un ensemble de logiciels installés sur un même ordinateur.",
+        "un système d’exploitation relié à plusieurs écrans.",
+        "un protocole de messagerie réservé aux objets connectés."
+      ]
+    },
+    {
+      "id": "res-man",
+      "module": "reseaux",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 2 · 2.2 Étendue",
+      "ancre": "cours/systemes-technologies-internet.html#ch2-classes",
+      "q": "Un réseau qui relie plusieurs établissements d’une même ville est un…",
+      "bonne": "MAN.",
+      "choix_faux": [
+        "LAN.",
+        "WAN.",
+        "PAN."
+      ]
+    },
+    {
+      "id": "res-wan",
+      "module": "reseaux",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 2 · 2.2 Étendue",
+      "ancre": "cours/systemes-technologies-internet.html#ch2-classes",
+      "q": "Un réseau qui relie des sites situés dans plusieurs pays est un…",
+      "bonne": "WAN.",
+      "choix_faux": [
+        "LAN.",
+        "MAN.",
+        "PAN."
+      ]
+    },
+    {
+      "id": "res-carte-reseau",
+      "module": "reseaux",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 2 · 2.3 Équipements",
+      "ancre": "cours/systemes-technologies-internet.html#ch2-equipements",
+      "q": "À quoi sert une carte réseau ?",
+      "bonne": "À permettre à un appareil de se connecter à un réseau.",
+      "choix_faux": [
+        "À relier plusieurs réseaux et diriger les paquets.",
+        "À fournir des services aux ordinateurs clients.",
+        "À mesurer une grandeur physique comme la température."
+      ]
+    },
+    {
+      "id": "res-switch",
+      "module": "reseaux",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 2 · 2.3 Équipements",
+      "ancre": "cours/systemes-technologies-internet.html#ch2-equipements",
+      "q": "Le switch (commutateur)…",
+      "bonne": "relie plusieurs appareils dans un réseau local.",
+      "choix_faux": [
+        "relie différents réseaux entre eux.",
+        "traduit les noms de domaine en adresses IP.",
+        "stocke les pages web consultées par les élèves."
+      ]
+    },
+    {
+      "id": "res-routeur",
+      "module": "reseaux",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 2 · 2.3 Équipements",
+      "ancre": "cours/systemes-technologies-internet.html#ch2-equipements",
+      "q": "Le routeur…",
+      "bonne": "relie différents réseaux et dirige les paquets.",
+      "choix_faux": [
+        "relie les appareils d’un même réseau local.",
+        "permet uniquement une connexion sans fil.",
+        "fournit les services aux ordinateurs clients."
+      ]
+    },
+    {
+      "id": "res-point-acces",
+      "module": "reseaux",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 2 · 2.3 Équipements",
+      "ancre": "cours/systemes-technologies-internet.html#ch2-equipements",
+      "q": "Un point d’accès Wi-Fi sert à…",
+      "bonne": "permettre une connexion sans fil au réseau.",
+      "choix_faux": [
+        "relier deux réseaux de villes différentes.",
+        "héberger les fichiers partagés du lycée.",
+        "identifier physiquement une interface réseau."
+      ]
+    },
+    {
+      "id": "res-ip-format",
+      "module": "reseaux",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 2 · 2.4 Paramètres",
+      "ancre": "cours/systemes-technologies-internet.html#ch2-parametres",
+      "q": "Une adresse IPv4 est composée…",
+      "bonne": "de quatre nombres compris entre 0 et 255, séparés par des points.",
+      "choix_faux": [
+        "de six nombres hexadécimaux séparés par des tirets.",
+        "de deux nombres séparés par deux-points.",
+        "de huit lettres séparées par des points."
+      ]
+    },
+    {
+      "id": "res-ip-role",
+      "module": "reseaux",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 2 · 2.4 Paramètres",
+      "ancre": "cours/systemes-technologies-internet.html#ch2-parametres",
+      "q": "L’adresse IP sert à…",
+      "bonne": "identifier une interface réseau dans un réseau utilisant le protocole IP.",
+      "choix_faux": [
+        "traduire un nom de domaine en adresse numérique.",
+        "déterminer la partie réseau et la partie hôte.",
+        "identifier une interface au niveau de la liaison locale."
+      ]
+    },
+    {
+      "id": "res-dns-signification",
+      "module": "reseaux",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 2 · 2.4 Paramètres",
+      "ancre": "cours/systemes-technologies-internet.html#ch2-parametres",
+      "q": "Que signifie DNS ?",
+      "bonne": "Domain Name System.",
+      "choix_faux": [
+        "Data Network Service.",
+        "Digital Network Switch.",
+        "Direct Name Server."
+      ]
+    },
+    {
+      "id": "res-mac-format",
+      "module": "reseaux",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 2 · 2.4 Paramètres",
+      "ancre": "cours/systemes-technologies-internet.html#ch2-parametres",
+      "q": "Quel est le format d’une adresse MAC dans le cours ?",
+      "bonne": "A4-B1-C1-2D-3E-4F",
+      "choix_faux": [
+        "192.168.1.20",
+        "255.255.255.0",
+        "www.example.com"
+      ]
+    },
+    {
+      "id": "res-mac-usage",
+      "module": "reseaux",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 2 · 2.4 Paramètres",
+      "ancre": "cours/systemes-technologies-internet.html#ch2-parametres",
+      "q": "L’adresse MAC est notamment utilisée pour…",
+      "bonne": "identifier une interface dans un réseau local.",
+      "choix_faux": [
+        "indiquer la partie réseau d’une adresse IP.",
+        "chiffrer les échanges entre un client et un serveur.",
+        "nommer un site web sur Internet."
+      ]
+    },
+    {
+      "id": "res-client-serveur-avantage",
+      "module": "reseaux",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 2 · 2.5 Architectures",
+      "ancre": "cours/systemes-technologies-internet.html#ch2-architectures",
+      "q": "Quel est l’avantage principal de l’architecture client / serveur ?",
+      "bonne": "La centralisation des données et de l’administration.",
+      "choix_faux": [
+        "L’absence totale de panne possible.",
+        "La suppression du besoin de réseau local.",
+        "La possibilité de se passer de tout mot de passe."
+      ]
+    },
+    {
+      "id": "res-p2p",
+      "module": "reseaux",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 2 · 2.5 Architectures",
+      "ancre": "cours/systemes-technologies-internet.html#ch2-architectures",
+      "q": "Dans une architecture poste à poste (Peer-to-Peer)…",
+      "bonne": "les ordinateurs communiquent directement entre eux, sans serveur central obligatoire.",
+      "choix_faux": [
+        "un serveur central distribue obligatoirement tous les fichiers.",
+        "un seul ordinateur peut accéder au réseau.",
+        "les postes ne peuvent partager aucune ressource."
+      ]
+    },
+    {
+      "id": "res-p2p-inconvenient",
+      "module": "reseaux",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 2 · 2.5 Architectures",
+      "ancre": "cours/systemes-technologies-internet.html#ch2-architectures",
+      "q": "Quel inconvénient présente le poste à poste ?",
+      "bonne": "La gestion est moins centralisée : sécurité et sauvegarde sont plus difficiles à administrer.",
+      "choix_faux": [
+        "La communication directe entre postes est impossible.",
+        "Il faut obligatoirement un serveur dédié puissant.",
+        "Chaque poste doit posséder sa propre adresse MAC publique."
+      ]
+    },
+    {
+      "id": "res-protocole-definition",
+      "module": "reseaux",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 2 · 2.6 Protocoles",
+      "ancre": "cours/systemes-technologies-internet.html#ch2-protocoles",
+      "q": "Un protocole est…",
+      "bonne": "un ensemble de règles qui permet aux équipements de communiquer.",
+      "choix_faux": [
+        "un câble qui relie deux ordinateurs.",
+        "un logiciel installé sur le serveur uniquement.",
+        "une adresse qui identifie une interface réseau."
+      ]
+    },
+    {
+      "id": "res-http-role",
+      "module": "reseaux",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 2 · 2.6 Protocoles",
+      "ancre": "cours/systemes-technologies-internet.html#ch2-protocoles",
+      "q": "HTTP sert à…",
+      "bonne": "échanger des ressources entre un client et un serveur Web.",
+      "choix_faux": [
+        "identifier une interface réseau dans un réseau local.",
+        "distribuer des messages entre objets connectés via un broker.",
+        "contrôler les communications réseau par des règles."
+      ]
+    },
+    {
+      "id": "res-tcp-ip",
+      "module": "reseaux",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 2 · 2.6 Protocoles",
+      "ancre": "cours/systemes-technologies-internet.html#ch2-protocoles",
+      "q": "Dans la suite TCP/IP, quel est le rôle de TCP ?",
+      "bonne": "Assurer une transmission fiable et ordonnée des données.",
+      "choix_faux": [
+        "Assurer l’adressage et l’acheminement des paquets.",
+        "Traduire les noms de domaine en adresses IP.",
+        "Chiffrer les pages web consultées."
+      ]
+    },
+    {
+      "id": "res-mqtt-role",
+      "module": "reseaux",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 2 · 2.6 Protocoles",
+      "ancre": "cours/systemes-technologies-internet.html#ch2-protocoles",
+      "q": "MQTT est particulièrement adapté…",
+      "bonne": "à la messagerie légère des objets connectés.",
+      "choix_faux": [
+        "au transfert de pages web entre serveurs.",
+        "à l’attribution des adresses IP du réseau local.",
+        "à la sauvegarde des fichiers du lycée."
+      ]
+    },
+    {
+      "id": "res-acl",
+      "module": "reseaux",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 2 · 2.7 Sécuriser",
+      "ancre": "cours/systemes-technologies-internet.html#ch2-securite",
+      "q": "Une liste de contrôle d’accès (ACL) contient…",
+      "bonne": "des règles qui autorisent ou interdisent certains accès ou communications.",
+      "choix_faux": [
+        "la liste des adresses MAC du réseau.",
+        "les noms de domaine du serveur DNS.",
+        "les mots de passe chiffrés des utilisateurs."
+      ]
+    },
+    {
+      "id": "iot-capteur-role",
+      "module": "iot",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 3 · 3.2 Composants",
+      "ancre": "cours/systemes-technologies-internet.html#ch3-composants",
+      "q": "Quel est le rôle d’un capteur dans un objet connecté ?",
+      "bonne": "Mesurer une grandeur physique (température, humidité, etc.).",
+      "choix_faux": [
+        "Stocker les données sur une plateforme distante.",
+        "Afficher les informations à l’utilisateur.",
+        "Diriger les paquets entre deux réseaux."
+      ]
+    },
+    {
+      "id": "iot-plateforme-role",
+      "module": "iot",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 3 · 3.2 Composants",
+      "ancre": "cours/systemes-technologies-internet.html#ch3-composants",
+      "q": "Le rôle de la plateforme IoT est de…",
+      "bonne": "recevoir et stocker les données envoyées par les objets.",
+      "choix_faux": [
+        "mesurer l’humidité du sol dans la serre.",
+        "fournir l’adresse IP au capteur.",
+        "remplacer le capteur en cas de panne."
+      ]
+    },
+    {
+      "id": "iot-application-role",
+      "module": "iot",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 3 · 3.2 Composants",
+      "ancre": "cours/systemes-technologies-internet.html#ch3-composants",
+      "q": "Quel est le rôle de l’application dans une chaîne IoT ?",
+      "bonne": "Afficher les informations ou permettre de commander l’objet.",
+      "choix_faux": [
+        "Mesurer la grandeur physique.",
+        "Transmettre la donnée sur le réseau.",
+        "Fournir l’énergie électrique au capteur."
+      ]
+    },
+    {
+      "id": "iot-chaine",
+      "module": "iot",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 3 · 3.3 Principe",
+      "ancre": "cours/systemes-technologies-internet.html#ch3-principe",
+      "q": "Dans quel ordre circule une mesure dans une chaîne IoT ?",
+      "bonne": "Capteur → objet connecté → réseau → plateforme → utilisateur.",
+      "choix_faux": [
+        "Plateforme → capteur → utilisateur → objet connecté.",
+        "Utilisateur → plateforme → objet connecté → capteur.",
+        "Réseau → capteur → plateforme → objet connecté."
+      ]
+    },
+    {
+      "id": "iot-subscriber",
+      "module": "iot",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 3 · 3.4 Échanger",
+      "ancre": "cours/systemes-technologies-internet.html#ch3-echanges",
+      "q": "Un subscriber MQTT est un programme qui…",
+      "bonne": "reçoit les messages auxquels il s’est abonné.",
+      "choix_faux": [
+        "publie un message sur un sujet donné.",
+        "stocke tous les messages du broker.",
+        "attribue les adresses IP aux objets."
+      ]
+    },
+    {
+      "id": "iot-sujet-mqtt",
+      "module": "iot",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 3 · 3.4 Échanger",
+      "ancre": "cours/systemes-technologies-internet.html#ch3-echanges",
+      "q": "Quel exemple de sujet (topic) MQTT le cours donne-t-il ?",
+      "bonne": "maison/salon/temperature",
+      "choix_faux": [
+        "192.168.1.20",
+        "A4-B1-C1-2D-3E-4F",
+        "www.example.com"
+      ]
+    },
+    {
+      "id": "iot-http-requete",
+      "module": "iot",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 3 · 3.4 Échanger",
+      "ancre": "cours/systemes-technologies-internet.html#ch3-echanges",
+      "q": "Avec HTTP, l’objet connecté…",
+      "bonne": "envoie une requête à un serveur.",
+      "choix_faux": [
+        "publie un message sur un broker.",
+        "reçoit une adresse MAC du routeur.",
+        "traduit un nom de domaine en adresse IP."
+      ]
+    },
+    {
+      "id": "iot-pas-de-connexion",
+      "module": "iot",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 3 · 3.5 Tester",
+      "ancre": "cours/systemes-technologies-internet.html#ch3-tester",
+      "q": "L’objet ne se connecte pas au réseau : que faut-il vérifier d’abord ?",
+      "bonne": "Le Wi-Fi et la configuration réseau.",
+      "choix_faux": [
+        "La couleur de la LED du capteur.",
+        "Le nombre de fichiers sur le téléphone.",
+        "La version du navigateur de l’utilisateur."
+      ]
+    },
+    {
+      "id": "iot-aucune-donnee",
+      "module": "iot",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 3 · 3.5 Tester",
+      "ancre": "cours/systemes-technologies-internet.html#ch3-tester",
+      "q": "Le serveur répond mais aucune donnée n’arrive : que faut-il vérifier ?",
+      "bonne": "La requête HTTP ou le message MQTT envoyé.",
+      "choix_faux": [
+        "Le niveau de charge de la batterie du téléphone.",
+        "La longueur du câble réseau du switch.",
+        "Le nombre d’utilisateurs connectés au serveur DNS."
+      ]
+    },
+    {
+      "id": "iot-mauvaise-valeur",
+      "module": "iot",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 3 · 3.5 Tester",
+      "ancre": "cours/systemes-technologies-internet.html#ch3-tester",
+      "q": "Une valeur aberrante s’affiche sur la plateforme : que faut-il vérifier ?",
+      "bonne": "La mesure elle-même et le format transmis.",
+      "choix_faux": [
+        "Le mot de passe du compte administrateur.",
+        "La marque du routeur du lycée.",
+        "La date de la dernière mise à jour du navigateur."
+      ]
+    },
+    {
+      "id": "iot-serre-protocoles",
+      "module": "iot",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Chapitre 3 · 3.6 Serre",
+      "ancre": "cours/systemes-technologies-internet.html#ch3-activite",
+      "q": "Quels protocoles le programme autorise-t-il pour les échanges IoT ?",
+      "bonne": "HTTP et/ou MQTT.",
+      "choix_faux": [
+        "FTP et SMTP.",
+        "DNS et DHCP.",
+        "TCP seul, sans IP."
+      ]
+    },
+    {
+      "id": "syn-se-vs-reseau",
+      "module": "systemes",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Fiche de synthèse",
+      "ancre": "cours/systemes-technologies-internet.html#synthese",
+      "q": "Quelle affirmation distingue correctement le système d’exploitation et le réseau ?",
+      "bonne": "Le système d’exploitation gère la machine ; le réseau relie des équipements entre eux.",
+      "choix_faux": [
+        "Le système d’exploitation relie les ordinateurs ; le réseau gère la machine.",
+        "Les deux mots désignent exactement la même chose.",
+        "Le réseau gère la mémoire ; le système d’exploitation dirige les paquets."
+      ]
+    },
+    {
+      "id": "syn-lan-vs-wan",
+      "module": "reseaux",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Fiche de synthèse",
+      "ancre": "cours/systemes-technologies-internet.html#synthese",
+      "q": "Quelle différence sépare LAN et WAN ?",
+      "bonne": "L’étendue : le LAN est local, le WAN couvre une très grande zone.",
+      "choix_faux": [
+        "Le LAN est sans fil, le WAN est toujours filaire.",
+        "Le WAN est réservé aux objets connectés.",
+        "Le LAN utilise MQTT, le WAN utilise HTTP."
+      ]
+    },
+    {
+      "id": "syn-iot-http-mqtt",
+      "module": "iot",
+      "niveaux": [
+        "3si",
+        "4si"
+      ],
+      "ref": "Fiche de synthèse",
+      "ancre": "cours/systemes-technologies-internet.html#synthese",
+      "q": "Pour un objet connecté, quel est l’apport principal de MQTT par rapport à HTTP ?",
+      "bonne": "Une messagerie légère passant par un broker, adaptée aux petits objets.",
+      "choix_faux": [
+        "Un chiffrement obligatoire des mesures.",
+        "La suppression du besoin de réseau.",
+        "L’attribution automatique des adresses MAC."
+      ]
     }
   ]
 }

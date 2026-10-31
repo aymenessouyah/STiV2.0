@@ -18,7 +18,10 @@ var SUPABASE_URL_DEFAUT = "https://vywujxmepvcbgedgmger.supabase.co";
 var SUPABASE_ANON_KEY_DEFAUT = "sb_publishable_FI5FimytONd5VdWK6GfXLA_I6vPTrvn";
 var NOM_DOSSIER_DRIVE_DEFAUT = "STI — Sauvegardes base";
 
-/* Les 15 tables public de la base STI V2.0 avec tri déterministe multi-colonnes */
+/* Les 18 tables public de la base STI V2.0 avec tri déterministe multi-colonnes.
+   v590 : ajout du journal et des compteurs XP (v487) et des copies du journal de
+   connexions (v582). Pour `acces_sauvegardes`, seule une sélection de colonnes est
+   lue : la colonne `lignes` contient des copies entières du journal. */
 var TABLES_SAUVEGARDE = [
   { nom: "profiles",             ordre: "id" },
   { nom: "acces",                ordre: "id" },
@@ -34,7 +37,10 @@ var TABLES_SAUVEGARDE = [
   { nom: "labo_device_messages", ordre: "id" },
   { nom: "badges_labo",          ordre: "code_hash" },
   { nom: "app_config_public",    ordre: "id" },
-  { nom: "push_subscriptions",   ordre: "id" }
+  { nom: "push_subscriptions",   ordre: "id" },
+  { nom: "sti_quiz_xp_compteurs", ordre: "user_id, cle" },
+  { nom: "sti_quiz_xp_operations", ordre: "user_id, cree_le, operation_id" },
+  { nom: "acces_sauvegardes",      ordre: "id", select: "id,motif,mois,nb_lignes,cree_le" }
 ];
 
 function prop_(cle) {
@@ -56,7 +62,8 @@ function lireTable_(base, cle, table) {
   var PAGE = 1000, offset = 0, lignes = [];
   var clauseOrdre = ordrePostgrest_(table.ordre);
   for (;;) {
-    var url = base + "/rest/v1/" + table.nom + "?select=*&order=" + clauseOrdre + "&limit=" + PAGE + "&offset=" + offset;
+    var colonnes = table.select || "*";
+    var url = base + "/rest/v1/" + table.nom + "?select=" + colonnes + "&order=" + clauseOrdre + "&limit=" + PAGE + "&offset=" + offset;
     var rep = UrlFetchApp.fetch(url, {
       method: "get",
       headers: {
@@ -197,7 +204,7 @@ function executerSauvegardeDrive_(options) {
         var dest = Session.getActiveUser().getEmail() || ADMIN_EMAIL_AUTORISE;
         MailApp.sendEmail(
           dest,
-          (erreurs.length ? "⚠️" : "✅") + " Sauvegarde STI (15 tables) du " + dateFichier + " (" + fichier.getName() + ")",
+          (erreurs.length ? "⚠️" : "✅") + " Sauvegarde STI (18 tables) du " + dateFichier + " (" + fichier.getName() + ")",
           texte + "\n\nDossier Drive : " + dossier.getUrl()
         );
       } catch (eMail) {
@@ -256,7 +263,7 @@ function installerQuotidien() {
   ScriptApp.newTrigger("sauvegardeMensuelle").timeBased().everyDays(1).atHour(2).create();
   PropertiesService.getScriptProperties().setProperty("FREQUENCE_AUTO", "quotidienne");
   PropertiesService.getScriptProperties().setProperty("TRIGGER_QUOTIDIEN_V467", "1");
-  Logger.log("✅ Déclencheur quotidien installé : chaque nuit vers 02 h (15 tables Supabase → Google Drive).");
+  Logger.log("✅ Déclencheur quotidien installé : chaque nuit vers 02 h (18 tables Supabase → Google Drive).");
 }
 
 function installerMensuel() {
@@ -319,7 +326,7 @@ function reponseJson_(obj) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-/* Téléversement direct d'une archive 15 tables déjà collectée côté admin.html (secours sans service_role) */
+/* Téléversement direct d'une archive 18 tables déjà collectée côté admin.html (secours sans service_role) */
 function enregistrerArchiveDirecteDrive_(corps) {
   var verrou = LockService.getScriptLock();
   if (!verrou.tryLock(25000)) {
@@ -421,7 +428,7 @@ function doGet() {
   });
 }
 
-/* Petit test de connexion (vérifie les 15 tables sans créer d'archive) */
+/* Petit test de connexion (vérifie les 18 tables sans créer d'archive) */
 function testerConnexion() {
   var base = prop_("SUPABASE_URL").replace(/\/$/, "");
   var cle = prop_("SUPABASE_SERVICE_KEY");

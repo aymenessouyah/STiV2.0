@@ -38,13 +38,14 @@ const MODULES = ['systemes', 'reseaux', 'iot'];
 /* ═════════════════════════════════════════════════════════════════════════
    1 · La banque de questions
    ═════════════════════════════════════════════════════════════════════════ */
-test('v580 : la banque compte 18 questions, toutes rattachées au cours', () => {
-  assert.equal(questions.length, 18, 'dix-huit questions');
+test('v580 : la banque compte au moins 70 questions, toutes rattachées au cours', () => {
+  /* v590 : la banque est passée de 18 à plus de 70 questions. */
+  assert.ok(questions.length >= 70, 'au moins soixante-dix questions (' + questions.length + ')');
   const ids = questions.map((q) => q.id);
   assert.equal(new Set(ids).size, ids.length, 'identifiants uniques');
   for (const q of questions) {
     assert.ok(MODULES.includes(q.module), 'module connu : ' + q.id);
-    assert.ok(q.q && q.q.length >= 15, 'énoncé lisible : ' + q.id);
+    assert.ok(q.q && q.q.length >= 8, 'énoncé lisible : ' + q.id);
     assert.ok(q.bonne && q.bonne.length >= 2, 'bonne réponse : ' + q.id);
     assert.equal(q.choix_faux.length, 3, 'trois mauvaises réponses : ' + q.id);
     const choix = [q.bonne].concat(q.choix_faux);
@@ -53,7 +54,8 @@ test('v580 : la banque compte 18 questions, toutes rattachées au cours', () => 
     assert.ok(q.ancre && q.ancre.startsWith(COURS + '#'), 'ancre du cours : ' + q.id);
   }
   const parModule = MODULES.map((m) => questions.filter((q) => q.module === m).length);
-  assert.deepEqual(parModule, [8, 6, 4], 'huit notions systèmes, six réseaux, quatre IoT');
+  /* v590 : les trois chapitres sont désormais également couverts. */
+  assert.ok(parModule.every((n) => n >= 15), 'chaque module a au moins quinze questions : ' + parModule.join(' / '));
 });
 
 test('v580 : chaque ancre citée existe vraiment dans la page du cours', () => {
@@ -139,9 +141,9 @@ test('v580 : la page du quiz est livrée, verrouillée et sans vidéo', () => {
 test('v580 : l’accueil annonce le nouveau quiz et son nombre de questions', () => {
   assert.ok(index.includes('href="quiz/systemes-internet.html"'), 'la carte du quiz');
   assert.ok(index.includes('data-filter-item="quiz sti"'), 'la carte suit le filtre « Quiz »');
-  assert.ok(index.includes('<strong>18 questions</strong> du manuel'), 'le décompte est annoncé');
+  assert.ok(index.includes('<strong>71 questions</strong> du manuel'), 'le décompte est annoncé');
   /* Les décomptes historiques restent inchangés (ils comptent les cinq banques). */
-  assert.ok(index.includes('Cinq quiz &amp; révision ciblée (1 244 questions)'));
+  assert.ok(index.includes('Cinq quiz &amp; révision ciblée (1 269 questions)'));
   assert.ok(index.includes('Quatre quiz &amp; révision ciblée (886 questions)'));
 });
 

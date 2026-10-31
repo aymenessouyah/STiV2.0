@@ -36,7 +36,7 @@ test('v587 : la publication affichée est déclarée dans sw.js, pas déduite du
   const sw = lire('sw.js');
   const mVersion = sw.match(/var VERSION_PUBLIEE = "v(\d+)";/);
   assert.ok(mVersion, 'VERSION_PUBLIEE doit être déclaré');
-  assert.equal(Number(mVersion[1]), 589, 'la plateforme est en v589');
+  assert.equal(Number(mVersion[1]), 590, 'la plateforme est en v590');
 
   const mDate = sw.match(/var PUBLIEE_LE = "([^"]+)";/);
   assert.ok(mDate, 'PUBLIEE_LE doit être déclaré');
@@ -139,7 +139,7 @@ test('v587 : la feuille des capsules est enfin rafraîchie chez les appareils in
   const sw = lire('sw.js');
   const ligne = sw.split('\n').find((l) => l.includes('url: "./assets/css/capsules-vedettes.css"'));
   assert.ok(ligne, 'une révision propre est nécessaire, sinon rien ne se met à jour');
-  assert.match(ligne, /revision: "etiquette-capsule-v587"/);
+  assert.match(ligne, /revision: "quiz-sauvegarde-v590"/);
 
   /* Les trois pages qui chargent cette feuille portent le même cache-buster. */
   for (const page of ['index.html', 'cours/javascript.html', 'cours/php.html']) {
