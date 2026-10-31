@@ -1,14 +1,17 @@
 """Les dix scènes du cours « Systèmes, technologies et Internet » (3ᵉ SI).
 
-L'écran est coupé en deux, du début à la fin :
+Une seule règle de mise en page, tenue d'un bout à l'autre :
 
-  * **à gauche** — les définitions, les schémas, la pile de la machine, les
-    cartes des notions ;
-  * **à droite** — les tableaux du manuel et les exemples chiffrés.
+  * **pleine largeur** quand il n'y a qu'une chose à montrer — un schéma, un
+    tableau du manuel, une chaîne d'étapes, une photo ;
+  * **deux colonnes** seulement quand deux contenus se répondent : comparer
+    client/serveur et poste à poste, opposer « propriétaire » et « libre »,
+    poser une illustration en face du texte qu'elle éclaire.
 
-Les deux moitiés portent le même décor d'une scène à l'autre : c'est un cours,
-on ne change pas les repères en route. La bande du bas garde, à chaque fois, la
-phrase à recopier dans le cahier.
+Les images du manuel sont montrées telles quelles (`image_manuel`), avec leur
+repère imprimé — « manuel p. 6 · § 1.2 les six rôles ». Elles sont découpées
+une fois pour toutes par `extraits.py`, depuis
+`documents/livre/sti-smart-book-3si-2026.pdf`.
 
 Le titre de chapitre est lu dans `narration.py` : le repère du menu et l'écran
 ne peuvent pas diverger.
@@ -22,21 +25,18 @@ from theme import (
     ORANGE, AMBRE, VIOLET, VERT, BLEU, ROSE, ROUGE_BORD,
     police, melange, boite_arrondie, fleche, couper_texte, largeur_texte,
 )
-import dessin as G
 from dessin import (
-    LARGEUR, HAUTEUR, MARGE, GAUCHE, DROITE, BANDE,
-    fond, panneau, carte, table, chaine, pile, etiquette,
+    LARGEUR, HAUTEUR, MARGE, PLEIN, GAUCHE, DROITE, BANDE,
+    fond, panneau, carte, table, chaine, pile, etiquette, image_manuel,
 )
 import narration as N
 
 TOTAL = len(N.ORDRE)
 
-G_TITRE = "le cours, pas à pas"
-D_TITRE = "les tableaux du manuel"
-X = GAUCHE[0] + 24          # marge intérieure du panneau de gauche
-Y0 = GAUCHE[1] + 70         # première ligne sous le titre du panneau
-DX = DROITE[0] + 22
-DY = DROITE[1] + 62
+X, Y, BAS = PLEIN[0], PLEIN[1], PLEIN[3]        # 64 · 186 · 884
+XG, YG = GAUCHE[0], GAUCHE[1]
+XD, YD = DROITE[0], DROITE[1]
+FIN = X + 1792                                  # 1856 : la largeur utile
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -71,12 +71,12 @@ def _apparait(p, seuil, duree=0.10):
     return max(0.0, min(1.0, (p - seuil) / duree))
 
 
-def _note(d, x, y, texte, couleur=AMBRE, taille=20, p=1.0, seuil=0.0, largeur=760):
+def _note(d, x, y, texte, couleur=TEXTE_2, taille=20, p=1.0, seuil=0.0, largeur=760):
     k = _apparait(p, seuil)
     if k <= 0:
         return
     # la première ligne est en gras : on la replie avec la mesure du gras,
-    # sinon elle déborde du panneau
+    # sinon elle déborde de la colonne
     lignes, courante = [], ""
     for mot in texte.split():
         essai = (courante + " " + mot).strip()
@@ -105,21 +105,52 @@ def _puce(d, x, y, texte, couleur=TEXTE_2, taille=22, p=1.0, seuil=0.0, largeur=
     return y + len(lignes) * (taille + 8) + air
 
 
+def _repere(d, x, y, texte, couleur=BLEU, p=1.0, seuil=0.0, taille=21, ancre="la"):
+    k = _apparait(p, seuil)
+    if k <= 0:
+        return
+    d.text((x, y), texte, font=police(taille, True),
+           fill=melange(FOND, couleur, k), anchor=ancre)
+
+
+def _rangee(d, boites, hauteur):
+    """Des boîtes côte à côte, à hauteurs égales : la rangée d'une scène."""
+    return [(x, boites[0][1], x + largeur, boites[0][1] + hauteur)
+            for x, largeur in boites]
+
+
 # ══════════════════════════════════════════════════════════════════════════
 #  1 · Ouverture — les trois chapitres
 # ══════════════════════════════════════════════════════════════════════════
 def scene_ouverture(d, p, t):
-    panneau(d, GAUCHE, "les trois chapitres du cours", AMBRE)
+    if p < 0.50:
+        # une seule chose à montrer : les équipements du cours, en pleine largeur
+        image_manuel(d, "systemes-appareils.png", (300, 200, 1620, 760),
+                     "un ordinateur, un téléphone, une montre connectée : "
+                     "les équipements de ce cours",
+                     p=p, seuil=0.03, couleur=BLEU, taille_legende=20)
+        _note(d, 380, 790, "Trois chapitres : les systèmes d'exploitation, les réseaux, "
+                           "l'Internet des objets.",
+              TEXTE_2, taille=23, p=p, seuil=0.12, largeur=1160)
+        _bandeau(d, "Manuel · pages 5 à 13 · la partie qui précède le développement Web",
+                 "3ᵉ SI · édition 2026", couleur=AMBRE)
+        return
+
     cartes = [
-        ("01 · Systèmes d'exploitation", ["Gérer l'environnement de travail", "manuel : pages 5 à 7"], BLEU, "CH. 1"),
-        ("02 · Réseaux informatiques", ["Assurer la communication entre équipements", "manuel : pages 8 à 10"], VIOLET, "CH. 2"),
-        ("03 · Internet des objets", ["Connecter des objets physiques à Internet", "manuel : pages 11 et 12"], VERT, "CH. 3"),
+        ("01 · Systèmes d'exploitation", ["Gérer l'environnement de travail",
+                                          "manuel : pages 5 à 7"], BLEU, "CH. 1"),
+        ("02 · Réseaux informatiques", ["Assurer la communication entre équipements",
+                                        "manuel : pages 8 à 10"], VIOLET, "CH. 2"),
+        ("03 · Internet des objets", ["Connecter des objets physiques à Internet",
+                                      "manuel : pages 11 et 12"], VERT, "CH. 3"),
     ]
     for i, (titre, corps, couleur, sigle) in enumerate(cartes):
-        carte(d, (X, Y0 + i * 196, GAUCHE[2] - 24, Y0 + i * 196 + 176),
-              titre, corps, couleur, p=p, seuil=0.06 + i * 0.30,
-              sigle=sigle)
-    panneau(d, DROITE, "à la fin du cours, vous saurez", BLEU)
+        x = X + i * 605
+        carte(d, (x, 200, x + 581, 350), titre, corps, couleur, p=p,
+              seuil=0.52 + i * 0.03, sigle=sigle, taille_titre=23, taille_corps=19)
+
+    _repere(d, X, 386, "à la fin du cours, vous saurez", BLEU, p=p, seuil=0.64,
+            taille=23)
     puces = [
         "Expliquer le rôle d'un système d'exploitation.",
         "Déployer un système et le sécuriser.",
@@ -128,14 +159,15 @@ def scene_ouverture(d, p, t):
         "Définir l'IoT et suivre le trajet d'une mesure.",
         "Réviser avec la fiche de synthèse du manuel.",
     ]
-    y = DY + 8
     for i, texte in enumerate(puces):
-        y = _puce(d, DX, y, texte, BLEU if i % 2 == 0 else VIOLET, p=p,
-                  seuil=0.30 + i * 0.08, largeur=760, air=34)
-    carte(d, (DX, DY + 400, DROITE[2] - 26, DY + 560), "ce cours suit le manuel",
-          ["pages 5 à 13 : la partie qui précède le développement Web",
-           "trois chapitres, la fiche de synthèse, puis l'évaluation"],
-          AMBRE, p=p, seuil=0.80, taille_titre=21, taille_corps=19)
+        colonne, rang = divmod(i, 3)
+        _puce(d, X + colonne * 900, 440 + rang * 62, texte,
+              BLEU if i % 2 == 0 else VIOLET, p=p, seuil=0.66 + i * 0.03,
+              largeur=860, taille=22, air=10)
+    carte(d, (X, 660, X + 1792, 840), "ce cours suit le manuel",
+          ["pages 5 à 13 : trois chapitres, les activités corrigées, la fiche de "
+           "synthèse, puis l'évaluation générale."],
+          AMBRE, p=p, seuil=0.84, taille_titre=22, taille_corps=20)
     _bandeau(d, "Manuel · pages 5 à 13 · la partie qui précède le développement Web",
              "3ᵉ SI · édition 2026", couleur=AMBRE)
 
@@ -144,28 +176,49 @@ def scene_ouverture(d, p, t):
 #  2 · Le système d'exploitation : la pile et les six rôles
 # ══════════════════════════════════════════════════════════════════════════
 def scene_systeme(d, p, t):
-    panneau(d, GAUCHE, "la pile de la machine", VERT)
-    couches = [
-        ("Utilisateur", "travaille avec des applications", BLEU, False),
-        ("Applications", "navigateur · traitement de texte · jeu", VIOLET, False),
-        ("Système d'exploitation", "logiciel de base : gestion du matériel", AMBRE, True),
-        ("Matériel", "processeur · mémoire · disque · périphériques", VERT, False),
-    ]
-    pile(d, (X, Y0 + 30, GAUCHE[2] - 26, GAUCHE[3] - 40), couches, p=p,
-         seuil=N.avance("systeme", "pile") - 0.04)
+    a_pile = N.avance("systeme", "pile")
+    a_roles = N.avance("systeme", "roles")
 
-    panneau(d, DROITE, "les six rôles", AMBRE)
-    lignes = [
-        ("Gérer le processeur", "exécuter plusieurs programmes"),
-        ("Gérer la mémoire", "répartir la mémoire vive"),
-        ("Gérer les fichiers", "créer, déplacer, supprimer"),
-        ("Gérer les périphériques", "imprimante, clavier"),
-        ("Gérer les utilisateurs", "comptes et autorisations"),
-        ("Assurer la sécurité", "pare-feu et mises à jour"),
-    ]
-    table(d, (DX, DY + 16, DROITE[2] - 26, DROITE[3] - 30),
-          ["rôle", "exemple"], lignes, AMBRE, p=p, seuil=N.avance("systeme", "roles") - 0.04,
-          largeurs=[0.46, 0.54], taille=20, pas=76)
+    if p < a_pile:
+        # deux contenus qui se répondent : le matériel et le logiciel
+        carte(d, (XG, 200, XG + 820, 360), "le matériel · hardware",
+              ["écran · clavier · souris · processeur", "mémoire vive · disque : ce qui se touche"],
+              BLEU, p=p, seuil=0.03, taille_titre=26, taille_corps=21)
+        carte(d, (XD, 200, XD + 900, 360), "le logiciel · software",
+              ["les programmes utilisés par l'utilisateur", "ce qui se lance"],
+              VIOLET, p=p, seuil=0.03, taille_titre=26, taille_corps=21)
+        image_manuel(d, "livre-photo-poste.jpg", (XG, 400, XG + 640, 800),
+                     "manuel p. 3 · des systèmes différents", p=p, seuil=0.12,
+                     couleur=BLEU, taille_legende=17)
+        _note(d, XG + 700, 430,
+              "Entre les deux, un logiciel de base sans lequel rien ne fonctionne : "
+              "le système d'exploitation.",
+              TEXTE_2, taille=24, p=p, seuil=0.18, largeur=1050)
+        _bandeau(d, "Matériel + logiciel : le système d'exploitation fait le lien.",
+                 "manuel p. 3", couleur=BLEU)
+        return
+
+    if p < a_roles:
+        _repere(d, X, 200, "la pile de la machine, du haut vers le bas", VERT,
+                p=p, seuil=a_pile, taille=23)
+        # le schéma du manuel, tel quel : utilisateur, système, matériel
+        image_manuel(d, "livre-p5-pile.png", (X + 660, 240, X + 1130, 620),
+                     "manuel p. 5 · § 1.1 la pile de la machine", p=p,
+                     seuil=a_pile + 0.02, couleur=VERT, taille_legende=18)
+        for i, (titre, detail, couleur) in enumerate([
+                ("Utilisateur", "travaille avec des applications", BLEU),
+                ("Applications", "navigateur · traitement de texte · jeu", VIOLET),
+                ("Système d'exploitation", "gestion du matériel", AMBRE)]):
+            carte(d, (X + i * 605, 640, X + i * 605 + 581, 790), titre, [detail],
+                  couleur, p=p, seuil=a_pile + 0.06 + i * 0.05,
+                  taille_titre=22, taille_corps=19)
+        _bandeau(d, "Le système d'exploitation est un logiciel de base : il gère le matériel "
+                    "et permet l'exécution des applications.", couleur=AMBRE)
+        return
+
+    image_manuel(d, "livre-p6-roles.png", (X, 196, FIN, BAS),
+                 "manuel p. 6 · § 1.2 les six rôles du système d'exploitation",
+                 p=p, seuil=a_roles, couleur=AMBRE)
     _bandeau(d, "Le système d'exploitation est un logiciel de base : il gère le matériel "
                 "et permet l'exécution des applications.", couleur=AMBRE)
 
@@ -174,31 +227,40 @@ def scene_systeme(d, p, t):
 #  3 · Types de systèmes et licences
 # ══════════════════════════════════════════════════════════════════════════
 def scene_systeme_types(d, p, t):
-    panneau(d, GAUCHE, "trois familles d'appareils", BLEU)
-    familles = [
-        ("Ordinateurs", ["Windows", "Linux (Ubuntu, Debian…)", "macOS"], BLEU, "PC"),
-        ("Mobiles", ["Android", "iOS"], VIOLET, "MOBILE"),
-        ("Embarqués", ["watchOS · tvOS", "QNX (automobile)"], VERT, "EMBARQUÉ"),
-    ]
-    for i, (titre, corps, couleur, sigle) in enumerate(familles):
-        carte(d, (X, Y0 + i * 190, GAUCHE[2] - 26, Y0 + i * 190 + 164),
-              titre, corps, couleur, p=p, seuil=0.06 + i * 0.26, sigle=sigle)
+    a_lic = N.avance("systeme_types", "licences")
 
-    panneau(d, DROITE, "propriétaire ou libre ?", AMBRE)
-    lignes = [
-        ("Licence", "des droits définis par le contrat", "libertés d'usage et de modification"),
-        ("Code source", "généralement non accessible", "accessible selon la licence"),
-        ("Exemple", "Windows", "distributions GNU/Linux"),
-    ]
-    table(d, (DX, DY + 16, DROITE[2] - 26, DY + 400),
-          ["", "propriétaire", "libre"], lignes, AMBRE, p=p,
-          seuil=N.avance("systeme_types", "licences") + 0.04,
-          largeurs=[0.24, 0.38, 0.38], taille=19, pas=96)
-    carte(d, (DX, DY + 430, DROITE[2] - 26, DROITE[3] - 30),
-          "le piège classique", ["Libre ne signifie pas nécessairement gratuit.",
-                                 "Un logiciel libre peut être vendu ; un logiciel propriétaire peut être gratuit."],
-          ROUGE_BORD, p=p, seuil=N.avance("systeme_types", "licences") + 0.34,
-          taille_titre=22, taille_corps=19)
+    if p < a_lic:
+        familles = [
+            ("Ordinateurs", ["Windows · macOS", "Linux (Ubuntu, Debian…)"], BLEU, "PC"),
+            ("Mobiles", ["Android", "iOS"], VIOLET, "MOBILE"),
+            ("Embarqués", ["watchOS · tvOS", "QNX (automobile)"], VERT, "EMBARQUÉ"),
+        ]
+        for i, (titre, corps, couleur, sigle) in enumerate(familles):
+            x = X + i * 605
+            carte(d, (x, 200, x + 581, 350), titre, corps, couleur, p=p,
+                  seuil=0.05 + i * 0.06, sigle=sigle, taille_titre=25, taille_corps=20)
+        image_manuel(d, "livre-p6-types.png", (X, 380, FIN, 870),
+                     "manuel p. 6 · § 1.3 les types de systèmes d'exploitation",
+                     p=p, seuil=0.28, couleur=BLEU, taille_legende=18)
+        _bandeau(d, "Le type dépend de l'appareil : PC, mobile, embarqué.",
+                 "manuel p. 6", couleur=BLEU)
+        return
+
+    carte(d, (XG, 200, XG + 820, 400), "logiciel propriétaire",
+          ["une licence qui définit les droits accordés",
+           "code source généralement non accessible",
+           "exemple : Windows"],
+          AMBRE, p=p, seuil=a_lic, taille_titre=25, taille_corps=20)
+    carte(d, (XD, 200, XD + 900, 400), "logiciel libre",
+          ["libertés d'utiliser, d'étudier, de modifier, redistribuer",
+           "code source accessible selon la licence",
+           "exemple : distributions GNU-Linux"],
+          VERT, p=p, seuil=a_lic + 0.10, taille_titre=25, taille_corps=20)
+    image_manuel(d, "livre-p6-licences.png", (X, 440, FIN, 790),
+                 "manuel p. 6 · § 1.4 logiciel propriétaire et logiciel libre",
+                 p=p, seuil=a_lic + 0.16, couleur=AMBRE, taille_legende=18)
+    _note(d, X, 820, "libre ne signifie pas nécessairement gratuit.", ROSE,
+          taille=23, p=p, seuil=a_lic + 0.30, largeur=1700)
     _bandeau(d, "Le type dépend de l'appareil ; la licence dépend des droits accordés.",
              "libre ≠ gratuit", couleur=AMBRE)
 
@@ -207,40 +269,45 @@ def scene_systeme_types(d, p, t):
 #  4 · Déployer, virtualiser, sécuriser
 # ══════════════════════════════════════════════════════════════════════════
 def scene_systeme_deployer(d, p, t):
-    panneau(d, GAUCHE, "déployer : trois temps", BLEU)
-    etapes = [
-        ("1 · Installer", "mettre le système sur l'ordinateur", BLEU),
-        ("2 · Configurer", "adapter les paramètres aux besoins", AMBRE),
-        ("3 · Mettre à jour", "installer les améliorations et les corrections", VERT),
-    ]
-    chaine(d, (X, Y0 + 6, GAUCHE[2] - 26, Y0 + 330), etapes, p=p, seuil=0.02,
-           verticale=True, taille_titre=23, taille_corps=18)
-    # la machine virtuelle, sous les trois temps
-    vm = [
-        ("PC réel", "Windows", BLEU),
-        ("Virtualisation", "VMware · VirtualBox", VIOLET),
-        ("Machine virtuelle", "un Linux dans une fenêtre", VERT),
-    ]
-    chaine(d, (X, Y0 + 420, GAUCHE[2] - 26, GAUCHE[3] - 20), vm, p=p,
-           seuil=N.avance("systeme_deployer", "vm") - 0.04,
-           verticale=False, taille_titre=19, taille_corps=15, remplir=0.95)
+    a_vm = N.avance("systeme_deployer", "vm")
+    a_sec = N.avance("systeme_deployer", "securite")
 
-    panneau(d, DROITE, "sécuriser : quatre moyens", VERT)
-    moyens = [
-        ("Antivirus", ["détecter et traiter les logiciels malveillants"], BLEU),
-        ("Pare-feu", ["contrôler les communications réseau"], AMBRE),
-        ("Mise à jour", ["corriger les failles et les problèmes"], VERT),
-        ("Mot de passe", ["limiter l'accès aux utilisateurs autorisés"], ROSE),
-    ]
-    for i, (titre, corps, couleur) in enumerate(moyens):
-        x = DX + (i % 2) * 450
-        y = DY + 12 + (i // 2) * 236
-        carte(d, (x, y, x + 430, y + 206), titre, corps, couleur, p=p,
-              seuil=N.avance("systeme_deployer", "securite") + 0.03 + i * 0.07,
-              taille_titre=23, taille_corps=19)
-    _note(d, DX, DROITE[3] - 90,
-          "Un antivirus ne remplace ni le pare-feu, ni les mises à jour, ni les mots de passe.",
-          ROUGE_BORD, taille=21, p=p, seuil=0.80, largeur=840)
+    if p < a_vm:
+        etapes = [
+            ("1 · Installer", "mettre le système sur l'ordinateur", BLEU),
+            ("2 · Configurer", "adapter les paramètres aux besoins", AMBRE),
+            ("3 · Mettre à jour", "installer les améliorations et les corrections", VERT),
+        ]
+        chaine(d, (X, 280, FIN, 520), etapes, p=p, seuil=0.02,
+               verticale=False, taille_titre=28, taille_corps=21, remplir=1.0)
+        _note(d, X, 600, "Déployer, c'est mettre en place puis préparer : les trois "
+                         "temps vont ensemble, dans cet ordre.",
+              TEXTE_2, taille=24, p=p, seuil=0.10, largeur=1700)
+        _bandeau(d, "Déployer un système : installer, configurer, mettre à jour.",
+                 "manuel p. 6 · § 1.5", couleur=BLEU)
+        return
+
+    if p < a_sec:
+        image_manuel(d, "livre-p7-vm.png", (X, 196, X + 1160, 800),
+                     "manuel p. 7 · la machine virtuelle", p=p, seuil=a_vm,
+                     couleur=VIOLET, taille_legende=18)
+        carte(d, (X + 1220, 200, FIN, 440), "pourquoi une machine virtuelle ?",
+              ["essayer un système sans toucher au système principal",
+               "VMware · VirtualBox"],
+              VIOLET, p=p, seuil=a_vm + 0.06, taille_titre=23, taille_corps=20)
+        _note(d, X + 1220, 500, "Un ordinateur simulé par un logiciel : la machine "
+                                "virtuelle s'ouvre dans une fenêtre.",
+              TEXTE_2, taille=21, p=p, seuil=a_vm + 0.14, largeur=560)
+        _bandeau(d, "La machine virtuelle : un ordinateur simulé, dans une fenêtre.",
+                 "manuel p. 7", couleur=VIOLET)
+        return
+
+    image_manuel(d, "livre-p7-securite.png", (X, 200, FIN, 620),
+                 "manuel p. 7 · § 1.6 sécuriser un ordinateur", p=p, seuil=a_sec,
+                 couleur=VERT, taille_legende=18)
+    _note(d, X, 680, "Un antivirus ne remplace ni le pare-feu, ni les mises à jour, "
+                     "ni les mots de passe : aucun moyen ne remplace les autres.",
+          ROSE, taille=25, p=p, seuil=a_sec + 0.16, largeur=1700)
     _bandeau(d, "Aucun moyen ne remplace les autres : la sécurité, c'est l'ensemble.",
              "manuel p. 7", couleur=VERT)
 
@@ -249,223 +316,224 @@ def scene_systeme_deployer(d, p, t):
 #  5 · Le réseau : définition, étendue, équipements
 # ══════════════════════════════════════════════════════════════════════════
 def scene_reseau_definition(d, p, t):
-    panneau(d, GAUCHE, "le réseau du lycée", VIOLET)
-    # les quatre équipements, puis le switch qui les relie
-    noms = [("PC 1", "poste"), ("PC 2", "poste"), ("Imprimante", "ressource"), ("Serveur", "services")]
-    largeur = (GAUCHE[2] - 26 - X - 3 * 16) / 4
-    centres = []
-    for i, (nom, detail) in enumerate(noms):
-        x0 = X + i * (largeur + 16)
-        boite = (x0, Y0 + 10, x0 + largeur, Y0 + 120)
-        carte(d, boite, nom, [detail], BLEU if i < 2 else VIOLET, p=p,
-              seuil=0.05 + i * 0.10, taille_titre=19, taille_corps=16)
-        centres.append((x0 + largeur / 2, Y0 + 120))
-    switch = (X + 150, Y0 + 300, GAUCHE[2] - 176, Y0 + 410)
-    for i, (cx, cy) in enumerate(centres):
-        fleche(d, (cx, cy + 6), (switch[0] + 40 + i * 60, switch[1] - 6),
-               couleur=melange(FOND_PANNEAU, TEXTE_3, _apparait(p, 0.45 + i * 0.08)),
-               epaisseur=3, progression=_apparait(p, 0.36 + i * 0.06))
-    carte(d, switch, "Switch / Routeur", ["relie les équipements du réseau local"],
-          AMBRE, p=p, seuil=0.34, taille_titre=22, taille_corps=17)
-    etiquette(d, X, Y0 + 440, "LAN · réseau local", ROSE, p=p, seuil=0.52)
-    _note(d, X, Y0 + 490,
-          "Un réseau, c'est un ensemble d'équipements reliés pour échanger des données et partager des ressources.",
-          TEXTE_2, taille=20, p=p, seuil=0.58, largeur=790)
+    a_et = N.avance("reseau_definition", "etendue")
+    a_eq = N.avance("reseau_definition", "equipements")
 
-    panneau(d, DROITE, "selon l'étendue", AMBRE)
-    table(d, (DX, DY + 8, DROITE[2] - 26, DY + 260),
-          ["type", "étendue", "exemple"],
-          [("LAN", "locale", "une salle informatique"),
-           ("MAN", "une ville", "plusieurs établissements"),
-           ("WAN", "très grande zone", "des sites dans plusieurs pays")],
-          AMBRE, p=p, seuil=N.avance("reseau_definition", "etendue") - 0.03,
-          largeurs=[0.16, 0.32, 0.52], taille=19, pas=58)
-    d.text((DX, DY + 288), "qui fait quoi", font=police(19, True), fill=VERT, anchor="la")
-    table(d, (DX, DY + 326, DROITE[2] - 26, DROITE[3] - 20),
-          ["équipement", "fonction"],
-          [("Carte réseau", "connecter l'appareil au réseau"),
-           ("Switch", "relier les appareils du réseau local"),
-           ("Routeur", "relier des réseaux, diriger les paquets"),
-           ("Point d'accès Wi-Fi", "offrir une connexion sans fil"),
-           ("Serveur", "fournir des services aux clients")],
-          VERT, p=p, seuil=N.avance("reseau_definition", "equipements") - 0.03,
-          largeurs=[0.36, 0.64], taille=19, pas=52)
-    _bandeau(d, "LAN local · MAN à l'échelle d'une ville · WAN très étendu : Internet est le plus grand des WAN.",
-             couleur=VIOLET)
+    if p < a_et:
+        image_manuel(d, "livre-p8-reseau.png", (X, 196, FIN, 700),
+                     "manuel p. 8 · § 2.1 deux postes, une imprimante, un serveur, "
+                     "un switch", p=p, seuil=0.02, couleur=VIOLET, taille_legende=18)
+        _note(d, X, 760, "Un réseau informatique : des équipements reliés entre eux "
+                         "pour échanger des données et partager des ressources.",
+              TEXTE_2, taille=24, p=p, seuil=0.10, largeur=1700)
+        _bandeau(d, "Un réseau, c'est un ensemble d'équipements reliés pour échanger "
+                    "des données et partager des ressources.", couleur=VIOLET)
+        return
+
+    if p < a_eq:
+        image_manuel(d, "livre-p8-etendue.png", (X, 196, FIN, 560),
+                     "manuel p. 8 · § 2.2 classification selon l'étendue", p=p,
+                     seuil=a_et, couleur=AMBRE, taille_legende=18)
+        for i, (sigle, texte, couleur) in enumerate([
+                ("LAN", "locale : une salle informatique, un lycée", BLEU),
+                ("MAN", "une ville : plusieurs établissements", VIOLET),
+                ("WAN", "très étendue : des sites dans plusieurs pays", AMBRE)]):
+            x = X + i * 605
+            carte(d, (x, 620, x + 581, 800), sigle, [texte], couleur, p=p,
+                  seuil=a_et + 0.03 + i * 0.05, taille_titre=26, taille_corps=19)
+        _bandeau(d, "LAN local · MAN à l'échelle d'une ville · WAN très étendu : "
+                    "Internet est le plus grand des WAN.", couleur=VIOLET)
+        return
+
+    image_manuel(d, "livre-p8-equipements.png", (X, 196, X + 1160, 700),
+                 "manuel p. 8 · § 2.3 les équipements d'un réseau", p=p, seuil=a_eq,
+                 couleur=VERT, taille_legende=18)
+    image_manuel(d, "livre-photo-baie.jpg", (X + 1220, 196, FIN, 700),
+                 "manuel p. 3 · une baie de brassage", p=p, seuil=a_eq + 0.10,
+                 couleur=VERT, taille_legende=17)
+    _note(d, X, 760, "Le switch reste dans le réseau local ; le routeur fait le pont "
+                     "entre deux réseaux et dirige les paquets.",
+          TEXTE_2, taille=24, p=p, seuil=a_eq + 0.20, largeur=1700)
+    _bandeau(d, "Carte réseau · switch · routeur · point d'accès Wi-Fi · serveur : "
+                "chacun sa fonction.", "manuel p. 8", couleur=VERT)
 
 
 # ══════════════════════════════════════════════════════════════════════════
 #  6 · Les quatre paramètres : IP, masque, DNS, MAC
 # ══════════════════════════════════════════════════════════════════════════
-def scene_reseau_parametres(d, p, t):
-    panneau(d, GAUCHE, "les quatre paramètres", BLEU)
-    params = [
-        ("Adresse IP", ["192.168.1.20", "identifie une interface"], BLEU, "IP", "ip"),
-        ("Masque réseau", ["255.255.255.0", "sépare réseau et hôte"], AMBRE, "MASQUE", "masque"),
-        ("Serveur DNS", ["www.example.com", "traduit un nom en adresse IP"], VIOLET, "DNS", "dns"),
-        ("Adresse MAC", ["A4-B1-C1-2D-3E-4F", "identifie la carte réseau"], VERT, "MAC", "mac"),
-    ]
-    for i, (titre, corps, couleur, sigle, segment) in enumerate(params):
-        x = X + (i % 2) * 424
-        y = Y0 + 20 + (i // 2) * 280
-        carte(d, (x, y, x + 400, y + 256), titre, corps, couleur, p=p,
-              seuil=N.avance("reseau_parametres", segment) - 0.03,
-              taille_titre=22, taille_corps=20, sigle=sigle)
-
-    panneau(d, DROITE, "lire une adresse et son masque", AMBRE)
-    # les quatre octets de l'adresse
-    x0, largeur, hauteur, pas = DX + 10, 148, 76, 16
-    octets = ["192", "168", "1", "20"]
-    d.text((x0, DY - 4), "adresse IP", font=police(18, True), fill=BLEU, anchor="la")
-    for i, octet in enumerate(octets):
+def _octets(d, p, a_masque):
+    """L'adresse en quatre octets, le masque en dessous, les deux parties."""
+    largeur, hauteur, pas = 300, 110, 40
+    x0 = (LARGEUR - (4 * largeur + 3 * pas)) / 2
+    d.text((x0, 250), "adresse IP", font=police(22, True), fill=BLEU, anchor="la")
+    for i, octet in enumerate(["192", "168", "1", "20"]):
         x = x0 + i * (largeur + pas)
-        k = _apparait(p, 0.10 + i * 0.06)
-        boite_arrondie(d, (x, DY + 26, x + largeur, DY + 26 + hauteur), rayon=12,
-                       fond=melange(FOND_PANNEAU, melange(FOND_PANNEAU_2, BLEU, 0.18), k),
+        k = _apparait(p, 0.04 + i * 0.05)
+        boite_arrondie(d, (x, 288, x + largeur, 288 + hauteur), rayon=14,
+                       fond=melange(FOND_PANNEAU, melange(FOND_PANNEAU_2, BLEU, 0.20), k),
                        bord=melange(FOND_PANNEAU, BLEU, 0.6 * k), largeur_bord=2)
-        d.text((x + largeur / 2, DY + 26 + hauteur / 2), octet,
-               font=police(28, True, mono=True), fill=melange(FOND_PANNEAU, TEXTE, k), anchor="mm")
-    # le masque, juste en dessous
-    d.text((x0, DY + 116), "masque", font=police(18, True), fill=TEXTE_3, anchor="la")
-    masque = ["255", "255", "255", "0"]
-    for i, octet in enumerate(masque):
+        d.text((x + largeur / 2, 288 + hauteur / 2), octet,
+               font=police(40, True, mono=True), fill=melange(FOND_PANNEAU, TEXTE, k),
+               anchor="mm")
+    d.text((x0, 430), "masque réseau", font=police(22, True), fill=TEXTE_3, anchor="la")
+    for i, octet in enumerate(["255", "255", "255", "0"]):
         x = x0 + i * (largeur + pas)
-        k = _apparait(p, 0.36 + i * 0.05)
-        boite_arrondie(d, (x, DY + 146, x + largeur, DY + 146 + hauteur), rayon=12,
+        k = _apparait(p, 0.16 + i * 0.04)
+        boite_arrondie(d, (x, 468, x + largeur, 468 + hauteur), rayon=14,
                        fond=melange(FOND_PANNEAU, FOND_PANNEAU_2, k),
                        bord=melange(FOND_PANNEAU, TEXTE_3, 0.55 * k), largeur_bord=2)
-        d.text((x + largeur / 2, DY + 146 + hauteur / 2), octet,
-               font=police(26, False, mono=True), fill=melange(FOND_PANNEAU, TEXTE_2, k),
+        d.text((x + largeur / 2, 468 + hauteur / 2), octet,
+               font=police(36, False, mono=True), fill=melange(FOND_PANNEAU, TEXTE_2, k),
                anchor="mm")
-    # les deux parties, soulignées
-    k = _apparait(p, N.avance("reseau_parametres", "masque") + 0.10)
-    d.line([(x0, DY + 240), (x0 + 3 * largeur + 2 * pas, DY + 240)],
-           fill=melange(FOND_PANNEAU, BLEU, k), width=4)
-    d.text((x0, DY + 252), "partie réseau : 192.168.1", font=police(20, True),
-           fill=melange(FOND_PANNEAU, BLEU, k), anchor="la")
+    k = _apparait(p, a_masque + 0.04)
+    if k <= 0:
+        return
     x4 = x0 + 3 * (largeur + pas)
-    d.line([(x4, DY + 240), (x4 + largeur, DY + 240)],
-           fill=melange(FOND_PANNEAU, AMBRE, k), width=4)
-    d.text((x4, DY + 252), "hôte : 20", font=police(20, True),
+    d.line([(x0, 614), (x0 + 3 * largeur + 2 * pas, 614)],
+           fill=melange(FOND_PANNEAU, BLEU, k), width=5)
+    d.text((x0, 634), "partie réseau : 192.168.1", font=police(24, True),
+           fill=melange(FOND_PANNEAU, BLEU, k), anchor="la")
+    d.line([(x4, 614), (x4 + largeur, 614)],
+           fill=melange(FOND_PANNEAU, AMBRE, k), width=5)
+    d.text((x4, 634), "hôte : 20", font=police(24, True),
            fill=melange(FOND_PANNEAU, AMBRE, k), anchor="la")
-    carte(d, (DX, DY + 300, DROITE[2] - 26, DY + 410), "adresse réseau",
-          ["192.168.1.0  ·  trois octets pour le réseau, le dernier pour la machine"],
-          AMBRE, p=p, seuil=N.avance("reseau_parametres", "masque") + 0.14,
-          taille_titre=21, taille_corps=19)
-    # le DNS
-    carte(d, (DX, DY + 430, DROITE[2] - 26, DROITE[3] - 24), "le DNS traduit",
-          ["www.example.com  →  192.168.1.20",
-           "l'humain retient un nom, la machine a besoin d'un nombre"],
-          VIOLET, p=p, seuil=N.avance("reseau_parametres", "dns") + 0.04,
-          taille_titre=21, taille_corps=19)
-    _bandeau(d, "IP : qui je suis · masque : où est le réseau · DNS : traduire les noms · MAC : la carte.",
-             couleur=BLEU)
+    d.text((x0, 700), "adresse réseau : 192.168.1.0", font=police(26, True),
+           fill=melange(FOND_PANNEAU, AMBRE, k), anchor="la")
+
+
+def scene_reseau_parametres(d, p, t):
+    a_masque = N.avance("reseau_parametres", "masque")
+    a_dns = N.avance("reseau_parametres", "dns")
+    a_mac = N.avance("reseau_parametres", "mac")
+
+    if p < a_masque:
+        image_manuel(d, "livre-p8-parametres.png", (X, 196, FIN, 860),
+                     "manuel p. 8 · § 2.4 les paramètres d'un composant réseau",
+                     p=p, seuil=0.02, couleur=BLEU, taille_legende=19)
+        _bandeau(d, "IP : qui je suis · masque : où est le réseau · DNS : traduire les noms "
+                    "· MAC : la carte.", couleur=BLEU)
+        return
+
+    if p < a_dns:
+        _octets(d, p, a_masque)
+        _note(d, X, 790, "Trois octets à 255 : le réseau. Le dernier à zéro : l'hôte.",
+              TEXTE_2, taille=22, p=p, seuil=a_masque + 0.16, largeur=1700)
+        _bandeau(d, "Le masque sépare la partie réseau de la partie hôte : ici, "
+                    "192.168.1.0 pour le réseau.", couleur=AMBRE)
+        return
+
+    if p < a_mac:
+        carte(d, (X, 240, FIN, 470), "le DNS traduit un nom en adresse IP",
+              ["www.example.com   →   192.168.1.20",
+               "l'humain retient un nom, la machine a besoin d'un nombre"],
+              VIOLET, p=p, seuil=a_dns, taille_titre=30, taille_corps=24)
+        _note(d, X, 540, "Domain Name System : le navigateur demande au DNS l'adresse "
+                         "IP qui correspond au nom tapé.",
+              TEXTE_2, taille=24, p=p, seuil=a_dns + 0.08, largeur=1700)
+        _bandeau(d, "Le DNS résout un nom de domaine en adresse IP.", "manuel p. 8",
+                 couleur=VIOLET)
+        return
+
+    carte(d, (X, 240, FIN, 510), "l'adresse MAC identifie une interface",
+          ["A4-B1-C1-2D-3E-4F", "six groupes de deux caractères hexadécimaux",
+           "elle identifie une interface dans le réseau local"],
+          VERT, p=p, seuil=a_mac, taille_titre=30, taille_corps=24)
+    _note(d, X, 580, "En résumé : l'IP identifie au niveau IP, le masque sépare réseau "
+                     "et hôte, le DNS traduit les noms, la MAC identifie localement.",
+          TEXTE_2, taille=24, p=p, seuil=a_mac + 0.18, largeur=1700)
+    _bandeau(d, "IP : qui je suis · masque : où est le réseau · DNS : traduire les noms "
+                "· MAC : la carte.", couleur=VERT)
 
 
 # ══════════════════════════════════════════════════════════════════════════
 #  7 · Architectures et protocoles
 # ══════════════════════════════════════════════════════════════════════════
-def _clients_serveur(d, p, seuil):
-    """Trois clients qui demandent, un serveur qui répond."""
-    for i in range(3):
-        k = _apparait(p, seuil + i * 0.06)
-        y = Y0 + 16 + i * 88
-        carte(d, (GAUCHE[0] + 40, y, GAUCHE[0] + 300, y + 72),
-              f"Client {i + 1}", [], BLEU, p=1.0 if k > 0 else 0.0,
-              taille_titre=19)
-        fleche(d, (GAUCHE[0] + 310, y + 36), (GAUCHE[0] + 520, Y0 + 140),
-               couleur=melange(FOND_PANNEAU, TEXTE_3, k), epaisseur=3, progression=k)
-    k = _apparait(p, seuil + 0.20)
-    carte(d, (GAUCHE[0] + 530, Y0 + 70, GAUCHE[2] - 40, Y0 + 250),
-          "Serveur", ["fournit le service", "données centralisées"], AMBRE,
-          p=1.0 if k > 0 else 0.0, seuil=0.0, taille_titre=21, taille_corps=17)
-
-
 def scene_reseau_architectures(d, p, t):
-    panneau(d, GAUCHE, "deux architectures", VIOLET)
-    _clients_serveur(d, p, 0.05)
-    _note(d, GAUCHE[0] + 40, Y0 + 284,
-          "Client / serveur : centralisation des données et des comptes, mais une panne du serveur bloque les services.",
-          TEXTE_2, taille=18, p=p, seuil=N.avance("reseau_architectures", "poste_a_poste") - 0.05,
-          largeur=760)
-    k = _apparait(p, N.avance("reseau_architectures", "poste_a_poste"))
-    if k > 0:
-        d.text((GAUCHE[0] + 40, Y0 + 386), "poste à poste (peer-to-peer)",
-               font=police(20, True), fill=melange(FOND_PANNEAU, VERT, k), anchor="la")
-    for i in range(3):
-        k = _apparait(p, N.avance("reseau_architectures", "poste_a_poste") + 0.04 + i * 0.05)
-        x = GAUCHE[0] + 40 + i * 268
-        carte(d, (x, Y0 + 420, x + 240, Y0 + 500), f"PC {i + 1}", [], VERT,
-              p=1.0 if k > 0 else 0.0)
-        if i < 2:
-            couleur_fleche = melange(FOND_PANNEAU, TEXTE_3, k)
-            # deux flèches parallèles : la communication va dans les deux sens
-            fleche(d, (x + 244, Y0 + 452), (x + 266, Y0 + 452),
-                   couleur=couleur_fleche, epaisseur=2, progression=k, pointe=7)
-            fleche(d, (x + 266, Y0 + 468), (x + 244, Y0 + 468),
-                   couleur=couleur_fleche, epaisseur=2, progression=k, pointe=7)
-    _note(d, GAUCHE[0] + 40, Y0 + 520,
-          "Poste à poste : partage direct, sans serveur central ; gestion, sécurité et sauvegardes moins centralisées.",
-          TEXTE_2, taille=18, p=p,
-          seuil=N.avance("reseau_architectures", "protocoles") - 0.02, largeur=770)
+    a_p2p = N.avance("reseau_architectures", "poste_a_poste")
+    a_proto = N.avance("reseau_architectures", "protocoles")
 
-    panneau(d, DROITE, "les protocoles du programme", AMBRE)
-    table(d, (DX, DY + 8, DROITE[2] - 26, DY + 430),
-          ["protocole", "rôle"],
-          [("TCP/IP", "IP adresse et achemine, TCP transmet de façon fiable"),
-           ("HTTP", "échanger des ressources entre client et serveur Web"),
-           ("HTTPS", "HTTP sécurisé : chiffrement et authentification"),
-           ("MQTT", "messagerie légère, adaptée aux objets connectés")],
-          AMBRE, p=p, seuil=N.avance("reseau_architectures", "protocoles") - 0.02,
-          largeurs=[0.20, 0.80], taille=19, pas=84)
-    carte(d, (DX, DY + 460, DROITE[2] - 26, DY + 610), "sécuriser le réseau",
-          ["Pare-feu : contrôler les communications selon des règles.",
-           "ACL : autoriser ou refuser certains accès."],
-          VERT, p=p, seuil=0.84, taille_titre=21, taille_corps=19)
-    _bandeau(d, "Un protocole est un ensemble de règles qui permet aux équipements de communiquer.",
-             "manuel p. 9", couleur=VIOLET)
+    if p < a_p2p:
+        image_manuel(d, "livre-p9-architectures.png", (X, 196, FIN, 860),
+                     "manuel p. 9 · § 2.5 les architectures des réseaux", p=p,
+                     seuil=0.02, couleur=VIOLET, taille_legende=19)
+        _bandeau(d, "Deux architectures : client / serveur, et poste à poste.",
+                 "manuel p. 9", couleur=VIOLET)
+        return
+
+    if p < a_proto:
+        # deux contenus qui se répondent : la comparaison, en deux colonnes
+        carte(d, (XG, 200, XG + 820, 470), "client / serveur",
+              ["plusieurs clients, un serveur central",
+               "avantages : données, comptes et administration centralisés",
+               "inconvénient : une panne du serveur bloque les services"],
+              BLEU, p=p, seuil=a_p2p - 0.12, taille_titre=26, taille_corps=20)
+        carte(d, (XD, 200, XD + 900, 470), "poste à poste · peer-to-peer",
+              ["les ordinateurs communiquent directement entre eux",
+               "avantage : partage direct, simple pour un petit réseau",
+               "inconvénients : sécurité et sauvegardes plus difficiles"],
+              VERT, p=p, seuil=a_p2p, taille_titre=26, taille_corps=20)
+        _note(d, X, 540, "Poste à poste : pas de serveur central obligatoire, chaque "
+                         "poste peut offrir ses ressources aux autres.",
+              TEXTE_2, taille=24, p=p, seuil=a_p2p + 0.10, largeur=1700)
+        _bandeau(d, "Client / serveur : centralisé · poste à poste : direct.",
+                 "manuel p. 9", couleur=VIOLET)
+        return
+
+    image_manuel(d, "livre-p9-protocoles.png", (X, 196, X + 1080, 860),
+                 "manuel p. 9 · § 2.6 les protocoles et l'exemple MQTT", p=p,
+                 seuil=a_proto, couleur=AMBRE, taille_legende=18)
+    carte(d, (X + 1160, 220, FIN, 520), "sécuriser un réseau",
+          ["Pare-feu : contrôler les communications selon des règles de sécurité.",
+           "ACL : autoriser ou interdire certains accès."],
+          VERT, p=p, seuil=a_proto + 0.16, taille_titre=25, taille_corps=21)
+    _bandeau(d, "Un protocole est un ensemble de règles qui permet aux équipements "
+                "de communiquer.", "manuel p. 9", couleur=VIOLET)
 
 
 # ══════════════════════════════════════════════════════════════════════════
-#  8 · L'IoT : composants et trajet d'une mesure
+#  8 · L'IoT : définition, composants, trajet d'une mesure
 # ══════════════════════════════════════════════════════════════════════════
 def scene_iot_principe(d, p, t):
-    panneau(d, GAUCHE, "l'Internet des objets", VERT)
-    # la définition, mot pour mot celle du manuel
-    carte(d, (X, Y0 + 4, GAUCHE[2] - 26, Y0 + 150), "la définition",
-          ["des objets physiques capables de collecter, transmettre et échanger",
-           "des données grâce à une connexion réseau"],
-          AMBRE, p=p, seuil=0.02, taille_titre=22, taille_corps=19)
-    # les cinq composants, un par un
-    comp = [
-        ("Objet connecté", "collecte ou utilise les données", BLEU),
-        ("Capteur", "mesure une grandeur physique", VIOLET),
-        ("Connexion réseau", "transmet les données", AMBRE),
-        ("Plateforme IoT", "reçoit et stocke", VERT),
-        ("Application", "affiche et permet de commander", ROSE),
-    ]
-    for i, (titre, corps, couleur) in enumerate(comp):
-        carte(d, (X, Y0 + 172 + i * 88, GAUCHE[2] - 26, Y0 + 172 + i * 88 + 76),
-              titre, [corps], couleur, p=p,
-              seuil=N.avance("iot_principe", "composants") - 0.04 + i * 0.045,
-              taille_titre=20, taille_corps=16)
+    a_comp = N.avance("iot_principe", "composants")
+    a_trajet = N.avance("iot_principe", "trajet")
 
-    panneau(d, DROITE, "où le rencontre-t-on ?", BLEU)
-    domaines = ["maison", "agriculture", "santé", "industrie", "ville", "transport"]
-    largeur = (DROITE[2] - 26 - DX - 2 * 12) / 3
-    for i, nom in enumerate(domaines):
-        k = _apparait(p, 0.06 + i * 0.035)
-        if k <= 0:
-            continue
-        x = DX + (i % 3) * (largeur + 12)
-        y = DY + 6 + (i // 3) * 56
-        boite_arrondie(d, (x, y, x + largeur, y + 44), rayon=10,
-                       fond=melange(FOND_PANNEAU, melange(FOND_PANNEAU_2, BLEU, 0.14), k),
-                       bord=melange(FOND_PANNEAU, BLEU, 0.45 * k), largeur_bord=2)
-        d.text((x + largeur / 2, y + 22), nom, font=police(18, True),
-               fill=melange(FOND_PANNEAU, TEXTE, k), anchor="mm")
-    d.text((DX, DY + 128), "le trajet d'une mesure", font=police(19, True),
-           fill=AMBRE, anchor="la")
+    if p < a_comp:
+        carte(d, (X, 196, FIN, 330), "la définition",
+              ["des objets physiques capables de collecter, transmettre et échanger "
+               "des données grâce à une connexion réseau"],
+              AMBRE, p=p, seuil=0.02, taille_titre=25, taille_corps=22)
+        # deux contenus qui se répondent : les domaines du manuel et l'illustration
+        image_manuel(d, "livre-p6-domaines.png", (X, 370, X + 1000, 870),
+                     "manuel p. 6 · § 3.1 où le rencontre-t-on ?", p=p, seuil=0.14,
+                     couleur=VERT, taille_legende=18)
+        image_manuel(d, "iot-maison.png", (X + 1060, 370, FIN, 870),
+                     "une maison connectée", p=p, seuil=0.22, couleur=BLEU,
+                     taille_legende=18)
+        _bandeau(d, "L'IoT : des objets physiques qui collectent, transmettent et "
+                    "échangent des données.", "manuel p. 6", couleur=VERT)
+        return
+
+    if p < a_trajet:
+        _repere(d, X, 210, "cinq composants, une solution IoT", VERT, p=p,
+                seuil=a_comp, taille=23)
+        comp = [
+            ("Objet connecté", "collecte ou utilise les données", BLEU),
+            ("Capteur", "mesure une grandeur", VIOLET),
+            ("Connexion réseau", "transmet les données", AMBRE),
+            ("Plateforme IoT", "reçoit et stocke", VERT),
+            ("Application", "affiche et permet de commander", ROSE),
+        ]
+        chaine(d, (X, 300, FIN, 520), comp, p=p, seuil=a_comp,
+               verticale=False, taille_titre=24, taille_corps=19, remplir=1.0)
+        _note(d, X, 600, "Il manque un seul de ces cinq composants et la chaîne "
+                         "s'arrête : l'objet ne parle plus à personne.",
+              TEXTE_2, taille=24, p=p, seuil=a_comp + 0.12, largeur=1700)
+        _bandeau(d, "Objet · capteur · réseau · plateforme · application : cinq "
+                    "composants.", "manuel p. 6 · § 3.2", couleur=VERT)
+        return
+
+    _repere(d, X, 210, "le trajet d'une mesure : 25 °C", AMBRE, p=p,
+            seuil=a_trajet, taille=23)
     etapes = [
         ("Capteur", "mesure 25 °C", BLEU),
         ("Objet connecté", "prépare la donnée", VIOLET),
@@ -473,9 +541,12 @@ def scene_iot_principe(d, p, t):
         ("Plateforme", "reçoit et stocke", VERT),
         ("Téléphone", "l'utilisateur consulte", ROSE),
     ]
-    chaine(d, (DX, DY + 162, DROITE[2] - 26, DROITE[3] - 20), etapes, p=p,
-           seuil=N.avance("iot_principe", "trajet") - 0.03, verticale=True,
-           taille_titre=20, taille_corps=15)
+    chaine(d, (X, 300, FIN, 520), etapes, p=p, seuil=a_trajet,
+           verticale=False, taille_titre=24, taille_corps=19, remplir=1.0)
+    _note(d, X, 600, "Mesurer, transmettre, stocker, consulter : le trajet ne change "
+                     "jamais. Un capteur ne parle pas directement à votre téléphone : "
+                     "il passe par la plateforme.",
+          TEXTE_2, taille=24, p=p, seuil=a_trajet + 0.14, largeur=1700)
     _bandeau(d, "Mesurer, transmettre, stocker, consulter : le trajet ne change jamais.",
              "manuel p. 11", couleur=VERT)
 
@@ -484,96 +555,118 @@ def scene_iot_principe(d, p, t):
 #  9 · Échanger avec une plateforme, tester, la serre
 # ══════════════════════════════════════════════════════════════════════════
 def scene_iot_echange(d, p, t):
-    panneau(d, GAUCHE, "MQTT : publier, distribuer, s'abonner", VIOLET)
-    etapes = [
-        ("Publisher", "publie un message", BLEU),
-        ("Broker", "reçoit et distribue", AMBRE),
-        ("Subscriber", "reçoit s'il est abonné", VERT),
-    ]
-    chaine(d, (X, Y0 + 6, GAUCHE[2] - 26, Y0 + 240), etapes, p=p,
-           seuil=N.avance("iot_echange", "mqtt") - 0.04,
-           verticale=False, taille_titre=20, taille_corps=15, remplir=0.95)
-    # la chaîne MQTT n'apparaît qu'à la deuxième phrase du passage
-    carte(d, (X, Y0 + 252, GAUCHE[2] - 26, Y0 + 348), "le sujet du message",
-          ["maison/salon/temperature  ·  les niveaux sont séparés par des barres obliques"],
-          ROSE, p=p, seuil=N.avance("iot_echange", "mqtt") + 0.26,
-          taille_titre=19, taille_corps=17)
-    carte(d, (X, Y0 + 364, GAUCHE[2] - 26, Y0 + 452), "et avec HTTP ?",
-          ["l'objet envoie une requête à un serveur, qui lui répond"],
-          BLEU, p=p, seuil=N.avance("iot_echange", "mqtt") + 0.06,
-          taille_titre=19, taille_corps=17)
+    a_mqtt = N.avance("iot_echange", "mqtt")
+    a_tester = N.avance("iot_echange", "tester")
+    a_serre = N.avance("iot_echange", "serre")
 
-    panneau(d, DROITE, "échanger, puis vérifier", AMBRE)
-    # les cinq conditions, dites avant les protocoles
-    table(d, (DX, DY + 8, DROITE[2] - 26, DY + 300),
-          ["avant d'envoyer", ""],
-          [("1 · Réseau", "être configuré pour accéder au réseau"),
-           ("2 · Informations", "connaître l'adresse de la plateforme"),
-           ("3 · Protocole", "choisir HTTP ou MQTT"),
-           ("4 · Données", "envoyer ou recevoir"),
-           ("5 · Test", "tester le programme et corriger")],
-          BLEU, p=p, seuil=0.02, largeurs=[0.30, 0.70], taille=18, pas=52)
-    d.text((DX, DY + 336), "du symptôme à la vérification", font=police(19, True),
-           fill=AMBRE, anchor="la")
-    table(d, (DX, DY + 370, DROITE[2] - 26, DROITE[3] - 20),
-          ["symptôme", "à vérifier"],
-          [("Pas de connexion", "le Wi-Fi et la configuration réseau"),
-           ("Le serveur ne répond pas", "l'adresse du serveur, son accessibilité"),
-           ("Aucune donnée reçue", "la requête HTTP ou le message MQTT"),
-           ("Mauvaise valeur affichée", "la mesure et le format transmis")],
-          AMBRE, p=p, seuil=N.avance("iot_echange", "tester") - 0.03,
-          largeurs=[0.40, 0.60], taille=18, pas=54)
-    # la serre de l'activité de synthèse, sous la note
-    carte(d, (X, Y0 + 470, GAUCHE[2] - 26, GAUCHE[3] - 18),
-          "l'activité de la serre intelligente",
-          ["un capteur d'humidité du sol envoie ses mesures à une plateforme IoT,",
-           "l'agriculteur consulte les valeurs depuis son téléphone."],
-          VERT, p=p, seuil=N.avance("iot_echange", "serre") - 0.02,
-          taille_titre=21, taille_corps=19)
-    _bandeau(d, "Le capteur mesure · l'objet transmet en HTTP ou MQTT · la plateforme stocke · on consulte.",
-             "manuel p. 12", couleur=VIOLET)
+    if p < a_mqtt:
+        _repere(d, X, 200, "avant d'envoyer une donnée, cinq conditions", BLEU,
+                p=p, seuil=0.02, taille=23)
+        conditions = [
+            ("1 · Réseau", "être configuré pour accéder au réseau", BLEU),
+            ("2 · Informations", "connaître l'adresse de la plateforme", VIOLET),
+            ("3 · Protocole", "choisir HTTP ou MQTT", AMBRE),
+            ("4 · Données", "envoyer ou recevoir", VERT),
+            ("5 · Test", "tester le programme et corriger", ROSE),
+        ]
+        chaine(d, (X, 260, FIN, 520), conditions, p=p, seuil=0.02,
+               verticale=False, taille_titre=20, taille_corps=17, remplir=1.0,
+               pas=0.035)
+        image_manuel(d, "iot-serre.png", (X + 420, 570, FIN - 420, 830),
+                     "l'objet connecté en situation : une serre instrumentée",
+                     p=p, seuil=0.10, couleur=VERT, taille_legende=17)
+        _bandeau(d, "Un objet configuré, informé, muni du bon protocole, qui envoie — "
+                    "puis qui teste.", couleur=BLEU)
+        return
+
+    if p < a_tester:
+        image_manuel(d, "livre-p11-echange.png", (X, 196, FIN, 860),
+                     "manuel p. 11 · § 3.4 échanger des données avec une plateforme IoT",
+                     p=p, seuil=a_mqtt, couleur=VIOLET, taille_legende=19)
+        _bandeau(d, "HTTP : une requête à un serveur · MQTT : publier, distribuer, "
+                    "s'abonner.", "manuel p. 11", couleur=VIOLET)
+        return
+
+    if p < a_serre:
+        image_manuel(d, "livre-p11-tester.png", (X, 240, FIN, 700),
+                     "manuel p. 11 · § 3.5 tester et corriger un programme IoT", p=p,
+                     seuil=a_tester, couleur=AMBRE, taille_legende=19)
+        _note(d, X, 760, "Chaque symptôme a sa vérification : connexion, serveur, "
+                         "données, valeur affichée.",
+              TEXTE_2, taille=24, p=p, seuil=a_tester + 0.14, largeur=1700)
+        _bandeau(d, "Tester, c'est remonter du symptôme à la cause.", "manuel p. 11",
+                 couleur=AMBRE)
+        return
+
+    # la serre : l'illustration et les réponses de l'activité, côte à côte
+    image_manuel(d, "iot-serre.png", (X, 200, X + 940, 760),
+                 "la serre de l'activité de synthèse", p=p, seuil=a_serre,
+                 couleur=VERT, taille_legende=18)
+    reponses = [
+        ("le capteur", "mesure l'humidité du sol", BLEU),
+        ("l'objet connecté", "récupère et transmet la mesure", VIOLET),
+        ("la plateforme", "reçoit et exploite les données", VERT),
+        ("les protocoles", "HTTP et MQTT", AMBRE),
+    ]
+    for i, (titre, detail, couleur) in enumerate(reponses):
+        carte(d, (X + 1000, 200 + i * 150, FIN, 200 + i * 150 + 134),
+              titre, [detail], couleur, p=p, seuil=a_serre + 0.06 + i * 0.07,
+              taille_titre=23, taille_corps=19)
+    _bandeau(d, "Le capteur mesure · l'objet transmet · la plateforme stocke · "
+                "l'agriculteur consulte.", "manuel p. 12", couleur=VERT)
 
 
 # ══════════════════════════════════════════════════════════════════════════
 #  10 · La fiche de synthèse
 # ══════════════════════════════════════════════════════════════════════════
 def scene_synthese(d, p, t):
-    panneau(d, GAUCHE, "la fiche de synthèse", AMBRE)
-    lignes = [
-        ("Système d'exploitation", "logiciel de base qui gère les ressources"),
-        ("Déploiement", "installer, configurer, mettre à jour"),
-        ("LAN · MAN · WAN", "local, ville, très étendu"),
-        ("Adresse IP", "identifier une interface"),
-        ("Masque réseau", "séparer la partie réseau et l'hôte"),
-        ("DNS", "traduire un nom en adresse IP"),
-        ("Adresse MAC", "identifier l'interface localement"),
-        ("TCP/IP", "communiquer sur les réseaux"),
-        ("HTTP · HTTPS", "échanger sur le Web, puis en sécurité"),
-        ("MQTT", "messagerie légère des objets connectés"),
-        ("IoT", "objets physiques connectés"),
-    ]
-    table(d, (X, Y0 + 4, GAUCHE[2] - 26, GAUCHE[3] - 20),
-          ["notion", "rôle essentiel"], lignes, AMBRE, p=p, seuil=0.02,
-          largeurs=[0.36, 0.64], taille=18, pas=50)
+    a_reseau = N.avance("synthese", "reseau")
+    a_iot = N.avance("synthese", "iot")
+    a_fin = N.avance("synthese", "fin")
 
-    panneau(d, DROITE, "l'idée clé", VERT)
-    idees = [
-        ("Le système gère l'équipement", "logiciel de base, du matériel aux applications", BLEU),
-        ("Le réseau fait communiquer", "IP, masque, DNS, MAC, protocoles, ACL", AMBRE),
-        ("L'IoT connecte le physique", "mesurer, transmettre, stocker, consulter", VERT),
-    ]
-    for i, (titre, corps, couleur) in enumerate(idees):
-        carte(d, (DX, DY + 10 + i * 158, DROITE[2] - 26, DY + 10 + i * 158 + 138),
-              titre, [corps], couleur, p=p,
-              seuil=N.avance("synthese", "reseau") - 0.03 + i * 0.10,
-              taille_titre=22, taille_corps=19)
-    carte(d, (DX, DY + 486, DROITE[2] - 26, DROITE[3] - 20), "et maintenant ?",
-          ["l'évaluation générale, page 13 du manuel : dix points.",
+    if p < a_iot:
+        image_manuel(d, "livre-p12-fiche.png", (X, 196, X + 1080, 870),
+                     "manuel p. 12 · la fiche de synthèse générale", p=p, seuil=0.02,
+                     couleur=AMBRE, taille_legende=18)
+        idees = [
+            ("Le système gère l'équipement", "logiciel de base, du matériel aux applications",
+             BLEU),
+            ("Le réseau fait communiquer", "IP, masque, DNS, MAC, protocoles, ACL", AMBRE),
+            ("L'IoT connecte le physique", "mesurer, transmettre, stocker, consulter", VERT),
+        ]
+        for i, (titre, corps, couleur) in enumerate(idees):
+            carte(d, (X + 1160, 200 + i * 190, FIN, 200 + i * 190 + 174),
+                  titre, [corps], couleur, p=p,
+                  seuil=max(0.04, a_reseau - 0.05) + i * 0.10,
+                  taille_titre=22, taille_corps=19)
+        _bandeau(d, "Onze notions, une seule page : la fiche de synthèse du manuel.",
+                 "manuel p. 12", couleur=AMBRE)
+        return
+
+    if p < a_fin:
+        image_manuel(d, "livre-p12-idee.png", (X, 280, FIN, 520),
+                     "manuel p. 12 · l'idée clé", p=p, seuil=a_iot, couleur=VERT,
+                     taille_legende=18)
+        _note(d, X, 580, "Le système d'exploitation gère l'équipement, le réseau "
+                         "permet la communication, et l'Internet des objets met "
+                         "cette communication au service d'objets physiques connectés.",
+              TEXTE_2, taille=26, p=p, seuil=a_iot + 0.10, largeur=1700)
+        _bandeau(d, "Le système gère l'équipement, le réseau fait communiquer, l'IoT "
+                    "met la communication au service des objets physiques.", couleur=VERT)
+        return
+
+    carte(d, (X, 230, FIN, 420), "et maintenant ?",
+          ["l'évaluation générale, page 13 du manuel : dix questions, dix points.",
            "puis le cours suivant : HTML5."],
-          ROSE, p=p, seuil=N.avance("synthese", "fin") - 0.02,
-          taille_titre=21, taille_corps=19)
-    _bandeau(d, "Le système gère l'équipement, le réseau fait communiquer, l'IoT met la "
-                "communication au service des objets physiques.", couleur=VERT)
+          ROSE, p=p, seuil=a_fin, taille_titre=32, taille_corps=26)
+    image_manuel(d, "systemes-appareils.png", (X + 380, 450, FIN - 380, 760),
+                 "l'ordinateur, le téléphone et la montre : tout ce que nous avons expliqué",
+                 p=p, seuil=a_fin + 0.10, couleur=BLEU, taille_legende=17)
+    _note(d, X, 850, "Relisez la fiche de synthèse avant l'évaluation : elle tient "
+                     "en une page, et tout le cours est dedans.",
+          TEXTE_2, taille=24, p=p, seuil=a_fin + 0.20, largeur=1700)
+    _bandeau(d, "Le cours s'arrête ici ; l'évaluation commence page 13.", "3ᵉ SI",
+             couleur=ROSE)
 
 
 SCENES = {

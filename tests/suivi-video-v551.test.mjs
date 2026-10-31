@@ -206,8 +206,8 @@ test('le suivi écoute la vidéo, pas le hasard', () => {
 test('le lot v551 est publié', () => {
   const sw = lire('sw.js');
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
-  assert.match(sw, /var UPDATE_ID = "v577-video-cours-sti-20261031"/);
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "cours-sti-v577"/);
+  assert.match(sw, /var UPDATE_ID = "v578-video-cours-sti-visuels-20261031"/);
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "cours-sti-v578"/);
   assert.ok(!sw.split('var UPDATE_FILES = [')[1].split('];')[0].includes('BouclePour-v547.mp4'),
     'les capsules restent hors du delta automatique');
 });

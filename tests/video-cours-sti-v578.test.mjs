@@ -1,4 +1,4 @@
-/* v577 — la vidéo du cours « Systèmes, technologies et Internet » (3ᵉ SI).
+/* v578 — la vidéo du cours « Systèmes, technologies et Internet » (3ᵉ SI).
    ─────────────────────────────────────────────────────────────────────────
    Ce n'est pas une capsule : c'est le cours de la partie 1 du manuel
    (pages 5 à 13), expliqué de bout en bout. Ce fichier vérifie trois choses :
@@ -19,12 +19,12 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const lire = (chemin) => readFileSync(join(root, chemin), 'utf8');
 
-const MP4 = 'assets/videos/CoursSystemesInternet-v577.mp4';
-const VTT = 'assets/subtitles/CoursSystemesInternet-fr-v577.vtt';
+const MP4 = 'assets/videos/CoursSystemesInternet-v578.mp4';
+const VTT = 'assets/subtitles/CoursSystemesInternet-fr-v578.vtt';
 const ID = 'cours-sti';
 const PAGE = 'cours/systemes-technologies-internet.html';
 const OUTILS = join(root, 'outils', 'courssti');
-const REV = 'cours-sti-v577';
+const REV = 'cours-sti-v578';
 
 /* La durée réelle, lue dans la boîte mvhd du MP4 — sans ffmpeg. */
 function dureeMp4(relatif) {
@@ -186,7 +186,7 @@ test('les scènes suivent l’ordre de la voix et le thème des capsules', () =>
 test('le lecteur du site sait ouvrir la vidéo du cours', () => {
   const protection = lire('assets/js/protection.js');
   assert.ok(protection.includes('var estCoursSti = '), 'le garde-fou reconnaît le slug');
-  assert.ok(/if \(estCoursSti\) url = prefixeAssetsSTI\(\) \+ "videos\/CoursSystemesInternet-v577\.mp4"/.test(protection),
+  assert.ok(/if \(estCoursSti\) url = prefixeAssetsSTI\(\) \+ "videos\/CoursSystemesInternet-v578\.mp4"/.test(protection),
     'le fichier joué');
   assert.ok(/if \(estCoursSti\) slugCible = "cours-sti"/.test(protection), 'le slug des chapitres');
   assert.match(protection, /🎥 Cours — Systèmes, technologies et Internet \(3ᵉ SI\)/, 'le titre du lecteur');
@@ -201,8 +201,8 @@ test('le lecteur du site sait ouvrir la vidéo du cours', () => {
 test('la carte du cours porte le bouton, la durée et les sous-titres', () => {
   const page = lire(PAGE);
   assert.ok(page.includes(`data-video-open="${ID}"`), 'le bouton « Regarder »');
-  assert.ok(page.includes(`../assets/videos/CoursSystemesInternet-v577.mp4`), 'le MP4 téléchargeable');
-  assert.ok(page.includes(`../assets/subtitles/CoursSystemesInternet-fr-v577.vtt`), 'les sous-titres');
+  assert.ok(page.includes(`../assets/videos/CoursSystemesInternet-v578.mp4`), 'le MP4 téléchargeable');
+  assert.ok(page.includes(`../assets/subtitles/CoursSystemesInternet-fr-v578.vtt`), 'les sous-titres');
   assert.ok(page.includes('id="video-cours"'), 'la section de la vidéo');
   assert.ok(page.includes('data-video-open="cours-sti"'), 'le bouton du haut de page');
   assert.ok(page.includes('Les dix sections de la vidéo'), 'la liste des sections');
@@ -211,19 +211,108 @@ test('la carte du cours porte le bouton, la durée et les sous-titres', () => {
 
 test('la vidéo est dans le paquet hors-ligne et versionnée', () => {
   const sw = lire('sw.js');
-  assert.ok(sw.includes(`"./assets/videos/CoursSystemesInternet-v577.mp4"`), 'MP4 hors-ligne');
-  assert.ok(sw.includes(`"./assets/subtitles/CoursSystemesInternet-fr-v577.vtt"`), 'VTT hors-ligne');
+  assert.ok(sw.includes(`"./assets/videos/CoursSystemesInternet-v578.mp4"`), 'MP4 hors-ligne');
+  assert.ok(sw.includes(`"./assets/subtitles/CoursSystemesInternet-fr-v578.vtt"`), 'VTT hors-ligne');
   assert.ok(sw.includes(`{ url: "./assets/js/protection.js", revision: "${REV}" }`), 'révision du lecteur');
   assert.ok(sw.includes(`{ url: "./assets/js/lecteur-commun.js", revision: "${REV}" }`), 'révision du lecteur commun');
   assert.ok(sw.includes(`{ url: "./assets/js/admin-vues-videos.js", revision: "${REV}" }`), 'révision de la vue admin');
-  assert.ok(sw.includes(`{ url: "./${PAGE}", revision: "sti-3si-v577", refreshIfCached: true }`), 'révision du cours');
+  assert.ok(sw.includes(`{ url: "./${PAGE}", revision: "sti-3si-v578", refreshIfCached: true }`), 'révision du cours');
 });
 
 test('les outils savent refaire la vidéo', () => {
   const integrer = lire('outils/courssti/integrer.py');
-  assert.ok(integrer.includes('VERSION_MEDIA = "v577"'), 'la version est dans le nom des fichiers');
+  assert.ok(integrer.includes('VERSION_MEDIA = "v578"'), 'la version est dans le nom des fichiers');
   assert.ok(integrer.includes('CLE_CHAPITRES = "cours-sti"'), 'les chapitres sont réécrits par l’outil');
   assert.ok(integrer.includes('--verifier'), 'l’outil sait contrôler sans écrire');
   assert.ok(existsSync(join(OUTILS, 'calage.json')), 'calage.json (montage)');
   assert.ok(existsSync(join(OUTILS, 'sous-titres.vtt')), 'sous-titres.vtt (montage)');
+});
+
+/* ═════════════════════════════════════════════════════════════════════════
+   4 · Les visuels : les images du manuel, et un écran divisé seulement
+       quand deux contenus se répondent (v578)
+   ═════════════════════════════════════════════════════════════════════════ */
+test('les images du manuel sont livrées avec leur repère de page', () => {
+  /* Les découpages viennent de `extraits.py` : un fichier par figure, plus les
+     deux photographies du manuel, et trois illustrations libres. */
+  const decoupes = ['livre-p5-pile', 'livre-p6-roles', 'livre-p6-types',
+    'livre-p6-licences', 'livre-p7-vm', 'livre-p7-securite', 'livre-p8-reseau',
+    'livre-p8-etendue', 'livre-p8-equipements', 'livre-p8-parametres',
+    'livre-p9-architectures', 'livre-p9-protocoles', 'livre-p11-echange',
+    'livre-p11-tester', 'livre-p12-fiche', 'livre-p12-idee'];
+  for (const nom of decoupes) {
+    const chemin = join(root, 'assets', 'images', 'cours-sti', nom + '.png');
+    assert.ok(existsSync(chemin), 'image du manuel absente : ' + nom);
+    assert.ok(statSync(chemin).size > 4_000, 'image vide : ' + nom);
+  }
+  for (const nom of ['livre-photo-poste', 'livre-photo-baie']) {
+    assert.ok(existsSync(join(root, 'assets', 'images', 'cours-sti', nom + '.jpg')),
+      'photographie du manuel absente : ' + nom);
+  }
+  for (const nom of ['iot-maison', 'iot-serre', 'systemes-appareils']) {
+    assert.ok(existsSync(join(root, 'assets', 'images', 'cours-sti', nom + '.png')),
+      'illustration absente : ' + nom);
+  }
+
+  /* L'outil de découpe est reproductible et sait contrôler sans écrire. */
+  const extraits = lire('outils/courssti/extraits.py');
+  assert.ok(extraits.includes('sti-smart-book-3si-2026.pdf'), 'la source est le manuel 3SI');
+  assert.ok(extraits.includes('import pymupdf'), 'PyMuPDF lit le PDF');
+  assert.ok(extraits.includes('--verifier'), 'l’outil sait contrôler sans écrire');
+});
+
+test('chaque image du manuel porte le numéro de page imprimée', () => {
+  /* La bande du bas du manuel parle de « pages 5 à 13 » — c'est la plage PDF.
+     Une légende doit citer la page imprimée, jamais l'indice du PDF. */
+  const scenes = lire('outils/courssti/scenes.py');
+  const legendes = [...scenes.matchAll(/"(manuel p\. (\d+)[^"]*)"/g)].map((m) => m[1]);
+  assert.ok(legendes.length >= 10, 'les légendes du manuel : ' + legendes.length);
+  for (const legende of legendes) {
+    const page = Number(legende.match(/manuel p\. (\d+)/)[1]);
+    assert.ok(page >= 2 && page <= 13, 'page imprimée hors du manuel : ' + legende);
+  }
+  /* Et l'image affichée est toujours une image livrée. */
+  const utilisees = [...scenes.matchAll(/image_manuel\(d, "([^"]+)"/g)].map((m) => m[1]);
+  assert.ok(utilisees.length >= 14, 'images utilisées : ' + utilisees.length);
+  for (const nom of utilisees) {
+    assert.ok(existsSync(join(root, 'assets', 'images', 'cours-sti', nom)),
+      'image appelée mais absente : ' + nom);
+  }
+});
+
+test('l’écran n’est divisé que lorsque deux contenus se répondent', () => {
+  const scenes = lire('outils/courssti/scenes.py');
+  const dessin = lire('outils/courssti/dessin.py');
+  /* Trois zones, une règle : la pleine largeur existe et sert. */
+  assert.match(dessin, /^PLEIN = \(64, 186, 1856, 884\)$/m, 'la zone pleine largeur');
+  assert.match(scenes, /^X, Y, BAS = PLEIN\[0\], PLEIN\[1\], PLEIN\[3\]/m);
+  const pleineLargeur = (scenes.match(/\bX\b, \d+, FIN,|\bFIN\b/g) || []).length;
+  assert.ok(pleineLargeur > 15, 'la pleine largeur est le cas courant : ' + pleineLargeur);
+  /* Les deux colonnes ne servent qu'aux comparaisons : matériel/logiciel,
+     propriétaire/libre, client-serveur/poste à poste, illustration/texte. */
+  for (const comparaison of ['le matériel · hardware', 'logiciel propriétaire',
+    'client / serveur', 'iot-serre.png']) {
+    assert.ok(scenes.includes(comparaison), 'comparaison en deux colonnes : ' + comparaison);
+  }
+  const colonnes = (scenes.match(/\bXG, 200,|\bXD, 200,/g) || []).length;
+  assert.ok(colonnes <= 8, 'les deux colonnes restent l’exception : ' + colonnes);
+
+  /* La primitive qui pose une image : cadre, ombre, légende. */
+  assert.ok(dessin.includes('def image_manuel('), 'la primitive image_manuel');
+  assert.match(dessin, /masque/, 'l’image est pastillée dans le cadre');
+});
+
+test('la mise en page et les images ne sont jamais annoncées à l’oral', () => {
+  /* La voix et les sous-titres restent ceux du cours : aucune phrase ne parle
+     de l'écran, des colonnes ou des images. */
+  const narration = lire('outils/courssti/narration.py');
+  /* Les phrases de la voix, une par ligne : la docstring du module, elle,
+     parle bien de l'écran — c'est de la documentation, pas de l'oral. */
+  const phrases = [...narration.matchAll(/^\s+"([^"\n]{25,})",?$/gm)].map((m) => m[1]);
+  for (const phrase of phrases) {
+    assert.ok(!/coupé en deux|à gauche|à droite|colonne|image|photo|illustration|visuel/i.test(phrase),
+      'la voix n’annonce pas la mise en page : ' + phrase.slice(0, 70));
+  }
+  const vtt = lire(VTT);
+  assert.ok(!/coupé en deux|à gauche|à droite/i.test(vtt), 'les sous-titres non plus');
 });
