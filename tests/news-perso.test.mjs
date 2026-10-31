@@ -230,8 +230,8 @@ test('v496 : le tableau de bord admin choisit la classe et saisit texte 1, texte
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);
   assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "ruban-vert-v517"/);
   assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "classe-nav-v536"/);
-  assert.match(sw, /url: "\.\/admin\.html", revision: "photo-secours-v562"/);
-  assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "photo-secours-v562"/);
+  assert.match(sw, /url: "\.\/admin\.html", revision: "couverture-v583"/);
+  assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "couverture-v583"/);
   const shell = sw.split('var SHELL = [')[1].split('];')[0];
   assert.ok(shell.includes('"./assets/js/news-perso.js"'), 'le moteur du bandeau est dans le shell hors-ligne');
   assert.ok(!shell.includes('"./assets/js/cote-ticker.js"'), 'l’ancien moteur ne fait plus partie du shell');

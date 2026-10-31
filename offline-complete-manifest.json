@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-10-31T09:17:41Z",
+  "generatedAt": "2026-10-31T09:37:22Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 757,
-  "totalBytes": 1110690471,
+  "totalBytes": 1110694611,
   "files": [
     {
       "path": "404.html",
@@ -63,12 +63,12 @@
     {
       "path": "README.md",
       "bytes": 62507,
-      "gitSha": "eae18bc69a90aaec78daba83f56c183cb58cf625"
+      "gitSha": "c9caa9a7986735d7d9a53d229af1bee6f13fa29c"
     },
     {
       "path": "admin.html",
       "bytes": 346065,
-      "gitSha": "fa2936e7fe8d37a2cb7433830a1e0aa514b04737"
+      "gitSha": "f32038cc16ef21d4c574e9ae8d3480329bab3002"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -662,8 +662,8 @@
     },
     {
       "path": "assets/js/admin-couverture.js",
-      "bytes": 14974,
-      "gitSha": "c0eec24ad00376af382dac5e4148d1b16aed0927"
+      "bytes": 14988,
+      "gitSha": "700b8d66f8833bb664f2a7c3794f3dbb89607389"
     },
     {
       "path": "assets/js/admin-dbsupbase.js",
@@ -682,8 +682,8 @@
     },
     {
       "path": "assets/js/admin-revision.js",
-      "bytes": 16765,
-      "gitSha": "dd497f5420179dcd403b3c1f5e1ebe2154089dd3"
+      "bytes": 16779,
+      "gitSha": "ee69677da8004f6915327dd374e6960798005baa"
     },
     {
       "path": "assets/js/admin-vues-videos.js",
@@ -692,13 +692,13 @@
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 746468,
-      "gitSha": "d27bc284703ba7da276c561172efdf268de426f3"
+      "bytes": 747874,
+      "gitSha": "b84b473cd7210f7c96add660acfc8f1d3dfa7953"
     },
     {
       "path": "assets/js/analytique.js",
-      "bytes": 17958,
-      "gitSha": "a5190808b8ee5fb0d2e5e5ec4724519cb1e409ac"
+      "bytes": 18719,
+      "gitSha": "8577ec9a109a246c3b58aa668e4f867b2decc328"
     },
     {
       "path": "assets/js/app.js",
@@ -907,8 +907,8 @@
     },
     {
       "path": "assets/js/roue-couverture.js",
-      "bytes": 12067,
-      "gitSha": "86c055e3f419e7e3a04d9b18efa073de5c28a790"
+      "bytes": 13067,
+      "gitSha": "94128160d85595038b361cc301fe7f8dccb5f065"
     },
     {
       "path": "assets/js/roue-habillage.js",
@@ -1007,8 +1007,8 @@
     },
     {
       "path": "assets/pages-couverture.json",
-      "bytes": 4888,
-      "gitSha": "51132725df3e111f7b8e00912fe88c52e52161fd"
+      "bytes": 5858,
+      "gitSha": "edfeaae2ee2cead493794bb547bd402d1e454ee4"
     },
     {
       "path": "assets/streams/css3-v302/css3-1080p.m3u8",
@@ -3787,8 +3787,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 100241,
-      "gitSha": "d35ee06b3b65b084fd8b13897450053fa61859ab"
+      "bytes": 100216,
+      "gitSha": "57da5693e941e4ea773a089129979c3a11b60292"
     }
   ]
 }

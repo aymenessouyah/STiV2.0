@@ -1530,7 +1530,7 @@ test('v456 (comportemental VM) : pagination PostgREST > 1000 lignes, purge persi
   assert.deepEqual(JSON.parse(storage.getItem('sti-quiz-sync-vus-purge-v1') || '[]'), []);
 });
 
-test('v457 (Lot D — audit final Quiz) : couverture 124 pages, cache-buster unifié ?v=457, SQL hors-Bac filtré en Examen, Examen Blanc 45 Qs et accueil #modules', () => {
+test('v457 (Lot D — audit final Quiz) : couverture des pages du site, cache-buster unifié ?v=457, SQL hors-Bac filtré en Examen, Examen Blanc 45 Qs et accueil #modules', () => {
   const indexHtml = read('index.html');
   const adminHtml = read('admin.html');
   const revErrHtml = read('revision-erreurs.html');
@@ -1550,16 +1550,27 @@ test('v457 (Lot D — audit final Quiz) : couverture 124 pages, cache-buster uni
   assert.match(hcHtml, /finaliserPartie === "complet"\s*\?\s*state\.session\.filter\(function \(q\) \{ return !q\._synced; \}\)/);
   assert.match(sqlHtml, /ok:\s*Boolean\(!a\.skipped && a\.good\)/);
 
-  // 2) quiz/pp.html retiré de la couverture (124 pages exactes, zéro doublon dans le repli roue-couverture.js)
-  assert.match(pyCouv, /"quiz\/pp\.html"/);
-  assert.equal(couvJson.n, 124);
-  assert.equal(couvJson.pages.length, 124);
-  assert.ok(!couvJson.pages.includes('quiz/pp.html'));
-  assert.ok(!roueCouvJs.includes('"quiz/pp.html"'));
+  /* v583 : la couverture n'est plus une liste figée de 124 pages à casse forcée en
+     minuscules (48 entrées ne désignaient plus aucun fichier). Elle suit désormais le
+     disque — toutes les pages .html suivies par Git, hors tests/ — et le décompte `n`
+     est calculé par outils/couverture/generer-couverture.py. L'ancien générateur
+     tools/pages-couverture.py n'est plus qu'un relais déprécié. */
+  assert.match(pyCouv, /DÉPRÉCIÉ/);
+  assert.match(read('outils/couverture/generer-couverture.py'), /EXCLUS = \("tests\/",\)/);
+  assert.equal(couvJson.gen, 'v583');
+  assert.equal(couvJson.n, couvJson.pages.length);
+  assert.equal(couvJson.n, 145, 'toutes les pages HTML hors tests/ doivent être couvertes');
+  assert.ok(couvJson.pages.includes('quiz/pp.html'), 'quiz/pp.html est une page réelle : elle est couverte');
+  assert.ok(roueCouvJs.includes('"quiz/pp.html"'));
+  assert.ok(couvJson.pages.includes('cours/PHP-recap.html'), 'la casse réelle est conservée');
   const secM = roueCouvJs.match(/var PAGES = \[([\s\S]*?)\];/);
   assert.ok(secM, 'PAGES présent dans roue-couverture.js');
   const secoursArr = vm.runInNewContext('[' + secM[1] + ']');
-  assert.equal(secoursArr.length, new Set(secoursArr).size, 'Aucun doublon dans PAGES');
+  assert.deepEqual(
+    [...secoursArr].sort(),
+    [...couvJson.pages].map((p) => p.toLowerCase()).sort(),
+    'le repli PAGES de roue-couverture.js doit refléter exactement le manifeste, en minuscules'
+  );
 
   // 5) Accueil #modules actualisé (1 244 / 886 questions, 66 Défis JS & HTML, plus de mention erronée "sans compte")
   assert.match(indexHtml, /Cinq quiz &amp; révision ciblée \(1 244 questions\)/);
@@ -4164,10 +4175,13 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
     false
   );
   assert.equal(rows.length, 2350, 'Les 3 pages (1000 + 1000 + 350) doivent être concaténées sans troncature à 1 000');
-  assert.equal(fetchUrls.length, 3);
-  assert.match(fetchUrls[0], /limit=1000&offset=0$/);
-  assert.match(fetchUrls[1], /limit=1000&offset=1000$/);
-  assert.match(fetchUrls[2], /limit=1000&offset=2000$/);
+  /* v583 : analytique.js lit aussi assets/pages-couverture.json (dénominateur des pages) ;
+     on ne compte donc que les appels PostgREST pour vérifier la pagination. */
+  const fetchRest = fetchUrls.filter((u) => u.includes('/rest/v1/'));
+  assert.equal(fetchRest.length, 3);
+  assert.match(fetchRest[0], /limit=1000&offset=0$/);
+  assert.match(fetchRest[1], /limit=1000&offset=1000$/);
+  assert.match(fetchRest[2], /limit=1000&offset=2000$/);
 
   const htmlRendu = anaCtx.STI_ANALYTIQUE.analyser(
     [
@@ -4233,7 +4247,7 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
   assert.match(cinq[0].t, /^v499 — Accueil :/);
 });
 
-test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 124/124 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {
+test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 145/145 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {
   const adminJs = read('assets/js/admin.js');
   const admCouvJs = read('assets/js/admin-couverture.js');
   const admRevJs = read('assets/js/admin-revision.js');
@@ -4282,13 +4296,13 @@ test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, pari
   assert.match(admRevJs, /function lireToutPagine\(fabriquerRequete, plafond\)/);
   assert.match(graphJs, /s\.from\("sti_quiz_parties"\)[\s\S]*?\.range\(deQ,\s*deQ\s*\+\s*999\)/);
 
-  // 2) Parité exacte 124/124 entre assets/pages-couverture.json et le repli hors-ligne de roue-couverture.js
+  // 2) Parité exacte 145/145 entre assets/pages-couverture.json et le repli hors-ligne de roue-couverture.js
   const secM = roueCouvJs.match(/var PAGES = \[([\s\S]*?)\];/);
   assert.ok(secM, 'PAGES présent dans roue-couverture.js');
   const secoursPages = Array.from(vm.runInNewContext('[' + secM[1] + ']')).map((p) => String(p).toLowerCase()).sort();
   const manifestPages = [...couvJson.pages].map((p) => String(p).toLowerCase()).sort();
-  assert.equal(secoursPages.length, 124);
-  assert.deepEqual(secoursPages, manifestPages, 'Le repli hors-ligne de roue-couverture.js doit correspondre exactement aux 124 pages de pages-couverture.json');
+  assert.equal(secoursPages.length, 145);
+  assert.deepEqual(secoursPages, manifestPages, 'Le repli hors-ligne de roue-couverture.js doit correspondre exactement aux 145 pages de pages-couverture.json');
 
   // 3) Annexe HTML5 : cible #annexe-html5 présente + correction de la coquille "aricle" -> "article" + piste barre analytique.js
   assert.match(annexeHtml5, /<main id="annexe-html5">/);
@@ -5019,7 +5033,7 @@ test('v470 (comportemental VM) : isolation multi-élèves quiz, tirage neuf conn
   assert.equal(Object.keys(uploadedFiles[0].json.tables).length, 15);
 });
 
-test('v471 (structure) : 124/124 chemins Git exacts dans roue-revision.js (zéro 404 casse Linux), reprendre.js multi-matières, 43 contrôles sante.js & sw.js sti-atelier-v331', () => {
+test('v471 (structure) : 145/145 chemins Git exacts dans roue-revision.js (zéro 404 casse Linux), reprendre.js multi-matières, 43 contrôles sante.js & sw.js sti-atelier-v331', () => {
   const roueRevJs = read('assets/js/roue-revision.js');
   const reprendreJs = read('assets/js/reprendre.js');
   const rouePlanJs = read('assets/js/roue-plan.js');
@@ -5045,13 +5059,13 @@ test('v471 (structure) : 124/124 chemins Git exacts dans roue-revision.js (zéro
     execFileSync(process.execPath, ['--check', join(root, rel)], { stdio: 'pipe' });
   }
 
-  // 1) Vérification exacte de casse sur disque / Git pour les 124 pages de pages-couverture.json
+  // 1) Vérification exacte de casse sur disque / Git pour les 145 pages de pages-couverture.json
   const gitTracked = new Set(
     execFileSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8' })
       .split('\0')
       .filter(Boolean)
   );
-  assert.equal(couvPages.length, 124);
+  assert.equal(couvPages.length, 145);
   const mMap = roueRevJs.match(/var CHEMINS_REELS = (\{[\s\S]*?\});/);
   assert.ok(mMap, 'CHEMINS_REELS doit être défini dans roue-revision.js');
   const cheminsReels = JSON.parse(mMap[1]);

@@ -1,7 +1,7 @@
 /* ══════════ STI v435 — COUVERTURE & ÉLÈVES À RISQUE (tableau de bord) ══════════
    Consigne auteur n°10 et 11 : la couverture du site (le journal « sti-pages-vues-v432 »
    que la roue de l'élève alimente déjà, et que sync-progressions.js copie dans le nuage)
-   devient lisible par le professeur : une ligne par élève (pages vues / 124, dernière
+   devient lisible par le professeur : une ligne par élève (pages vues / 145, dernière
    activité, moyenne quiz, signaux) + un export CSV « élèves à risque » pour le conseil
    de classe.
 
@@ -221,7 +221,7 @@
         return;
       }
       var pages = res[4];
-      if (!pages) { etat("⚠️ Manifeste assets/pages-couverture.json introuvable — lancez tools/pages-couverture.py.", "#b91c1c"); return; }
+      if (!pages) { etat("⚠️ Manifeste assets/pages-couverture.json introuvable — lancez outils/couverture/generer-couverture.py.", "#b91c1c"); return; }
       remplirClasses(profils);
       var classe = elClasse ? elClasse.value : "*";
       var actifs = profils.filter(function (p) {
