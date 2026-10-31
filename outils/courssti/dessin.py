@@ -14,6 +14,10 @@ module garde le fond, les constantes de l'écran, et les primitives propres à u
 from __future__ import annotations
 
 import math
+import os
+from functools import lru_cache
+
+from PIL import Image, ImageDraw
 
 from theme import (
     FOND, FOND_PANNEAU, FOND_PANNEAU_2, BORDURE, TEXTE, TEXTE_2, TEXTE_3,
@@ -24,7 +28,14 @@ from theme import (
 LARGEUR, HAUTEUR = 1920, 1080
 MARGE = 64
 
-# Les deux moitiés de l'écran : le cours à gauche, les tableaux à droite.
+_RACINE = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                       "..", ".."))
+IMAGES = os.path.join(_RACINE, "assets", "images", "cours-sti")
+
+# Trois zones, une règle : on n'occupe **toute la largeur** que lorsqu'il n'y a
+# qu'une chose à montrer ; les deux colonnes ne servent que si deux contenus se
+# répondent (comparer, opposer, illustrer un texte).
+PLEIN = (64, 186, 1856, 884)
 GAUCHE = (64, 186, 916, 884)
 DROITE = (940, 186, 1856, 884)
 BANDE = (64, 906, 1856, 1012)
@@ -138,7 +149,7 @@ def table(d, box, entetes, lignes, couleur=AMBRE, p: float = 1.0,
 
 def chaine(d, box, etapes, p: float = 1.0, seuil: float = 0.0,
            verticale: bool = False, taille_titre: int = 21, taille_corps: int = 17,
-           couleur_defaut=BLEU, remplir: float = 0.62):
+           couleur_defaut=BLEU, remplir: float = 0.62, pas: float = 0.08):
     """Des boîtes reliées par des flèches, une par étape.
 
     `etapes` = [(titre, détail, couleur)] ; une étape sans titre et sans détail
@@ -157,9 +168,9 @@ def chaine(d, box, etapes, p: float = 1.0, seuil: float = 0.0,
                    x0 + i * (largeur + fleche_w) + largeur, y0 + (y1 - y0) * remplir)
                   for i in range(n)]
     for i, (titre, detail, couleur) in enumerate(etapes):
-        if p < seuil + i * 0.08:
+        if p < seuil + i * pas:
             return
-        k = min(1.0, (p - seuil - i * 0.08) / 0.14)
+        k = min(1.0, (p - seuil - i * pas) / 0.14)
         carte(d, boites[i], titre, [detail] if detail else [],
               couleur=couleur or couleur_defaut, p=1.0,
               taille_titre=taille_titre, taille_corps=taille_corps)
@@ -186,9 +197,9 @@ def pile(d, box, couches, p: float = 1.0, seuil: float = 0.0,
     n = len(couches)
     hauteur = (y1 - y0 - (n - 1) * 22) / n
     for i, (titre, detail, couleur, vedette) in enumerate(couches):
-        if p < seuil + i * 0.08:
+        if p < seuil + i * pas:
             return
-        k = min(1.0, (p - seuil - i * 0.08) / 0.14)
+        k = min(1.0, (p - seuil - i * pas) / 0.14)
         y = y0 + i * (hauteur + 22)
         boite = (x0, y, x1, y + hauteur)
         fond_ = melange(FOND_PANNEAU, melange(FOND_PANNEAU_2, couleur, 0.22 if vedette else 0.10), k)
@@ -219,3 +230,63 @@ def etiquette(d, x, y, texte, couleur=ROSE, p: float = 1.0, seuil: float = 0.0,
                    bord=melange(FOND_PANNEAU, couleur, 0.7 * k), largeur_bord=2)
     d.text((x_gauche + 11, y + 12), texte, font=police(taille, True),
            fill=melange(FOND_PANNEAU, couleur, k), anchor="la")
+
+
+# ── Les images : celles du manuel, et celles qui l'illustrent ──────────────
+@lru_cache(maxsize=64)
+def _charger(nom: str) -> Image.Image:
+    return Image.open(os.path.join(IMAGES, nom)).convert("RGB")
+
+
+@lru_cache(maxsize=128)
+def _vignette(nom: str, largeur: int, hauteur: int) -> Image.Image:
+    """L'image déjà réduite à la taille de l'écran : un rendu de 23 500 images
+    ne rééchantillonne pas 23 500 fois les mêmes figures du manuel."""
+    return _charger(nom).resize((largeur, hauteur), Image.LANCZOS)
+
+
+def _placer(largeur: int, hauteur: int, cadre, reserve: int):
+    """La plus grande boîte au bon rapport, centrée dans le cadre."""
+    x0, y0, x1, y1 = cadre
+    dispo_l = max(1, x1 - x0)
+    dispo_h = max(1, y1 - y0 - reserve)
+    k = min(dispo_l / largeur, dispo_h / hauteur)
+    l, h = int(largeur * k), int(hauteur * k)
+    cx = (x0 + x1) / 2
+    return (int(cx - l / 2), int(y0 + (dispo_h - h) / 2),
+            int(cx - l / 2) + l, int(y0 + (dispo_h - h) / 2) + h)
+
+
+def image_manuel(d, nom: str, cadre, legende: str = "", p: float = 1.0,
+                 seuil: float = 0.0, couleur=BORDURE, taille_legende: int = 18,
+                 marge: int = 10):
+    """Une image posée dans le cadre, avec son repère (« manuel p. 6 · § 1.3 »).
+
+    Les pages du manuel sont claires : sur le fond de nuit, elles forment une
+    fenêtre nette, encadrée d'un filet de couleur et d'une ombre. L'image
+    n'apparaît que lorsque la voix arrive sur le passage qu'elle illustre.
+    """
+    if p < seuil:
+        return
+    k = min(1.0, (p - seuil) / 0.22)
+    reserve = (taille_legende + 30 + marge) if legende else 0
+    source = _charger(nom)
+    boite = _placer(source.width, source.height, cadre, reserve)
+    l, h = boite[2] - boite[0], boite[3] - boite[1]
+    # l'ombre, puis le cadre sombre : l'image a du relief sur le fond
+    d.rounded_rectangle([boite[0] + 6, boite[1] + 8, boite[2] + 6, boite[3] + 8],
+                        radius=12, fill=(6, 9, 18))
+    d.rounded_rectangle([boite[0] - marge, boite[1] - marge,
+                         boite[2] + marge, boite[3] + marge],
+                        radius=14, fill=FOND_PANNEAU_2,
+                        outline=melange(FOND_PANNEAU_2, couleur, 0.6 * k), width=2)
+    vignette = _vignette(nom, l, h)
+    masque = Image.new("L", (l, h), int(255 * k))
+    ImageDraw.Draw(masque).rounded_rectangle([0, 0, l - 1, h - 1], radius=8, fill=int(255 * k))
+    toile = getattr(d, "_image", None)
+    if toile is not None:
+        toile.paste(vignette, (boite[0], boite[1]), masque)
+    if legende:
+        d.text(((boite[0] + boite[2]) / 2, boite[3] + marge + 12), legende,
+               font=police(taille_legende), fill=melange(FOND, TEXTE_3, k),
+               anchor="ma")

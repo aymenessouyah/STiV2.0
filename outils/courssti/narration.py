@@ -13,10 +13,10 @@ Ce n'est **pas une capsule** : c'est le cours de la partie 1 du manuel, pages 5
   le trajet d'une mesure, l'échange HTTP et MQTT, le test et la correction,
   l'activité de la serre intelligente.
 
-L'écran est coupé en deux, comme dans les capsules :
-
-* **à gauche** — les définitions, les schémas, les piles et les chaînes ;
-* **à droite** — les tableaux du manuel et les exemples chiffrés.
+L'écran suit une seule règle : **pleine largeur** quand il n'y a qu'une chose
+à montrer, **deux colonnes** seulement quand deux contenus se répondent. Les
+schémas et les tableaux du manuel y apparaissent tels quels, découpés par
+`extraits.py`, avec leur page en repère.
 
 Deux conventions de nommage, une fois pour toutes :
 
@@ -59,7 +59,6 @@ SECTIONS = {
                 "Deux : comment deux équipements communiquent-ils ?",
                 "Trois : comment un objet connecté fait-il remonter une mesure jusqu'à Internet ?",
                 "Trois questions, trois chapitres : les systèmes d'exploitation, les réseaux informatiques, et l'Internet des objets.",
-                "L'écran est coupé en deux, comme dans les capsules : à gauche les définitions et les schémas, à droite les tableaux et les exemples du manuel.",
                 "Chaque chapitre se termine par des activités corrigées ; le cours se referme sur une fiche de synthèse et une évaluation générale sur dix points.",
                 "Prenez un cahier, gardez le livre ouvert : nous commençons par le logiciel qui pilote la machine.",
             ]),

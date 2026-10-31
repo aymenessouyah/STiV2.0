@@ -546,9 +546,9 @@ test('la capsule se lance depuis la grille de l\'accueil', () => {
 
   /* le service worker sert la nouvelle version du lecteur */
   const sw = lire('sw.js');
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "cours-sti-v577"/);
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "cours-sti-v578"/);
   /* le lecteur commun n'a pas bougé depuis la v543 : il garde sa révision */
-  assert.match(sw, /url: "\.\/assets\/js\/lecteur-commun\.js", revision: "cours-sti-v577"/);
+  assert.match(sw, /url: "\.\/assets\/js\/lecteur-commun\.js", revision: "cours-sti-v578"/);
 });
 
 test('la carte vidéo est dans l\'onglet Vidéos de JavaScript', () => {
@@ -586,7 +586,7 @@ test('la capsule est dans le paquet hors-ligne complet', () => {
   assert.ok(complet.includes(`"./${VIDEO}"`), 'MP4 hors-ligne');
   assert.ok(complet.includes(`"./${VTT}"`), 'VTT hors-ligne');
   assert.ok(!delta.includes(`BouclePour-${VERSION_MEDIA}.mp4`), 'les médias restent hors du delta léger');
-  assert.match(sw, /var UPDATE_ID = "v577-video-cours-sti-20261031";/);
+  assert.match(sw, /var UPDATE_ID = "v578-video-cours-sti-visuels-20261031";/);
   assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "etiquette-relief-v572"/);
   assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "etiquette-relief-v572"/);
 });
@@ -600,7 +600,7 @@ test('la fabrique de la capsule reste dans le dépôt', () => {
   assert.match(integrer, /def bloc_chapitres\(/, 'les chapitres sont recalculés');
   assert.match(integrer, /def ecrire_chapitres\(/, 'et réécrits dans protection.js');
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  assert.match(manifeste.version, /^v577/, 'manifeste du lot');
+  assert.match(manifeste.version, /^v578/, 'manifeste du lot');
   assert.ok(manifeste.files.some((f) => f.path === VIDEO), 'MP4 dans le manifeste');
   assert.ok(manifeste.files.some((f) => f.path === VTT), 'VTT dans le manifeste');
 });

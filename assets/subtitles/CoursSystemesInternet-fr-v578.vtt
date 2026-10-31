@@ -1,766 +1,758 @@
 WEBVTT
 
-00:00:01.200 --> 00:00:03.205
+00:00:01.200 --> 00:00:03.235
 Bienvenue dans STI Version 2.0.
 
-00:00:03.205 --> 00:00:08.120
+00:00:03.235 --> 00:00:08.225
 Ceci n'est pas une capsule : c'est un
 cours, celui de la troisième année SI,
 
-00:00:08.120 --> 00:00:10.966
+00:00:08.225 --> 00:00:11.114
 intitulé Systèmes, technologies et
 Internet.
 
-00:00:10.966 --> 00:00:16.011
+00:00:11.114 --> 00:00:16.236
 Il occupe les pages cinq à treize du
 manuel, juste avant le développement Web.
 
-00:00:16.011 --> 00:00:17.822
+00:00:16.236 --> 00:00:18.074
 Il répond à trois questions.
 
-00:00:17.822 --> 00:00:20.473
+00:00:18.074 --> 00:00:20.766
 Un : qui fait fonctionner un ordinateur ?
 
-00:00:20.473 --> 00:00:23.707
+00:00:20.766 --> 00:00:24.049
 Deux : comment deux équipements
 communiquent-ils ?
 
-00:00:23.707 --> 00:00:28.881
+00:00:24.049 --> 00:00:29.302
 Trois : comment un objet connecté fait-il
 remonter une mesure jusqu'à Internet ?
 
-00:00:28.881 --> 00:00:33.732
+00:00:29.302 --> 00:00:34.226
 Trois questions, trois chapitres : les
 systèmes d'exploitation, les réseaux
 
-00:00:33.732 --> 00:00:36.319
+00:00:34.226 --> 00:00:36.852
 informatiques, et l'Internet des objets.
 
-00:00:36.319 --> 00:00:41.751
-L'écran est coupé en deux, comme dans les
-capsules : à gauche les définitions et les
-
-00:00:41.751 --> 00:00:45.438
-schémas, à droite les tableaux et les
-exemples du manuel.
-
-00:00:45.438 --> 00:00:50.353
+00:00:36.852 --> 00:00:41.842
 Chaque chapitre se termine par des
 activités corrigées ; le cours se referme
 
-00:00:50.353 --> 00:00:54.751
+00:00:41.842 --> 00:00:46.307
 sur une fiche de synthèse et une
 évaluation générale sur dix points.
 
-00:00:54.751 --> 00:01:00.249
+00:00:46.307 --> 00:00:51.888
 Prenez un cahier, gardez le livre ouvert :
 nous commençons par le logiciel qui pilote
 
-00:01:00.249 --> 00:01:00.960
+00:00:51.888 --> 00:00:52.610
 la machine.
 
-00:01:01.510 --> 00:01:04.355
+00:00:53.160 --> 00:00:56.005
 Chapitre un : les systèmes d'exploitation.
 
-00:01:04.355 --> 00:01:09.570
+00:00:56.005 --> 00:01:01.220
 Un ordinateur, c'est d'abord du matériel :
 l'écran, le clavier, la souris, le
 
-00:01:09.570 --> 00:01:13.498
+00:01:01.220 --> 00:01:05.148
 processeur, la mémoire vive, le disque.
 C'est le hardware.
 
-00:01:13.498 --> 00:01:18.849
+00:01:05.148 --> 00:01:10.499
 C'est ensuite du logiciel : les programmes
 utilisés par l'utilisateur. C'est le
 
-00:01:18.849 --> 00:01:19.459
+00:01:10.499 --> 00:01:11.109
 software.
 
-00:01:19.459 --> 00:01:24.877
+00:01:11.109 --> 00:01:16.527
 Entre les deux se trouve un logiciel de
 base sans lequel rien ne fonctionne : le
 
-00:01:24.877 --> 00:01:26.435
+00:01:16.527 --> 00:01:18.085
 système d'exploitation.
 
-00:01:26.435 --> 00:01:31.109
+00:01:18.085 --> 00:01:22.759
 Voici la pile, du haut vers le bas :
 l'utilisateur travaille avec des
 
-00:01:31.109 --> 00:01:36.730
+00:01:22.759 --> 00:01:28.380
 applications ; les applications reposent
 sur le système d'exploitation ; le système
 
-00:01:36.730 --> 00:01:39.169
+00:01:28.380 --> 00:01:30.819
 d'exploitation commande le matériel.
 
-00:01:39.169 --> 00:01:44.316
+00:01:30.819 --> 00:01:35.966
 Définition à retenir : le système
 d'exploitation est un logiciel de base qui
 
-00:01:44.316 --> 00:01:48.990
+00:01:35.966 --> 00:01:40.640
 assure la gestion du matériel et permet
 l'exécution des applications.
 
-00:01:48.990 --> 00:01:50.006
+00:01:40.640 --> 00:01:41.656
 Il a six rôles.
 
-00:01:50.006 --> 00:01:55.018
+00:01:41.656 --> 00:01:46.668
 Gérer le processeur : organiser
 l'exécution des programmes, par exemple un
 
-00:01:55.018 --> 00:01:58.607
+00:01:46.668 --> 00:01:50.257
 navigateur et un lecteur vidéo ouverts en
 même temps.
 
-00:01:58.607 --> 00:02:02.265
+00:01:50.257 --> 00:01:53.915
 Gérer la mémoire : la répartir entre les
 applications.
 
-00:02:02.265 --> 00:02:06.261
+00:01:53.915 --> 00:01:57.911
 Gérer les fichiers : créer, supprimer,
 déplacer, organiser.
 
-00:02:06.261 --> 00:02:10.867
+00:01:57.911 --> 00:02:02.517
 Gérer les périphériques : communiquer avec
 l'imprimante, le clavier.
 
-00:02:10.867 --> 00:02:15.472
+00:02:02.517 --> 00:02:07.122
 Gérer les utilisateurs : contrôler les
 comptes et les autorisations.
 
-00:02:15.472 --> 00:02:19.333
+00:02:07.122 --> 00:02:10.983
 Assurer la sécurité : protéger le système
 et les données.
 
-00:02:19.333 --> 00:02:24.684
+00:02:10.983 --> 00:02:16.334
 Six rôles, un seul logiciel de base.
 Retenez surtout la définition : gestion du
 
-00:02:24.684 --> 00:02:27.190
+00:02:16.334 --> 00:02:18.840
 matériel, exécution des applications.
 
-00:02:27.740 --> 00:02:31.977
+00:02:19.390 --> 00:02:23.627
 Deuxième point du chapitre : les types de
 systèmes d'exploitation.
 
-00:02:31.977 --> 00:02:37.434
+00:02:23.627 --> 00:02:29.084
 Pour les ordinateurs personnels : Windows,
 système propriétaire de Microsoft ; Linux,
 
-00:02:37.434 --> 00:02:42.249
+00:02:29.084 --> 00:02:33.899
 une famille de systèmes libres avec
 plusieurs distributions, comme Ubuntu ;
 
-00:02:42.249 --> 00:02:44.753
+00:02:33.899 --> 00:02:36.403
 macOS, sur les ordinateurs Mac d'Apple.
 
-00:02:44.753 --> 00:02:49.696
+00:02:36.403 --> 00:02:41.346
 Pour les mobiles : Android, sur de
 nombreux téléphones et tablettes ; iOS, le
 
-00:02:49.696 --> 00:02:50.916
+00:02:41.346 --> 00:02:42.566
 système des iPhone.
 
-00:02:50.916 --> 00:02:56.116
+00:02:42.566 --> 00:02:47.766
 Pour les appareils spécialisés, on parle
 de systèmes embarqués : watchOS pour les
 
-00:02:56.116 --> 00:03:00.160
+00:02:47.766 --> 00:02:51.810
 montres, tvOS pour l'Apple TV, QNX
 notamment dans l'automobile.
 
-00:03:00.160 --> 00:03:04.911
+00:02:51.810 --> 00:02:56.561
 Un système embarqué est intégré dans un
 appareil qui réalise des fonctions
 
-00:03:04.911 --> 00:03:05.489
+00:02:56.561 --> 00:02:57.139
 précises.
 
-00:03:05.489 --> 00:03:07.672
+00:02:57.139 --> 00:02:59.322
 Deuxième distinction : la licence.
 
-00:03:07.672 --> 00:03:12.487
+00:02:59.322 --> 00:03:04.137
 Un logiciel propriétaire s'utilise selon
 une licence qui définit les droits
 
-00:03:12.487 --> 00:03:17.173
+00:03:04.137 --> 00:03:08.823
 accordés, et son code source n'est
 généralement pas accessible librement.
 
-00:03:17.173 --> 00:03:18.714
+00:03:08.823 --> 00:03:10.364
 C'est le cas de Windows.
 
-00:03:18.714 --> 00:03:23.850
+00:03:10.364 --> 00:03:15.500
 Un logiciel libre garantit les libertés
 d'utiliser, d'étudier, de modifier et de
 
-00:03:23.850 --> 00:03:28.921
+00:03:15.500 --> 00:03:20.571
 redistribuer le programme ; son code
 source est accessible selon les conditions
 
-00:03:28.921 --> 00:03:32.517
+00:03:20.571 --> 00:03:24.167
 de la licence. C'est le cas des
 distributions GNU-Linux.
 
-00:03:32.517 --> 00:03:37.524
+00:03:24.167 --> 00:03:29.174
 Attention à un piège classique : libre ne
 signifie pas nécessairement gratuit.
 
-00:03:37.524 --> 00:03:42.660
+00:03:29.174 --> 00:03:34.310
 À retenir : le type dépend de l'appareil,
 la licence dépend des droits accordés.
 
-00:03:43.210 --> 00:03:48.419
+00:03:34.860 --> 00:03:40.069
 Déployer un système d'exploitation, c'est
 le mettre en place et le préparer pour son
 
-00:03:48.419 --> 00:03:50.155
+00:03:40.069 --> 00:03:41.805
 utilisation, en trois temps.
 
-00:03:50.155 --> 00:03:53.628
+00:03:41.805 --> 00:03:45.278
 Un : installer, c'est-à-dire le mettre sur
 l'ordinateur.
 
-00:03:53.628 --> 00:03:57.348
+00:03:45.278 --> 00:03:48.998
 Deux : configurer, adapter les paramètres
 selon les besoins.
 
-00:03:57.348 --> 00:04:01.627
+00:03:48.998 --> 00:03:53.277
 Trois : mettre à jour, installer les
 améliorations et les corrections
 
-00:04:01.627 --> 00:04:02.371
+00:03:53.277 --> 00:03:54.021
 disponibles.
 
-00:04:02.371 --> 00:04:07.394
+00:03:54.021 --> 00:03:59.044
 Pour essayer un système sans toucher au
 système principal, on utilise une machine
 
-00:04:07.394 --> 00:04:08.014
+00:03:59.044 --> 00:03:59.664
 virtuelle.
 
-00:04:08.014 --> 00:04:12.416
+00:03:59.664 --> 00:04:04.066
 C'est un ordinateur simulé par un
 logiciel : un PC réel fait tourner un
 
-00:04:12.416 --> 00:04:17.315
+00:04:04.066 --> 00:04:08.965
 logiciel de virtualisation, et une machine
 virtuelle apparaît dans une fenêtre.
 
-00:04:17.315 --> 00:04:20.416
+00:04:08.965 --> 00:04:12.066
 Deux exemples au programme : VMware et
 VirtualBox.
 
-00:04:20.416 --> 00:04:25.624
+00:04:12.066 --> 00:04:17.274
 Reste la sécurité de l'ordinateur : quatre
 moyens qui se complètent, jamais un seul.
 
-00:04:25.624 --> 00:04:29.159
+00:04:17.274 --> 00:04:20.809
 L'antivirus détecte et traite les
 logiciels malveillants.
 
-00:04:29.159 --> 00:04:32.073
+00:04:20.809 --> 00:04:23.723
 Le pare-feu contrôle les communications
 réseau.
 
-00:04:32.073 --> 00:04:35.298
+00:04:23.723 --> 00:04:26.948
 La mise à jour corrige les failles et les
 problèmes.
 
-00:04:35.298 --> 00:04:38.894
+00:04:26.948 --> 00:04:30.544
 Le mot de passe limite l'accès aux
 utilisateurs autorisés.
 
-00:04:38.894 --> 00:04:43.545
+00:04:30.544 --> 00:04:35.195
 Un antivirus ne remplace ni le pare-feu,
 ni les mises à jour, ni les bonnes
 
-00:04:43.545 --> 00:04:46.149
+00:04:35.195 --> 00:04:37.799
 pratiques : la sécurité, c'est l'ensemble.
 
-00:04:46.149 --> 00:04:50.490
+00:04:37.799 --> 00:04:42.140
 Fin du chapitre un. Nous passons à la
 communication entre équipements.
 
-00:04:51.040 --> 00:04:53.761
+00:04:42.690 --> 00:04:45.411
 Chapitre deux : les réseaux informatiques.
 
-00:04:53.761 --> 00:04:58.879
+00:04:45.411 --> 00:04:50.529
 Définition : un réseau informatique est un
 ensemble d'équipements informatiques
 
-00:04:58.879 --> 00:05:03.738
+00:04:50.529 --> 00:04:55.388
 reliés entre eux afin d'échanger des
 données et de partager des ressources.
 
-00:05:03.738 --> 00:05:08.402
+00:04:55.388 --> 00:05:00.052
 Regardez le schéma : deux postes de
 travail, une imprimante partagée, un
 
-00:05:08.402 --> 00:05:13.455
+00:05:00.052 --> 00:05:05.105
 serveur qui offre des services, et au
 centre un switch ou un routeur qui relie
 
-00:05:13.455 --> 00:05:13.974
+00:05:05.105 --> 00:05:05.624
 le tout.
 
-00:05:13.974 --> 00:05:16.954
+00:05:05.624 --> 00:05:08.604
 On classe d'abord un réseau selon son
 étendue.
 
-00:05:16.954 --> 00:05:21.489
+00:05:08.604 --> 00:05:13.139
 Le LAN, local, comme le réseau d'une salle
 informatique ou d'un lycée.
 
-00:05:21.489 --> 00:05:26.412
+00:05:13.139 --> 00:05:18.062
 Le MAN, à l'échelle d'une ville :
 plusieurs établissements d'une même ville.
 
-00:05:26.412 --> 00:05:31.530
+00:05:18.062 --> 00:05:23.180
 Le WAN, très étendu : des sites dans
 plusieurs pays. Internet est le plus grand
 
-00:05:31.530 --> 00:05:32.049
+00:05:23.180 --> 00:05:23.699
 des WAN.
 
-00:05:32.049 --> 00:05:35.871
+00:05:23.699 --> 00:05:27.521
 On décrit ensuite les équipements, chacun
 avec sa fonction.
 
-00:05:35.871 --> 00:05:40.082
+00:05:27.521 --> 00:05:31.732
 La carte réseau permet à un appareil de se
 connecter à un réseau.
 
-00:05:40.082 --> 00:05:44.876
+00:05:31.732 --> 00:05:36.526
 Le switch, ou commutateur, relie plusieurs
 appareils dans un réseau local.
 
-00:05:44.876 --> 00:05:48.893
+00:05:36.526 --> 00:05:40.543
 Le routeur relie des réseaux différents et
 dirige les paquets.
 
-00:05:48.893 --> 00:05:52.326
+00:05:40.543 --> 00:05:43.976
 Le point d'accès Wi-Fi permet une
 connexion sans fil.
 
-00:05:52.326 --> 00:05:56.343
+00:05:43.976 --> 00:05:47.993
 Le serveur fournit des services ou des
 ressources aux clients.
 
-00:05:56.343 --> 00:06:01.266
+00:05:47.993 --> 00:05:52.916
 Retenez la différence essentielle : le
 switch reste dans le réseau local, le
 
-00:06:01.266 --> 00:06:03.858
+00:05:52.916 --> 00:05:55.508
 routeur fait le pont entre deux réseaux.
 
-00:06:03.858 --> 00:06:07.680
+00:05:55.508 --> 00:05:59.330
 Place maintenant aux paramètres,
 c'est-à-dire aux adresses.
 
-00:06:08.230 --> 00:06:11.310
+00:05:59.880 --> 00:06:02.960
 Quatre paramètres à ne jamais confondre.
 
-00:06:11.310 --> 00:06:16.930
+00:06:02.960 --> 00:06:08.580
 L'adresse IP identifie une interface
 réseau dans un réseau qui utilise le
 
-00:06:16.930 --> 00:06:17.931
+00:06:08.580 --> 00:06:09.581
 protocole IP.
 
-00:06:17.931 --> 00:06:24.399
+00:06:09.581 --> 00:06:16.049
 En IPv4, elle s'écrit avec quatre nombres
 compris entre zéro et 255, séparés par des
 
-00:06:24.399 --> 00:06:27.016
+00:06:16.049 --> 00:06:18.666
 points : par exemple 192.168.1.20.
 
-00:06:27.016 --> 00:06:33.099
+00:06:18.666 --> 00:06:24.749
 Le masque réseau indique quelle partie de
 l'adresse désigne le réseau et quelle
 
-00:06:33.099 --> 00:06:34.793
+00:06:24.749 --> 00:06:26.443
 partie désigne l'hôte.
 
-00:06:34.793 --> 00:06:41.106
+00:06:26.443 --> 00:06:32.756
 Avec l'adresse 192.168.1.20 et le masque
 255.255.255.0, les trois premiers nombres
 
-00:06:41.106 --> 00:06:45.726
+00:06:32.756 --> 00:06:37.376
 forment la partie réseau et le dernier
 identifie la machine.
 
-00:06:45.726 --> 00:06:50.962
+00:06:37.376 --> 00:06:42.612
 L'adresse réseau est donc 192.168.1.0, et
 l'hôte porte le numéro 20.
 
-00:06:50.962 --> 00:06:57.121
+00:06:42.612 --> 00:06:48.771
 Le serveur DNS traduit un nom de domaine
 en adresse IP. DNS signifie Domain Name
 
-00:06:57.121 --> 00:06:57.660
+00:06:48.771 --> 00:06:49.310
 System.
 
-00:06:57.660 --> 00:07:03.666
+00:06:49.310 --> 00:06:55.316
 Quand vous tapez www.example.com, votre
 navigateur demande au DNS l'adresse IP
 
-00:07:03.666 --> 00:07:04.820
+00:06:55.316 --> 00:06:56.470
 correspondante.
 
-00:07:04.820 --> 00:07:09.594
+00:06:56.470 --> 00:07:01.244
 L'être humain retient un nom, la machine a
 besoin d'un nombre.
 
-00:07:09.594 --> 00:07:13.444
+00:07:01.244 --> 00:07:05.094
 L'adresse MAC est associée à une interface
 réseau.
 
-00:07:13.444 --> 00:07:18.987
+00:07:05.094 --> 00:07:10.637
 Elle s'écrit en six groupes de deux
 caractères hexadécimaux, par exemple
 
-00:07:18.987 --> 00:07:20.373
+00:07:10.637 --> 00:07:12.023
 A4-B1-C1-2D-3E-4F.
 
-00:07:20.373 --> 00:07:25.609
+00:07:12.023 --> 00:07:17.259
 Elle sert notamment à identifier une
 interface dans le réseau local.
 
-00:07:25.609 --> 00:07:31.768
+00:07:17.259 --> 00:07:23.418
 En résumé : l'IP identifie au niveau IP,
 le masque sépare réseau et hôte, le DNS
 
-00:07:31.768 --> 00:07:35.310
+00:07:23.418 --> 00:07:26.960
 traduit les noms, la MAC identifie
 localement.
 
-00:07:35.860 --> 00:07:38.395
+00:07:27.510 --> 00:07:30.045
 Deux architectures, puis les protocoles.
 
-00:07:38.395 --> 00:07:43.464
+00:07:30.045 --> 00:07:35.114
 Dans l'architecture client-serveur, un
 ordinateur client demande un service à un
 
-00:07:43.464 --> 00:07:47.203
+00:07:35.114 --> 00:07:38.853
 ordinateur serveur : plusieurs clients, un
 serveur central.
 
-00:07:47.203 --> 00:07:51.702
+00:07:38.853 --> 00:07:43.352
 Les avantages : centralisation des
 données, gestion des utilisateurs et
 
-00:07:51.702 --> 00:07:53.476
+00:07:43.352 --> 00:07:45.126
 administration centralisées.
 
-00:07:53.476 --> 00:07:58.608
+00:07:45.126 --> 00:07:50.258
 L'inconvénient : si le serveur tombe en
 panne, les services qu'il fournit peuvent
 
-00:07:58.608 --> 00:08:00.002
+00:07:50.258 --> 00:07:51.652
 devenir indisponibles.
 
-00:08:00.002 --> 00:08:04.818
+00:07:51.652 --> 00:07:56.468
 Dans le poste à poste, en anglais
 peer-to-peer, les ordinateurs communiquent
 
-00:08:04.818 --> 00:08:08.367
+00:07:56.468 --> 00:08:00.017
 directement entre eux, sans serveur
 central obligatoire.
 
-00:08:08.367 --> 00:08:13.309
+00:08:00.017 --> 00:08:04.959
 C'est simple et direct pour un petit
 réseau ; en revanche la gestion est moins
 
-00:08:13.309 --> 00:08:17.872
+00:08:04.959 --> 00:08:09.522
 centralisée, et la sécurité comme les
 sauvegardes sont plus difficiles à
 
-00:08:17.872 --> 00:08:18.632
+00:08:09.522 --> 00:08:10.282
 administrer.
 
-00:08:18.632 --> 00:08:23.765
+00:08:10.282 --> 00:08:15.415
 Un protocole est un ensemble de règles qui
 permet aux équipements de communiquer.
 
-00:08:23.765 --> 00:08:25.666
+00:08:15.415 --> 00:08:17.316
 Quatre noms sont au programme.
 
-00:08:25.666 --> 00:08:29.721
+00:08:17.316 --> 00:08:21.371
 TCP/IP : IP assure l'adressage et
 l'acheminement, TCP assure une
 
-00:08:29.721 --> 00:08:31.749
+00:08:21.371 --> 00:08:23.399
 transmission fiable et ordonnée.
 
-00:08:31.749 --> 00:08:35.678
+00:08:23.399 --> 00:08:27.328
 HTTP échange des ressources entre un
 client et un serveur Web.
 
-00:08:35.678 --> 00:08:40.177
+00:08:27.328 --> 00:08:31.827
 HTTPS est sa version sécurisée, avec
 chiffrement et authentification du
 
-00:08:40.177 --> 00:08:40.683
+00:08:31.827 --> 00:08:32.333
 serveur.
 
-00:08:40.683 --> 00:08:45.119
+00:08:32.333 --> 00:08:36.769
 MQTT est une messagerie légère, adaptée
 aux objets connectés : nous la
 
-00:08:45.119 --> 00:08:47.083
+00:08:36.769 --> 00:08:38.733
 retrouverons au chapitre trois.
 
-00:08:47.083 --> 00:08:51.519
+00:08:38.733 --> 00:08:43.169
 Sécuriser un réseau, enfin, c'est d'abord
 un pare-feu qui contrôle les
 
-00:08:51.519 --> 00:08:55.891
+00:08:43.169 --> 00:08:47.541
 communications selon des règles de
 sécurité, et une liste de contrôle
 
-00:08:55.891 --> 00:08:59.820
+00:08:47.541 --> 00:08:51.470
 d'accès, appelée ACL, qui autorise ou
 interdit certains accès.
 
-00:09:00.370 --> 00:09:05.397
+00:08:52.020 --> 00:08:57.047
 Chapitre trois : l'Internet des objets, en
 anglais Internet of Things, ou IoT.
 
-00:09:05.397 --> 00:09:10.746
+00:08:57.047 --> 00:09:02.396
 Définition : l'Internet des objets désigne
 l'ensemble des objets physiques capables
 
-00:09:10.746 --> 00:09:15.837
+00:09:02.396 --> 00:09:07.487
 de collecter, transmettre et échanger des
 données grâce à une connexion réseau.
 
-00:09:15.837 --> 00:09:20.928
+00:09:07.487 --> 00:09:12.578
 On le rencontre partout : l'éclairage et
 le thermostat d'une maison, un capteur
 
-00:09:20.928 --> 00:09:25.955
+00:09:12.578 --> 00:09:17.605
 d'humidité du sol en agriculture, un
 appareil de suivi en santé, un capteur de
 
-00:09:25.955 --> 00:09:31.111
+00:09:17.605 --> 00:09:22.761
 température dans l'industrie, l'éclairage
 public en ville, le suivi de véhicules
 
-00:09:31.111 --> 00:09:32.271
+00:09:22.761 --> 00:09:23.921
 dans le transport.
 
-00:09:32.271 --> 00:09:35.107
+00:09:23.921 --> 00:09:26.757
 Une solution IoT repose sur cinq
 composants.
 
-00:09:35.107 --> 00:09:38.587
+00:09:26.757 --> 00:09:30.237
 L'objet connecté, qui collecte ou utilise
 les données.
 
-00:09:38.587 --> 00:09:40.907
+00:09:30.237 --> 00:09:32.557
 Le capteur, qui mesure une grandeur.
 
-00:09:40.907 --> 00:09:43.936
+00:09:32.557 --> 00:09:35.586
 La connexion réseau, qui permet de
 transmettre.
 
-00:09:43.936 --> 00:09:47.287
+00:09:35.586 --> 00:09:38.937
 La plateforme IoT, qui reçoit et stocke
 les données.
 
-00:09:47.287 --> 00:09:51.540
+00:09:38.937 --> 00:09:43.190
 L'application, qui affiche les
 informations ou permet de commander
 
-00:09:51.540 --> 00:09:52.056
+00:09:43.190 --> 00:09:43.706
 l'objet.
 
-00:09:52.056 --> 00:09:55.020
+00:09:43.706 --> 00:09:46.670
 Suivons une mesure de température : 25
 degrés.
 
-00:09:55.020 --> 00:09:59.338
+00:09:46.670 --> 00:09:50.988
 Le capteur mesure. L'objet connecté
 prépare la donnée. Le réseau la
 
-00:09:59.338 --> 00:10:03.785
+00:09:50.988 --> 00:09:55.435
 transporte, en HTTP ou en MQTT. La
 plateforme la reçoit et la stocke.
 
-00:10:03.785 --> 00:10:06.621
+00:09:55.435 --> 00:09:58.271
 L'utilisateur la consulte sur son
 téléphone.
 
-00:10:06.621 --> 00:10:11.325
+00:09:58.271 --> 00:10:02.975
 C'est toujours le même trajet : mesurer,
 transmettre, stocker, consulter.
 
-00:10:11.325 --> 00:10:15.901
+00:10:02.975 --> 00:10:07.551
 Un capteur ne parle pas directement à
 votre téléphone : il passe par la
 
-00:10:15.901 --> 00:10:16.610
+00:10:07.551 --> 00:10:08.260
 plateforme.
 
-00:10:17.160 --> 00:10:21.156
+00:10:08.810 --> 00:10:12.806
 Comment un objet échange-t-il vraiment
 avec une plateforme ?
 
-00:10:21.156 --> 00:10:25.950
+00:10:12.806 --> 00:10:17.600
 Il doit être configuré pour accéder au
 réseau, disposer des informations
 
-00:10:25.950 --> 00:10:31.344
+00:10:17.600 --> 00:10:22.994
 nécessaires à la communication, utiliser
 un protocole adapté, envoyer ou recevoir
 
-00:10:31.344 --> 00:10:35.540
+00:10:22.994 --> 00:10:27.190
 les données, puis tester son programme et
 corriger les erreurs.
 
-00:10:35.540 --> 00:10:37.604
+00:10:27.190 --> 00:10:29.254
 Deux protocoles sont possibles.
 
-00:10:37.604 --> 00:10:41.000
+00:10:29.254 --> 00:10:32.650
 Avec HTTP, l'objet envoie une requête à un
 serveur.
 
-00:10:41.000 --> 00:10:46.128
+00:10:32.650 --> 00:10:37.778
 Avec MQTT, les messages passent par un
 broker, c'est-à-dire un intermédiaire.
 
-00:10:46.128 --> 00:10:50.856
+00:10:37.778 --> 00:10:42.506
 Trois rôles : le publisher publie un
 message, le broker le reçoit et le
 
-00:10:50.856 --> 00:10:55.517
+00:10:42.506 --> 00:10:47.167
 distribue, le subscriber reçoit les
 messages auxquels il s'est abonné.
 
-00:10:55.517 --> 00:11:00.711
+00:10:47.167 --> 00:10:52.361
 Un message est publié sur un sujet, par
 exemple maison/salon/temperature : les
 
-00:11:00.711 --> 00:11:04.307
+00:10:52.361 --> 00:10:55.957
 niveaux du sujet sont séparés par des
 barres obliques.
 
-00:11:04.307 --> 00:11:07.571
+00:10:55.957 --> 00:10:59.221
 Testons, avec la table de vérification du
 manuel.
 
-00:11:07.571 --> 00:11:11.832
+00:10:59.221 --> 00:11:03.482
 Pas de connexion : vérifiez le Wi-Fi et la
 configuration réseau.
 
-00:11:11.832 --> 00:11:17.027
+00:11:03.482 --> 00:11:08.677
 Le serveur ne répond pas : vérifiez
 l'adresse du serveur et son accessibilité.
 
-00:11:17.027 --> 00:11:21.422
+00:11:08.677 --> 00:11:13.072
 Aucune donnée reçue : vérifiez la requête
 HTTP ou le message MQTT.
 
-00:11:21.422 --> 00:11:25.950
+00:11:13.072 --> 00:11:17.600
 Mauvaise valeur affichée : vérifiez la
 mesure et le format transmis.
 
-00:11:25.950 --> 00:11:30.145
+00:11:17.600 --> 00:11:21.795
 L'activité de synthèse du manuel, c'est
 une serre intelligente.
 
-00:11:30.145 --> 00:11:34.940
+00:11:21.795 --> 00:11:26.590
 Un capteur d'humidité du sol envoie ses
 mesures à une plateforme IoT, et
 
-00:11:34.940 --> 00:11:38.669
+00:11:26.590 --> 00:11:30.319
 l'agriculteur consulte les valeurs depuis
 son téléphone.
 
-00:11:38.669 --> 00:11:42.398
+00:11:30.319 --> 00:11:34.048
 Quel est le rôle du capteur ? Mesurer
 l'humidité du sol.
 
-00:11:42.398 --> 00:11:46.194
+00:11:34.048 --> 00:11:37.844
 De l'objet connecté ? Récupérer et
 transmettre la mesure.
 
-00:11:46.194 --> 00:11:49.724
+00:11:37.844 --> 00:11:41.374
 De la plateforme ? Recevoir et exploiter
 les données.
 
-00:11:49.724 --> 00:11:52.920
+00:11:41.374 --> 00:11:44.570
 Et les deux protocoles possibles ? HTTP et
 MQTT.
 
-00:11:53.470 --> 00:11:57.082
+00:11:45.120 --> 00:11:48.732
 Faisons le point avec la fiche de synthèse
 du manuel.
 
-00:11:57.082 --> 00:12:02.057
+00:11:48.732 --> 00:11:53.707
 Le système d'exploitation est le logiciel
 de base qui gère les ressources
 
-00:12:02.057 --> 00:12:03.011
+00:11:53.707 --> 00:11:54.661
 informatiques.
 
-00:12:03.011 --> 00:12:07.510
+00:11:54.661 --> 00:11:59.160
 Le déployer, c'est l'installer, le
 configurer et le mettre à jour.
 
-00:12:07.510 --> 00:12:12.894
+00:11:59.160 --> 00:12:04.544
 Un réseau se classe par son étendue : LAN
 local, MAN métropolitain, WAN étendu.
 
-00:12:12.894 --> 00:12:18.414
+00:12:04.544 --> 00:12:10.064
 Quatre paramètres : l'adresse IP identifie
 une interface au niveau IP ; le masque
 
-00:12:18.414 --> 00:12:23.798
+00:12:10.064 --> 00:12:15.448
 sépare la partie réseau de la partie
 hôte ; le DNS traduit un nom de domaine en
 
-00:12:23.798 --> 00:12:28.024
+00:12:15.448 --> 00:12:19.674
 adresse IP ; l'adresse MAC identifie une
 interface localement.
 
-00:12:28.024 --> 00:12:33.612
+00:12:19.674 --> 00:12:25.262
 Côté protocoles : TCP/IP pour communiquer
 sur les réseaux, HTTP pour le Web, HTTPS
 
-00:12:33.612 --> 00:12:38.656
+00:12:25.262 --> 00:12:30.306
 pour le Web sécurisé, MQTT pour la
 messagerie légère des objets connectés.
 
-00:12:38.656 --> 00:12:44.040
+00:12:30.306 --> 00:12:35.690
 Et l'Internet des objets, ce sont des
 objets physiques connectés qui collectent
 
-00:12:44.040 --> 00:12:45.744
+00:12:35.690 --> 00:12:37.394
 et échangent des données.
 
-00:12:45.744 --> 00:12:50.855
+00:12:37.394 --> 00:12:42.505
 L'idée clé, en une phrase : le système
 d'exploitation gère l'équipement, le
 
-00:12:50.855 --> 00:12:55.353
+00:12:42.505 --> 00:12:47.003
 réseau permet la communication, et
 l'Internet des objets met cette
 
-00:12:55.353 --> 00:12:59.034
+00:12:47.003 --> 00:12:50.684
 communication au service d'objets
 physiques connectés.
 
-00:12:59.034 --> 00:13:03.736
+00:12:50.684 --> 00:12:55.386
 Vous pouvez maintenant passer à
 l'évaluation générale du manuel, page
 
-00:13:03.736 --> 00:13:06.122
+00:12:55.386 --> 00:12:57.772
 treize : dix questions, dix points.
 
-00:13:06.122 --> 00:13:09.870
+00:12:57.772 --> 00:13:01.520
 Bon travail, et à bientôt dans le cours
 suivant, HTML5.

@@ -168,7 +168,7 @@ test('v498 : les boîtes « en cours » tiennent sur une seule ligne compacte', 
 
 test('v498 : service worker et manifeste hors ligne connaissent le drapeau et la vidéo', () => {
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
-  assert.match(sw, /var UPDATE_ID = "v577-video-cours-sti-20261031"/);
+  assert.match(sw, /var UPDATE_ID = "v578-video-cours-sti-visuels-20261031"/);
   assert.match(sw, /url: "\.\/index\.html", revision: "sti-3si-v573"/);
   assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "classe-nav-v536"/);
   assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "etiquette-relief-v572"/);
@@ -189,5 +189,5 @@ test('v498 : service worker et manifeste hors ligne connaissent le drapeau et la
     assert.equal(entree.bytes, data.length, chemin);
     assert.equal(entree.gitSha, createHash('sha1').update(`blob ${data.length}\0`).update(data).digest('hex'), chemin);
   }
-  assert.equal(manifeste.version, 'v577-sti-atelier-v386');
+  assert.equal(manifeste.version, 'v578-sti-atelier-v386');
 });

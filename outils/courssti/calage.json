@@ -1,6 +1,6 @@
 {
   "durees": {
-    "ouverture": 59.76,
+    "ouverture": 51.41,
     "systeme": 85.68,
     "systeme_types": 74.92,
     "systeme_deployer": 67.28,
@@ -13,16 +13,16 @@
   },
   "debuts": {
     "ouverture": 1.2,
-    "systeme": 61.51,
-    "systeme_types": 147.74,
-    "systeme_deployer": 223.21,
-    "reseau_definition": 291.04,
-    "reseau_parametres": 368.23,
-    "reseau_architectures": 455.86,
-    "iot_principe": 540.37,
-    "iot_echange": 617.16,
-    "synthese": 713.47
+    "systeme": 53.16,
+    "systeme_types": 139.39,
+    "systeme_deployer": 214.86,
+    "reseau_definition": 282.69,
+    "reseau_parametres": 359.88,
+    "reseau_architectures": 447.51,
+    "iot_principe": 532.02,
+    "iot_echange": 608.81,
+    "synthese": 705.12
   },
-  "total": 791.67,
-  "debit": 15.33
+  "total": 783.32,
+  "debit": 15.31
 }

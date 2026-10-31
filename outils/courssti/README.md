@@ -6,10 +6,25 @@ réseaux informatiques, l'Internet des objets. Même thème visuel, même voix,
 mêmes sous-titres et mêmes chapitres que les capsules — mais un contenu de
 cours, sans énoncé ni correction.
 
-* **à gauche** — les définitions et les schémas : la pile de la machine, le
-  réseau du lycée, les cartes des notions ;
-* **à droite** — les tableaux du manuel et les exemples chiffrés ;
-* **en bas** — la phrase à recopier dans le cahier.
+**L'écran se divise seulement quand il y a deux choses à confronter.** Une
+seule règle, tenue d'un bout à l'autre :
+
+* **pleine largeur** (`PLEIN = (64, 186, 1856, 884)`) quand il n'y a qu'une
+  chose à montrer : un schéma, un tableau du manuel, une chaîne d'étapes, une
+  photo ;
+* **deux colonnes** (`GAUCHE`, `DROITE`) quand deux contenus se répondent :
+  matériel / logiciel, propriétaire / libre, client-serveur / poste à poste,
+  une illustration en face du texte qu'elle éclaire ;
+* **en bas**, dans les deux cas, la phrase à recopier dans le cahier.
+
+**Les images sont celles du manuel.** `extraits.py` découpe une fois pour
+toutes, à 210 ppp, les schémas et les tableaux des pages 2 à 8 du livre
+(`documents/livre/sti-smart-book-3si-2026.pdf`) et les deux photographies
+(poste de travail, baie de brassage), puis les range dans
+`assets/images/cours-sti/`. À côté, trois illustrations libres complètent le
+cours : `iot-maison`, `iot-serre`, `systemes-appareils`. Chaque image affichée
+porte son repère — « manuel p. 6 · § 1.2 les six rôles » — et ce repère cite
+toujours la **page imprimée**, jamais l'indice du PDF.
 
 Les exemples sont ceux du livre, une seule fois chacun : `192.168.1.20` avec le
 masque `255.255.255.0` donne le réseau `192.168.1.0` ; la MAC
@@ -38,17 +53,21 @@ narration.py   les dix textes (≤ 1500 caractères par section, la limite d'un 
     ↓  generate_speech → voix/<section>.mp3
 montage.py     voix-off.wav + calage.json + sous-titres.vtt
     ↓
-scenes.py      une scène par section, dessinées par dessin.py (carte, table, chaine, pile)
+extraits.py    les figures du manuel → assets/images/cours-sti/ (PyMuPDF)
+    ↓
+scenes.py      une scène par section, dessinées par dessin.py
+               (carte, table, chaine, pile, image_manuel)
 render.py      sortie_courssti.mp4 (1920×1080, 30 i/s, H.264 + AAC mono)
     ↓
-integrer.py    assets/videos/CoursSystemesInternet-v577.mp4
-               assets/subtitles/CoursSystemesInternet-fr-v577.vtt
+integrer.py    assets/videos/CoursSystemesInternet-v578.mp4
+               assets/subtitles/CoursSystemesInternet-fr-v578.vtt
                + chapitres de protection.js, durée du cours
 ```
 
 Commandes :
 
 ```bash
+python3 outils/courssti/extraits.py                    # les images du manuel (--verifier)
 python3 outils/courssti/narration.py --dit systeme     # ce que la voix prononce
 python3 outils/courssti/montage.py                     # après les clips
 python3 outils/courssti/render.py --plan               # chronologie prévisionnelle
@@ -68,9 +87,10 @@ dans le `PATH` ; `montage.py` n'a besoin que du binaire.
 * **La version est dans le nom des fichiers** : le service worker sert `.mp4` et
   `.vtt` en « cache d'abord » et ne les revalide jamais. Changer `VERSION_MEDIA`
   dans `integrer.py` à chaque refonte, sinon le téléphone garde l'ancienne vidéo.
-* **Deux colonnes, jamais mélangées** : `GAUCHE = (64, 186, 916, 884)` pour les
-  définitions, `DROITE = (940, 186, 1856, 884)` pour les tableaux, `BANDE` pour
-  la phrase à retenir.
+* **La division de l'écran est une décision de contenu, pas un décor** :
+  `PLEIN` pour une seule chose, `GAUCHE` / `DROITE` seulement quand deux
+  contenus se comparent, `BANDE` pour la phrase à retenir. L'oral ne commente
+  jamais ce choix : la voix et les sous-titres ne parlent que du cours.
 * **L'image suit la voix** : chaque dessin apparaît à `narration.avance()`, la
   fraction de la section où commence le passage qui l'explique. Une phrase
   ajoutée déplace l'image toute seule.

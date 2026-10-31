@@ -1,9 +1,9 @@
 {
-  "version": "v577-sti-atelier-v386",
-  "generatedAt": "2026-10-31T00:05:25Z",
+  "version": "v578-sti-atelier-v386",
+  "generatedAt": "2026-10-31T07:30:45Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 753,
-  "totalBytes": 1105192658,
+  "totalBytes": 1110580761,
   "files": [
     {
       "path": "404.html",
@@ -832,8 +832,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 251226,
-      "gitSha": "e093da837599e674846705875dcd88a9e9ebbb55"
+      "bytes": 251225,
+      "gitSha": "ef7ca10a139864c7cff6bec4e2b8b5caa260604b"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -1041,9 +1041,9 @@
       "gitSha": "adc00b86c8f890a1b603899afd0a0ea3f81935e8"
     },
     {
-      "path": "assets/subtitles/CoursSystemesInternet-fr-v577.vtt",
-      "bytes": 18741,
-      "gitSha": "86db9fa0a5e7247ab7beec8687fba759ccf7b216"
+      "path": "assets/subtitles/CoursSystemesInternet-fr-v578.vtt",
+      "bytes": 18529,
+      "gitSha": "f905c9cc9cd6a8fc43696dbafa8a4a5bc62bd352"
     },
     {
       "path": "assets/subtitles/DateJS-fr-v565.vtt",
@@ -1141,9 +1141,9 @@
       "gitSha": "33aca5a190d9b0e51e48e6c5a6427b41efaa5e80"
     },
     {
-      "path": "assets/videos/CoursSystemesInternet-v577.mp4",
-      "bytes": 45169355,
-      "gitSha": "cb551f3bae30c4a392b5af99978915bf2cdb7d85"
+      "path": "assets/videos/CoursSystemesInternet-v578.mp4",
+      "bytes": 50557663,
+      "gitSha": "85c3a6b02f19a4478ce3be2bfa5d5da0a5768624"
     },
     {
       "path": "assets/videos/DateJS-v565.mp4",
@@ -1393,7 +1393,7 @@
     {
       "path": "cours/systemes-technologies-internet.html",
       "bytes": 57923,
-      "gitSha": "d65c270e830b9ecf933196388df21fb768a34fce"
+      "gitSha": "0528165da6663ffd01607217f15c7c1a9371ab9c"
     },
     {
       "path": "cssanimee/cours.js",
@@ -3767,8 +3767,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 99687,
-      "gitSha": "da5a6379da582c377c4d13e3b4b8d87cf0c3b087"
+      "bytes": 99695,
+      "gitSha": "569385ae69c5d6e499f41b6ef2a8e7b3b4b111f8"
     }
   ]
 }

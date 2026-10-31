@@ -34,7 +34,7 @@ if not os.path.exists(FF):
     FF = "ffmpeg"
 
 SLUG = "CoursSystemesInternet"
-VERSION_MEDIA = "v577"          # à changer à chaque refonte : l'URL est la version
+VERSION_MEDIA = "v578"          # à changer à chaque refonte : l'URL est la version
 CLE_CHAPITRES = "cours-sti"
 NOM_MP4 = f"{SLUG}-{VERSION_MEDIA}.mp4"
 NOM_VTT = f"{SLUG}-fr-{VERSION_MEDIA}.vtt"

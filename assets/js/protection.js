@@ -1392,17 +1392,16 @@
       STI_CHAPITRES_MEDIA["php-synthese"] = [{"t":0,"short":"🎬 Bienvenue — STI 2.0 By AE","label":"0:00 · 🎬 Bienvenue — STI 2.0 By AE"},{"t":31.2,"short":"0 · Le projet et le web local","label":"0:31 · 0 · Le projet et le web local"},{"t":79.37,"short":"1 · Base de données ecole","label":"1:19 · 1 · Base de données ecole"},{"t":121.17,"short":"2 · index.html","label":"2:01 · 2 · index.html"},{"t":164.05,"short":"3 · inscription.html","label":"2:44 · 3 · inscription.html"},{"t":203.52,"short":"4 · CSS float","label":"3:23 · 4 · CSS float"},{"t":258.85,"short":"5 · CSS transition en détail","label":"4:18 · 5 · CSS transition en détail"},{"t":321.65,"short":"6 · JavaScript : let, innerHTML, alert, return","label":"5:21 · 6 · JavaScript : let, innerHTML, alert, return"},{"t":374.85,"short":"7 · Nom_prenom et dates","label":"6:14 · 7 · Nom_prenom et dates"},{"t":431.09,"short":"8 · PHP : ajouter et liste","label":"7:11 · 8 · PHP : ajouter et liste"},{"t":470.09,"short":"9 · modifier, statistiques, tests","label":"7:50 · 9 · modifier, statistiques, tests"},{"t":518.02,"short":"🔍 ajouter.php ligne par ligne","label":"8:38 · 🔍 ajouter.php ligne par ligne"},{"t":593.06,"short":"🔍 liste.php ligne par ligne","label":"9:53 · 🔍 liste.php ligne par ligne"},{"t":656.86,"short":"🔍 modifier.php ligne par ligne","label":"10:56 · 🔍 modifier.php ligne par ligne"},{"t":716.59,"short":"🔍 statistiques.php ligne par ligne","label":"11:56 · 🔍 statistiques.php ligne par ligne"},{"t":778.26,"short":"⚖ fetch et num_rows / COUNT(*)","label":"12:58 · ⚖ fetch et num_rows / COUNT(*)"},{"t":841.03,"short":"★ Fin — plateforme et bon courage","label":"14:01 · ★ Fin — plateforme et bon courage"}];
       STI_CHAPITRES_MEDIA["cours-sti"] = [
         { t: 1.200, short: "1 · Bienvenue — le cours qui précède le Web", label: "0:01 · 1 · Bienvenue — le cours qui précède le Web" },
-        { t: 61.510, short: "2 · Chapitre 1 · Le système d'exploitation et ses rôles", label: "1:02 · 2 · Chapitre 1 · Le système d'exploitation et ses rôles" },
-        { t: 147.740, short: "3 · Chapitre 1 · Types de systèmes et licences", label: "2:28 · 3 · Chapitre 1 · Types de systèmes et licences" },
-        { t: 223.210, short: "4 · Chapitre 1 · Déployer, virtualiser, sécuriser", label: "3:43 · 4 · Chapitre 1 · Déployer, virtualiser, sécuriser" },
-        { t: 291.040, short: "5 · Chapitre 2 · Le réseau, son étendue, ses équipements", label: "4:51 · 5 · Chapitre 2 · Le réseau, son étendue, ses équipements" },
-        { t: 368.230, short: "6 · Chapitre 2 · IP, masque, DNS et adresse MAC", label: "6:08 · 6 · Chapitre 2 · IP, masque, DNS et adresse MAC" },
-        { t: 455.860, short: "7 · Chapitre 2 · Architectures, protocoles, sécurité", label: "7:36 · 7 · Chapitre 2 · Architectures, protocoles, sécurité" },
-        { t: 540.370, short: "8 · Chapitre 3 · L'Internet des objets et ses composants", label: "9:00 · 8 · Chapitre 3 · L'Internet des objets et ses composants" },
-        { t: 617.160, short: "9 · Chapitre 3 · Échanger, tester, la serre intelligente", label: "10:17 · 9 · Chapitre 3 · Échanger, tester, la serre intelligente" },
-        { t: 713.470, short: "10 · Fiche de synthèse — l'essentiel du cours", label: "11:53 · 10 · Fiche de synthèse — l'essentiel du cours" }
-      ];
-      /* La courte démonstration display ne possède qu'un seul départ. */
+        { t: 53.160, short: "2 · Chapitre 1 · Le système d'exploitation et ses rôles", label: "0:53 · 2 · Chapitre 1 · Le système d'exploitation et ses rôles" },
+        { t: 139.390, short: "3 · Chapitre 1 · Types de systèmes et licences", label: "2:19 · 3 · Chapitre 1 · Types de systèmes et licences" },
+        { t: 214.860, short: "4 · Chapitre 1 · Déployer, virtualiser, sécuriser", label: "3:35 · 4 · Chapitre 1 · Déployer, virtualiser, sécuriser" },
+        { t: 282.690, short: "5 · Chapitre 2 · Le réseau, son étendue, ses équipements", label: "4:43 · 5 · Chapitre 2 · Le réseau, son étendue, ses équipements" },
+        { t: 359.880, short: "6 · Chapitre 2 · IP, masque, DNS et adresse MAC", label: "6:00 · 6 · Chapitre 2 · IP, masque, DNS et adresse MAC" },
+        { t: 447.510, short: "7 · Chapitre 2 · Architectures, protocoles, sécurité", label: "7:28 · 7 · Chapitre 2 · Architectures, protocoles, sécurité" },
+        { t: 532.020, short: "8 · Chapitre 3 · L'Internet des objets et ses composants", label: "8:52 · 8 · Chapitre 3 · L'Internet des objets et ses composants" },
+        { t: 608.810, short: "9 · Chapitre 3 · Échanger, tester, la serre intelligente", label: "10:09 · 9 · Chapitre 3 · Échanger, tester, la serre intelligente" },
+        { t: 705.120, short: "10 · Fiche de synthèse — l'essentiel du cours", label: "11:45 · 10 · Fiche de synthèse — l'essentiel du cours" }
+      ];      /* La courte démonstration display ne possède qu'un seul départ. */
       STI_CHAPITRES_MEDIA["css3-display"] = [{ t: 0, short: "Display", label: "00:00 · Démonstration display" }];
       /* Repères synchronisés sur validation-nom-prenom-js.srt (Série 5 JavaScript — Objet String). */
       /* Repères de la vidéo « TP Train — Série 6 » (v526), calés sur la voix off. */
@@ -2736,7 +2735,7 @@
           }
         } catch (e) {}
         var url = estPhpChaines ? prefixeAssetsSTI() + "videos/PhpChaines-v566.mp4" : estDateJs ? prefixeAssetsSTI() + "videos/DateJS-v565.mp4" : estFonctionsChaine ? prefixeAssetsSTI() + "videos/FonctionsChaine-v564.mp4" : estBouclePour ? prefixeAssetsSTI() + "videos/BouclePour-v547.mp4" : estConsoleVariables ? prefixeAssetsSTI() + "videos/ConsoleVariables-v548.mp4" : estPhpVariables ? prefixeAssetsSTI() + "videos/PhpVariables-v549.mp4" : estDefis37 ? prefixeAssetsSTI() + "videos/defis37-tableau-aleas-media.mp4" : estTpTrain ? prefixeAssetsSTI() + "videos/tp-train-serie6.mp4" : estTpEvenements ? prefixeAssetsSTI() + "videos/tp-evenements-liens-v2.mp4" : estTpFormulaire ? prefixeAssetsSTI() + "videos/tp-formulaire-tableau-autre.mp4" : estTpDisplay ? prefixeAssetsSTI() + "videos/tp-display-float-position.mp4" : estTpTransitions ? prefixeAssetsSTI() + "videos/tp-transitions-animations.mp4" : estJsValidation ? prefixeAssetsSTI() + "videos/validation-nom-prenom-js.mp4" : estCssDisplay ? prefixeAssetsSTI() + "videos/displayanim.mp4" : estPhpSynthese ? prefixeAssetsSTI() + "videos/php-synthese.mp4" : estSqlInit ? resoudreUrlVideoSqlInit() : (estExploreFloat ? resoudreUrlVideoExploreFloat() : (estExploreFlex ? resoudreUrlVideoExploreFlex() : (estSqlSerie6 ? resoudreUrlVideoSqlSerie6() : (estSqlSerie5 ? resoudreUrlVideoSqlSerie5() : (estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estSqlSerie3 ? resoudreUrlVideoSqlSerie3() : (estSqlSerie2 ? resoudreUrlVideoSqlSerie2() : (estSqlSerie1 ? resoudreUrlVideoSqlSerie1() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet())))))))))))))));
-        if (estCoursSti) url = prefixeAssetsSTI() + "videos/CoursSystemesInternet-v577.mp4";
+        if (estCoursSti) url = prefixeAssetsSTI() + "videos/CoursSystemesInternet-v578.mp4";
         var css3Qualite = "auto";
         if (estCss3) {
           var prefCss3 = "";
