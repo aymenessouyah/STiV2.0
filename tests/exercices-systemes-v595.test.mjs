@@ -91,7 +91,7 @@ test('v595 : les ateliers sont livrés hors ligne et versionnés', () => {
     assert.ok(shell.includes('"./' + chemin + '"'), 'coquille : ' + chemin);
     assert.ok(offline.includes('"./' + chemin + '"'), 'cache complet : ' + chemin);
   }
-  assert.match(sw, /var VERSION_PUBLIEE = "v596";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v597";/);
 
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
   for (const chemin of [...PAGES, 'assets/css/exercices-sti.css', 'assets/js/exercices-sti.js']) {

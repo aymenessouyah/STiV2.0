@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="sombre" data-taille-texte="normale" class="sti-theme-wait">
+<head>
+  <meta charset="UTF-8">
+  <style>html.sti-theme-wait body { visibility: hidden; }</style>
+  <noscript><style>html.sti-theme-wait body { visibility: visible; }</style></noscript>
+  <script>setTimeout(function () { document.documentElement.classList.remove("sti-theme-wait"); }, 3000);</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Galerie des projets STI V2.0 : carte bancaire animée, site des fleurs du lycée, formulaire d’inscription CAP, Tunisie Explorer et bureau de statistiques — cinq réalisations pédagogiques en HTML5, CSS3, JavaScript et PHP, avec énoncés et corrigés.">
+  <meta name="author" content="Aymen Essouyah">
+  <meta name="robots" content="noai, noimageai">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https://vywujxmepvcbgedgmger.supabase.co; media-src 'self' blob:; connect-src 'self' https: wss:; frame-src 'self' https://www.youtube.com https://example.com; form-action 'self' https://www.google.com; worker-src 'self'; object-src 'none'; base-uri 'self'">
+  <title>Galerie des projets — STI V2.0 · Lycée Raféha</title>
+  <link rel="icon" href="../assets/icons/STI_by_AE.ico">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/cours.css">
+  <link rel="stylesheet" href="../assets/css/projets-galerie.css?v=597">
+  <link rel="stylesheet" href="../assets/css/protection.css?v=227">
+  <script src="../assets/js/config.js?v=479" defer></script>
+  <script src="../assets/js/supabase-umd.js" defer></script>
+  <script src="../assets/js/acces.js?v=479" defer></script>
+  <script src="../assets/js/profil.js" defer></script>
+  <script src="../assets/js/app.js" defer></script>
+  <script src="../assets/js/protection.js?v=227&amp;rev=479" defer></script>
+</head>
+<body class="sti-v2 course-page">
+  <a class="skip-link" href="#contenu-principal">Aller au contenu principal</a>
+  <div class="reading-progress" id="readingProgressBar" aria-hidden="true"></div>
+  <header class="site-header" role="banner">
+    <div class="container site-header__inner">
+      <a class="brand-logo" href="../index.html" aria-label="STI V2.0 Lycée Raféha · 3e &amp; 4e SI — Retour à l’accueil">
+        <img class="brand-logo__drapeau" src="../assets/images/drapeau-tunisie.svg" alt="Drapeau tunisien" width="40" height="40" loading="lazy">
+        <span class="brand-logo__mark" aria-hidden="true"><img src="../assets/icons/sti-icon-192.png" alt="" width="40" height="40"></span>
+        <span class="brand-logo__text">
+          <span class="brand-logo__title">STI V2.0</span>
+          <span class="brand-logo__sub">Lycée Raféha · 3e &amp; 4e SI</span>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="Navigation principale">
+        <a class="site-nav__link" href="../index.html#videos">Vidéos</a>
+        <a class="site-nav__link" href="../index.html#cours">Cours</a>
+        <a class="site-nav__link" href="../index.html#smart-book">Scanner mon livre</a>
+        <a class="site-nav__link" href="../index.html#outils-bac">Outils Bac</a>
+        <a class="site-nav__link" href="../index.html#quiz">Quiz</a>
+        <a class="site-nav__link" href="../glossaire.html">Glossaire</a>
+      </nav>
+      <div class="header-actions">
+        <button type="button" class="search-trigger" data-open-search="" aria-label="Rechercher… Ctrl K — Ouvrir la recherche rapide">
+          <span aria-hidden="true">🔎</span><span class="search-trigger__label">Rechercher…</span><kbd>Ctrl K</kbd>
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" id="installBtn" hidden="" title="Installer l'application STI V2.0 hors-ligne">📲 Installer</button>
+        <div class="theme-switcher" role="group" aria-label="Choisir le mode d'affichage">
+          <button type="button" class="theme-switcher__btn" data-set-theme="clair" aria-pressed="false" title="Mode clair">☀️</button>
+          <button type="button" class="theme-switcher__btn" data-set-theme="intermediaire" aria-pressed="false" title="Mode intermédiaire">🌗</button>
+          <button type="button" class="theme-switcher__btn" data-set-theme="sombre" aria-pressed="true" title="Mode sombre">🌙</button>
+        </div>
+        <div data-subscriber-slot=""></div>
+        <button type="button" class="burger-btn" id="stiBurgerBtn" aria-label="Ouvrir le menu mobile" aria-expanded="false" aria-controls="stiMobileNav">☰</button>
+      </div>
+    </div>
+    <nav class="mobile-nav-drawer container" id="stiMobileNav" aria-label="Navigation mobile">
+      <a class="site-nav__link" href="../index.html#videos">🎥 Vidéos explicatives</a>
+      <a class="site-nav__link" href="../index.html#cours">📚 Cours &amp; Matières</a>
+      <a class="site-nav__link" href="../index.html#outils-bac">🛠️ Ateliers &amp; Outils Bac</a>
+      <a class="site-nav__link" href="../index.html#quiz">🎯 Quiz &amp; Mes erreurs</a>
+      <a class="site-nav__link" href="../glossaire.html">🌍 Glossaire FR · EN · AR</a>
+      <a class="site-nav__link" href="../dashboard.html">📊 Mon tableau de bord</a>
+    </nav>
+  </header>
+
+  <main id="contenu-principal">
+    <section class="course-hero" aria-labelledby="titre-page">
+      <div class="container">
+        <nav class="course-breadcrumb" aria-label="Fil d’Ariane"><a href="../index.html">Accueil</a><span aria-hidden="true">›</span><a href="../index.html#outils-bac">Ateliers &amp; Outils Bac</a><span aria-hidden="true">›</span><span class="course-breadcrumb__current" aria-current="page">Galerie des projets</span></nav>
+        <div class="course-hero__grid">
+          <div class="course-hero__copy">
+            <div class="course-eyebrow"><span class="badge" style="background:var(--accent-gold-soft);border:1px solid var(--accent-gold-border);color:var(--accent-gold)">🏛️ Réalisations · 3ᵉ &amp; 4ᵉ SI</span><span class="course-eyebrow__meta">5 PROJETS · ÉNONCÉS &amp; CORRIGÉS</span></div>
+            <h1 class="course-hero__title" id="titre-page">Ce que les élèves <span>ont vraiment construit.</span></h1>
+            <p class="course-hero__lead">Cinq projets menés en cours de STI, du formulaire d’inscription au bureau de statistiques. Chacun est ouvrable tel quel, avec son énoncé quand il existe et un corrigé quand il y en a un : de quoi voir à quoi ressemble un travail terminé avant de se lancer.</p>
+            <div class="hero-actions">
+              <a class="btn btn-course-primary" href="#projets">🏛️ Parcourir les projets</a>
+              <a class="btn btn-secondary" href="../exercices/series-exercices.html">📚 Voir les séries d’exercices</a>
+            </div>
+            <div class="course-hero__facts"><span>▦ 5 projets</span><span>✦ HTML5 · CSS3 · JavaScript · PHP</span><span>📝 Énoncés et corrigés</span></div>
+          </div>
+          <aside class="course-overview" aria-label="À quoi sert cette galerie">
+            <div class="course-lesson">
+              <h2>Comment s’en servir</h2>
+              <ul>
+                <li>Ouvrez un projet pour voir le résultat final, puis comparez avec votre propre travail.</li>
+                <li>Lisez l’énoncé avant le code : c’est l’exercice tel qu’il a été donné.</li>
+                <li>Le corrigé montre une solution possible — pas la seule.</li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="projets" aria-labelledby="titre-projets">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <span class="section-kicker">🏛️ Galerie</span>
+            <h2 id="titre-projets">Cinq projets, du plus simple au plus complet</h2>
+            <p>Filtrez par technologie, puis ouvrez ce qui vous intéresse. Tout fonctionne sans installation.</p>
+          </div>
+        </div>
+
+        <div class="galerie-filtres" role="group" aria-label="Filtrer les projets par technologie">
+          <button type="button" class="galerie-filtre" data-filtre="tous" aria-pressed="true">Tous les projets</button>
+          <button type="button" class="galerie-filtre" data-filtre="html5" aria-pressed="false">HTML5</button>
+          <button type="button" class="galerie-filtre" data-filtre="css3" aria-pressed="false">CSS3</button>
+          <button type="button" class="galerie-filtre" data-filtre="javascript" aria-pressed="false">JavaScript</button>
+          <button type="button" class="galerie-filtre" data-filtre="php" aria-pressed="false">PHP</button>
+        </div>
+
+        <!-- v597 · Signature des projets.
+             Les fichiers de `projets/` ne contiennent aucun nom d'auteur : le bloc
+             « Réalisé par » existe donc dans chaque carte mais reste masqué tant
+             qu'il est vide. Pour l'afficher, il suffit de retirer l'attribut
+             `hidden` et d'écrire le prénom dans <strong data-auteur>…</strong>. -->
+        <div class="galerie" id="galerieProjets">
+
+          <!-- 1. Carte bancaire animée -->
+          <article class="projet projet--carte-bancaire" id="carte-bancaire" data-tech="html5 css3 javascript">
+            <div class="projet__apercu">
+              <span class="projet__num" aria-hidden="true">01</span>
+              <svg viewBox="0 0 320 180" role="img" aria-label="Aperçu : une carte bancaire dorée qui se retourne en trois dimensions">
+                <defs><linearGradient id="ap-cb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1b2b4d"/><stop offset="1" stop-color="#0d1526"/></linearGradient></defs>
+                <rect width="320" height="180" fill="url(#ap-cb)"/>
+                <g transform="translate(160 92) rotate(-8)">
+                  <rect x="-98" y="-56" width="196" height="112" rx="16" fill="#243354" stroke="#facc15" stroke-width="2.5"/>
+                  <rect x="-74" y="-34" width="36" height="27" rx="5" fill="#facc15"/>
+                  <path d="M-74 -24h36M-56 -34v27" stroke="#243354" stroke-width="2"/>
+                  <circle cx="62" cy="-38" r="13" fill="#f97316" opacity=".85"/>
+                  <circle cx="42" cy="-38" r="13" fill="#ef4444" opacity=".7"/>
+                  <text x="-74" y="24" font-family="ui-monospace,monospace" font-size="17" font-weight="700" fill="#e2e8f0">•••• 4242</text>
+                  <rect x="-74" y="34" width="76" height="7" rx="3.5" fill="#94a3b8" opacity=".55"/>
+                  <rect x="26" y="34" width="46" height="7" rx="3.5" fill="#94a3b8" opacity=".35"/>
+                </g>
+              </svg>
+            </div>
+            <div class="projet__entete">
+              <span class="projet__techno">HTML5</span><span class="projet__techno">CSS3</span><span class="projet__techno">JS</span>
+              <span class="projet__niveau">3ᵉ &amp; 4ᵉ SI</span>
+            </div>
+            <h3 class="projet__titre">Carte bancaire animée</h3>
+            <p class="projet__auteur" hidden><span aria-hidden="true">👤</span><span>Réalisé par <strong data-auteur></strong></span></p>
+            <p class="projet__resume">Un formulaire de paiement dont la carte se retourne en 3D quand on passe du numéro au cryptogramme.</p>
+            <ul class="projet__appris">
+              <li>Retournement 3D avec <code>transform</code> et <code>perspective</code></li>
+              <li>Contrôle des champs en JavaScript : longueur, chiffres, format</li>
+              <li>Mise en forme automatique du numéro par groupes de quatre</li>
+            </ul>
+            <div class="projet__liens">
+              <a class="projet__lien projet__lien--principal" href="carte-bancaire/cb.html">▶ Ouvrir le projet</a>
+              <a class="projet__lien" href="carte-bancaire/enonce-tp-carte-bancaire.html">📄 Lire l’énoncé</a>
+            </div>
+          </article>
+
+          <!-- 2. Les fleurs du Lycée Rafèha -->
+          <article class="projet projet--fleurs" id="fleurs" data-tech="html5 css3 javascript php">
+            <div class="projet__apercu">
+              <span class="projet__num" aria-hidden="true">02</span>
+              <svg viewBox="0 0 320 180" role="img" aria-label="Aperçu : une fleur stylisée sur fond violet">
+                <defs><linearGradient id="ap-fl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2b1f4d"/><stop offset="1" stop-color="#0d1526"/></linearGradient></defs>
+                <rect width="320" height="180" fill="url(#ap-fl)"/>
+                <path d="M160 168V86" stroke="#4ade80" stroke-width="6" stroke-linecap="round"/>
+                <path d="M160 128c-26-4-38-20-38-38 22 0 34 14 38 38z" fill="#22c55e"/>
+                <path d="M160 140c24-4 36-19 36-36-21 0-32 13-36 36z" fill="#16a34a"/>
+                <g fill="#c084fc">
+                  <ellipse cx="160" cy="52" rx="17" ry="27"/>
+                  <ellipse cx="160" cy="52" rx="17" ry="27" transform="rotate(60 160 62)"/>
+                  <ellipse cx="160" cy="52" rx="17" ry="27" transform="rotate(120 160 62)"/>
+                  <ellipse cx="160" cy="52" rx="17" ry="27" transform="rotate(180 160 62)"/>
+                  <ellipse cx="160" cy="52" rx="17" ry="27" transform="rotate(240 160 62)"/>
+                  <ellipse cx="160" cy="52" rx="17" ry="27" transform="rotate(300 160 62)"/>
+                </g>
+                <circle cx="160" cy="62" r="13" fill="#fbbf24"/>
+              </svg>
+            </div>
+            <div class="projet__entete">
+              <span class="projet__techno">HTML5</span><span class="projet__techno">CSS3</span><span class="projet__techno">JS</span><span class="projet__techno">PHP</span>
+              <span class="projet__niveau">4ᵉ SI</span>
+            </div>
+            <h3 class="projet__titre">Les fleurs du Lycée Rafèha</h3>
+            <p class="projet__auteur" hidden><span aria-hidden="true">👤</span><span>Réalisé par <strong data-auteur></strong></span></p>
+            <p class="projet__resume">Un petit site sur les fleurs, doublé d’un formulaire d’inscription dont les candidats sont enregistrés en base.</p>
+            <ul class="projet__appris">
+              <li>Pages liées, mise en page CSS et bandeau du lycée</li>
+              <li>Formulaire complet : civilité, âge, téléphone, ville, conditions</li>
+              <li>Enregistrement et affichage des candidats en PHP / MySQL</li>
+            </ul>
+            <div class="projet__liens">
+              <a class="projet__lien projet__lien--principal" href="fleurs/index.html">▶ Ouvrir le site</a>
+              <a class="projet__lien" href="fleurs/inscription.html">📝 Le formulaire</a>
+              <a class="projet__lien" href="fleurs/Corrections.html">✅ Corrigé JS</a>
+            </div>
+          </article>
+
+          <!-- 3. Formulaire d'inscription — CAP Fleuriste -->
+          <article class="projet projet--formulaire" id="formulaire" data-tech="html5 css3">
+            <div class="projet__apercu">
+              <span class="projet__num" aria-hidden="true">03</span>
+              <svg viewBox="0 0 320 180" role="img" aria-label="Aperçu : un formulaire d’inscription avec ses champs et son bouton">
+                <defs><linearGradient id="ap-fo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a2214"/><stop offset="1" stop-color="#0d1526"/></linearGradient></defs>
+                <rect width="320" height="180" fill="url(#ap-fo)"/>
+                <rect x="58" y="20" width="204" height="140" rx="12" fill="#15223d" stroke="#ff783c" stroke-width="2"/>
+                <rect x="58" y="20" width="204" height="26" rx="12" fill="#ff783c" opacity=".22"/>
+                <circle cx="74" cy="33" r="4" fill="#ff783c"/><circle cx="88" cy="33" r="4" fill="#ff783c" opacity=".6"/>
+                <rect x="76" y="60" width="52" height="7" rx="3.5" fill="#94a3b8" opacity=".7"/>
+                <rect x="76" y="72" width="168" height="16" rx="5" fill="#0d1526" stroke="#334155"/>
+                <rect x="76" y="98" width="60" height="7" rx="3.5" fill="#94a3b8" opacity=".7"/>
+                <rect x="76" y="110" width="168" height="16" rx="5" fill="#0d1526" stroke="#334155"/>
+                <rect x="76" y="136" width="70" height="16" rx="8" fill="#ff783c"/>
+              </svg>
+            </div>
+            <div class="projet__entete">
+              <span class="projet__techno">HTML5</span><span class="projet__techno">CSS3</span>
+              <span class="projet__niveau">3ᵉ SI · TP 1</span>
+            </div>
+            <h3 class="projet__titre">Formulaire d’inscription — CAP Fleuriste</h3>
+            <p class="projet__auteur" hidden><span aria-hidden="true">👤</span><span>Réalisé par <strong data-auteur></strong></span></p>
+            <p class="projet__resume">Le corrigé du tout premier TP de formulaire : chaque type de champ du programme, validé par HTML5 seul.</p>
+            <ul class="projet__appris">
+              <li>Champs texte, e-mail, téléphone, date et zone de texte</li>
+              <li>Liste déroulante, cases à cocher, boutons radio</li>
+              <li>Validation HTML5 (<code>required</code>, <code>pattern</code>) et boîte de dialogue</li>
+            </ul>
+            <div class="projet__liens">
+              <a class="projet__lien projet__lien--principal" href="formulaire-inscription/cvFleurs.html">▶ Ouvrir le formulaire</a>
+              <a class="projet__lien" href="../cours/html5.html#formulaires">📖 Revoir le cours</a>
+            </div>
+          </article>
+
+          <!-- 4. Tunisie Explorer -->
+          <article class="projet projet--tunisie" id="tunisie" data-tech="html5 css3">
+            <div class="projet__apercu">
+              <span class="projet__num" aria-hidden="true">04</span>
+              <svg viewBox="0 0 320 180" role="img" aria-label="Aperçu : une page de site touristique avec son image, son lecteur vidéo et son lecteur audio">
+                <defs>
+                  <linearGradient id="ap-tn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b2a4a"/><stop offset="1" stop-color="#0d1526"/></linearGradient>
+                  <linearGradient id="ap-tn-ciel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d4ed8"/><stop offset="1" stop-color="#f59e0b"/></linearGradient>
+                </defs>
+                <rect width="320" height="180" fill="url(#ap-tn)"/>
+                <rect x="26" y="24" width="268" height="132" rx="10" fill="#15223d" stroke="#38bdf8" stroke-width="2"/>
+                <path d="M26 46h268" stroke="#38bdf8" stroke-width="2"/>
+                <g fill="#38bdf8" opacity=".8"><circle cx="40" cy="35" r="3.5"/><circle cx="52" cy="35" r="3.5"/><circle cx="64" cy="35" r="3.5"/></g>
+                <rect x="78" y="30" width="140" height="11" rx="5.5" fill="#0d1526" stroke="#334155"/>
+                <rect x="40" y="58" width="120" height="66" rx="7" fill="url(#ap-tn-ciel)"/>
+                <circle cx="132" cy="78" r="9" fill="#fde68a"/>
+                <path d="M40 108c22-16 40-8 58 0s40 10 62-2v18H40z" fill="#a9702c"/>
+                <path d="M40 116c30-8 52 2 74 0s30-6 46 0v8H40z" fill="#7c5a2a"/>
+                <g fill="#0d1526" opacity=".55"><rect x="40" y="130" width="86" height="6" rx="3"/><rect x="40" y="141" width="58" height="6" rx="3"/></g>
+                <circle cx="196" cy="90" r="20" fill="#0d1526" stroke="#38bdf8" stroke-width="2.5"/>
+                <path d="M190 81l14 9-14 9z" fill="#38bdf8"/>
+                <rect x="176" y="120" width="102" height="4" rx="2" fill="#334155"/>
+                <rect x="176" y="120" width="46" height="4" rx="2" fill="#38bdf8"/>
+                <circle cx="222" cy="122" r="5" fill="#e2e8f0"/>
+                <g stroke="#fbbf24" stroke-width="2.4" stroke-linecap="round" fill="none">
+                  <path d="M180 136v-6M186 140v-14M192 137v-8M198 142v-18"/>
+                </g>
+                <rect x="208" y="134" width="70" height="4" rx="2" fill="#334155"/>
+                <rect x="208" y="134" width="24" height="4" rx="2" fill="#fbbf24"/>
+              </svg>
+            </div>
+            <div class="projet__entete">
+              <span class="projet__techno">HTML5</span><span class="projet__techno">CSS3</span>
+              <span class="projet__niveau">3ᵉ &amp; 4ᵉ SI</span>
+            </div>
+            <h3 class="projet__titre">Tunisie Explorer</h3>
+            <p class="projet__auteur" hidden><span aria-hidden="true">👤</span><span>Réalisé par <strong data-auteur></strong></span></p>
+            <p class="projet__resume">Un site touristique complet construit uniquement avec les fiches HTML5 et CSS3 du programme.</p>
+            <ul class="projet__appris">
+              <li>Galerie d’images animée avec <code>transform</code> et transitions</li>
+              <li>Carte intégrée en <code>iframe</code>, vidéo et audio natifs</li>
+              <li>Formulaire complet et mise en page responsive</li>
+            </ul>
+            <div class="projet__liens">
+              <a class="projet__lien projet__lien--principal" href="site-tunisie/index.html">▶ Ouvrir le site</a>
+              <a class="projet__lien" href="site-tunisie/enonce.html">📄 Lire l’énoncé</a>
+              <a class="projet__lien" href="site-tunisie/site-tunisie-Correction-animation-html-css.html">🎬 Animation pas à pas</a>
+            </div>
+          </article>
+
+          <!-- 5. Projet STI 0 — Bureau de statistiques -->
+          <article class="projet projet--sti0" id="sti0" data-tech="html5 css3 javascript php">
+            <div class="projet__apercu">
+              <span class="projet__num" aria-hidden="true">05</span>
+              <svg viewBox="0 0 320 180" role="img" aria-label="Aperçu : un histogramme de statistiques avec sa courbe">
+                <defs><linearGradient id="ap-st" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2c2410"/><stop offset="1" stop-color="#0d1526"/></linearGradient></defs>
+                <rect width="320" height="180" fill="url(#ap-st)"/>
+                <path d="M48 30v116h232" stroke="#475569" stroke-width="2"/>
+                <g fill="#fbbf24">
+                  <rect x="70" y="102" width="26" height="44" rx="4"/>
+                  <rect x="108" y="80" width="26" height="66" rx="4" opacity=".85"/>
+                  <rect x="146" y="58" width="26" height="88" rx="4"/>
+                  <rect x="184" y="92" width="26" height="54" rx="4" opacity=".85"/>
+                  <rect x="222" y="70" width="26" height="76" rx="4"/>
+                </g>
+                <path d="M83 96 121 74 159 52 197 86 235 64" fill="none" stroke="#22d3ee" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <g fill="#0d1526" stroke="#22d3ee" stroke-width="2.5">
+                  <circle cx="83" cy="96" r="4.5"/><circle cx="121" cy="74" r="4.5"/><circle cx="159" cy="52" r="4.5"/>
+                  <circle cx="197" cy="86" r="4.5"/><circle cx="235" cy="64" r="4.5"/>
+                </g>
+              </svg>
+            </div>
+            <div class="projet__entete">
+              <span class="projet__techno">HTML5</span><span class="projet__techno">CSS3</span><span class="projet__techno">JS</span><span class="projet__techno">PHP</span>
+              <span class="projet__niveau">4ᵉ SI</span>
+            </div>
+            <h3 class="projet__titre">Projet STI 0 — Bureau de statistiques</h3>
+            <p class="projet__auteur" hidden><span aria-hidden="true">👤</span><span>Réalisé par <strong data-auteur></strong></span></p>
+            <p class="projet__resume">Un sondage en ligne et son dépouillement : les élèves répondent, le site calcule et affiche les résultats par thème.</p>
+            <ul class="projet__appris">
+              <li>Questionnaire à choix — oui, non, sans avis</li>
+              <li>Authentification simple et enregistrement des réponses</li>
+              <li>Calcul des pourcentages et affichage graphique</li>
+            </ul>
+            <div class="projet__liens">
+              <a class="projet__lien projet__lien--principal" href="sti0/index.html">▶ Ouvrir le projet</a>
+              <a class="projet__lien" href="sti0/Sondage.html">📝 Le sondage</a>
+              <a class="projet__lien" href="sti0/Statistiques.html">📊 Les statistiques</a>
+              <a class="projet__lien" href="sti0/projetsti0.pdf.html">📄 L’énoncé PDF</a>
+            </div>
+          </article>
+
+        </div>
+
+        <p class="galerie-note" id="note">
+          <span class="galerie-note__icone" aria-hidden="true">💡</span>
+          <span><strong>À savoir avant d’ouvrir.</strong> Ces pages sont des travaux d’élèves conservés tels quels. Celles qui utilisent <strong>PHP et MySQL</strong> (fleurs, bureau de statistiques) ont besoin d’un serveur : en ligne, la page s’affiche mais l’enregistrement ne se fait pas — le code et le corrigé restent consultables. Les projets HTML5, CSS3 et JavaScript, eux, fonctionnent entièrement dans le navigateur.</span>
+        </p>
+
+        <div class="hero-actions" style="margin-top:24px">
+          <a class="btn btn-primary" href="../exercices/series-exercices.html">📚 Passer aux séries d’exercices</a>
+          <a class="btn btn-secondary" href="../bac-pratique.html">🏆 Atelier Bac pratique</a>
+          <a class="btn btn-secondary" href="../index.html#cours">📖 Revenir aux cours</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="container source-footer"><div><strong>STI V2.0 · Le web de A à Z</strong><p>Lycée Raféha · 3ème &amp; 4ème SI · Aymen Essouyah</p></div><nav aria-label="Liens utiles"><a href="../index.html">Accueil</a><a href="../exercices/series-exercices.html">✏️ Exercices</a><a href="../livre-smart.html">📖 Livre connecté</a></nav></div></footer>
+  <button type="button" id="back-to-top" class="back-to-top-fab" aria-label="Remonter en haut de la page" title="Haut de page">↑</button>
+
+  <script>
+    /* v597 : filtre par technologie. Sans JavaScript, tous les projets restent
+       visibles : les boutons ne sont qu'une aide, jamais une condition d'accès. */
+    (function () {
+      var boutons = Array.prototype.slice.call(document.querySelectorAll("[data-filtre]"));
+      var cartes = Array.prototype.slice.call(document.querySelectorAll("#galerieProjets .projet"));
+      if (!boutons.length || !cartes.length) return;
+      var zone = document.getElementById("projets");
+      var annonce = document.createElement("p");
+      annonce.setAttribute("role", "status");
+      annonce.setAttribute("aria-live", "polite");
+      annonce.style.cssText = "margin:10px 0 0;font-size:.85rem;color:var(--text-muted)";
+      zone.querySelector(".container").insertBefore(annonce, document.getElementById("galerieProjets"));
+
+      function appliquer(filtre) {
+        var visibles = 0;
+        cartes.forEach(function (carte) {
+          var technologies = (carte.getAttribute("data-tech") || "").split(/\s+/);
+          var visible = filtre === "tous" || technologies.indexOf(filtre) !== -1;
+          carte.hidden = !visible;
+          if (visible) visibles += 1;
+        });
+        boutons.forEach(function (b) {
+          b.setAttribute("aria-pressed", b.getAttribute("data-filtre") === filtre ? "true" : "false");
+        });
+        annonce.textContent = visibles + (visibles > 1 ? " projets affichés" : " projet affiché");
+      }
+
+      boutons.forEach(function (bouton) {
+        bouton.addEventListener("click", function () {
+          appliquer(bouton.getAttribute("data-filtre"));
+        });
+      });
+      appliquer("tous");
+    })();
+  </script>
+</body>
+</html>

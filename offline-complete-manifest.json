@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-10-31T14:10:13Z",
+  "generatedAt": "2026-10-31T15:32:46Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 770,
-  "totalBytes": 1113968239,
+  "totalFiles": 772,
+  "totalBytes": 1114005206,
   "files": [
     {
       "path": "404.html",
@@ -269,6 +269,11 @@
       "path": "assets/css/php.css",
       "bytes": 22442,
       "gitSha": "423c5a5f3ff4ea14e5c36ca753ca9cf79eeabe1f"
+    },
+    {
+      "path": "assets/css/projets-galerie.css",
+      "bytes": 7513,
+      "gitSha": "9a8bfc6d4e8de595f887e6347f55db2ce0299c56"
     },
     {
       "path": "assets/css/protection.css",
@@ -3247,8 +3252,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 64919,
-      "gitSha": "d026ae0b55e1ac2f2e1bb7fa76f0dbaf3d790c67"
+      "bytes": 65715,
+      "gitSha": "a1360650856446fd6f1b8281bcf25670e6811341"
     },
     {
       "path": "livre-smart.html",
@@ -3631,6 +3636,11 @@
       "gitSha": "b3a8afa04504cff0ac35e62f2188b2dc4fec606d"
     },
     {
+      "path": "projets/index.html",
+      "bytes": 28101,
+      "gitSha": "f4f40211e89c7a2ff6c186ef3eb42eb3f9d58e32"
+    },
+    {
       "path": "projets/site-tunisie/correction-details/carte-timbre-droite-haut.html",
       "bytes": 48913,
       "gitSha": "e5b1dd627efd449d0e1820484807f041754c5b12"
@@ -3812,8 +3822,8 @@
     },
     {
       "path": "sitemap.xml",
-      "bytes": 11870,
-      "gitSha": "587c5fad94aeba10f95d2a9a53d1d66a9a0b1ff2"
+      "bytes": 12023,
+      "gitSha": "db87185e7464f610d60525914d107febab8a217c"
     },
     {
       "path": "supabase/migrations/20261027_media_prog_monotone_v479.sql",
@@ -3852,8 +3862,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 102511,
-      "gitSha": "d85f582018595772c438ef50e3b604c2d698e2d4"
+      "bytes": 102915,
+      "gitSha": "c96e82013713c6f34971d20421b79f60850cad73"
     }
   ]
 }

@@ -5450,8 +5450,8 @@ test('v473 (structure & budgets performance) : 0 doublon dans UPDATE_FILES (-85,
      moteur, son initialiseur et sa banque de questions (272 entrées) ; le
      budget reste serré, sans média. */
   /* v596 : les cinq pages d'ateliers « Systèmes » entrent dans le delta (elles
-     portaient l'ancienne pastille PNG) ; les deux PNG en sortent — plafond à 276. */
-  assert.ok(urls.length <= 276, `UPDATE_FILES doit rester compact (<= 276 entrées uniques, observé: ${urls.length})`);
+     portaient l'ancienne pastille PNG) ; les deux PNG en sortent — plafond à 278. */
+  assert.ok(urls.length <= 278, `UPDATE_FILES doit rester compact (<= 278 entrées uniques, observé: ${urls.length})`);
 
   const mCore = swJs.match(/var NOYAU_RAPIDE_RECHARGEMENT = (\{[\s\S]*?\n\});/);
   assert.ok(mCore, 'NOYAU_RAPIDE_RECHARGEMENT doit encadrer les rechargements proactifs du SW');

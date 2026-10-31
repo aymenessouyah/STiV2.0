@@ -478,7 +478,7 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
   const urls = [...delta.matchAll(/url:\s*"([^"]+)"/g)].map((m) => m[1]);
   assert.equal(new Set(urls).size, urls.length, 'aucun doublon');
   /* v580 : le quiz STI ajoute 4 entrées (page, moteur, initialiseur, banque). */
-  assert.ok(urls.length <= 276, 'delta léger (≤ 276 entrées)');
+  assert.ok(urls.length <= 278, 'delta léger (≤ 278 entrées)');
   assert.ok(!urls.includes('./documents/annexes/annexe-sql.pdf.html'), 'place libérée par une annexe figée');
   /* Préchargement hors ligne : le module doit y être pour que le coin marche sans réseau. */
   const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];
