@@ -106,7 +106,7 @@ test('v596 : le tableau de bord dessine les icônes avec le même sprite', () =>
 test('v596 : le nouveau pictogramme est servi et versionné', () => {
   const sw = lire('sw.js');
   assert.match(sw, /url: "\.\/assets\/icons\/matieres\.svg", revision: "matiere-sti-v596"/);
-  assert.match(sw, /var VERSION_PUBLIEE = "v59\d";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v6\d\d";/);
   /* Les pages qui portaient l'ancienne pastille sont réinvalidées. */
   assert.match(sw, /url: "\.\/cours\/systemes-technologies-internet\.html", revision: "cours-sti-v596", refreshIfCached: true/);
   for (const page of ATELIERS) {

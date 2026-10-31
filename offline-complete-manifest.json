@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-10-31T21:45:00Z",
+  "generatedAt": "2026-11-01T09:25:00Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 772,
-  "totalBytes": 1114009090,
+  "totalBytes": 1114010500,
   "files": [
     {
       "path": "404.html",
@@ -332,8 +332,8 @@
     },
     {
       "path": "assets/css/theme.css",
-      "bytes": 84536,
-      "gitSha": "1ee295b77798c3b6675440bf34b2a0f4b23f9ca7"
+      "bytes": 85602,
+      "gitSha": "12c8db7203899282c4b5c00aed1c45a1ccac7768"
     },
     {
       "path": "assets/css/visionneuse-exercices.css",
@@ -737,8 +737,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 130519,
-      "gitSha": "d7cabeb43b42d1da0f2ed1c08c448cecd5a9abd3"
+      "bytes": 130829,
+      "gitSha": "fe84a799efca1ac34f5a6c2411f9e37ead155b9b"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -3862,8 +3862,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 102988,
-      "gitSha": "7ae29a0732b232a61f501cdc16b291cd4256c12c"
+      "bytes": 103022,
+      "gitSha": "b8bf5eebda9090ef1566602159d9192bb9b442e6"
     }
   ]
 }
