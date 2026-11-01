@@ -70,14 +70,14 @@ test('v605 — le rapport est lisible, copiable et refermable', () => {
 });
 
 test('v605 — la page d’administration charge la nouvelle version du script', () => {
-  assert.match(adminHtml, /assets\/js\/admin\.js\?v=607-perf/);
+  assert.match(adminHtml, /assets\/js\/admin\.js\?v=610-perf/);
 });
 
 test('v605 — la publication avance et le service worker reverra admin.js', () => {
-  assert.match(sw, /var VERSION_PUBLIEE = "v609";/);
-  assert.match(sw, /var PUBLIEE_LE = "2026-11-01T23:40:00Z";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v610";/);
+  assert.match(sw, /var PUBLIEE_LE = "2026-11-01T12:20:00Z";/);
   assert.match(sw, /v605-compteurs-expliques-20261101/);
   /* v606 : la version publiée avance, mais la révision d’admin.js reste celle de v605. */
-  assert.match(sw, /\{ url: "\.\/assets\/js\/admin\.js", revision: "journal-acces-v607" \}/);
-  assert.match(sw, /\{ url: "\.\/admin\.html", revision: "sauvegarde-barre-v609" \}/);
+  assert.match(sw, /\{ url: "\.\/assets\/js\/admin\.js", revision: "maj-visible-v610" \}/);
+  assert.match(sw, /\{ url: "\.\/admin\.html", revision: "maj-visible-v610" \}/);
 });

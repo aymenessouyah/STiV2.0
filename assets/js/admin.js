@@ -463,12 +463,32 @@
     /* v587 : à côté du numéro, la date et l'heure de la dernière mise à jour de la
        plateforme — uniquement dans le tableau de bord. Format court, heure locale du
        poste (jj/mm/aaaa hh:mm), sans secondes : le badge doit rester lisible. */
+    /* v610 — « l'heure de mise à jour est toujours fausse ». Elle suivait le fuseau
+       du poste : un téléphone réglé ailleurs (ou avec une horloge décalée)
+       affichait une heure sans rapport, parfois plusieurs heures dans le futur.
+       L'heure est désormais convertie dans le fuseau de la Tunisie (GMT+1 toute
+       l'année, sans heure d'été), comme le veut l'usage de la plateforme. */
+    var FUSEAU_MAJ_ADM = "Africa/Tunis";
     function formaterMajPublicationAdm(iso) {
       var d = new Date(iso);
       if (!iso || isNaN(d.getTime())) return "";
       function deux(n) { n = Number(n) || 0; return (n < 10 ? "0" : "") + n; }
-      return deux(d.getDate()) + "/" + deux(d.getMonth() + 1) + "/" + d.getFullYear() +
-        " " + deux(d.getHours()) + ":" + deux(d.getMinutes());
+      try {
+        var parties = new Intl.DateTimeFormat("fr-FR", {
+          timeZone: FUSEAU_MAJ_ADM, day: "2-digit", month: "2-digit", year: "numeric",
+          hour: "2-digit", minute: "2-digit", hour12: false
+        }).formatToParts(d);
+        var p = {};
+        (parties || []).forEach(function (x) { p[x.type] = x.value; });
+        if (p.day && p.month && p.year && p.hour && p.minute) {
+          var hh = String(p.hour) === "24" ? "00" : p.hour;
+          return deux(p.day) + "/" + deux(p.month) + "/" + p.year + " " + deux(hh) + ":" + deux(p.minute);
+        }
+      } catch (eFus) {}
+      /* Repli sans Intl : GMT+1 en dur (la Tunisie ne pratique pas l'heure d'été). */
+      var d1 = new Date(d.getTime() + 3600000);
+      return deux(d1.getUTCDate()) + "/" + deux(d1.getUTCMonth() + 1) + "/" + d1.getUTCFullYear() +
+        " " + deux(d1.getUTCHours()) + ":" + deux(d1.getUTCMinutes());
     }
     function majTexteVersion(v, dateIso) {
       var quand = formaterMajPublicationAdm(dateIso);
@@ -479,7 +499,7 @@
         if (elTexteVer) elTexteVer.textContent = "🏷️ Version V2.0 · " + v;
         else elBadgeVer.textContent = "🏷️ Version V2.0 · " + v;
         var elDateVer = document.getElementById("badge-version-date-admin");
-        if (elDateVer) elDateVer.textContent = quand ? "· " + quand : "";
+        if (elDateVer) elDateVer.textContent = quand ? "· " + quand + " (GMT+1)" : "";
         elBadgeVer.title = quand
           ? "Dernière mise à jour de la plateforme : " + quand +
             " — cliquer pour vérifier les mises à jour"
@@ -487,7 +507,7 @@
       }
       if (elPiedVer) {
         elPiedVer.textContent = "🏷️ Version active : STI V2.0 (" + v + ")" +
-          (quand ? " · mise à jour du " + quand : "");
+          (quand ? " · mise à jour du " + quand + " (GMT+1)" : "");
       }
     }
     majTexteVersion(versionDefaut);
@@ -501,6 +521,9 @@
       if (!(num > 0)) return;
       PUBLICATION_ADM.num = num;
       PUBLICATION_ADM.date = iso || "";
+      /* v610 : le numéro publié doit être lisible par la logique de mise à jour
+         du service worker, qui vit dans une autre portée. */
+      try { window.__STI_VERSION_PUBLIEE = num; window.__STI_VERSION_PUBLIEE_LE = iso || ""; } catch (eWPub) {}
       try {
         localStorage.setItem("sti-version-publiee", String(num));
         if (iso) localStorage.setItem("sti-version-publiee-le", iso);
@@ -808,6 +831,58 @@
   })();
 
   if ("serviceWorker" in navigator) {
+    /* v610 — « v609 ne s'affiche pas ». Deux verrous empêchaient la nouvelle
+       version d'arriver jusqu'à l'écran :
+         1) le témoin de rechargement était tiré du nom de cache « sti-atelier-v386 »,
+            qui ne change jamais : après le premier changement de service worker de
+            la session, tout rechargement ultérieur était bloqué ;
+         2) quand le rechargement était bloqué, la page restait l'ancienne et
+            l'utilisateur ne voyait jamais les nouveautés, même si le badge, lui,
+            lisait déjà le bon numéro dans sw.js.
+       Le témoin suit maintenant le NUMÉRO PUBLIÉ (v609, v610…) : chaque nouvelle
+       publication provoque exactement un rechargement, jamais deux. */
+    var rechargementDejaFait = false;
+    function versionPublieeAdm() {
+      try {
+        if (window.__STI_VERSION_PUBLIEE > 0) return String(window.__STI_VERSION_PUBLIEE);
+      } catch (eVP1) {}
+      try {
+        var n = parseInt(localStorage.getItem("sti-version-publiee") || "0", 10) || 0;
+        if (n > 0) return String(n);
+      } catch (eVP) {}
+      return "0";
+    }
+    function rechargerPourNouvelleVersion() {
+      if (rechargementDejaFait) return;
+      var v = versionPublieeAdm();
+      try {
+        if (sessionStorage.getItem("sti-sw-reload-ver") === v) return;
+        sessionStorage.setItem("sti-sw-reload-ver", v);
+        sessionStorage.removeItem("sti-sw-upd-ver-sess");
+      } catch (eCA) {}
+      rechargementDejaFait = true;
+      try {
+        var modaleOuverte = document.querySelector(".modal-fond.visible, #zone-detail.visible");
+        if (modaleOuverte) {
+          /* Ne jamais recharger sous les yeux de quelqu'un qui travaille :
+             on lui propose la mise à jour dans un bandeau. */
+          proposerRechargementAdm();
+          return;
+        }
+      } catch (eMod) {}
+      location.reload();
+    }
+    var bandeauMajAdm = null;
+    function proposerRechargementAdm() {
+      if (bandeauMajAdm) return;
+      bandeauMajAdm = document.createElement("button");
+      bandeauMajAdm.type = "button";
+      bandeauMajAdm.id = "sti-bandeau-maj-admin";
+      bandeauMajAdm.textContent = "🔄 Nouvelle version prête — toucher pour recharger";
+      bandeauMajAdm.setAttribute("style", "position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:100001;padding:11px 18px;border-radius:999px;border:2.5px solid #1a1a2e;background:#0f766e;color:#fff;font-weight:900;font-size:13px;cursor:pointer;box-shadow:4px 4px 0 #1a1a2e;");
+      bandeauMajAdm.addEventListener("click", function () { location.reload(); });
+      document.body.appendChild(bandeauMajAdm);
+    }
     navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) {
       var cleSyncCible = "v" + ((cfg && (cfg.VERSION_AFFICHEE || cfg.VERSION)) || "477");
       var dejaSyncAdm = "";
@@ -817,9 +892,26 @@
         var navSwA = (typeof performance !== "undefined" && performance.getEntriesByType) ? performance.getEntriesByType("navigation") : null;
         if (navSwA && navSwA[0] && navSwA[0].type === "reload") estReloadSwAdm = true;
       } catch (eSwA) {}
-      if (dejaSyncAdm === cleSyncCible && !estReloadSwAdm) return;
-      try { sessionStorage.setItem("sti-admin-sw-synced", cleSyncCible); } catch (eSwA2) {}
-      if (reg) reg.update().catch(function () {});
+      if (dejaSyncAdm !== cleSyncCible || estReloadSwAdm) {
+        try { sessionStorage.setItem("sti-admin-sw-synced", cleSyncCible); } catch (eSwA2) {}
+        if (reg) reg.update().catch(function () {});
+      }
+      /* v610 : la vérification n'est plus conditionnée — un onglet resté ouvert
+         toute la journée doit voir arriver la nouvelle version. */
+      if (reg) {
+        if (typeof reg.update === "function") reg.update().catch(function () {});
+        reg.addEventListener("updatefound", function () {
+          var nw = reg.installing;
+          if (!nw) return;
+          nw.addEventListener("statechange", function () {
+            if (nw.state === "installed") {
+              if (navigator.serviceWorker.controller) rechargerPourNouvelleVersion();
+            } else if (nw.state === "activated") {
+              rechargerPourNouvelleVersion();
+            }
+          });
+        });
+      }
       setTimeout(function () {
         try {
           var swT = (reg && reg.active) || navigator.serviceWorker.controller;
@@ -828,13 +920,7 @@
       }, 6000);
     }).catch(function () {});
     navigator.serviceWorker.addEventListener("controllerchange", function () {
-      try {
-        var verActAdm = localStorage.getItem("sti-version-installee") || String((cfg && cfg.VERSION) || "latest");
-        if (sessionStorage.getItem("sti-sw-reload-ver") === verActAdm) return;
-        sessionStorage.setItem("sti-sw-reload-ver", verActAdm);
-        sessionStorage.removeItem("sti-sw-upd-ver-sess");
-      } catch (eCA) {}
-      location.reload();
+      rechargerPourNouvelleVersion();
     });
   }
 
