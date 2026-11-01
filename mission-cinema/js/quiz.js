@@ -447,7 +447,7 @@ window.QuizController = (function () {
     var btn = document.createElement("button");
     btn.type = "button";
     btn.className = "btn continuer";
-    btn.textContent = "Continuer la mission";
+    btn.textContent = "Poursuivre";
     btn.onclick = function () {
       video.questionAnswered(q);
       hideCorrection();
