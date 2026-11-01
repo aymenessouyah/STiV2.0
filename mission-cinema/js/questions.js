@@ -33,7 +33,7 @@ window.QUESTIONS_DATA = (function () {
   var Q = [
   /* ================= Chapitre 1 — LDD (Définition des données) ================= */
   {
-    id: 1, num: 1, time: 50.583, chapter: 1, type: "sql",
+    id: 1, num: 1, time: 50.583, stopTime: 67.500, chapter: 1, type: "sql",
     enonce: "Créer les tables <b>REALISATEUR, FILM, ACTEUR, JOUER et PROJECTION</b> avec leurs clés primaires et étrangères.<br>" +
             "<code>duree</code> doit être &gt; 0, <code>annee</code> ≥ 1900 et <code>cachet</code> ≥ 0.<br>" +
             "(<code>idParrain</code> sera ajoutée à la question 25.)",
@@ -53,7 +53,7 @@ window.QUESTIONS_DATA = (function () {
     explication: "Les cinq tables sont créées avec leurs clés primaires et étrangères. Les contraintes CHECK sur annee (>= 1900), duree (&gt; 0) et cachet (>= 0) garantissent l'intégrité des données."
   },
   {
-    id: 2, num: 2, time: 68.500, chapter: 1, type: "sql",
+    id: 2, num: 2, time: 68.500, stopTime: 74.083, chapter: 1, type: "sql",
     enonce: "Ajouter à la table <b>ACTEUR</b> une colonne <b>email</b> (VARCHAR 50).",
     refs: ["ALTER TABLE acteur ADD email VARCHAR(50);"],
     resultat: {
@@ -70,7 +70,7 @@ window.QUESTIONS_DATA = (function () {
     explication: "ADD email VARCHAR(50) ajoute une nouvelle colonne à la table ACTEUR. Elle accepte les valeurs NULL par défaut."
   },
   {
-    id: 3, num: 3, time: 75.083, chapter: 1, type: "sql",
+    id: 3, num: 3, time: 75.083, stopTime: 83.833, chapter: 1, type: "sql",
     enonce: "Modifier le type de <b>titre</b> en VARCHAR(100) et rendre la colonne <b>genre</b> NOT NULL dans la table FILM.",
     refs: [
       "ALTER TABLE film MODIFY titre VARCHAR(100);",
@@ -92,7 +92,7 @@ window.QUESTIONS_DATA = (function () {
     explication: "MODIFY permet de changer le type d'une colonne et d'ajouter ou supprimer une contrainte NOT NULL sur une colonne existante."
   },
   {
-    id: 4, num: 4, time: 84.833, chapter: 1, type: "sql",
+    id: 4, num: 4, time: 84.833, stopTime: 87.833, chapter: 1, type: "sql",
     enonce: "Supprimer la colonne <b>email</b> de la table ACTEUR.",
     refs: ["ALTER TABLE acteur DROP COLUMN email;"],
     resultat: {
@@ -108,7 +108,7 @@ window.QUESTIONS_DATA = (function () {
     explication: "DROP COLUMN email retire définitivement la colonne de la table ACTEUR."
   },
   {
-    id: 5, num: 5, time: 88.333, chapter: 1, type: "sql",
+    id: 5, num: 5, time: 88.833, stopTime: 92.500, chapter: 1, type: "sql",
     enonce: "Supprimer la table <b>PROJECTION</b>, puis la recréer avec la même structure (idProj, idFilm, salle, dateProj, nbSpectateurs) et sa clé étrangère vers FILM.",
     refs: [
       "DROP TABLE projection;",
