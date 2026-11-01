@@ -88,7 +88,10 @@ h1 { font-size: 2.2rem; margin: 8px 0 4px; letter-spacing: 2px; text-transform: 
   font-size: 0.95rem; font-weight: 600;
   cursor: pointer; transition: var(--trans);
   color: var(--blanc);
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.15);
 }
+.btn:hover { background: rgba(255,255,255,0.18); }
 .btn:focus { outline: 2px solid var(--or); outline-offset: 2px; }
 .btn:active { transform: scale(0.97); }
 
@@ -172,6 +175,27 @@ aside.panneau ul#liste-questions {
   text-align: center;
 }
 
+/* Présentation de la base de données */
+.schema-bd {
+  margin: 16px 0; padding: 14px 18px;
+  background: var(--noir-doux); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--rayon);
+}
+.schema-bd h3 {
+  margin: 0 0 12px; font-size: 1rem; color: var(--or-clair);
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.schema-table {
+  display: flex; gap: 12px; flex-wrap: wrap;
+}
+.schema-colonne {
+  flex: 1 1 120px; min-width: 110px;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px; padding: 10px 12px; font-size: 0.82rem; color: #cbd5e1;
+  line-height: 1.5;
+}
+.schema-colonne strong { color: var(--blanc); display: block; margin-bottom: 4px; font-size: 0.9rem; }
+
 /* ---------- vidéo ---------- */
 .video-wrap { position: relative; background: #000; border-radius: var(--rayon); overflow: hidden; box-shadow: var(--ombre); }
 .video-wrap video { width: 100%; height: auto; display: block; background: #000; }
@@ -219,6 +243,7 @@ aside.panneau ul#liste-questions {
   flex: 1 1 0;
   min-width: 0;
   position: relative; background: #000; border-radius: var(--rayon); overflow: hidden; box-shadow: var(--ombre);
+  min-height: 420px;
 }
 .video-wrap video { width: 100%; height: auto; display: block; background: #000; }
 

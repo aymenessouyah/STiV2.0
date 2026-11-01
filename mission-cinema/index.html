@@ -82,6 +82,33 @@
       <div class="principal">
         <div id="chapitre-actuel" class="chap-banniere">Préparation de la mission…</div>
 
+        <!-- Présentation de la base de données -->
+        <div class="schema-bd">
+          <h3>Base de données « cinema »</h3>
+          <div class="schema-table">
+            <div class="schema-colonne">
+              <strong>REALISATEUR</strong><br>
+              idReal (PK), nom, prenom, nationalite
+            </div>
+            <div class="schema-colonne">
+              <strong>FILM</strong><br>
+              idFilm (PK), titre, genre, annee, duree, budget, idReal (FK)
+            </div>
+            <div class="schema-colonne">
+              <strong>ACTEUR</strong><br>
+              idActeur (PK), nom, prenom, dateNaiss, nationalite, idParrain (FK)
+            </div>
+            <div class="schema-colonne">
+              <strong>JOUER</strong><br>
+              idFilm (FK), idActeur (FK), role, cachet
+            </div>
+            <div class="schema-colonne">
+              <strong>PROJECTION</strong><br>
+              idProj (PK), idFilm (FK), salle, dateProj, nbSpectateurs
+            </div>
+          </div>
+        </div>
+
         <div class="mission-principale">
           <div class="video-wrap">
             <div id="video-erreur" class="alerte cacher"></div>
