@@ -29,6 +29,9 @@
     "assets/css/quiz-sql-tw.css": [
       "474"
     ],
+    "assets/css/theme.css": [
+      "611-flamme"
+    ],
     "assets/js/acces.js": [
       "453",
       "479"
@@ -56,6 +59,9 @@
     ],
     "assets/js/analytique.js": [
       "469"
+    ],
+    "assets/js/app.js": [
+      "611-flamme"
     ],
     "assets/js/config.js": [
       "256",
@@ -86,6 +92,9 @@
     ],
     "assets/js/portail.js": [
       "321"
+    ],
+    "assets/js/profil.js": [
+      "611-flamme"
     ],
     "assets/js/protection.js": [
       "193",

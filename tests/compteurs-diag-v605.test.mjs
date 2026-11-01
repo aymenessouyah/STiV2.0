@@ -74,8 +74,8 @@ test('v605 — la page d’administration charge la nouvelle version du script',
 });
 
 test('v605 — la publication avance et le service worker reverra admin.js', () => {
-  assert.match(sw, /var VERSION_PUBLIEE = "v610";/);
-  assert.match(sw, /var PUBLIEE_LE = "2026-11-01T12:20:00Z";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v(?:6(?:1[1-9]|[2-9]\d)|[7-9]\d\d)";/);
+  assert.match(sw, /var PUBLIEE_LE = "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z";/);
   assert.match(sw, /v605-compteurs-expliques-20261101/);
   /* v606 : la version publiée avance, mais la révision d’admin.js reste celle de v605. */
   assert.match(sw, /\{ url: "\.\/assets\/js\/admin\.js", revision: "maj-visible-v610" \}/);

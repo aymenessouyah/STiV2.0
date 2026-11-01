@@ -19,7 +19,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);
   assert.equal(entrees.length, revisions.size, 'aucune URL de mise à jour en double');
   /* v520 : profil.js porte le plancher anti-recul des XP. */
-  assert.equal(revisions.get('./assets/js/profil.js'), 'roue-compte-v602');
+  assert.equal(revisions.get('./assets/js/profil.js'), 'flamme-regularite-v611');
   assert.equal(revisions.get('./assets/js/suivi-profil.js'), 'suivi-contextes-v491');
   /* v596 : le sprite gagne le pictogramme de la matière « Systèmes » ; il porte
      donc sa propre révision, sinon les appareils installés garderaient l'ancien. */
@@ -58,17 +58,17 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   }
   assert.equal(revisions.get('./quiz/php.html'), 'plafond-a-v555');
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
-  assert.equal(revisions.get('./assets/js/app.js'), 'roue-compte-v602');
+  assert.equal(revisions.get('./assets/js/app.js'), 'flamme-regularite-v611');
   assert.equal(revisions.get('./index.html'), 'cours-sti-v596');
-  assert.equal(revisions.get('./offline-complete-manifest.json'), 'maj-visible-v610');
+  assert.equal(revisions.get('./offline-complete-manifest.json'), 'flamme-regularite-v611');
   assert.equal(revisions.get('./README.md'), 'couverture-v583');
   /* v585 : le tableau de bord annonce le Smart Book 3ᵉ SI à 81 pages ; le drapeau reste au lot v503. */
-  assert.equal(revisions.get('./dashboard.html'), 'livre-3si-81p-v585');
+  assert.equal(revisions.get('./dashboard.html'), 'flamme-regularite-v611');
   assert.equal(revisions.get('./assets/images/drapeau-tunisie.svg'), 'accueil-lycee-v503');
   /* v517 : le ruban lit mieux la classe — la 4e SI passe au vert. */
   assert.equal(revisions.get('./assets/js/news-perso.js'), 'ruban-vert-v517');
   /* v507 : ruban sans logo et compteurs de vidéos. */
-  assert.equal(revisions.get('./assets/css/theme.css'), 'roue-compte-v602');
+  assert.equal(revisions.get('./assets/css/theme.css'), 'flamme-regularite-v611');
   assert.equal(revisions.get('./admin.html'), 'maj-visible-v610');
   assert.equal(revisions.get('./assets/js/sante.js'), 'tp-transitions-v512');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */

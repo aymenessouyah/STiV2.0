@@ -5469,8 +5469,10 @@ test('v473 (structure & budgets performance) : 0 doublon dans UPDATE_FILES (-85,
      La borne reste un garde-fou de poids, relevée à 600 Ko.
      v580 : le journal des nouveautés documente enfin v571 → v580 (+6 Ko de
      texte, aucune image) ; la borne passe à 640 Ko pour laisser vivre la page
-     « Nouveautés » sans relâcher le garde-fou. */
-  assert.ok(coreBytes > 0 && coreBytes < 640 * 1024, `Le noyau de rechargement SW doit peser < 640 Ko (observé: ${coreBytes} octets)`);
+     « Nouveautés » sans relâcher le garde-fou.
+     v611 : la flamme de régularité ajoute le calcul des jours d'affilée, la
+     bande des 14 jours et son style (~4 Ko) ; la borne passe à 660 Ko. */
+  assert.ok(coreBytes > 0 && coreBytes < 660 * 1024, `Le noyau de rechargement SW doit peser < 660 Ko (observé: ${coreBytes} octets)`);
   assert.match(swJs, /appareilSansCachePrealable/);
   assert.match(swJs, /_lruTouchRecents/);
   assert.match(swJs, /_timerHitDebounce/);

@@ -11,7 +11,7 @@
   <link rel="icon" href="assets/icons/STI_by_AE.ico" />
 
   <!-- Feuille de style unique du Design System STI V2.0 -->
-  <link rel="stylesheet" href="assets/css/theme.css" />
+  <link rel="stylesheet" href="assets/css/theme.css?v=611-flamme" />
   <link rel="stylesheet" href="assets/css/protection.css?v=227" />
 
   <!-- Ordre strict des scripts : config -> supabase-umd -> acces -> sync-progressions -> profil -> app -->
@@ -19,8 +19,8 @@
   <script defer src="assets/js/supabase-umd.js"></script>
   <script defer src="assets/js/acces.js?v=479"></script>
   <script defer src="assets/js/sync-progressions.js?v=479"></script>
-  <script defer src="assets/js/profil.js"></script>
-  <script defer src="assets/js/app.js"></script>
+  <script defer src="assets/js/profil.js?v=611-flamme"></script>
+  <script defer src="assets/js/app.js?v=611-flamme"></script>
   <script defer src="assets/js/protection.js?v=227&amp;rev=479"></script><script src="assets/js/lecteur-commun.js" defer></script>
 <script src="assets/js/suivi-profil.js" defer></script><script src="assets/js/reconnexion-profil.js" defer></script><script src="assets/js/appel-quiz.js" defer></script>
 <!-- File write-ahead des quiz et des gains XP : vidée dès la première reconnexion. -->
@@ -114,6 +114,16 @@
 
       <!-- Grille principale des modules abonnés -->
       <div class="dash-grid">
+        <!-- 0. Flamme de régularité (v611) : jours travaillés d'affilée -->
+        <article class="dash-card dash-card--reg" aria-labelledby="dashRegulariteTitre">
+          <div class="dash-card__head">
+            <h2 id="dashRegulariteTitre">🔥 Ma régularité</h2>
+            <span class="badge" id="dashRegulariteBadge">— éteinte</span>
+          </div>
+          <p class="dash-regularite__aide">Chaque jour où vous faites un exercice, un quiz, un laboratoire ou une vidéo terminée compte. Une flamme s’éteint après deux jours sans travail.</p>
+          <div id="dashRegulariteContent"></div>
+        </article>
+
         <!-- 1. Reprise de lecture -->
         <article class="dash-card">
           <div class="dash-card__head">

@@ -17,6 +17,13 @@
      n'apparaît ni dans « en cours » ni dans la progression par matière. */
   var MATIERES_CLES = ["html5", "css3", "javascript", "sql", "php", "sti"];
 
+  /* v611 — Flamme de régularité. On garde au plus un an de jours travaillés
+     (366 dates « aaaa-mm-jj »), ce qui suffit pour la série en cours et le
+     record, sans faire grossir le profil. */
+  var MAX_JOURS_REGULARITE = 366;
+  var CLE_JOURS_HISTORIQUES = "sti-jours-travail";
+  var TROU_REGULARITE = 86400000;
+
   /* Les anciennes pages restent une source de visites, sans modifier leur journal. */
   var PAGES_COURS_HISTORIQUES = {
     html5: ["cours/html5.html", "cours/courshtml5.html"],
@@ -99,6 +106,8 @@
         php: [],
         sti: []
       },
+      /* v611 — jours travaillés (aaaa-mm-jj) pour la flamme de régularité. */
+      joursTravail: [],
       quiz: [],
       videos: {
         vues: [],
@@ -124,6 +133,79 @@
       }
     });
     return out;
+  }
+
+  /* v611 — dates « aaaa-mm-jj » valides, dédoublonnées, triées, un an maximum. */
+  function normaliserJoursTravail(brut) {
+    if (!Array.isArray(brut)) return [];
+    var vus = {}, propres = [];
+    brut.forEach(function (jour) {
+      var texte = String(jour || "").trim();
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(texte)) return;
+      var d = new Date(texte + "T12:00:00Z");
+      if (isNaN(d.getTime()) || d.toISOString().slice(0, 10) !== texte) return;
+      if (vus[texte]) return;
+      vus[texte] = true;
+      propres.push(texte);
+    });
+    propres.sort();
+    return propres.slice(-MAX_JOURS_REGULARITE);
+  }
+
+  /* v611 — heure de Tunisie (GMT+1, sans heure d'été) : la journée d'un élève
+     commence à minuit chez lui, pas à minuit UTC. */
+  function jourDeTunis(date) {
+    var base = date instanceof Date && !isNaN(date.getTime()) ? date : new Date();
+    var tunis = new Date(base.getTime() + 3600000);
+    return { jour: tunis.toISOString().slice(0, 10), millis: base.getTime() };
+  }
+
+  /* v611 — invariante : « aaaa-mm-jj » + 12 h UTC → millisecondes, sans bug de fuseau. */
+  function millisDuJour(jour) {
+    return Date.parse(String(jour) + "T12:00:00Z");
+  }
+
+  /* v611 — compte des jours d'affilée. Une série continue tant qu'il n'y a pas
+     deux jours vides de suite : si l'élève travaille aujourd'hui, la série
+     inclut hier ; s'il ne travaille qu'après minuit, la veille compte encore
+     (on ne casse pas une flamme parce qu'on a révisé tard). */
+  function calculerSerieJours(jours, dateReference) {
+    var liste = normaliserJoursTravail(jours);
+    var presents = {};
+    liste.forEach(function (j) { presents[j] = true; });
+    var today = jourDeTunis(dateReference);
+    var veille = jourDeTunis(new Date(today.millis - TROU_REGULARITE));
+    /* La série se compte jusqu'à aujourd'hui, ou jusqu'à hier tant que la
+       journée n'est pas finie : un élève qui a travaillé hier garde sa flamme
+       jusqu'à minuit. Au-delà d'hier, la flamme est éteinte (le record reste). */
+    var depart = presents[today.jour] ? today.jour : (presents[veille.jour] ? veille.jour : "");
+
+    var serie = 0;
+    if (depart) {
+      var curseur = millisDuJour(depart);
+      while (presents[new Date(curseur).toISOString().slice(0, 10)] && serie <= MAX_JOURS_REGULARITE) {
+        serie += 1;
+        curseur -= TROU_REGULARITE;
+      }
+    }
+
+    /* Record : la plus longue suite jamais enregistrée. */
+    var record = 0, suite = 0, precedent = null;
+    liste.forEach(function (j) {
+      var m = millisDuJour(j);
+      if (precedent !== null && m - precedent === TROU_REGULARITE) suite += 1;
+      else suite = 1;
+      if (suite > record) record = suite;
+      precedent = m;
+    });
+
+    return {
+      serie: serie,
+      record: record,
+      aujourdhui: Boolean(presents[today.jour]),
+      totalJours: liste.length,
+      dernierJour: liste.length ? liste[liste.length - 1] : ""
+    };
   }
 
   function normaliserProfil(brut) {
@@ -200,6 +282,7 @@
       chapitres: chapitresPropres,
       exercicesFaits: exosPropres,
       laboratoires: laboratoiresPropres,
+      joursTravail: normaliserJoursTravail(src.joursTravail),
       quiz: Array.isArray(src.quiz)
         ? src.quiz.filter(function (q) { return q && typeof q === "object"; }).map(function (q) {
             return {
@@ -473,6 +556,7 @@
       pourcent: Math.max(0, Math.min(100, Math.round(Number(pourcent) || 0))),
       url: String(url || "")
     };
+    p.joursTravail = joursAvecAujourdhui(p.joursTravail);
     return sauvegarderProfil(p, false);
   }
 
@@ -489,6 +573,7 @@
       liste.splice(idx, 1);
     }
     p.exercicesFaits[matiere] = liste;
+    if (doitEtreFait && liste.indexOf(idExercice) !== -1) p.joursTravail = joursAvecAujourdhui(p.joursTravail);
     return sauvegarderProfil(p, false);
   }
 
@@ -499,6 +584,7 @@
     var liste = p.laboratoires[matiere];
     if (liste.indexOf(idLaboratoire) !== -1) return p;
     liste.push(idLaboratoire);
+    p.joursTravail = joursAvecAujourdhui(p.joursTravail);
     return sauvegarderProfil(p, false);
   }
 
@@ -518,6 +604,7 @@
 
     if (info.terminee && p.videos.vues.indexOf(idV) === -1) {
       p.videos.vues.push(idV);
+      p.joursTravail = joursAvecAujourdhui(p.joursTravail);
     }
 
     /* L’illustration ne remplace pas la reprise principale. */
@@ -532,6 +619,73 @@
       };
     }
     return sauvegarderProfil(p, false);
+  }
+
+  /* v611 — pointer la journée dès qu'un travail réel est enregistré.
+     `date` n'est là que pour les tests : l'appel normal ne la passe pas. */
+  function joursAvecAujourdhui(jours) {
+    var liste = normaliserJoursTravail(jours);
+    var jour = jourDeTunis().jour;
+    if (liste.indexOf(jour) === -1) liste.push(jour);
+    return normaliserJoursTravail(liste);
+  }
+
+  function enregistrerJourTravail(date) {
+    var p = chargerProfil();
+    var jour = jourDeTunis(date).jour;
+    var jours = normaliserJoursTravail(p.joursTravail);
+    if (jours.indexOf(jour) !== -1) return p;
+    jours.push(jour);
+    p.joursTravail = normaliserJoursTravail(jours);
+    return sauvegarderProfil(p, false);
+  }
+
+  function lireRegularite(date) {
+    var p = chargerProfil();
+    return calculerSerieJours(p.joursTravail, date);
+  }
+
+  /* v611 — reprise de l'historique de régularité des journaux déjà en place
+     (pages vues, exercices, quiz, vidéos) : l'élève qui travaille depuis des
+     semaines ne doit pas voir une flamme à « 1 jour » le jour de la mise à jour.
+     On ne devine rien : seules les dates réellement écrites sont reprises. */
+  function joursDepuisJournauxHistoriques() {
+    var dates = {}, aJoute = false;
+    function ajouter(valeur) {
+      var texte = String(valeur || "").trim();
+      if (!texte) return;
+      var m = texte.match(/^(\d{4}-\d{2}-\d{2})/);
+      if (m) { if (!dates[m[1]]) aJoute = true; dates[m[1]] = true; return; }
+      var ms = Number(texte);
+      if (isFinite(ms) && ms > 1000000000000) {
+        var j = jourDeTunis(new Date(ms)).jour;
+        if (!dates[j]) aJoute = true;
+        dates[j] = true;
+      }
+    }
+    try {
+      var stockage = global.localStorage;
+      if (!stockage) return [];
+      var pages = null;
+      try { pages = JSON.parse(stockage.getItem("sti-pages-vues-v432") || "null"); } catch (e) {}
+      if (pages && typeof pages === "object") {
+        Object.keys(pages).forEach(function (cle) { ajouter(pages[cle]); });
+      }
+    } catch (e) {}
+    var profil = chargerProfil();
+    (profil.quiz || []).forEach(function (q) { ajouter(q && q.date); });
+    (profil.notes || []).forEach(function (n) { ajouter(n && n.date); });
+    return Object.keys(dates).sort();
+  }
+
+  function reparerRegularite() {
+    var p = chargerProfil();
+    var actuels = normaliserJoursTravail(p.joursTravail);
+    var ajoutes = joursDepuisJournauxHistoriques();
+    if (!ajoutes.length) return actuels;
+    p.joursTravail = normaliserJoursTravail(actuels.concat(ajoutes));
+    sauvegarderProfil(p, false);
+    return p.joursTravail;
   }
 
   function reinitialiser() {
@@ -971,6 +1125,11 @@
     basculerExerciceFait: basculerExerciceFait,
     enregistrerLaboratoire: enregistrerLaboratoire,
     enregistrerPositionVideo: enregistrerPositionVideo,
+    /* v611 — flamme de régularité. */
+    enregistrerJourTravail: enregistrerJourTravail,
+    lireRegularite: lireRegularite,
+    calculerSerieJours: calculerSerieJours,
+    reparerRegularite: reparerRegularite,
     reinitialiser: reinitialiser,
     appliquerPreferencesDOM: appliquerPreferencesDOM,
     lireEtatSession: lireEtatSession,

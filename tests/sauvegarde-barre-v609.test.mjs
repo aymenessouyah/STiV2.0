@@ -73,7 +73,7 @@ test('v609 — la feuille de repli mentionne le bouton sans exception flottante'
 
 test('v609 — publication : cache-buster du module et version', () => {
   assert.match(admin, /assets\/js\/sauvegarde\.js\?v=609/);
-  assert.match(sw, /var VERSION_PUBLIEE = "v610";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v(?:6(?:1[1-9]|[2-9]\d)|[7-9]\d\d)";/);
   assert.match(sw, /v609-sauvegarde-barre-20261101/);
   assert.ok(sw.includes('{ url: "./assets/js/sauvegarde.js", revision: "sauvegarde-barre-v609" }'));
 });

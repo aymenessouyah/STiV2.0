@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-01T12:20:00Z",
+  "generatedAt": "2026-11-01T15:40:00Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 773,
-  "totalBytes": 1114074558,
+  "totalBytes": 1114088156,
   "files": [
     {
       "path": "404.html",
@@ -62,8 +62,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 66004,
-      "gitSha": "ed483c5c4785d2ac41dfcbe33a036a4dec4a3543"
+      "bytes": 67840,
+      "gitSha": "2d6119a25800a30b6b9421f5395cbe73c1d0fca4"
     },
     {
       "path": "admin.html",
@@ -332,8 +332,8 @@
     },
     {
       "path": "assets/css/theme.css",
-      "bytes": 90424,
-      "gitSha": "452607b7d47ea273f2a4aa79de6f9cc6b5e4983c"
+      "bytes": 91516,
+      "gitSha": "b3300ab953305289f7b2b979c4dc64070fe0a9a1"
     },
     {
       "path": "assets/css/visionneuse-exercices.css",
@@ -737,8 +737,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 135244,
-      "gitSha": "f5e2f6ae78662774e1971de6f395b12cb5afb0d2"
+      "bytes": 138596,
+      "gitSha": "3c06378e8de2ae485504c75ce0af6b54c9b6bf1b"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -882,8 +882,8 @@
     },
     {
       "path": "assets/js/profil.js",
-      "bytes": 43064,
-      "gitSha": "9a9c20afb9dd7add2b1789fcfc1cfdf6ddf6ba89"
+      "bytes": 49643,
+      "gitSha": "1c101e37026a6730763be7f7fb62b9b34a181d8d"
     },
     {
       "path": "assets/js/protection.js",
@@ -1477,8 +1477,8 @@
     },
     {
       "path": "dashboard.html",
-      "bytes": 15973,
-      "gitSha": "40800bd4cd66b9c5b0bbf915a7815d9db8a9c29a"
+      "bytes": 16651,
+      "gitSha": "753c0d15e6c7b5816492547aebac7f57fa2f58e7"
     },
     {
       "path": "documents/annexes/annexe-css3.pdf",
@@ -3867,8 +3867,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 104671,
-      "gitSha": "129f7bc7e4fd0d4001604542faf8d119b918a043"
+      "bytes": 104732,
+      "gitSha": "f35e56303ad12666f66463eff9b8941cdeb64a5a"
     }
   ]
 }
