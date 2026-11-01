@@ -193,6 +193,19 @@ window.AppController = (function () {
       afficherBilan();
       return;
     }
+    // Attendre que la vidéo soit chargée avant de faire le seek et le play
+    // (sinon seekToSeconds échoue silencieusement et Q1 ne se déclenche pas)
+    if (videoEl.readyState >= HTMLMediaElement.HAVE_METADATA) {
+      lancerMission();
+    } else {
+      videoEl.addEventListener("loadedmetadata", function lancer() {
+        videoEl.removeEventListener("loadedmetadata", lancer);
+        lancerMission();
+      }, { once: true });
+    }
+  }
+
+  function lancerMission() {
     // Reprise : position de lecture enregistrée (si activité interrompue)
     var savedPos = 0;
     try { savedPos = parseInt(localStorage.getItem(POS_KEY) || "0", 10) || 0; } catch (e) {}
@@ -294,6 +307,8 @@ window.AppController = (function () {
 
   function afficherQuestion(q) {
     panneauQuestion.classList.remove("cacher");
+    zoneInteraction.classList.remove("cacher");
+    zoneInteraction.innerHTML = "";
     video.pause(); // s'assurer que la vidéo est en pause
     quiz.renderQuestion(q, zoneInteraction);
     rafraichirPanneau();
