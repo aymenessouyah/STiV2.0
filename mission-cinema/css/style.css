@@ -514,19 +514,86 @@ textarea:focus { outline: 2px solid var(--or); border-color: transparent; }
 /* ---------- responsive ---------- */
 @media (max-width: 900px) {
   .mission-body { flex-direction: column; padding: 16px; gap: 16px; }
-  aside.panneau { flex: 1 1 auto; max-width: 100px; min-width: auto; }
-  aside.panneau h3 { display: none; }
-  aside.panneau .ligne-score, aside.panneau .ligne-pct, aside.panneau .ligne-temps { display: none; }
-  aside.panneau ul#liste-questions {
-    flex-direction: row; overflow-x: auto; padding-bottom: 8px; gap: 8px;
+  aside.panneau {
+    position: static;
+    top: auto;
+    align-self: stretch;
+    flex: 1 1 auto;
+    max-width: none;
+    min-width: auto;
+    order: -1; /* panneau d'abord en mobile */
   }
-  .q-item { flex: 0 0 auto; min-width: 110px; justify-content: center; text-align: center; padding: 8px 6px; }
-  .q-item .q-badge { width: 28px; height: 28px; }
-  .mission-header { padding: 10px 16px; }
+  aside.panneau h3 { display: block; font-size: 0.85rem; }
+  aside.panneau .ligne-score, aside.panneau .ligne-pct, aside.panneau .ligne-temps { display: flex; font-size: 0.85rem; padding: 6px 4px; }
+  aside.panneau .logo { margin-bottom: 10px; }
+  aside.panneau ul#liste-questions {
+    flex-direction: row; overflow-x: auto; padding-bottom: 8px; gap: 6px;
+  }
+  .q-item { flex: 0 0 auto; min-width: 90px; justify-content: center; text-align: center; padding: 7px 5px; font-size: 0.8rem; gap: 6px; }
+  .q-item .q-badge { width: 26px; height: 26px; font-size: 0.75rem; }
+  .mission-header { padding: 10px 16px; flex-direction: column; align-items: flex-start; gap: 10px; }
   .mission-header .titre-mission { font-size: 1rem; }
+  .mission-header .eleve-badge { order: 2; width: 100%; justify-content: flex-end; }
   .chap-banniere { font-size: 0.85rem; }
   .btn-continuer, .q-actions { flex-direction: column; }
   .q-declare { margin-left: 0; margin-top: 10px; width: 100%; text-align: left; }
+}
+
+@media (max-width: 640px) {
+  .mission-body { padding: 12px; gap: 12px; }
+  aside.panneau { gap: 12px; }
+  aside.panneau h3 { font-size: 0.8rem; margin: 0 0 6px; padding-bottom: 4px; }
+  aside.panneau .ligne-score, aside.panneau .ligne-pct, aside.panneau .ligne-temps { font-size: 0.8rem; padding: 5px 2px; }
+  aside.panneau ul#liste-questions { gap: 5px; padding-bottom: 6px; }
+  .q-item { min-width: 80px; padding: 6px 4px; font-size: 0.75rem; }
+  .q-badge { width: 24px; height: 24px; font-size: 0.7rem; }
+
+  .principal { gap: 12px; }
+
+  .chap-banniere { padding: 8px 12px; font-size: 0.8rem; }
+
+  .schema-bd { margin: 12px 0; padding: 10px 14px; }
+  .schema-bd h3 { font-size: 0.9rem; margin-bottom: 8px; }
+  .schema-colonne { padding: 8px 10px; font-size: 0.78rem; min-width: 100px; }
+
+  .mission-principale { gap: 12px; }
+
+  .video-wrap { min-height: 260px; border-radius: 8px; }
+
+  .panneau-question { max-height: 50vh; border-radius: 8px; }
+  #zone-interaction { padding: 16px; }
+
+  .q-card { padding: 18px 16px; }
+  .q-enonce { font-size: 1rem; margin-bottom: 14px; }
+  .q-meta { margin-bottom: 12px; gap: 8px; }
+  .q-num { width: 26px; height: 26px; font-size: 0.8rem; }
+  .q-type { font-size: 0.75rem; }
+
+  textarea { min-height: 100px; font-size: 0.85rem; padding: 10px 12px; }
+
+  .q-actions { flex-direction: column; gap: 8px; }
+  .q-actions .btn.valider { width: 100%; justify-content: center; }
+  .q-declare { width: 100%; margin-top: 8px; }
+
+  .table-editor { margin: 10px 0 4px; padding: 10px 12px; }
+  .table-editor table { font-size: 0.8rem; }
+  .table-editor th, .table-editor td { padding: 5px 6px; font-size: 0.75rem; }
+  .table-editor input.table-cell { font-size: 0.75rem; padding: 3px 5px; }
+
+  .bulle-resultats { margin: 10px 0 0; padding: 12px 14px; border-radius: 8px; }
+  #bulle-resultats-auto { border-radius: 8px; }
+
+  .correction-badge { padding: 7px 12px; font-size: 0.9rem; }
+  .correction-bloc { font-size: 0.85rem; margin: 10px 0; }
+  .correction-bloc pre { padding: 10px; font-size: 0.8rem; }
+  .correction-explication { font-size: 0.85rem; padding: 10px 12px; margin: 12px 0 0; }
+  .correction-note { font-size: 0.8rem; padding: 8px 12px; margin: 8px 0 0; }
+
+  .btn.continuer { margin-top: 16px; width: 100%; padding: 12px; }
+
+  .mission-header .logo { font-size: 1.1rem; }
+  .mission-header .titre-mission { font-size: 0.95rem; }
+  .eleve-badge .badge-img { width: 28px; height: 28px; }
 }
 
 @media (max-width: 480px) {
@@ -535,6 +602,27 @@ textarea:focus { outline: 2px solid var(--or); border-color: transparent; }
   .bilan-wrap { padding: 24px 16px; }
   .bilan-score { font-size: 2rem; }
   .controles-secondaires { justify-content: center; }
+
+  .accueil-cadre { padding: 32px 16px; }
+  .champ-nom input { font-size: 16px; } /* évite le zoom sur iOS */
+  .btn-principal { font-size: 1rem; padding: 14px; }
+
+  .video-wrap { min-height: 220px; }
+  .panneau-question { max-height: 40vh; }
+  #zone-interaction { padding: 14px; }
+  .q-card { padding: 16px 14px; }
+}
+
+/* ---------- tableau éditable : scroll horizontal sur mobile ---------- */
+@media (max-width: 640px) {
+  .table-editor {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .table-editor table {
+    min-width: 320px;
+    display: table;
+  }
 }
 
 /* impression / réduction de mouvement */
