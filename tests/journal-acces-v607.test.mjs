@@ -68,8 +68,8 @@ test('v607 — le diagnostic lit aussi les pannes remontées par l’appareil de
 
 test('v607 — publication : cache-buster, révisions et version', () => {
   assert.match(adminHtml, /assets\/js\/admin\.js\?v=607-perf/);
-  assert.match(sw, /var VERSION_PUBLIEE = "v607";/);
-  assert.match(sw, /var PUBLIEE_LE = "2026-11-01T21:20:00Z";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v608";/);
+  assert.match(sw, /var PUBLIEE_LE = "2026-11-01T22:45:00Z";/);
   assert.match(sw, /v607-journal-acces-20261101/);
   for (const url of ['./assets/js/acces.js', './assets/js/admin.js']) {
     assert.ok(
@@ -77,5 +77,5 @@ test('v607 — publication : cache-buster, révisions et version', () => {
       'révision attendue pour ' + url
     );
   }
-  assert.match(sw, /\{ url: "\.\/admin\.html", revision: "journal-acces-v607" \}/);
+  assert.match(sw, /\{ url: "\.\/admin\.html", revision: "plus-tout-v608" \}/);
 });
