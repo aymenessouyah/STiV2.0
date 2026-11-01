@@ -21,12 +21,13 @@ const admin = lire('admin.html');
 const sw = lire('sw.js');
 const css = lire('assets/css/admin-saas.css');
 
-test('v606 — la pastille flottante ne porte plus l’identifiant du ruban Services', () => {
+test('v606 — le bouton de sauvegarde ne porte plus l’identifiant du ruban Services', () => {
   assert.ok(
     !/b\.id = "sti-btn-sauvegarde";/.test(sauvegarde),
-    'la pastille ne doit plus s’appeler #sti-btn-sauvegarde (le ruban la masquerait)'
+    'le bouton ne doit plus s’appeler #sti-btn-sauvegarde (le ruban le masquerait)'
   );
-  assert.match(sauvegarde, /b\.id = "sti-sauv-btn-flottant";/);
+  /* v609 : plus de pastille flottante ; le bouton vit dans la barre d'outils. */
+  assert.match(sauvegarde, /b\.id = "sti-sauv-btn-barre";/);
 });
 
 test('v606 — la cause est vérifiable : le ruban masque les boutons du dock replié', () => {
@@ -55,7 +56,7 @@ test('v606 — le bouton du ruban « Services » existe et reste hors écran ava
 
 test('v606 — les deux boutons ouvrent le panneau, export Drive en évidence', () => {
   assert.match(sauvegarde, /function lierOuvreursExport\(\)/);
-  assert.match(sauvegarde, /\["sti-btn-sauvegarde", "btn-export-drive-admin"\]/);
+  assert.match(sauvegarde, /\["sti-btn-sauvegarde", "btn-export-drive-admin", "sti-sauv-btn-barre"\]/);
   assert.match(sauvegarde, /panneau\(\{ focusExport: true \}\);/);
   /* Le ruban est construit après nous : on relie aussi plus tard. */
   assert.match(sauvegarde, /setTimeout\(lierOuvreursExport, 1000\);/);
@@ -72,17 +73,17 @@ test('v606 — le panneau amène la vue sur l’encadré export sans se refermer
 });
 
 test('v606 — la page charge bien la nouvelle version du module', () => {
-  assert.match(admin, /assets\/js\/sauvegarde\.js\?v=606/);
+  assert.match(admin, /assets\/js\/sauvegarde\.js\?v=609/);
   assert.ok(
-    admin.indexOf('export-drive.js?v=603') < admin.indexOf('sauvegarde.js?v=606'),
+    admin.indexOf('export-drive.js?v=603') < admin.indexOf('sauvegarde.js?v=609'),
     'export-drive.js doit rester chargé avant sauvegarde.js'
   );
 });
 
 test('v606 — publication : service worker et révisions à jour', () => {
-  assert.match(sw, /var VERSION_PUBLIEE = "v608";/);
-  assert.match(sw, /var PUBLIEE_LE = "2026-11-01T22:45:00Z";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v609";/);
+  assert.match(sw, /var PUBLIEE_LE = "2026-11-01T23:40:00Z";/);
   assert.match(sw, /v606-export-trouvable-20261101/);
-  assert.match(sw, /\{ url: "\.\/assets\/js\/sauvegarde\.js", revision: "export-trouvable-v606" \}/);
-  assert.match(sw, /\{ url: "\.\/admin\.html", revision: "plus-tout-v608" \}/);
+  assert.match(sw, /\{ url: "\.\/assets\/js\/sauvegarde\.js", revision: "sauvegarde-barre-v609" \}/);
+  assert.match(sw, /\{ url: "\.\/admin\.html", revision: "sauvegarde-barre-v609" \}/);
 });

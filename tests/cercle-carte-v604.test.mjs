@@ -107,6 +107,6 @@ test('v604 : sans compte connecté, le cercle montre les initiales du profil loc
 });
 
 test('v604 : la version publiée et le cache avancent', () => {
-  assert.match(SW, /var VERSION_PUBLIEE = "v608";/);
-  assert.match(SW, /url: "\.\/offline-complete-manifest\.json", revision: "plus-tout-v608"/);
+  assert.match(SW, /var VERSION_PUBLIEE = "v609";/);
+  assert.match(SW, /url: "\.\/offline-complete-manifest\.json", revision: "sauvegarde-barre-v609"/);
 });

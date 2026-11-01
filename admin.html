@@ -5016,23 +5016,22 @@
      permanence, sous un bouton qui annonçait pourtant « Plus ▾ ». On tranche
      ici, en fin de cascade et avec une spécificité suffisante :
        • replié  → Flash, Appel, Aide, Top 3, Maj, News, Carte, Maj Élèves,
-                   PIN, README, Alertes, Sortir et la pastille « Sauvegarde
-                   complète » sont masqués ;
+                   PIN, README, Alertes, « Sauvegarde » et Sortir sont masqués ;
        • ouvert  → ils reviennent tous.
-     Sur PC, les mêmes boutons suivent déjà « Système & Plus ▾ ». -->
-<style id="style-plus-v608">
+     Sur PC, les mêmes boutons suivent déjà « Système & Plus ▾ ».
+     v609 : le bouton « 💾 Sauvegarde » (ajouté par sauvegarde.js) est un vrai
+     .btn-util.sys-extra-item de cette barre : il suit donc la même règle, sans
+     avoir besoin d'une exception. Plus aucune pastille flottante. -->
+<style id="style-plus-v609">
   body:not(.sys-bar-ouverte) .barre-util .sys-extra-item,
   body:not(.sys-bar-ouverte) .barre-util #btn-logout,
-  body:not(.sys-bar-ouverte) #sti-sauv-btn-flottant {
+  body:not(.sys-bar-ouverte) .barre-util #sti-sauv-btn-barre {
     display: none !important;
   }
   body.sys-bar-ouverte .barre-util .sys-extra-item,
-  body.sys-bar-ouverte .barre-util #btn-logout {
+  body.sys-bar-ouverte .barre-util #btn-logout,
+  body.sys-bar-ouverte .barre-util #sti-sauv-btn-barre {
     display: inline-flex !important;
-  }
-  /* La pastille de sauvegarde garde sa forme quand elle revient. */
-  body.sys-bar-ouverte #sti-sauv-btn-flottant {
-    display: inline-block !important;
   }
 </style>
 <script src="assets/js/supabase-umd.js" defer></script>
@@ -5049,7 +5048,7 @@
   <script src="assets/js/analytique.js?v=469" defer></script>
   <script src="assets/js/admin-vues-videos.js?v=531" defer></script>
   <script src="assets/js/export-drive.js?v=603" defer></script>
-  <script src="assets/js/sauvegarde.js?v=606" defer></script>
+  <script src="assets/js/sauvegarde.js?v=609" defer></script>
 <script src="assets/js/sante.js?v=471" defer></script>
 <!-- v606 : bouton du ruban « Services ». Il est placé hors écran tant que le
      ruban ne l'a pas adopté ; ensuite, la feuille de style de l'administration le

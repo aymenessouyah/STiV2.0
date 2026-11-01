@@ -688,7 +688,7 @@
      Un identifiant propre le rend invulnérable, et les vrais boutons de la
      page ouvrent le panneau, export Drive en évidence. */
   function lierOuvreursExport() {
-    ["sti-btn-sauvegarde", "btn-export-drive-admin"].forEach(function (id) {
+    ["sti-btn-sauvegarde", "btn-export-drive-admin", "sti-sauv-btn-barre"].forEach(function (id) {
       var el = document.getElementById(id);
       if (!el || el.getAttribute("data-sti-sauvegarde-lie") === "1") return;
       el.setAttribute("data-sti-sauvegarde-lie", "1");
@@ -699,18 +699,42 @@
     });
   }
 
+  /* v609 — « intégrer le bouton Sauvegarde complète dans la famille, sans
+     l'afficher à part ». La pastille flottante de la v606/v608 est supprimée :
+     elle restait posée en « position:fixed » au milieu de l'écran, hors de la
+     grille des boutons, et grossissait au lieu de suivre les autres. Le bouton
+     est maintenant un vrai bouton de la barre d'outils
+     (.btn-util.mob-extra.sys-extra-item) : il prend la même forme que Flash,
+     Appel, Aide…, se range juste après « Alertes » et avant « Sortir », et
+     suit donc exactement la famille « Plus ▾ » (masqué replié, affiché ouvert,
+     « Système & Plus ▾ » sur PC). */
   function bouton() {
+    var ancienne = document.getElementById("sti-sauv-btn-flottant");
+    if (ancienne && ancienne.parentNode) ancienne.parentNode.removeChild(ancienne);
+    var barre = (typeof document.querySelector === "function") ? document.querySelector(".barre-util") : null;
+    if (!barre) return;
+    var b = document.getElementById("sti-sauv-btn-barre");
+    if (!b) {
+      b = document.createElement("button");
+      b.id = "sti-sauv-btn-barre";
+      b.type = "button";
+      b.className = "btn-util mob-extra sys-extra-item";
+      b.setAttribute("title", "Sauvegarde complète : exporter les 18 tables, le schéma et le code du site vers Google Drive (une fois par mois)");
+      b.setAttribute("aria-label", "Sauvegarde complète — ouvrir l’export vers Drive");
+      b.innerHTML = '<span class="btn-util-glyph" aria-hidden="true">💾</span> <span class="lbl-pc">Sauvegarde complète</span><span class="lbl-mob">Sauvegarde</span>';
+    }
+    var sortie = document.getElementById("btn-logout");
+    if (b.parentNode !== barre) {
+      if (sortie && sortie.parentNode === barre) barre.insertBefore(b, sortie);
+      else barre.appendChild(b);
+    }
+    /* Le clic est branché juste après (lierOuvreursExport ajoute l'écouteur
+       une seule fois grâce à data-sti-sauvegarde-lie). */
     lierOuvreursExport();
-    var b = document.getElementById("sti-sauv-btn-flottant");
-    if (b) return;
-    b = document.createElement("button");
-    b.id = "sti-sauv-btn-flottant";
-    b.type = "button";
-    b.textContent = "💾 Sauvegarde complète";
-    b.setAttribute("style", 'position:fixed;left:14px;bottom:114px;z-index:99999;padding:11px 16px;border-radius:999px;border:3px solid #1a1a2e;background:#15803d;color:#fff;font-family:"Comic Sans MS","Comic Sans","Comic Neue","Chalkboard SE",cursive,sans-serif;font-weight:800;font-size:14px;cursor:pointer;box-shadow:4px 4px 0 #1a1a2e;');
-    b.setAttribute("aria-label", "Sauvegarde complète — ouvrir l’export vers Drive");
-    b.addEventListener("click", function () { panneau({ focusExport: true }); });
-    document.body.appendChild(b);
+    /* Garde-fou : les minuteries ne se posent qu'une fois, même si la fonction
+       est rappelée après l'arrivée du ruban « Services ». */
+    if (bouton.minuteriesPosees) return;
+    bouton.minuteriesPosees = true;
     setTimeout(function () {
       try { verifierSyncAutoDrive(); } catch (e) {}
     }, 15000);
