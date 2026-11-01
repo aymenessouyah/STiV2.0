@@ -71,8 +71,10 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
     /* v597 : le guide d'administration annonce 151 pages de couverture (145 + les
        cinq ateliers « Systèmes » + la galerie des projets). */
     /* v614 : admin.html accueille l'onglet et la section « 📘 Guide exercice ».
-       v615 : cache-buster admin.js passé en ?v=615-perf ; empreinte réactualisée. */
-    'admin.html': 'ddbf649c73a1973f82a5f49aec0ebcfb3e534cf8e31b354d7c710c017df89003',
+       v615 : cache-buster admin.js passé en ?v=615-perf.
+       v616 : une erreur de montage de la section est désormais affichée au lieu
+       d'être avalée ; empreinte réactualisée. */
+    'admin.html': '9aaf9731394978cba47ad9ef7f93ab299f2811d5eeeb88ff12c907f5ca577eb9',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };
@@ -243,9 +245,11 @@ test('commandes d’administration : scripts et fonctions de la barre PC inchang
      v614 : le module « Guide exercice » (lecture du réglage public, liste des
      72 exercices, enregistrement du choix) entre dans admin.js.
      v615 : la section prend ses couleurs dans la palette (lisible en mode ardoise)
-     et son bandeau récapitulatif s'affiche ; empreinte réactualisée. */
+     et son bandeau récapitulatif s'affiche.
+     v616 : la liste s'affiche tout de suite depuis une copie embarquée des 72
+     exercices, et une panne laisse un message clair ; empreinte réactualisée. */
   /* v596 : TOTAL_PAGES_SITE_ADMIN passe à 150 (repli hors manifeste). */
-  assert.equal(sha('assets/js/admin.js'), '67040ac67d706e7ae8a8c410002b80f9ee1e0aad9a37ae40f2b5f6da3d58c190');
+  assert.equal(sha('assets/js/admin.js'), '253f2914c2596524d1a9840a6978be1175a29d52b51dc6cc20b1dc3b166f32d9');
   assert.equal(sha('assets/js/rayonsx-surligneur.js'), '1b7fe2067629766ef4043fa3060199b71124d8486e36d92aaac0b45bd861847c');
   const protection = lire('assets/js/protection.js');
   const debut = protection.indexOf('  function estAppareilPC()');
