@@ -48,10 +48,10 @@ window.VideoController = (function () {
         playing = true;
         startQuestionPoll();
         // Sécurité : si la vidéo est censée être en pause pour une question,
-        // on gèle currentTime et on force une nouvelle pause
+        // on force une nouvelle pause puis on gèle currentTime
         if (pausedForQuestion) {
-            video.currentTime = pauseTime;
             video.pause();
+            video.currentTime = pauseTime;
         }
     });
     video.addEventListener("pause", function () { playing = false; stopQuestionPoll(); });
@@ -102,9 +102,10 @@ window.VideoController = (function () {
       // Si on est en pause pour une question, geler currentTime au moment de la pause
       // et empêcher toute progression. Le poller revient ici toutes les 100 ms pour
       // maintenir la position tant que la question n'est pas répondue.
+      // (pause d'abord, puis figer currentTime car video.pause() est asynchrone)
       if (pausedForQuestion) {
-        video.currentTime = pauseTime;
         video.pause();
+        video.currentTime = pauseTime;
         if (onTimeUpdate) onTimeUpdate(missionTime, (missionTime / missionDuration) * 100);
         return;
       }
@@ -256,8 +257,10 @@ window.VideoController = (function () {
     questionLocked = true;
     // Mémoriser le moment de la pause pour geler currentTime dans le poller
     pauseTime = q.time;
-    // Remettre currentTime exactement au temps de la question
-    try { video.currentTime = q.time; } catch (e) {}
+    // PAUSE D'ABORD, puis geler currentTime (video.pause() est asynchrone,
+    // il faut arrêter la lecture avant de figer currentTime)
+    video.pause();
+    try { video.currentTime = pauseTime; } catch (e) {}
     video.pause();
     if (onQuestionTrigger) onQuestionTrigger(q);
   }
