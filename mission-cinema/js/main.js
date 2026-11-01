@@ -31,7 +31,7 @@ window.AppController = (function () {
   var spanChapitre = document.getElementById("chapitre-actuel");
 
   var btnPlay = document.getElementById("btn-play");
-  var btnPause = document.getElementById("btn-pause");
+
   var inputProgress = document.getElementById("progress");
   var btnVitesse = document.getElementById("vitesse");
   var btnPleinEcran = document.getElementById("btn-plein-ecran");
@@ -97,7 +97,7 @@ window.AppController = (function () {
         }
       });
     });
-    btnPause.addEventListener("click", function () { video.pause(); });
+
     btnVitesse.addEventListener("change", function () { video.setSpeed(btnVitesse.value); });
     btnPleinEcran.addEventListener("click", function () { video.toggleFullscreen(); });
 
@@ -217,8 +217,11 @@ window.AppController = (function () {
       var firstChapter = data.chapters[0];
       video.seekToSeconds(firstChapter ? firstChapter.timeStart : 0);
     }
-    // La vidéo ne démarre PAS automatiquement : l'utilisateur clique sur "Lire"
-    // quand il est prêt. La vidéo se mettra en pause à chaque question.
+    // Démarrage automatique de la vidéo dès le lancement de la mission
+    video.forcePlay().catch(function () {
+      // Si la vidéo ne peut pas jouer, basculer en mode simulation
+      basculerModeSansVideo();
+    });
   }
 
   function basculerModeSansVideo() {
