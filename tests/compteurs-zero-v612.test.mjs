@@ -202,9 +202,9 @@ test('v612 — le recomprage est branché dans la page et dans l’interface', (
 test('v612 — publication : version, cache-busters et révisions', () => {
   assert.match(sw, /var VERSION_PUBLIEE = "v6\d\d";/);
   assert.match(sw, /v612-compteurs-zero-20261101/);
-  assert.match(adminHtml, /assets\/js\/admin\.js\?v=613-perf/);
-  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "videos-supabase-v613" }'));
-  assert.ok(sw.includes('{ url: "./admin.html", revision: "videos-supabase-v613" }'));
+  assert.match(adminHtml, /assets\/js\/admin\.js\?v=614-perf/);
+  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "guide-exercice-v614" }'));
+  assert.ok(sw.includes('{ url: "./admin.html", revision: "guide-exercice-v614" }'));
   /* Les invariants de cache ne bougent pas. */
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);

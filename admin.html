@@ -2343,6 +2343,7 @@
     <button type="button" class="btn-sec-tab" data-sec-cible="all">🗂️ Tout replier</button>
     <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-graphiques">📊 Activité</button>
     <button type="button" class="btn-sec-tab actif" data-sec-cible="bloc-sec-abonnes">👥 Abonnés &amp; Classes</button>
+    <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-guide-exercice">📘 Guide exercice</button>
     <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-quiz">🏆 Quiz &amp; Bac Pratique</button>
     <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-messages">📨 Messages &amp; Réponses</button>
     <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-connexions">🕒 Dernières Connexions</button>
@@ -2709,6 +2710,41 @@
       <div id="wrap-voir-plus-suivi" style="display:none;text-align:center;margin:10px 0 4px">
         <button type="button" class="btn-outil" id="btn-voir-plus-suivi">➕ Voir plus</button>
       </div>
+    </div>
+  </section>
+  <!-- v614 — Guide exercice : le professeur choisit, exercice par exercice, si
+       les corrections et les vidéos sont visibles pour les élèves. -->
+  <section class="carte-section-admin sec-repliee" id="bloc-sec-guide-exercice" aria-labelledby="titre-sec-guide-exercice">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px">
+      <h2 style="margin:0" id="titre-sec-guide-exercice">📘 Guide exercice — corrections et vidéos visibles</h2>
+      <button type="button" class="btn-replier-sec" data-replier="bloc-sec-guide-exercice">▸ Agrandir</button>
+    </div>
+    <div class="corps-section-admin">
+      <p style="margin:0 0 10px;font-size:13px;color:var(--adm-muted);font-weight:600">
+        Choisissez ce que les élèves voient <strong>dans chaque exercice</strong>. Le réglage est public
+        (table <code>app_config_public</code>) : il s'applique sur tous les appareils, connectés ou non,
+        sans que l'élève ait à recharger quoi que ce soit de plus.
+      </p>
+
+      <div class="filtres-bar" style="margin-bottom:10px">
+        <label style="display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:13px">
+          <input type="checkbox" id="guide-defaut-corrections" checked /> Corrections visibles par défaut
+        </label>
+        <label style="display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:13px">
+          <input type="checkbox" id="guide-defaut-videos" checked /> Vidéos visibles par défaut
+        </label>
+        <input type="search" id="guide-filtre" placeholder="🔎 Filtrer les exercices (titre, matière, chemin)…" />
+        <select id="guide-filtre-matiere">
+          <option value="*">📚 Toutes les matières</option>
+        </select>
+        <button type="button" class="btn-outil" id="guide-tout-afficher" title="Tout rendre visible (corrections et vidéos)">👁️ Tout afficher</button>
+        <button type="button" class="btn-outil" id="guide-tout-masquer" title="Tout masquer (corrections et vidéos)">🔒 Tout masquer</button>
+        <button type="button" class="btn-outil vert" id="guide-enregistrer" title="Enregistrer et publier le réglage pour les élèves">💾 Enregistrer</button>
+        <span id="guide-etat" style="font-size:12.5px;font-weight:800;color:var(--adm-muted)"></span>
+      </div>
+
+      <div id="guide-resume" class="bandeau-classe" role="status" aria-live="polite"></div>
+      <div id="guide-liste" style="display:flex;flex-direction:column;gap:6px;max-height:520px;overflow:auto;padding:4px 2px"></div>
     </div>
   </section>
 <div class="sti-groupe-tete" id="grp-classe"><span class="sti-groupe-ico" aria-hidden="true">🏫</span><span class="sti-groupe-txt"><b>Gestion de la classe</b><i>Abonnés, classes, vues par jour et par élève — l’afficheur de salle reste dans la vue d’ensemble</i></span><a class="sti-groupe-haut" href="#vue-ensemble-admin" title="Revenir a la vue d’ensemble">↑</a></div>
@@ -4913,7 +4949,7 @@
     });
 
     function afficherSectionCible(secId, defiler) {
-      var toutes = ["bloc-sec-graphiques", "bloc-sec-abonnes", "bloc-sec-quiz", "bloc-sec-messages", "bloc-sec-connexions", "bloc-sec-dbsupbase", "bloc-sec-aide"];
+      var toutes = ["bloc-sec-graphiques", "bloc-sec-abonnes", "bloc-sec-quiz", "bloc-sec-guide-exercice", "bloc-sec-messages", "bloc-sec-connexions", "bloc-sec-dbsupbase", "bloc-sec-aide"];
       document.querySelectorAll(".btn-sec-tab[data-sec-cible]").forEach(function (b) {
         b.classList.toggle("actif", b.getAttribute("data-sec-cible") === secId);
       });
@@ -4935,7 +4971,7 @@
         }
       });
       var grpMap = {
-        "grp-scolarite": ["bloc-sec-quiz", "bloc-sec-messages"],
+        "grp-scolarite": ["bloc-sec-quiz", "bloc-sec-guide-exercice", "bloc-sec-messages"],
         "grp-classe": ["bloc-sec-abonnes"],
         "grp-connexion": ["bloc-sec-connexions"],
         "grp-dbsupbase": ["bloc-sec-dbsupbase"],
@@ -4947,6 +4983,10 @@
         var vis = (secId === "open-all" || secId === "all") || grpMap[gid].indexOf(secId) !== -1;
         gEl.style.display = vis ? "" : "none";
       });
+      /* v614 : le Guide exercice se monte à sa première ouverture (il lit la base). */
+      if (secId === "bloc-sec-guide-exercice" && typeof window.__stiMonterGuideExercice === "function") {
+        try { window.__stiMonterGuideExercice(); } catch (eMonte) {}
+      }
       try {
         window.dispatchEvent(new CustomEvent("sti:section-admin-ouverte", { detail: { secId: secId } }));
       } catch (e) {}
@@ -5038,7 +5078,7 @@
 <script src="assets/js/supabase-umd.js" defer></script>
 <script src="assets/js/config.js?v=479" defer></script>
 <script src="assets/js/protection.js?v=474" defer></script>
-  <script src="assets/js/admin.js?v=613-perf" defer></script>
+  <script src="assets/js/admin.js?v=614-perf" defer></script>
   <script src="assets/js/admin-couverture.js?v=469" defer></script>
   <script src="assets/js/admin-dbsupbase.js?v=466" defer></script>
   <script src="assets/js/admin-revision.js?v=469" defer></script>

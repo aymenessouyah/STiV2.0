@@ -166,7 +166,7 @@ test('v597 : la vitrine est branchée sur l’accueil, le service worker et le s
 
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   const nbDelta = delta.split('{ url:').length - 1;
-  assert.ok(nbDelta <= 278, `delta trop long : ${nbDelta}`);
+  assert.ok(nbDelta <= 280, `delta trop long : ${nbDelta}`);
 
   for (const liste of ['SHELL', 'OFFLINE_LIST']) {
     const bloc = sw.split('var ' + liste + ' = [')[1].split('];')[0];

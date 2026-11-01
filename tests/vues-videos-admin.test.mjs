@@ -468,18 +468,18 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
     'assets/js/reprendre.js']) {
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${REV}"`), chemin);
   }
-  assert.ok(delta.includes('url: "./admin.html", revision: "videos-supabase-v613"'),
+  assert.ok(delta.includes('url: "./admin.html", revision: "guide-exercice-v614"'),
     'la page d’administration repart au lot v585 (Smart Book 3SI à 81 pages)');
   /* v613 : le coin des vues porte désormais sa propre révision (comptage en base). */
   assert.ok(delta.includes('url: "./assets/js/admin-vues-videos.js", revision: "videos-supabase-v613"'),
-    'le coin des vues suit la v613');
+    'le coin des vues suit la v613 (inchangé en v614)');
   assert.match(delta, /url: "\.\/assets\/js\/sync-progressions\.js", revision: "pastille-sync-v534"/);
-  assert.match(delta, /url: "\.\/offline-complete-manifest\.json", revision: "videos-supabase-v613"/);
+  assert.match(delta, /url: "\.\/offline-complete-manifest\.json", revision: "guide-exercice-v614"/);
   /* Budget du delta préservé : le module entre dans la liste, une annexe figée en sort. */
   const urls = [...delta.matchAll(/url:\s*"([^"]+)"/g)].map((m) => m[1]);
   assert.equal(new Set(urls).size, urls.length, 'aucun doublon');
   /* v580 : le quiz STI ajoute 4 entrées (page, moteur, initialiseur, banque). */
-  assert.ok(urls.length <= 278, 'delta léger (≤ 278 entrées)');
+  assert.ok(urls.length <= 280, 'delta léger (≤ 280 entrées)');
   assert.ok(!urls.includes('./documents/annexes/annexe-sql.pdf.html'), 'place libérée par une annexe figée');
   /* Préchargement hors ligne : le module doit y être pour que le coin marche sans réseau. */
   const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];

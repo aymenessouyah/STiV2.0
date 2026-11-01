@@ -1,0 +1,510 @@
+{
+ "commentaire": "Catalogue du « Guide exercice » — généré depuis le dépôt (titres, corrections et vidéos détectées). Ne pas éditer à la main.",
+ "version": 1,
+ "pages": [
+  {
+   "chemin": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Enonce.pdf.html",
+   "titre": "TP Explore Tunisie — Énoncé (HTML5 / CSS3)",
+   "matiere": "html-css",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-float.html",
+   "titre": "Explore Tunisie",
+   "matiere": "html-css",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-position.html",
+   "titre": "Explore Tunisie",
+   "matiere": "html-css",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index.html",
+   "titre": "Explore Tunisie",
+   "matiere": "html-css",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/html-css/TP1-css.pdf.html",
+   "titre": "TP 1 — Structure & Balises sémantiques (CSS3)",
+   "matiere": "html-css",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/html-css/TP2-css.pdf.html",
+   "titre": "TP 2 — Layout & Menu de navigation (CSS3)",
+   "matiere": "html-css",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/html-css/TP2/tp2corrposition.html",
+   "titre": "TP N°2 - Correction pas à pas - Lycée Rafèha",
+   "matiere": "html-css",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/html-css/TP3-css.pdf.html",
+   "titre": "TP 3 — Page d'accueil interactive, Ariana (CSS3)",
+   "matiere": "html-css",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/html-css/activite-html-css/Act1/page1.html",
+   "titre": "Exercice CSS",
+   "matiere": "html-css",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/html-css/activite-html-css/Act2/page2.html",
+   "titre": "Projet HTML/CSS",
+   "matiere": "html-css",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/html-css/activite1-2-position-animation-css3.pdf.html",
+   "titre": "Activités 1 & 2 — Positionnement flottant & animations (CSS3)",
+   "matiere": "html-css",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/html-css/box-shadow-text-shadow-css3.html",
+   "titre": "box-shadow en détail",
+   "matiere": "html-css",
+   "correction": false,
+   "video": false
+  },
+  {
+   "chemin": "exercices/html-css/emploi-temps/emploidutemps.html",
+   "titre": "Emploi du temps - 4ème Sciences de l'Informatique 2",
+   "matiere": "html-css",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/html-css/formulaire-inscription.pdf.html",
+   "titre": "Énoncé — Formulaire d'inscription (HTML5/CSS3)",
+   "matiere": "html-css",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/html-css/tp-display-float-position/index.html",
+   "titre": "TP : display, float et position",
+   "matiere": "html-css",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/html-css/tp-evenements-liens/index.html",
+   "titre": "TP : Événements JavaScript, liens et arrière-plans",
+   "matiere": "html-css",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/html-css/tp-formulaire-tableau-autre/index.html",
+   "titre": "TP : Formulaire, Tableau, Autres .... HTML5 / CSS3",
+   "matiere": "html-css",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/html-css/tp-transitions-animations/exercice1.html",
+   "titre": "Corrigé 1 — transitions et animations CSS3",
+   "matiere": "html-css",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/html-css/tp-transitions-animations/exercice2.html",
+   "titre": "Corrigé 2 — menu et sous-menus animés",
+   "matiere": "html-css",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/html-css/tp-transitions-animations/index.html",
+   "titre": "TP : transitions et animations CSS3",
+   "matiere": "html-css",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/javascript/TP Train/Enonce_TP_TrainTN_JavaScript.html",
+   "titre": "SNCFT · TP JavaScript — énoncé",
+   "matiere": "javascript",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/javascript/TP Train/Ressource_eleve_TrainTN.html",
+   "titre": "SNCFT · Réserver un billet de train — ressource élève",
+   "matiere": "javascript",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/javascript/TP Train/TP_Train_JavaScript_cORRECTION.html",
+   "titre": "SNCFT · TP JavaScript — corrigé",
+   "matiere": "javascript",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/javascript/TP Train/index.html",
+   "titre": "🚆 Série 6 · TP Train — Réserver un billet — STI V2.0",
+   "matiere": "javascript",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/javascript/Tp1-Correction-js.html",
+   "titre": "TP1 JavaScript - Corrigé",
+   "matiere": "javascript",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/javascript/Tp1-js.html",
+   "titre": "TP1 JavaScript - Énoncé",
+   "matiere": "javascript",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/javascript/Tp2-Correction-js.html",
+   "titre": "TP2 JavaScript - Corrigé",
+   "matiere": "javascript",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/javascript/Tp2-js.html",
+   "titre": "TP2 JavaScript - Énoncé",
+   "matiere": "javascript",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/javascript/Tp3-Correction-js.html",
+   "titre": "TP3 JavaScript - Corrigé",
+   "matiere": "javascript",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/javascript/Tp3-js.html",
+   "titre": "TP3 JavaScript - Énoncé",
+   "matiere": "javascript",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/javascript/Tp4-Correction-js.html",
+   "titre": "TP4 JavaScript - Corrigé",
+   "matiere": "javascript",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/javascript/Tp4-js.html",
+   "titre": "TP4 JavaScript - Énoncé",
+   "matiere": "javascript",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/javascript/Tp5-Correction-js.html",
+   "titre": "TP5 JavaScript - Corrigé",
+   "matiere": "javascript",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/javascript/Tp5-js.html",
+   "titre": "TP5 JavaScript - Énoncé Reformulé",
+   "matiere": "javascript",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/javascript/js-37-defis-tt.html",
+   "titre": "Les 37 Défis — JavaScript • STI Quiz",
+   "matiere": "javascript",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/php/4STi-dc-6-2025-2026.pdf.html",
+   "titre": "Devoir de Contrôle N°6 (2025-2026) — Épreuve Pratique 4e SI (PHP / MySQLi)",
+   "matiere": "php",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/php/Tp1-Correction-php.html",
+   "titre": "Corrigé Série 1 PHP — Chaînes, Fonctions, Tableaux et Dates",
+   "matiere": "php",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/php/Tp1-php.html",
+   "titre": "Série 1 PHP — Chaînes, Fonctions, Tableaux et Dates (Énoncé)",
+   "matiere": "php",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/php/Tp2-Correction-php.html",
+   "titre": "Corrigé : Série d'Exercices sur les chaînes de caractères (PHP)",
+   "matiere": "php",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/php/Tp2-php.html",
+   "titre": "Série d'Exercices : Les fonctions relatives aux chaînes de caractères (PHP)",
+   "matiere": "php",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/php/Tp3-correction-php.html",
+   "titre": "Corrigé : Série d'Exercices sur les Tableaux en PHP",
+   "matiere": "php",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/php/Tp3-php.html",
+   "titre": "Série d'Exercices : Les Tableaux en PHP",
+   "matiere": "php",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/php/Tp4-Correction-php.html",
+   "titre": "Corrigé Série 4 PHP : MySQLi Procédural et Connexion à une base de données",
+   "matiere": "php",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/php/Tp4-php.html",
+   "titre": "Série 4 PHP : MySQLi Procédural et Connexion à une base de données",
+   "matiere": "php",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/php/Tp5-Correction-php.html",
+   "titre": "Corrigé Série 5 PHP — Sujet Blanc Complet Type Bac Pratique",
+   "matiere": "php",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/php/Tp5-php.html",
+   "titre": "Série 5 PHP — Sujet Blanc Complet Type Bac Pratique (Barème / 20)",
+   "matiere": "php",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/php/debogage-php-bac.html",
+   "titre": "Atelier Débogage PHP / MySQLi / SQL / JS — Trouver et Corriger l'Erreur",
+   "matiere": "php",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/php/ordre-php-bac.html",
+   "titre": "Atelier Interactif PHP/MySQLi & SQL — Remise en ordre des scripts du Bac STI",
+   "matiere": "php",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/php/sondage-parcours-pas-a-pas.html",
+   "titre": "sondage.php : le parcours pas à pas",
+   "matiere": "php",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/php/statphpanimee.html",
+   "titre": "🎬 Exécution pas à pas — stats_sondage.php",
+   "matiere": "php",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/php/trace-fetch-php.html",
+   "titre": "Visualiseur Pas-à-Pas : Boucle while & mysqli_fetch_assoc / fetch_row / fetch_array",
+   "matiere": "php",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/resume-fonctions-standards.html",
+   "titre": "Résumé Fonctions Standards — STI Quiz",
+   "matiere": "",
+   "correction": false,
+   "video": true
+  },
+  {
+   "chemin": "exercices/series-exercices.html",
+   "titre": "Séries et exercices — STI Quiz",
+   "matiere": "",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/sql/CommentConstruireunerequêteSQL.html",
+   "titre": "Construire une requête SQL",
+   "matiere": "sql",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/sql/Tp-BD-Jointure-sous-requetes-Group-By.html",
+   "titre": "Série BD : Jointure - sous-requêtes - Group By (Lycée Rafèha)",
+   "matiere": "sql",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/sql/Tp-GroupBy-bd.html",
+   "titre": "TP : LMD (Group By) - Lycée Rafeha",
+   "matiere": "sql",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/sql/Tp-date-ssr-j-gp-bd.html",
+   "titre": "Série BD : Date - Jointure - Sous-requêtes - Group By (Gesthotel)",
+   "matiere": "sql",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/sql/Tp-date-ssr-j-gp-correction-bd.html",
+   "titre": "Corrigé : Série 5 BD - Date, Jointure, Sous-requêtes, Group By (Gesthotel)",
+   "matiere": "sql",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/sql/Tp1-Correction-bd.html",
+   "titre": "Corrigé : Série 1 BD - Requêtes LDD simples (Hôpital & Location)",
+   "matiere": "sql",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/sql/Tp1-bd.html",
+   "titre": "Série d'Exercices - LDD (Lycée Rafeha)",
+   "matiere": "sql",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/sql/Tp2-Correction-bd.html",
+   "titre": "Corrigé : Série 2 BD - LMD Jointures et sous-requêtes",
+   "matiere": "sql",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/sql/Tp2-bd.html",
+   "titre": "Série de Révision : BD - SQL - LMD (Lycée Rafèha)",
+   "matiere": "sql",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/sql/Tp3-Correction-bd.html",
+   "titre": "Corrigé : Série 3 BD - LMD (Group By) (bdtp5, Employés & Notes)",
+   "matiere": "sql",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/sql/Tp4-correction-bd.html",
+   "titre": "Corrigé : Série 4 BD - Jointures, Sous-requêtes et Group By (Lycée Rafèha)",
+   "matiere": "sql",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/sql/atelier_sql_3_fenetres.html",
+   "titre": "Atelier SQL — Question, SGBD, Résultat",
+   "matiere": "sql",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/sql/sql-correction.html",
+   "titre": "Corrigé : Série 6 BD - Récap LDD + LMD (Base ÉTUDIANT)",
+   "matiere": "sql",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/sql/sql.html",
+   "titre": "Série 6 : Récap LDD + LMD (Base ÉTUDIANT) - Lycée Rafeha",
+   "matiere": "sql",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/systemes/atelier-1-systemes-exploitation.html",
+   "titre": "Atelier 1 — Les systèmes d’exploitation · Exercices 3ᵉ SI",
+   "matiere": "systemes",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/systemes/atelier-2-reseaux.html",
+   "titre": "Atelier 2 — Les réseaux informatiques · Exercices 3ᵉ SI",
+   "matiere": "systemes",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/systemes/atelier-3-machine-virtuelle.html",
+   "titre": "Atelier 3 — La machine virtuelle · Exercices 3ᵉ SI",
+   "matiere": "systemes",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/systemes/atelier-4-objets-connectes.html",
+   "titre": "Atelier 4 — Les objets connectés · Exercices 3ᵉ SI",
+   "matiere": "systemes",
+   "correction": true,
+   "video": true
+  },
+  {
+   "chemin": "exercices/systemes/index.html",
+   "titre": "Exercices — Systèmes, technologies et Internet · STI V2.0",
+   "matiere": "systemes",
+   "correction": true,
+   "video": true
+  }
+ ]
+}

@@ -97,7 +97,7 @@ test('v610 — une page HTML en cache se rafraîchit en arrière-plan', () => {
 test('v610 — publication : version, cache-buster et révisions', () => {
   assert.match(sw, /var VERSION_PUBLIEE = "v(?:6(?:1[1-9]|[2-9]\d)|[7-9]\d\d)";/);
   assert.match(sw, /v610-maj-visible-20261101/);
-  assert.match(adminHtml, /assets\/js\/admin\.js\?v=613-perf/);
-  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "videos-supabase-v613" }'));
-  assert.ok(sw.includes('{ url: "./admin.html", revision: "videos-supabase-v613" }'));
+  assert.match(adminHtml, /assets\/js\/admin\.js\?v=614-perf/);
+  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "guide-exercice-v614" }'));
+  assert.ok(sw.includes('{ url: "./admin.html", revision: "guide-exercice-v614" }'));
 });

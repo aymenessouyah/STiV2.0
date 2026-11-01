@@ -7018,6 +7018,277 @@
   window.__stiRecompterMediasAdmin = recompterMediasEleves;
   window.__stiMediasRecomptesAdmin = mediasRecomptesAdmin;
 
+  /* ══════════════════════════════════════════════════════════════════════════
+     📘 v614 — GUIDE EXERCICE
+
+     Demande du professeur : « créer une partie du tableau de bord nommée
+     guide exercice : l'admin peut choisir d'afficher ou non les corrections
+     ainsi les vidéos de chaque exercice. »
+
+     Le réglage est écrit dans `app_config_public` (id = "guide_exercice"),
+     table déjà utilisée par le bandeau de news : lecture PUBLIQUE, sans compte.
+     C'est ce qui permet à un élève non connecté de voir le même choix que les
+     autres, sur n'importe quel appareil.
+
+     Format enregistré :
+       { corrections: bool,      → défaut pour tous les exercices
+         videos: bool,
+         parExercice: { "<chemin>": { corrections?: bool, videos?: bool } },
+         maj: ISO }
+     Ce que la page applique est décrit dans assets/js/guide-exercice.js.
+     ══════════════════════════════════════════════════════════════════════════ */
+  var GUIDE_ID_CONFIG = "guide_exercice";
+  var guideCatalogue = null;      /* liste des exercices (JSON du dépôt) */
+  var guideReglage = null;        /* réglage courant, édité dans la page */
+  var guideChargeLe = 0;
+
+  function guideEtat(texte, couleur) {
+    var el = document.getElementById("guide-etat");
+    if (!el) return;
+    el.textContent = texte || "";
+    el.style.color = couleur || "var(--adm-muted)";
+  }
+
+  function guideResume(texte) {
+    var el = document.getElementById("guide-resume");
+    if (el) el.textContent = texte || "";
+  }
+
+  /* Catalogue : fichier généré depuis le dépôt (titres, corrections et vidéos
+     détectées). Si le fichier manque, on liste au moins les chemins connus. */
+  function chargerCatalogueGuide() {
+    if (guideCatalogue) return Promise.resolve(guideCatalogue);
+    return fetch(cfg.RACINE + "assets/guide-exercice-catalogue.json", { cache: "no-cache" })
+      .then(function (r) { return r && r.ok ? r.json() : null; })
+      .then(function (j) {
+        guideCatalogue = (j && Array.isArray(j.pages)) ? j.pages : [];
+        return guideCatalogue;
+      })
+      .catch(function () { guideCatalogue = []; return guideCatalogue; });
+  }
+
+  function reglageGuidePropre(brut) {
+    var o = brut && typeof brut === "object" ? brut : {};
+    var parExercice = {};
+    if (o.parExercice && typeof o.parExercice === "object" && !Array.isArray(o.parExercice)) {
+      Object.keys(o.parExercice).forEach(function (k) {
+        var v = o.parExercice[k];
+        if (!v || typeof v !== "object") return;
+        var p = {};
+        if (typeof v.corrections === "boolean") p.corrections = v.corrections;
+        if (typeof v.videos === "boolean") p.videos = v.videos;
+        if (Object.keys(p).length) parExercice[k] = p;
+      });
+    }
+    return {
+      corrections: typeof o.corrections === "boolean" ? o.corrections : true,
+      videos: typeof o.videos === "boolean" ? o.videos : true,
+      parExercice: parExercice,
+      maj: typeof o.maj === "string" ? o.maj : ""
+    };
+  }
+
+  /* Réglage EFFECTIF d'un exercice (exception sinon défaut) — même règle que
+     assets/js/guide-exercice.js, pour que l'aperçu du tableau de bord dise
+     exactement ce que verra l'élève. */
+  function guideEffectifPour(chemin) {
+    var c = reglageGuidePropre(guideReglage);
+    var ex = c.parExercice[chemin] || null;
+    return {
+      corrections: ex && typeof ex.corrections === "boolean" ? ex.corrections : c.corrections,
+      videos: ex && typeof ex.videos === "boolean" ? ex.videos : c.videos,
+      exception: Boolean(ex)
+    };
+  }
+
+  function lireReglageGuide() {
+    guideEtat("⏳ Lecture du réglage…");
+    return sb.from("app_config_public").select("value,updated_at").eq("id", GUIDE_ID_CONFIG).maybeSingle()
+      .then(function (r) {
+        if (r && r.error) throw r.error;
+        guideReglage = reglageGuidePropre(r && r.data ? r.data.value : null);
+        guideChargeLe = Date.now();
+        return guideReglage;
+      })
+      .catch(function (e) {
+        guideReglage = reglageGuidePropre(null);
+        guideEtat("⚠️ Lecture impossible (" + ((e && e.message) || "droits ou connexion") + ") — réglage par défaut affiché.", "#b91c1c");
+        return guideReglage;
+      });
+  }
+
+  /* Une case = un exercice, avec ses deux interrupteurs et son état effectif. */
+  function rendreGuideListe() {
+    var cont = document.getElementById("guide-liste");
+    if (!cont) return;
+    var filtre = String((document.getElementById("guide-filtre") || {}).value || "").trim().toLowerCase();
+    var matiere = String((document.getElementById("guide-filtre-matiere") || {}).value || "*");
+    var pages = (guideCatalogue || []).filter(function (p) {
+      if (matiere !== "*" && p.matiere !== matiere) return false;
+      if (!filtre) return true;
+      return (String(p.titre || "") + " " + String(p.chemin || "") + " " + String(p.matiere || ""))
+        .toLowerCase().indexOf(filtre) !== -1;
+    });
+    cont.innerHTML = "";
+    if (!pages.length) {
+      cont.innerHTML = "<p style='margin:10px;font-weight:800;color:#7a6f5d'>Aucun exercice ne correspond au filtre.</p>";
+      guideResume("0 exercice affiché.");
+      return;
+    }
+    var frag = document.createDocumentFragment();
+    var nbCorrMasquees = 0, nbVidMasquees = 0, nbExceptions = 0;
+    pages.forEach(function (p) {
+      var eff = guideEffectifPour(p.chemin);
+      if (!eff.corrections) nbCorrMasquees += 1;
+      if (!eff.videos) nbVidMasquees += 1;
+      if (eff.exception) nbExceptions += 1;
+      var ligne = document.createElement("div");
+      ligne.className = "dash-row";
+      ligne.style.cssText = "display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;" +
+        "padding:8px 12px;border-radius:10px;background:#fffdf7;border:1.5px solid #d8d0bd";
+      var titre = document.createElement("div");
+      titre.style.cssText = "flex:1;min-width:220px";
+      var b = document.createElement("strong");
+      b.textContent = p.titre || p.chemin;
+      var petit = document.createElement("div");
+      petit.style.cssText = "font-size:11.5px;color:#7a6f5d;font-weight:700";
+      petit.textContent = (p.matiere ? p.matiere.toUpperCase() + " · " : "") + p.chemin +
+        (p.correction ? " · corrigé" : "") + (p.video ? " · vidéo" : "");
+      titre.append(b, petit);
+
+      var cases = document.createElement("div");
+      cases.style.cssText = "display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-weight:800;font-size:12.5px";
+      [["corrections", "Corrections"], ["videos", "Vidéos"]].forEach(function (paire) {
+        var cle = paire[0];
+        var lab = document.createElement("label");
+        lab.style.cssText = "display:inline-flex;align-items:center;gap:6px;cursor:pointer";
+        var cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = Boolean(eff[cle]);
+        cb.setAttribute("data-guide-exercice", p.chemin);
+        cb.setAttribute("data-guide-reglage", cle);
+        cb.addEventListener("change", function () {
+          var r = reglageGuidePropre(guideReglage);
+          var ex = r.parExercice[p.chemin] || {};
+          ex[cle] = cb.checked;
+          r.parExercice[p.chemin] = ex;
+          /* Une exception identique au défaut ne sert à rien : on la retire. */
+          if (ex.corrections === r.corrections && ex.videos === r.videos) delete r.parExercice[p.chemin];
+          else if (typeof ex.corrections === "boolean" && ex.corrections !== r.corrections &&
+                   typeof ex.videos === "boolean" && ex.videos === r.videos) delete ex.videos;
+          else if (typeof ex.videos === "boolean" && ex.videos !== r.videos &&
+                   typeof ex.corrections === "boolean" && ex.corrections === r.corrections) delete ex.corrections;
+          guideReglage = r;
+          majGuideResume();
+        });
+        lab.append(cb, document.createTextNode(" " + paire[1]));
+        cases.appendChild(lab);
+      });
+      ligne.append(titre, cases);
+      frag.appendChild(ligne);
+    });
+    cont.appendChild(frag);
+    guideResume(pages.length + " exercice(s) affiché(s) · " + nbCorrMasquees + " sans correction · " +
+      nbVidMasquees + " sans vidéo · " + nbExceptions + " réglage(s) particulier(s).");
+  }
+
+  function majGuideResume() {
+    var c = reglageGuidePropre(guideReglage);
+    var nb = Object.keys(c.parExercice).length;
+    guideEtat("Défaut : corrections " + (c.corrections ? "visibles" : "masquées") +
+      ", vidéos " + (c.videos ? "visibles" : "masquées") +
+      (nb ? " · " + nb + " exception(s)" : "") +
+      (guideChargeLe ? "" : " · non enregistré"), "#0f766e");
+  }
+
+  function enregistrerReglageGuide() {
+    var c = reglageGuidePropre(guideReglage);
+    c.maj = new Date().toISOString();
+    guideEtat("⏳ Enregistrement…");
+    return sb.from("app_config_public").upsert({
+      id: GUIDE_ID_CONFIG,
+      value: c,
+      updated_at: c.maj
+    }).then(function (r) {
+      if (r && r.error) throw r.error;
+      guideReglage = c;
+      guideChargeLe = Date.now();
+      guideEtat("✅ Enregistré et publié à " + new Date().toLocaleTimeString("fr-FR") + ".", "#16a34a");
+      msg("📘 Guide exercice : réglage publié pour tous les élèves.", "ok");
+      return c;
+    }).catch(function (e) {
+      guideEtat("❌ Enregistrement refusé : " + ((e && e.message) || "droits ?"), "#b91c1c");
+      msg("📘 Guide exercice : enregistrement impossible — " + ((e && e.message) || "droits ?"), "err");
+      return null;
+    });
+  }
+
+  function monterGuideExercice() {
+    var section = document.getElementById("bloc-sec-guide-exercice");
+    if (!section || section.getAttribute("data-guide-monte") === "1") return;
+    section.setAttribute("data-guide-monte", "1");
+    var cbDefCorr = document.getElementById("guide-defaut-corrections");
+    var cbDefVid = document.getElementById("guide-defaut-videos");
+    var selMatiere = document.getElementById("guide-filtre-matiere");
+    var champFiltre = document.getElementById("guide-filtre");
+
+    function recalquerDefauts() {
+      var c = reglageGuidePropre(guideReglage);
+      if (cbDefCorr) cbDefCorr.checked = c.corrections;
+      if (cbDefVid) cbDefVid.checked = c.videos;
+    }
+
+    if (cbDefCorr) cbDefCorr.addEventListener("change", function () {
+      var c = reglageGuidePropre(guideReglage);
+      c.corrections = cbDefCorr.checked;
+      guideReglage = c; rendreGuideListe(); majGuideResume();
+    });
+    if (cbDefVid) cbDefVid.addEventListener("change", function () {
+      var c = reglageGuidePropre(guideReglage);
+      c.videos = cbDefVid.checked;
+      guideReglage = c; rendreGuideListe(); majGuideResume();
+    });
+    if (champFiltre) champFiltre.addEventListener("input", rendreGuideListe);
+    if (selMatiere) selMatiere.addEventListener("change", rendreGuideListe);
+
+    var bAfficher = document.getElementById("guide-tout-afficher");
+    if (bAfficher) bAfficher.addEventListener("click", function () {
+      guideReglage = { corrections: true, videos: true, parExercice: {}, maj: "" };
+      recalquerDefauts(); rendreGuideListe(); majGuideResume();
+      guideEtat("Tout est visible — pensez à enregistrer.", "#b45309");
+    });
+    var bMasquer = document.getElementById("guide-tout-masquer");
+    if (bMasquer) bMasquer.addEventListener("click", function () {
+      guideReglage = { corrections: false, videos: false, parExercice: {}, maj: "" };
+      recalquerDefauts(); rendreGuideListe(); majGuideResume();
+      guideEtat("Tout est masqué — pensez à enregistrer.", "#b45309");
+    });
+    var bEnr = document.getElementById("guide-enregistrer");
+    if (bEnr) bEnr.addEventListener("click", function () {
+      bEnr.disabled = true;
+      enregistrerReglageGuide().then(function () { bEnr.disabled = false; },
+        function () { bEnr.disabled = false; });
+    });
+
+    Promise.all([chargerCatalogueGuide(), lireReglageGuide()]).then(function () {
+      if (selMatiere) {
+        var vues = {};
+        (guideCatalogue || []).forEach(function (p) { if (p.matiere) vues[p.matiere] = true; });
+        Object.keys(vues).sort().forEach(function (m) {
+          var o = document.createElement("option");
+          o.value = m; o.textContent = m.toUpperCase();
+          selMatiere.appendChild(o);
+        });
+      }
+      recalquerDefauts();
+      rendreGuideListe();
+      majGuideResume();
+      if (guideChargeLe) guideEtat("Réglage lu dans la base.", "#0f766e");
+    });
+  }
+  window.__stiMonterGuideExercice = monterGuideExercice;
+  window.__stiGuideEffectifPour = guideEffectifPour;
+
   function rendAbonnes() {
     /* v612 : les compteurs vérifiés directement en base survivent aux rendus
        (chaque rechargement du journal les recalculerait à zéro). */
