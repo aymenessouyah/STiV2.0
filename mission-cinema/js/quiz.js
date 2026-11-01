@@ -118,6 +118,10 @@ window.QuizController = (function () {
           btn.textContent = "Valider ma réponse";
         }
       };
+      if (saved && saved.declared) {
+        cb.checked = true;
+        btn.textContent = "Valider comme équivalente";
+      }
       ligne.appendChild(chk);
       wrap.appendChild(ligne);
     }
