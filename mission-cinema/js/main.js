@@ -38,10 +38,22 @@ window.AppController = (function () {
   var btnPleinEcran = document.getElementById("btn-plein-ecran");
   var btnSousTitres = document.getElementById("btn-sous-titres");
   var btnSon = document.getElementById("btn-son");
+  var videoPlaceholder = document.getElementById("video-placeholder");
 
   // État UI
   var updateUITimer = null;
   var detectedError = false;
+
+  function afficherPlaceholder(montrer) {
+    if (!videoPlaceholder) return;
+    if (montrer) {
+      videoPlaceholder.classList.remove("cacher");
+      videoEl.style.display = "none";
+    } else {
+      videoPlaceholder.classList.add("cacher");
+      videoEl.style.display = "block";
+    }
+  }
 
   function init() {
     // Sauvegarde existante ?
@@ -73,7 +85,16 @@ window.AppController = (function () {
     inputNom.addEventListener("keydown", function (e) { if (e.key === "Enter") btnStart.click(); });
 
     // Contrôles vidéo
-    btnPlay.addEventListener("click", function () { video.play(); });
+    btnPlay.addEventListener("click", function () {
+      video.forcePlay().catch(function () {
+        // Si la vidéo ne peut pas jouer, basculer en mode simulation
+        if (video.isFailed()) {
+          document.getElementById("video-erreur")?.classList.remove("cacher");
+          videoEl.style.display = "none";
+          startSimulationClock();
+        }
+      });
+    });
     btnPause.addEventListener("click", function () { video.pause(); });
     btnVitesse.addEventListener("change", function () { video.setSpeed(btnVitesse.value); });
     btnPleinEcran.addEventListener("click", function () { video.toggleFullscreen(); });
@@ -140,7 +161,7 @@ window.AppController = (function () {
                             "<button class='btn' onclick='AppController.modeSansVideo()'>Poursuivre sans la vidéo</button>";
           alert.classList.remove("cacher");
         }
-        videoEl.style.display = "none";
+        afficherPlaceholder(true);
         // Mode simulation : horloge qui fait défiler le timeline de la mission
         startSimulationClock();
       }
@@ -151,6 +172,7 @@ window.AppController = (function () {
 
   var modeSansVideo = function () {
     document.getElementById("video-erreur")?.classList.add("cacher");
+    afficherPlaceholder(true);
     startSimulationClock();
   };
 
@@ -171,7 +193,18 @@ window.AppController = (function () {
       var next = video.nextUnansweredTime();
       if (next != null) video.seekToSeconds(Math.max(0, next - 1));
     }
-    video.play();
+    video.forcePlay().catch(function () {
+      // Si la vidéo ne peut pas jouer, afficher l'alerte et basculer en mode simulation
+      var alert = document.getElementById("video-erreur");
+      if (alert) {
+        alert.innerHTML = "Le fichier vidéo n'a pas pu être chargé.<br>" +
+          "L'activité reste accessible : cliquez sur une question dans la barre latérale pour y répondre.<br>" +
+          "<button class='btn' onclick='AppController.modeSansVideo()'>Poursuivre sans la vidéo</button>";
+        alert.classList.remove("cacher");
+      }
+      afficherPlaceholder(true);
+      startSimulationClock();
+    });
   }
 
   function startSimulationClock() {
@@ -271,8 +304,10 @@ window.AppController = (function () {
           zoneInteraction.classList.remove("cacher");
           zoneInteraction.innerHTML = "<div class='q-card'><div class='q-meta'><span class='q-num'>Question " + q.num + " (relecture)</span><span class='q-type'>" + quiz.typeLabel(q.type) + "</span></div></div>";
           quiz.showCorrection(q, a.correct, a.declared ? "Validation déclarative (autre écriture)." : (a.correct ? "Correcte." : "Incorrecte."));
-        } else {
-          video.seekToSeconds(q.time);
+        } else if (!quiz.isComplete()) {
+          // Déclencher la question manuellement (utile si la vidéo ne lit pas)
+          video.pause();
+          afficherQuestion(q);
         }
       };
       listeQuestions.appendChild(li);

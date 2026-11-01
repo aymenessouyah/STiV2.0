@@ -18,6 +18,7 @@ window.VideoController = (function () {
   var pausedForQuestion = false;                      // en pause pour une question
   var questionLocked = false;                         // une question est en cours de traitement
   var answeredIds = new Set();                        // questions déjà traitées
+  var videoFailed = false;                            // vrai si le fichier MP4 ne charge pas
 
   // Callbacks
   var onQuestionTrigger = null;   // function(question)
@@ -46,7 +47,13 @@ window.VideoController = (function () {
       if (onEnded) onEnded();
     });
     video.addEventListener("error", function () {
+      videoFailed = true;
       if (onError) onError(video.error);
+    });
+
+    video.addEventListener("loadedmetadata", function () {
+      if (videoFailed) return;
+      // La vidéo est prête : on peut démarrer
     });
 
     // Synchronisation : currentTime + détection des boucles de la vidéo démo
@@ -121,6 +128,18 @@ window.VideoController = (function () {
   function setSpeed(rate) {
     if (video) video.playbackRate = parseFloat(rate) || 1;
   }
+
+  function forcePlay() {
+    if (videoFailed) return Promise.reject(new Error("vidéo indisponible"));
+    if (!video) return Promise.reject(new Error("vidéo non initialisée"));
+    pausedForQuestion = false;
+    return video.play().catch(function (err) {
+      console.warn("Lecture vidéo bloquée :", err);
+      throw err;
+    });
+  }
+
+  function isFailed() { return videoFailed; }
 
   function toggleFullscreen() {
     if (!video) return;
@@ -200,12 +219,14 @@ window.VideoController = (function () {
   return {
     init: init,
     play: play,
+    forcePlay: forcePlay,
     pause: pause,
     resume: resume,
     seekToSeconds: seekToSeconds,
     setSpeed: setSpeed,
     toggleFullscreen: toggleFullscreen,
     formatTime: formatTime,
+    isFailed: isFailed,
     allQuestions: allQuestionsSorted,
     nextQuestionAt: nextQuestionAt,
     nextUnansweredTime: nextUnansweredTime,
