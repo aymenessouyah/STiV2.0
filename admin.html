@@ -2025,14 +2025,14 @@
         <div class="sous">Pilotage pédagogique, suivi temps réel des classes et administration sécurisée</div>
       </div>
     </div>
-    <div class="barre-util">
+    <div class="barre-util" id="barre-outils-plus-v608">
       <!-- 1. Accès directs prioritaires — lisibles sur PC et directement accessibles en mode mobile (dont 🔑 Mot de passe injecté après Sécurité) -->
       <a class="btn-util" id="btn-accueil-site" href="index.html" title="Retourner à l'accueil du site STI"><span class="btn-util-glyph" aria-hidden="true">🏠</span> <span class="lbl-pc">Accueil au site</span><span class="lbl-mob">Accueil au site</span></a>
       <button class="btn-util" id="btn-messenger-top" type="button" title="Ouvrir la messagerie directe Messenger STI avec les candidats"><span class="btn-util-glyph" aria-hidden="true">💬</span> <span class="lbl-pc">Messenger</span><span class="lbl-mob">Chat</span> <span id="badge-msn-top" style="display:none;background:#0d9488;color:#fff;font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:999px;margin-left:3px">0</span></button>
       <button class="btn-util mob-extra" id="btn-securite-top" type="button" title="Centre de Sécurité : Mode Examen / Verrouillage, Sessions Supabase, Éjection F12 &amp; Journal d'alertes"><span class="btn-util-glyph" aria-hidden="true">🛡️</span> <span class="lbl-pc">Sécurité</span><span class="lbl-mob">Sécu</span> <span id="badge-sec-top" style="display:none;background:#dc2626;color:#fff;font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:999px;margin-left:3px">0</span></button>
       <button class="btn-util mob-extra" id="btn-palette-admin" type="button" title="Changer d'univers chromatique : Pin &amp; Or · Synthwave · Pop Studio · Spotify">🌲 <span class="lbl-pc">Pin &amp; Or</span><span class="lbl-mob">Univers</span></button>
       <button class="btn-util mob-extra" id="btn-bascule-theme" type="button" title="Basculer entre le mode Clair et le mode Sombre du tableau de bord — choix memorise">🎨 Mode : Clair</button>
-      <button class="btn-util mob-extra" id="btn-toggle-sys-bar" type="button" title="Afficher ou masquer les outils complémentaires (Question Flash, Appel, Mains levées, Palmarès, News, Carte visite, Docteur STI, PIN, README, Alertes)"><span class="btn-util-glyph" aria-hidden="true">⚙</span> <span class="lbl-pc">Système &amp; Plus ▾</span><span class="lbl-mob">Plus ▾</span></button>
+      <button class="btn-util mob-extra" id="btn-toggle-sys-bar" type="button" aria-expanded="false" aria-controls="barre-outils-plus-v608" title="Afficher ou masquer TOUS les boutons placés après celui-ci : Question Flash, Appel, Mains levées, Palmarès, Actualiser, News, Carte visite, Forcer Maj Élèves, PIN, README, Alertes, Sortie, et la pastille « Sauvegarde complète »"><span class="btn-util-glyph" aria-hidden="true">⚙</span> <span class="lbl-pc">Système &amp; Plus ▾</span><span class="lbl-mob">Plus ▾</span></button>
 
       <!-- 2. Outils complémentaires repliables en un clic -->
       <button class="btn-util mob-extra sys-extra-item" id="btn-flash-top" type="button" title="Lancer une Question Flash / Sondage Live en classe"><span class="btn-util-glyph" aria-hidden="true">⚡</span> <span class="lbl-pc">Question Flash</span><span class="lbl-mob">Flash</span></button>
@@ -5009,6 +5009,32 @@
   })();
 </script>
 
+<!-- v608 — « Plus ▾ » commande vraiment TOUS les boutons placés après lui.
+     Sur mobile, la feuille admin-saas.css force « .barre-util .btn-util
+     { display:inline-flex !important } », ce qui écrasait la règle de repli
+     prévue pour les outils complémentaires : ils restaient affichés en
+     permanence, sous un bouton qui annonçait pourtant « Plus ▾ ». On tranche
+     ici, en fin de cascade et avec une spécificité suffisante :
+       • replié  → Flash, Appel, Aide, Top 3, Maj, News, Carte, Maj Élèves,
+                   PIN, README, Alertes, Sortir et la pastille « Sauvegarde
+                   complète » sont masqués ;
+       • ouvert  → ils reviennent tous.
+     Sur PC, les mêmes boutons suivent déjà « Système & Plus ▾ ». -->
+<style id="style-plus-v608">
+  body:not(.sys-bar-ouverte) .barre-util .sys-extra-item,
+  body:not(.sys-bar-ouverte) .barre-util #btn-logout,
+  body:not(.sys-bar-ouverte) #sti-sauv-btn-flottant {
+    display: none !important;
+  }
+  body.sys-bar-ouverte .barre-util .sys-extra-item,
+  body.sys-bar-ouverte .barre-util #btn-logout {
+    display: inline-flex !important;
+  }
+  /* La pastille de sauvegarde garde sa forme quand elle revient. */
+  body.sys-bar-ouverte #sti-sauv-btn-flottant {
+    display: inline-block !important;
+  }
+</style>
 <script src="assets/js/supabase-umd.js" defer></script>
 <script src="assets/js/config.js?v=479" defer></script>
 <script src="assets/js/protection.js?v=474" defer></script>

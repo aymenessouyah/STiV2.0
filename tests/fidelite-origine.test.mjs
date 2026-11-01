@@ -70,7 +70,7 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
     /* v587 : badge « Version V2.0 · v587 · 31/10/2026 11:31 » (date de mise à jour). */
     /* v597 : le guide d'administration annonce 151 pages de couverture (145 + les
        cinq ateliers « Systèmes » + la galerie des projets). */
-    'admin.html': '0c0ded79c49efb8a44e6b80f2d013d7aa714499c08c43523587c100efa0883a4',
+    'admin.html': '838b961c0a7b54408b55a0ca96fea495252af94fcd8d81f1d3afb3b968b0e812',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };
