@@ -210,13 +210,13 @@ test('v613 — le coin « Vues des vidéos » complète les élèves absents de 
 test('v613 — publication : version, cache-busters et révisions', () => {
   /* v614 : la publication avance (« Guide exercice ») ; le coin des vues, lui,
      garde son lot. */
-  assert.match(sw, /var VERSION_PUBLIEE = "v614";/);
-  assert.match(sw, /v614-guide-exercice-20261101/);
-  assert.match(adminHtml, /assets\/js\/admin\.js\?v=614-perf/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v615";/);
+  assert.match(sw, /v615-guide-lisibilite-20261101/);
+  assert.match(adminHtml, /assets\/js\/admin\.js\?v=615-perf/);
   assert.match(adminHtml, /assets\/js\/admin-vues-videos\.js\?v=613-perf/);
-  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "guide-exercice-v614" }'));
+  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "guide-lisibilite-v615" }'));
   assert.ok(sw.includes('{ url: "./assets/js/admin-vues-videos.js", revision: "videos-supabase-v613" }'));
-  assert.ok(sw.includes('{ url: "./admin.html", revision: "guide-exercice-v614" }'));
+  assert.ok(sw.includes('{ url: "./admin.html", revision: "guide-lisibilite-v615" }'));
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);
 });

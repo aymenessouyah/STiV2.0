@@ -7051,7 +7051,11 @@
 
   function guideResume(texte) {
     var el = document.getElementById("guide-resume");
-    if (el) el.textContent = texte || "";
+    if (!el) return;
+    el.textContent = texte || "";
+    /* v615 : le bandeau récapitulatif est un « bandeau-classe », masqué par
+       défaut ; sans cette classe il restait invisible. */
+    el.classList.toggle("visible", Boolean(texte));
   }
 
   /* Catalogue : fichier généré depuis le dépôt (titres, corrections et vidéos
@@ -7112,7 +7116,7 @@
       })
       .catch(function (e) {
         guideReglage = reglageGuidePropre(null);
-        guideEtat("⚠️ Lecture impossible (" + ((e && e.message) || "droits ou connexion") + ") — réglage par défaut affiché.", "#b91c1c");
+        guideEtat("⚠️ Lecture impossible (" + ((e && e.message) || "droits ou connexion") + ") — réglage par défaut affiché.", "var(--adm-red)");
         return guideReglage;
       });
   }
@@ -7131,7 +7135,7 @@
     });
     cont.innerHTML = "";
     if (!pages.length) {
-      cont.innerHTML = "<p style='margin:10px;font-weight:800;color:#7a6f5d'>Aucun exercice ne correspond au filtre.</p>";
+      cont.innerHTML = "<p style='margin:10px;font-weight:800;color:var(--adm-muted)'>Aucun exercice ne correspond au filtre.</p>";
       guideResume("0 exercice affiché.");
       return;
     }
@@ -7144,14 +7148,18 @@
       if (eff.exception) nbExceptions += 1;
       var ligne = document.createElement("div");
       ligne.className = "dash-row";
+      /* v615 : fond, bordure et textes viennent de la palette du tableau de bord
+         (variables CSS) — la liste reste lisible en mode clair comme en mode
+         ardoise, au lieu d'un fond crème figé qui rendait le texte invisible. */
       ligne.style.cssText = "display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;" +
-        "padding:8px 12px;border-radius:10px;background:#fffdf7;border:1.5px solid #d8d0bd";
+        "padding:8px 12px;border-radius:10px;background:var(--adm-surface-2);" +
+        "border:1.5px solid var(--adm-border);color:var(--adm-text)";
       var titre = document.createElement("div");
       titre.style.cssText = "flex:1;min-width:220px";
       var b = document.createElement("strong");
       b.textContent = p.titre || p.chemin;
       var petit = document.createElement("div");
-      petit.style.cssText = "font-size:11.5px;color:#7a6f5d;font-weight:700";
+      petit.style.cssText = "font-size:11.5px;color:var(--adm-muted);font-weight:700";
       petit.textContent = (p.matiere ? p.matiere.toUpperCase() + " · " : "") + p.chemin +
         (p.correction ? " · corrigé" : "") + (p.video ? " · vidéo" : "");
       titre.append(b, petit);
@@ -7198,7 +7206,7 @@
     guideEtat("Défaut : corrections " + (c.corrections ? "visibles" : "masquées") +
       ", vidéos " + (c.videos ? "visibles" : "masquées") +
       (nb ? " · " + nb + " exception(s)" : "") +
-      (guideChargeLe ? "" : " · non enregistré"), "#0f766e");
+      (guideChargeLe ? "" : " · non enregistré"), "var(--adm-green)");
   }
 
   function enregistrerReglageGuide() {
@@ -7213,11 +7221,11 @@
       if (r && r.error) throw r.error;
       guideReglage = c;
       guideChargeLe = Date.now();
-      guideEtat("✅ Enregistré et publié à " + new Date().toLocaleTimeString("fr-FR") + ".", "#16a34a");
+      guideEtat("✅ Enregistré et publié à " + new Date().toLocaleTimeString("fr-FR") + ".", "var(--adm-green)");
       msg("📘 Guide exercice : réglage publié pour tous les élèves.", "ok");
       return c;
     }).catch(function (e) {
-      guideEtat("❌ Enregistrement refusé : " + ((e && e.message) || "droits ?"), "#b91c1c");
+      guideEtat("❌ Enregistrement refusé : " + ((e && e.message) || "droits ?"), "var(--adm-red)");
       msg("📘 Guide exercice : enregistrement impossible — " + ((e && e.message) || "droits ?"), "err");
       return null;
     });
@@ -7255,13 +7263,13 @@
     if (bAfficher) bAfficher.addEventListener("click", function () {
       guideReglage = { corrections: true, videos: true, parExercice: {}, maj: "" };
       recalquerDefauts(); rendreGuideListe(); majGuideResume();
-      guideEtat("Tout est visible — pensez à enregistrer.", "#b45309");
+      guideEtat("Tout est visible — pensez à enregistrer.", "var(--adm-amber)");
     });
     var bMasquer = document.getElementById("guide-tout-masquer");
     if (bMasquer) bMasquer.addEventListener("click", function () {
       guideReglage = { corrections: false, videos: false, parExercice: {}, maj: "" };
       recalquerDefauts(); rendreGuideListe(); majGuideResume();
-      guideEtat("Tout est masqué — pensez à enregistrer.", "#b45309");
+      guideEtat("Tout est masqué — pensez à enregistrer.", "var(--adm-amber)");
     });
     var bEnr = document.getElementById("guide-enregistrer");
     if (bEnr) bEnr.addEventListener("click", function () {
@@ -7283,7 +7291,7 @@
       recalquerDefauts();
       rendreGuideListe();
       majGuideResume();
-      if (guideChargeLe) guideEtat("Réglage lu dans la base.", "#0f766e");
+      if (guideChargeLe) guideEtat("Réglage lu dans la base.", "var(--adm-green)");
     });
   }
   window.__stiMonterGuideExercice = monterGuideExercice;

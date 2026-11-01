@@ -85,5 +85,5 @@ test('v606 — publication : service worker et révisions à jour', () => {
   assert.match(sw, /var PUBLIEE_LE = "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z";/);
   assert.match(sw, /v606-export-trouvable-20261101/);
   assert.match(sw, /\{ url: "\.\/assets\/js\/sauvegarde\.js", revision: "sauvegarde-barre-v609" \}/);
-  assert.match(sw, /\{ url: "\.\/admin\.html", revision: "guide-exercice-v614" \}/);
+  assert.match(sw, /\{ url: "\.\/admin\.html", revision: "guide-lisibilite-v615" \}/);
 });
