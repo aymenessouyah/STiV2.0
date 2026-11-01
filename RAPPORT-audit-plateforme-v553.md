@@ -36,9 +36,9 @@
 | Fluidité | Les 12 animations du thème restent sur transform/opacity | ✅ ok |  |
 | Fluidité | Les 19 écouteurs de défilement sont passifs | ✅ ok |  |
 | Fluidité | prefers-reduced-motion respecté dans le thème et dans la grille des capsules | ✅ ok |  |
-| Rapidité | 51 page(s) dépassent 1,5 Mo de code | ℹ️ mineur | Positionnement-animee/index.html — 1656 Ko<br>admin.html — 2029 Ko<br>bac-pratique.html — 1624 Ko<br>cours/PHP-recap.html — 1628 Ko<br>cours/Recap-JavaScript-STI.html — 1693 Ko<br>cours/annexe-fleuriste-html5.html — 1672 Ko<br>cours/courscss3.html — 1757 Ko<br>cours/courshtml5.html — 2107 Ko<br>cours/coursphp.html — 1663 Ko<br>cours/css3.html — 2183 Ko<br>cours/fiche-revision-html5.html — 1729 Ko<br>cours/html5.html — 2154 Ko |
+| Rapidité | 51 page(s) dépassent 1,5 Mo de code | ℹ️ mineur | Positionnement-animee/index.html — 1656 Ko<br>admin.html — 2045 Ko<br>bac-pratique.html — 1624 Ko<br>cours/PHP-recap.html — 1628 Ko<br>cours/Recap-JavaScript-STI.html — 1693 Ko<br>cours/annexe-fleuriste-html5.html — 1672 Ko<br>cours/courscss3.html — 1757 Ko<br>cours/courshtml5.html — 2107 Ko<br>cours/coursphp.html — 1663 Ko<br>cours/css3.html — 2183 Ko<br>cours/fiche-revision-html5.html — 1729 Ko<br>cours/html5.html — 2154 Ko |
 | Rapidité | 8 script(s) bloquant(s) dans l’en-tête (petits fichiers, ordre imposé) | ℹ️ mineur | dashboard.html → assets/js/config.js?v=479<br>index.html → assets/js/config.js?v=479<br>quiz/pp.html → ../assets/js/retour-quiz.js<br>quiz/systemes-internet.html → ../assets/js/quiz-systemes-boot.js?v=580<br>quiz/tableaux.html → ../assets/js/quiz-tableaux-boot.js?v=456<br>revision-erreurs.html → assets/js/config.js?v=476<br>revision-erreurs.html → assets/js/supabase-umd.js<br>revision-erreurs.html → assets/js/quiz-sync.js?v=460 |
-| Rapidité | Service worker prêt : 773 fichiers décrits hors-ligne (v582-sti-atelier-v386) | ✅ ok |  |
+| Rapidité | Service worker prêt : 775 fichiers décrits hors-ligne (v582-sti-atelier-v386) | ✅ ok |  |
 | Rapidité | Chargement différé des images : 125/209 (60 %) | ✅ ok |  |
 | Sécurité | RLS active sur les 10 tables créées par les migrations | ✅ ok |  |
 | Sécurité | Aucune clé de service (service_role) dans les pages ni les scripts | ✅ ok |  |
@@ -48,7 +48,7 @@
 | Sécurité | admin.js vérifie la session et l’adresse de l’administrateur avant d’afficher quoi que ce soit | ✅ ok |  |
 | Sécurité | Seule la clé publique (sb_publishable_) est exposée côté client | ✅ ok |  |
 | Accessibilité | Page(s) sans h1 (15) | ℹ️ mineur | Positionnement-animee/index.html, cssanimee/index.html, exercices/html-css/activite-html-css/Act1/page1.html, exercices/html-css/emploi-temps/emploidutemps.html, exercices/html-css/tp-transitions-animations/exercice2.html, exercices/php/debogage-php-bac.html, exercices/php/trace-fetch-php.html, exercices/sql/atelier_sql_3_fenetres.html, projets/carte-bancaire/cb.html, projets/fleurs/index.html, projets/fleurs/inscription.html, projets/sti0/Sondage.html, projets/sti0/Statistiques.html, projets/sti0/sondage.html, projets/sti0/statistiques.html |
-| Accessibilité | Champ(s) sans étiquette (back-office et formulaires de démonstration) (29) | ℹ️ mineur | admin.html (74), cours/PHP-recap.html (25), cours/courscss3.html (38), cours/courshtml5.html (1), cours/css3.html (47), cours/datalist.html (4), cours/html5.html (14), cours/javascript.html (27), cours/php-recap.html (25), cours/php.html (37), cours/sql-contraintes.html (9), cours/sql.html (58), exercices/html-css/tp-formulaire-tableau-autre/index.html (2), exercices/javascript/TP Train/Enonce_TP_TrainTN_JavaScript.html (8), exercices/javascript/TP Train/Ressource_eleve_TrainTN.html (8) |
+| Accessibilité | Champ(s) sans étiquette (back-office et formulaires de démonstration) (29) | ℹ️ mineur | admin.html (77), cours/PHP-recap.html (25), cours/courscss3.html (38), cours/courshtml5.html (1), cours/css3.html (47), cours/datalist.html (4), cours/html5.html (14), cours/javascript.html (27), cours/php-recap.html (25), cours/php.html (37), cours/sql-contraintes.html (9), cours/sql.html (58), exercices/html-css/tp-formulaire-tableau-autre/index.html (2), exercices/javascript/TP Train/Enonce_TP_TrainTN_JavaScript.html (8), exercices/javascript/TP Train/Ressource_eleve_TrainTN.html (8) |
 | Accessibilité | Page(s) sans lien d’évitement (118) | ℹ️ mineur | 404.html, admin.html, bac-pratique.html, carte-visite.html, cours/PHP-recap.html, cours/Recap-JavaScript-STI.html, cours/annexe-fleuriste-html5.html, cours/courscss3.html, cours/courshtml5.html, cours/coursphp.html, cours/datalist.html, cours/fiche-revision-html5.html, cours/php-recap.html, cours/sql-bases-ldd-lmd-lcd.html, cours/sql-contraintes.html |
 
 ## Chiffres relevés
@@ -69,7 +69,7 @@
 - **keyframesDisposition** : 0
 - **ecouteursDefilement** : 19
 - **pagesLourdes** : 51
-- **offline** : 773
+- **offline** : 775
 - **images** : imgTotal = 209 · lazyTotal = 125
 - **csp** : 88
 

@@ -55,7 +55,7 @@
       "613-perf"
     ],
     "assets/js/admin.js": [
-      "613-perf"
+      "614-perf"
     ],
     "assets/js/analytique.js": [
       "469"
@@ -77,6 +77,9 @@
     ],
     "assets/js/graphiques-activite.js": [
       "469"
+    ],
+    "assets/js/guide-exercice.js": [
+      "614"
     ],
     "assets/js/mobile-nav.js": [
       "604"
