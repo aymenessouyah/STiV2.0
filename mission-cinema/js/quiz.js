@@ -318,7 +318,7 @@ window.QuizController = (function () {
   function hideCorrection() {
     var container = document.getElementById("zone-interaction");
     if (container) container.innerHTML = "";
-    document.getElementById("overlay-question")?.classList.add("cacher");
+    document.getElementById("panneau-question")?.classList.add("cacher");
     document.getElementById("zone-interaction")?.classList.add("cacher");
   }
 

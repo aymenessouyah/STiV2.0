@@ -208,23 +208,42 @@ aside.panneau ul#liste-questions {
   background: #0b1120; color: var(--blanc); font-size: 0.85rem;
 }
 
-/* ---------- fenêtre interactive ---------- */
-.overlay {
-  position: fixed; inset: 0; z-index: 50;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(15, 23, 42, 0.75);
+/* ---------- zone principale : vidéo + question à droite ---------- */
+.mission-principale {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  width: 100%;
 }
-.overlay-fond {
-  position: absolute; inset: 0; background: #000; opacity: 0.55; backdrop-filter: blur(4px);
+.video-wrap {
+  flex: 1 1 0;
+  min-width: 0;
+  position: relative; background: #000; border-radius: var(--rayon); overflow: hidden; box-shadow: var(--ombre);
 }
-.overlay-panel {
-  position: relative; z-index: 55;
-  width: min(700px, 92vw);
-  max-height: 92vh; overflow-y: auto;
+.video-wrap video { width: 100%; height: auto; display: block; background: #000; }
+
+/* Panneau de question à droite de la vidéo */
+.panneau-question {
+  flex: 0 0 420px;
+  width: 420px;
+  max-height: 88vh;
+  overflow-y: auto;
   background: var(--blanc); color: var(--noir);
   border-radius: var(--rayon); box-shadow: var(--ombre);
-  animation: apparir var(--trans);
+  border: 1px solid rgba(255,255,255,0.08);
+  display: flex; flex-direction: column;
 }
+.panneau-question.cacher { display: none !important; }
+#zone-interaction { padding: 22px; flex: 1; overflow-y: auto; }
+
+@media (max-width: 900px) {
+  .mission-principale { flex-direction: column; }
+  .panneau-question { flex: 1 1 auto; width: 100%; max-height: 45vh; }
+  .video-wrap { min-height: 300px; }
+}
+
+/* ---------- ancienne fenêtre interactive (supprimée) ---------- */
+.overlay, .overlay-fond, .overlay-panel { display: none !important; }
 
 @keyframes apparir {
   from { opacity: 0; transform: translateY(20px); }
