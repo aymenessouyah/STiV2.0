@@ -1973,6 +1973,55 @@ html.sti-4si-autorise .section--ateliers { --outil-halo: #34d399; }
   border-bottom: 1px solid var(--border);
 }
 .dash-card__head h2 { font-size: 1.12rem; }
+/* v611 — Flamme de régularité : sobre, sans clignotement ni animation. */
+.dash-card--reg { grid-column: 1 / -1; }
+.dash-regularite__aide {
+  font-size: 0.83rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+.dash-flamme__serie {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.dash-flamme__nombre {
+  font: 800 2.1rem/1 var(--font-sans);
+  color: var(--brand);
+}
+.dash-flamme__unite {
+  font: 700 0.95rem/1.2 var(--font-sans);
+  color: var(--text-secondary);
+}
+.dash-flamme__bande {
+  display: flex;
+  gap: 5px;
+  margin: 12px 0;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+.dash-flamme__jour {
+  flex: 1 1 0;
+  min-width: 12px;
+  height: 26px;
+  border-radius: 6px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+}
+.dash-flamme__jour[data-actif="1"] {
+  background: var(--brand);
+  border-color: var(--brand);
+}
+.dash-flamme__message {
+  font-size: 0.86rem;
+  margin: 0 0 10px;
+  color: var(--text-secondary);
+}
+@media (max-width: 600px) {
+  .dash-flamme__nombre { font-size: 1.7rem; }
+  .dash-flamme__jour { height: 22px; min-width: 9px; }
+}
 .dash-list { display: flex; flex-direction: column; gap: var(--space-2); }
 .dash-row {
   display: flex;

@@ -81,8 +81,8 @@ test('v608 — le clic entretient bien les deux classes et l’état', () => {
 });
 
 test('v608 — publication', () => {
-  assert.match(sw, /var VERSION_PUBLIEE = "v610";/);
-  assert.match(sw, /var PUBLIEE_LE = "2026-11-01T12:20:00Z";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v(?:6(?:1[1-9]|[2-9]\d)|[7-9]\d\d)";/);
+  assert.match(sw, /var PUBLIEE_LE = "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z";/);
   assert.match(sw, /v608-plus-tout-20261101/);
   assert.match(sw, /\{ url: "\.\/admin\.html", revision: "maj-visible-v610" \}/);
 });

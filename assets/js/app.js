@@ -2285,6 +2285,65 @@
       }).join("");
     }
 
+    /* 3 bis. Flamme de régularité (v611) */
+    var contReg = document.getElementById("dashRegulariteContent");
+    var badgeReg = document.getElementById("dashRegulariteBadge");
+    if (contReg && typeof global.STIProfil.lireRegularite === "function") {
+      /* Les journaux déjà écrits (pages vues, quiz, notes) sont repris une fois :
+         sans cela, un élève fidèle depuis des semaines verrait « 1 jour ». */
+      if (!profil.joursTravail || !profil.joursTravail.length) {
+        try {
+          if (typeof global.STIProfil.reparerRegularite === "function") global.STIProfil.reparerRegularite();
+          profil = global.STIProfil.chargerProfil();
+        } catch (e) {}
+      }
+      var reg = global.STIProfil.lireRegularite();
+      var joursPresents = {};
+      (profil.joursTravail || []).forEach(function (j) { joursPresents[j] = true; });
+
+      /* Bande des 14 derniers jours, du plus ancien (gauche) à aujourd'hui (droite). */
+      var mtn = Date.now() + 3600000;
+      var bande = "";
+      for (var iReg = 13; iReg >= 0; iReg--) {
+        var jourBande = new Date(mtn - iReg * 86400000).toISOString().slice(0, 10);
+        var actifReg = Boolean(joursPresents[jourBande]);
+        var morceaux = jourBande.split("-");
+        bande +=
+          '<span class="dash-flamme__jour" data-actif="' + (actifReg ? "1" : "0") + '"' +
+            ' title="' + morceaux[2] + "/" + morceaux[1] + (actifReg ? " — travaillé" : " — rien") + '">' +
+          "</span>";
+      }
+
+      var serieTexte = reg.serie === 1 ? "1 jour" : reg.serie + " jours";
+      var messageReg;
+      if (reg.serie === 0 && reg.totalJours === 0) {
+        messageReg = "Aucun jour encore. Un exercice ou une vidéo terminée allume votre flamme aujourd’hui.";
+      } else if (reg.serie === 0) {
+        messageReg = "Votre flamme est éteinte. Reprenez aujourd’hui pour la rallumer.";
+      } else if (reg.aujourdhui) {
+        messageReg = "Journée validée ✅ Revenez demain pour ne pas casser la série.";
+      } else {
+        messageReg = "Rien encore aujourd’hui : un exercice suffit pour garder la flamme.";
+      }
+
+      if (badgeReg) {
+        badgeReg.textContent = reg.serie > 0 ? "🔥 " + serieTexte : "— éteinte";
+        badgeReg.className = "badge " + (reg.serie > 0 ? "badge-gold" : "");
+      }
+      contReg.innerHTML =
+        '<div class="dash-flamme__serie">' +
+          '<span class="dash-flamme__nombre">' + reg.serie + "</span>" +
+          '<span class="dash-flamme__unite">' + (reg.serie === 1 ? "jour d’affilée" : "jours d’affilée") + "</span>" +
+        "</div>" +
+        '<div class="dash-flamme__bande" aria-hidden="true">' + bande + "</div>" +
+        '<p class="dash-flamme__message">' + messageReg + "</p>" +
+        '<div class="dash-list">' +
+          '<div class="dash-row"><div>🏆 Record personnel</div><strong>' +
+            reg.record + (reg.record === 1 ? " jour" : " jours") + "</strong></div>" +
+          '<div class="dash-row"><div>📅 Jours travaillés au total</div><strong>' + reg.totalJours + "</strong></div>" +
+        "</div>";
+    }
+
     /* 4. Quiz et erreurs */
     var contQuiz = document.getElementById("dashQuizList");
     if (contQuiz) {
@@ -2468,6 +2527,10 @@
               p.quiz = p.quiz.slice(0, 25);
             }
             global.STIProfil.sauvegarderProfil(p, false);
+            /* v611 : un quiz compté dans le carnet allume aussi la journée. */
+            if (typeof global.STIProfil.enregistrerJourTravail === "function") {
+              global.STIProfil.enregistrerJourTravail();
+            }
           }
         } catch (e) {}
         return origEnregistrer.apply(this, arguments);

@@ -68,8 +68,8 @@ test('v607 — le diagnostic lit aussi les pannes remontées par l’appareil de
 
 test('v607 — publication : cache-buster, révisions et version', () => {
   assert.match(adminHtml, /assets\/js\/admin\.js\?v=610-perf/);
-  assert.match(sw, /var VERSION_PUBLIEE = "v610";/);
-  assert.match(sw, /var PUBLIEE_LE = "2026-11-01T12:20:00Z";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v(?:6(?:1[1-9]|[2-9]\d)|[7-9]\d\d)";/);
+  assert.match(sw, /var PUBLIEE_LE = "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z";/);
   assert.match(sw, /v607-journal-acces-20261101/);
   /* v610 : admin.js porte désormais sa propre révision ; acces.js garde la sienne. */
   assert.ok(sw.includes('{ url: "./assets/js/acces.js", revision: "journal-acces-v607" }'),

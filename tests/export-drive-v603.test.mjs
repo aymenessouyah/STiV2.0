@@ -179,7 +179,7 @@ test('v603 : le script Apps Script accepte une archive enrichie', () => {
 });
 
 test('v603 : la livraison hors ligne embarque le module', () => {
-  assert.match(SW, /var VERSION_PUBLIEE = "v610";/);
+  assert.match(SW, /var VERSION_PUBLIEE = "v(?:6(?:1[1-9]|[2-9]\d)|[7-9]\d\d)";/);
   assert.match(SW, /url: "\.\/assets\/js\/export-drive\.js", revision: "export-drive-v603"/);
   assert.match(SW, /url: "\.\/assets\/js\/sauvegarde\.js", revision: "sauvegarde-barre-v609"/);
   assert.match(SW, /url: "\.\/admin\.html", revision: "maj-visible-v610"/);

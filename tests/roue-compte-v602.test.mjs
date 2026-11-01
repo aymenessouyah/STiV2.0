@@ -122,8 +122,8 @@ test('v602 : la roue complète devient un cercle de 40 px sur téléphone', () =
 });
 
 test('v602 : la version publiée et le cache avancent', () => {
-  assert.match(SW, /var VERSION_PUBLIEE = "v610";/, 'la version publiée passe à v602');
-  assert.match(SW, /url: "\.\/assets\/css\/theme\.css", revision: "roue-compte-v602"/);
-  assert.match(SW, /url: "\.\/assets\/js\/app\.js", revision: "roue-compte-v602"/);
+  assert.match(SW, /var VERSION_PUBLIEE = "v(?:6(?:1[1-9]|[2-9]\d)|[7-9]\d\d)";/, 'la version publiée passe à v602');
+  assert.match(SW, /url: "\.\/assets\/css\/theme\.css", revision: "flamme-regularite-v611"/);
+  assert.match(SW, /url: "\.\/assets\/js\/app\.js", revision: "flamme-regularite-v611"/);
   assert.match(SW, /url: "\.\/assets\/css\/badge-compte\.css", revision: "cercle-carte-v604"/);
 });

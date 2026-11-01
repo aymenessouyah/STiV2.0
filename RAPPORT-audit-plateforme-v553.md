@@ -20,7 +20,7 @@
 | Quiz : tirage aléatoire à chaque entrée | ✅ conforme | mélange des questions et de la place de la bonne réponse — Les 6 quiz tirent questions et réponses à chaque partie |
 | XP : synchronisation entre appareils | ✅ conforme | file locale, envoi idempotent, maximum conservé — Scores et réponses passent par une file locale puis un envoi idempotent |
 | Quiz conformes aux annexes | ✅ conforme | vocabulaire des énoncés et des bonnes réponses — Quiz ↔ annexes : 91 % du vocabulaire vient directement de l’annexe, 98 % avec le cours |
-| Souplesse en mode mobile | ✅ conforme | viewport, navigation, cibles tactiles, points de rupture — Les 139 pages déclarent un viewport adapté · Menu mobile accessible (aria-expanded) et 33 points de rupture dans le thème |
+| Souplesse en mode mobile | ✅ conforme | viewport, navigation, cibles tactiles, points de rupture — Les 139 pages déclarent un viewport adapté · Menu mobile accessible (aria-expanded) et 34 points de rupture dans le thème |
 
 | Axe | Constat | Niveau | Détail |
 |---|---|---|---|
@@ -31,12 +31,12 @@
 | XP | Scores et réponses passent par une file locale puis un envoi idempotent | ✅ ok |  |
 | Annexes | Quiz ↔ annexes : 91 % du vocabulaire vient directement de l’annexe, 98 % avec le cours | ✅ ok | HTML5 : 126 questions · 92 % dans l’annexe, 92 % avec le cours<br>CSS3 : 137 questions · 87 % dans l’annexe, 98 % avec le cours<br>JAVASCRIPT : 63 questions · 96 % dans l’annexe, 100 % avec le cours<br>SQL : 86 questions · 88 % dans l’annexe, 99 % avec le cours<br>PHP : 82 questions · 94 % dans l’annexe, 98 % avec le cours<br>Seuls écarts (énoncé + bonne réponse) : html5 : alternatives, html5 : picture, html5 : alternatifs, css3 : alternance, css3 : diaires, sql : adddate, php : debut, php : gorienne |
 | Mobile | Les 139 pages déclarent un viewport adapté | ✅ ok |  |
-| Mobile | Menu mobile accessible (aria-expanded) et 33 points de rupture dans le thème | ✅ ok |  |
+| Mobile | Menu mobile accessible (aria-expanded) et 34 points de rupture dans le thème | ✅ ok |  |
 | Fluidité | Les 39 vidéos des pages attendent un clic (preload metadata/none) | ✅ ok |  |
 | Fluidité | Les 12 animations du thème restent sur transform/opacity | ✅ ok |  |
 | Fluidité | Les 19 écouteurs de défilement sont passifs | ✅ ok |  |
 | Fluidité | prefers-reduced-motion respecté dans le thème et dans la grille des capsules | ✅ ok |  |
-| Rapidité | 51 page(s) dépassent 1,5 Mo de code | ℹ️ mineur | Positionnement-animee/index.html — 1656 Ko<br>admin.html — 2011 Ko<br>bac-pratique.html — 1617 Ko<br>cours/PHP-recap.html — 1622 Ko<br>cours/Recap-JavaScript-STI.html — 1686 Ko<br>cours/annexe-fleuriste-html5.html — 1672 Ko<br>cours/courscss3.html — 1751 Ko<br>cours/courshtml5.html — 2101 Ko<br>cours/coursphp.html — 1656 Ko<br>cours/css3.html — 2172 Ko<br>cours/fiche-revision-html5.html — 1723 Ko<br>cours/html5.html — 2144 Ko |
+| Rapidité | 51 page(s) dépassent 1,5 Mo de code | ℹ️ mineur | Positionnement-animee/index.html — 1656 Ko<br>admin.html — 2011 Ko<br>bac-pratique.html — 1624 Ko<br>cours/PHP-recap.html — 1628 Ko<br>cours/Recap-JavaScript-STI.html — 1693 Ko<br>cours/annexe-fleuriste-html5.html — 1672 Ko<br>cours/courscss3.html — 1757 Ko<br>cours/courshtml5.html — 2107 Ko<br>cours/coursphp.html — 1663 Ko<br>cours/css3.html — 2183 Ko<br>cours/fiche-revision-html5.html — 1729 Ko<br>cours/html5.html — 2154 Ko |
 | Rapidité | 8 script(s) bloquant(s) dans l’en-tête (petits fichiers, ordre imposé) | ℹ️ mineur | dashboard.html → assets/js/config.js?v=479<br>index.html → assets/js/config.js?v=479<br>quiz/pp.html → ../assets/js/retour-quiz.js<br>quiz/systemes-internet.html → ../assets/js/quiz-systemes-boot.js?v=580<br>quiz/tableaux.html → ../assets/js/quiz-tableaux-boot.js?v=456<br>revision-erreurs.html → assets/js/config.js?v=476<br>revision-erreurs.html → assets/js/supabase-umd.js<br>revision-erreurs.html → assets/js/quiz-sync.js?v=460 |
 | Rapidité | Service worker prêt : 773 fichiers décrits hors-ligne (v582-sti-atelier-v386) | ✅ ok |  |
 | Rapidité | Chargement différé des images : 125/209 (60 %) | ✅ ok |  |
@@ -63,7 +63,7 @@
 - **tables** : 10
 - **banque** : 660
 - **annexes** : jetons = 365 · tauxAnnexe = 91 · tauxSources = 98 · horsSources = 8
-- **medias** : 33
+- **medias** : 34
 - **videosHtml** : 39
 - **keyframes** : 12
 - **keyframesDisposition** : 0
