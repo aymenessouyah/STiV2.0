@@ -82,31 +82,10 @@
       <div class="principal">
         <div id="chapitre-actuel" class="chap-banniere">Préparation de la mission…</div>
 
-        <!-- Présentation de la base de données -->
+        <!-- Présentation de la base de données (schéma graphique) -->
         <div class="schema-bd">
-          <h3>Base de données « cinema »</h3>
-          <div class="schema-table">
-            <div class="schema-colonne">
-              <strong>REALISATEUR</strong><br>
-              idReal (PK), nom, prenom, nationalite
-            </div>
-            <div class="schema-colonne">
-              <strong>FILM</strong><br>
-              idFilm (PK), titre, genre, annee, duree, budget, idReal (FK)
-            </div>
-            <div class="schema-colonne">
-              <strong>ACTEUR</strong><br>
-              idActeur (PK), nom, prenom, dateNaiss, nationalite, idParrain (FK)
-            </div>
-            <div class="schema-colonne">
-              <strong>JOUER</strong><br>
-              idFilm (FK), idActeur (FK), role, cachet
-            </div>
-            <div class="schema-colonne">
-              <strong>PROJECTION</strong><br>
-              idProj (PK), idFilm (FK), salle, dateProj, nbSpectateurs
-            </div>
-          </div>
+          <h3>Base de données « cinema » — Schéma relationnel</h3>
+          <img src="assets/images/schema-bd.jpg" alt="Schéma relationnel de la base de données cinéma" class="schema-image">
         </div>
 
         <div class="mission-principale">
