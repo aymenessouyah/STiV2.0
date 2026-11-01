@@ -65,17 +65,18 @@ test('v587 : le tableau de bord lit la publication AVANT le jeton de cache', () 
   assert.match(js, /localStorage\.setItem\("sti-version-publiee", String\(num\)\)/);
 });
 
-test('v587 : la date de mise à jour est formatée en jj/mm/aaaa hh:mm', () => {
+test('v587 : la date de mise à jour est formatée en jj/mm/aaaa hh:mm (heure de Tunis, v610)', () => {
   const js = lire('assets/js/admin.js');
   const fn = extraireFonction(js, 'formaterMajPublicationAdm');
   const formater = new Function('return ' + fn)();
 
-  /* Heures locales : on construit la date attendue avec le même fuseau. */
+  /* v610 : l'heure est désormais celle de la Tunisie (GMT+1, sans heure d'été),
+     et non plus celle du poste — un téléphone mal réglé affichait une heure fausse. */
   const iso = '2026-10-31T10:15:29Z';
-  const d = new Date(iso);
+  const d = new Date(Date.parse(iso) + 3600000);
   const deux = (n) => (n < 10 ? '0' : '') + n;
-  const attendu = deux(d.getDate()) + '/' + deux(d.getMonth() + 1) + '/' + d.getFullYear() +
-    ' ' + deux(d.getHours()) + ':' + deux(d.getMinutes());
+  const attendu = deux(d.getUTCDate()) + '/' + deux(d.getUTCMonth() + 1) + '/' + d.getUTCFullYear() +
+    ' ' + deux(d.getUTCHours()) + ':' + deux(d.getUTCMinutes());
   assert.equal(formater(iso), attendu);
   assert.match(formater(iso), /^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}$/);
 

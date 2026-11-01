@@ -67,15 +67,14 @@ test('v607 — le diagnostic lit aussi les pannes remontées par l’appareil de
 });
 
 test('v607 — publication : cache-buster, révisions et version', () => {
-  assert.match(adminHtml, /assets\/js\/admin\.js\?v=607-perf/);
-  assert.match(sw, /var VERSION_PUBLIEE = "v609";/);
-  assert.match(sw, /var PUBLIEE_LE = "2026-11-01T23:40:00Z";/);
+  assert.match(adminHtml, /assets\/js\/admin\.js\?v=610-perf/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v610";/);
+  assert.match(sw, /var PUBLIEE_LE = "2026-11-01T12:20:00Z";/);
   assert.match(sw, /v607-journal-acces-20261101/);
-  for (const url of ['./assets/js/acces.js', './assets/js/admin.js']) {
-    assert.ok(
-      sw.includes(`{ url: "${url}", revision: "journal-acces-v607" }`),
-      'révision attendue pour ' + url
-    );
-  }
-  assert.match(sw, /\{ url: "\.\/admin\.html", revision: "sauvegarde-barre-v609" \}/);
+  /* v610 : admin.js porte désormais sa propre révision ; acces.js garde la sienne. */
+  assert.ok(sw.includes('{ url: "./assets/js/acces.js", revision: "journal-acces-v607" }'),
+    'révision attendue pour ./assets/js/acces.js');
+  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "maj-visible-v610" }'),
+    'révision attendue pour ./assets/js/admin.js');
+  assert.match(sw, /\{ url: "\.\/admin\.html", revision: "maj-visible-v610" \}/);
 });
