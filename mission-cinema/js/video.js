@@ -19,6 +19,7 @@ window.VideoController = (function () {
   var questionLocked = false;                         // une question est en cours de traitement
   var answeredIds = new Set();                        // questions déjà traitées
   var videoFailed = false;                            // vrai si le fichier MP4 ne charge pas
+  var questionPollTimer = null;                       // poller pour détecter les questions de façon fiable
 
   // Callbacks
   var onQuestionTrigger = null;   // function(question)
@@ -41,9 +42,10 @@ window.VideoController = (function () {
   function bindEvents() {
     if (!video) return;
 
-    video.addEventListener("play", function () { playing = true; });
-    video.addEventListener("pause", function () { playing = false; });
+    video.addEventListener("play", function () { playing = true; startQuestionPoll(); });
+    video.addEventListener("pause", function () { playing = false; stopQuestionPoll(); });
     video.addEventListener("ended", function () {
+      stopQuestionPoll();
       if (onEnded) onEnded();
     });
     video.addEventListener("error", function () {
@@ -80,6 +82,36 @@ window.VideoController = (function () {
         }
       }
     });
+
+    // Polling supplémentaire pour détecter les questions de façon fiable
+    // même si timeupdate ne tire pas assez fréquemment
+    function checkQuestion() {
+      if (pausedForQuestion || questionLocked || !video) return;
+      var ct = video.currentTime;
+      if (ct < lastCurrentTime - 1) {
+        loopCount++;
+      }
+      lastCurrentTime = ct;
+      var missionTime = ct + loopCount * loopDuration;
+      if (missionTime > missionDuration) missionTime = missionDuration;
+      if (onTimeUpdate) onTimeUpdate(missionTime, (missionTime / missionDuration) * 100);
+      if (onQuestionTrigger) {
+        var q = nextQuestionAt(missionTime);
+        if (q && !answeredIds.has(q.id) && !questionLocked) {
+          triggerQuestion(q);
+        }
+      }
+    }
+    function startQuestionPoll() {
+      if (questionPollTimer) return;
+      questionPollTimer = setInterval(checkQuestion, 100);
+    }
+    function stopQuestionPoll() {
+      if (questionPollTimer) {
+        clearInterval(questionPollTimer);
+        questionPollTimer = null;
+      }
+    }
   }
 
   // ------------------------------------------------------------------

@@ -213,9 +213,8 @@ window.AppController = (function () {
       // Reprise d'une activité interrompue : se positionner à la dernière position connue
       video.seekToSeconds(savedPos);
     } else {
-      // Nouvelle mission : commencer au début du premier chapitre
-      var firstChapter = data.chapters[0];
-      video.seekToSeconds(firstChapter ? firstChapter.timeStart : 0);
+      // Nouvelle mission : commencer à l'instant 0 de la vidéo
+      video.seekToSeconds(0);
     }
     // Démarrage automatique de la vidéo dès le lancement de la mission
     video.forcePlay().catch(function () {
