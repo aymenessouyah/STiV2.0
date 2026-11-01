@@ -348,6 +348,54 @@ textarea:focus { outline: 2px solid var(--or); border-color: transparent; }
 .q-declare { font-size: 0.8rem; color: var(--gris); display: flex; align-items: center; gap: 6px; margin-left: auto; }
 .q-declare input { accent-color: var(--or); }
 
+/* ---------- tableau éditable (questions 40-45) ---------- */
+.table-editor {
+  margin: 14px 0 6px;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--rayon);
+}
+.table-editor h4 {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  color: var(--noir-doux);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.table-editor table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+.table-editor th, .table-editor td {
+  border: 1px solid #94a3b8;
+  padding: 6px 8px;
+  text-align: left;
+}
+.table-editor th {
+  background: #e2e8f0;
+  color: var(--noir-doux);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+.table-editor input.table-cell {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px 6px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  background: #ffffff;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85rem;
+}
+.table-editor input.table-cell:focus {
+  outline: 2px solid var(--or);
+  border-color: transparent;
+}
+
 /* ---------- correction ---------- */
 #zone-correction { margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0; display: none; }
 #zone-correction.visible, .correction-affichee { display: block; }
