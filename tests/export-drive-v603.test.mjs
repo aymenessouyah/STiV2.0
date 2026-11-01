@@ -39,7 +39,7 @@ const api = chargerModule();
 test('v603 : le bouton « Export vers Drive » est dans le tableau de bord', () => {
   assert.match(ADMIN, /<script src="assets\/js\/export-drive\.js\?v=603" defer><\/script>/,
     'le module est chargé par la page d’administration');
-  assert.ok(ADMIN.indexOf('export-drive.js?v=603') < ADMIN.indexOf('sauvegarde.js?v=606'),
+  assert.ok(ADMIN.indexOf('export-drive.js?v=603') < ADMIN.indexOf('sauvegarde.js?v=609'),
     'le module est chargé avant le panneau de sauvegarde');
 
   assert.match(SAUVEGARDE, /id="sti-sauv-drive-export"/, 'le bouton existe');
@@ -179,10 +179,10 @@ test('v603 : le script Apps Script accepte une archive enrichie', () => {
 });
 
 test('v603 : la livraison hors ligne embarque le module', () => {
-  assert.match(SW, /var VERSION_PUBLIEE = "v608";/);
+  assert.match(SW, /var VERSION_PUBLIEE = "v609";/);
   assert.match(SW, /url: "\.\/assets\/js\/export-drive\.js", revision: "export-drive-v603"/);
-  assert.match(SW, /url: "\.\/assets\/js\/sauvegarde\.js", revision: "export-trouvable-v606"/);
-  assert.match(SW, /url: "\.\/admin\.html", revision: "plus-tout-v608"/);
+  assert.match(SW, /url: "\.\/assets\/js\/sauvegarde\.js", revision: "sauvegarde-barre-v609"/);
+  assert.match(SW, /url: "\.\/admin\.html", revision: "sauvegarde-barre-v609"/);
   assert.ok(MANIFESTE.files.some(f => f.path === 'assets/js/export-drive.js'),
     'le module est décrit dans le manifeste hors-ligne');
 });

@@ -26,7 +26,7 @@ const sw = lire('sw.js');
 const saas = lire('assets/css/admin-saas.css');
 
 const blocStyle = () => {
-  const debut = admin.indexOf('<style id="style-plus-v608">');
+  const debut = admin.indexOf('<style id="style-plus-v609">');
   assert.ok(debut > -1, 'bloc de style v608 absent');
   const fin = admin.indexOf('</style>', debut);
   return admin.slice(debut, fin);
@@ -34,7 +34,7 @@ const blocStyle = () => {
 
 test('v608 — le repli masque TOUS les boutons placés après « Plus »', () => {
   const css = blocStyle();
-  for (const cible of ['.sys-extra-item', '#btn-logout', '#sti-sauv-btn-flottant']) {
+  for (const cible of ['.sys-extra-item', '#btn-logout', '#sti-sauv-btn-barre']) {
     assert.ok(
       new RegExp(`body:not\\(\\.sys-bar-ouverte\\)[^{]*\\${cible}[^{]*\\{[^}]*display:\\s*none !important`).test(css) ||
       (css.includes(cible) && /body:not\(\.sys-bar-ouverte\)[\s\S]*?display:\s*none !important/.test(css)),
@@ -47,22 +47,23 @@ test('v608 — l’ouverture les rétablit', () => {
   const css = blocStyle();
   assert.match(css, /body\.sys-bar-ouverte \.barre-util \.sys-extra-item[\s\S]*?display:\s*inline-flex !important/);
   assert.match(css, /body\.sys-bar-ouverte \.barre-util #btn-logout[\s\S]*?display:\s*inline-flex !important/);
-  assert.match(css, /body\.sys-bar-ouverte #sti-sauv-btn-flottant[\s\S]*?display:\s*inline-block !important/);
+  assert.match(css, /body\.sys-bar-ouverte \.barre-util #sti-sauv-btn-barre[\s\S]*?display:\s*inline-flex !important/);
 });
 
 test('v608 — la règle de repli gagne l’arbitrage qui la neutralisait', () => {
   /* La règle fautive est toujours là (elle sert au reste) : c'est la nouvelle
      règle qui doit être plus spécifique et plus tardive. */
   assert.match(saas, /\.barre-util \.btn-util,\s*\n\.btn-util \{\s*\n  display: inline-flex !important;/);
-  const debut = admin.indexOf('<style id="style-plus-v608">');
+  const debut = admin.indexOf('<style id="style-plus-v609">');
   assert.ok(debut > admin.indexOf('assets/css/admin-saas.css'), 'le bloc doit venir après la feuille externe');
   assert.ok(debut > admin.indexOf('id="style-tiroir-v383"'), 'et après les styles de tiroir');
   assert.match(blocStyle(), /body:not\(\.sys-bar-ouverte\) \.barre-util \.sys-extra-item/);
 });
 
-test('v608 — la pastille de sauvegarde est bien celle qui est visée', () => {
-  assert.match(sauvegarde, /b\.id = "sti-sauv-btn-flottant";/);
-  assert.match(sauvegarde, /bottom:114px/, 'la pastille flottante garde sa position');
+test('v608 — le bouton de sauvegarde est bien celui qui est visé', () => {
+  /* v609 : il est désormais intégré à la barre (voir tests/sauvegarde-barre-v609). */
+  assert.match(sauvegarde, /b\.id = "sti-sauv-btn-barre";/);
+  assert.ok(!/position:fixed;left:14px;bottom:114px/.test(sauvegarde), 'plus de pastille flottante');
 });
 
 test('v608 — le bouton annonce ce qu’il commande', () => {
@@ -80,8 +81,8 @@ test('v608 — le clic entretient bien les deux classes et l’état', () => {
 });
 
 test('v608 — publication', () => {
-  assert.match(sw, /var VERSION_PUBLIEE = "v608";/);
-  assert.match(sw, /var PUBLIEE_LE = "2026-11-01T22:45:00Z";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v609";/);
+  assert.match(sw, /var PUBLIEE_LE = "2026-11-01T23:40:00Z";/);
   assert.match(sw, /v608-plus-tout-20261101/);
-  assert.match(sw, /\{ url: "\.\/admin\.html", revision: "plus-tout-v608" \}/);
+  assert.match(sw, /\{ url: "\.\/admin\.html", revision: "sauvegarde-barre-v609" \}/);
 });
