@@ -15,7 +15,6 @@ window.AppController = (function () {
   var ecranMission = document.getElementById("ecran-mission");
   var ecranBilan = document.getElementById("ecran-bilan");
   var videoEl = document.getElementById("video");
-  var overlay = document.getElementById("overlay-question");
   var zoneInteraction = document.getElementById("zone-interaction");
 
   var btnStart = document.getElementById("btn-start");
@@ -39,6 +38,7 @@ window.AppController = (function () {
   var btnSousTitres = document.getElementById("btn-sous-titres");
   var btnSon = document.getElementById("btn-son");
   var videoPlaceholder = document.getElementById("video-placeholder");
+  var panneauQuestion = document.getElementById("panneau-question");
 
   // État UI
   var updateUITimer = null;
@@ -265,15 +265,14 @@ window.AppController = (function () {
   }
 
   function afficherQuestion(q) {
-    overlay.classList.remove("cacher");
-    zoneInteraction.classList.remove("cacher");
+    panneauQuestion.classList.remove("cacher");
     video.pause(); // s'assurer que la vidéo est en pause
     quiz.renderQuestion(q, zoneInteraction);
     rafraichirPanneau();
   }
 
   function cacherQuestion() {
-    overlay.classList.add("cacher");
+    panneauQuestion.classList.add("cacher");
     zoneInteraction.classList.add("cacher");
     zoneInteraction.innerHTML = "";
     quiz.hideCorrection();
@@ -314,7 +313,7 @@ window.AppController = (function () {
           // revoir la correction d'une question traitée
           var a = quiz.getAnswers()[q.id];
           video.pause();
-          overlay.classList.remove("cacher");
+          panneauQuestion.classList.remove("cacher");
           zoneInteraction.classList.remove("cacher");
           zoneInteraction.innerHTML = "<div class='q-card'><div class='q-meta'><span class='q-num'>Question " + q.num + " (relecture)</span><span class='q-type'>" + quiz.typeLabel(q.type) + "</span></div></div>";
           quiz.showCorrection(q, a.correct, a.declared ? "Validation déclarative (autre écriture)." : (a.correct ? "Correcte." : "Incorrecte."));
@@ -398,7 +397,7 @@ window.AppController = (function () {
     var q = data.questions.find(function (x) { return x.id === id; });
     if (!q) return;
     video.pause();
-    overlay.classList.remove("cacher");
+    panneauQuestion.classList.remove("cacher");
     zoneInteraction.classList.remove("cacher");
     zoneInteraction.innerHTML = "<div class='q-card'><div class='q-meta'><span class='q-num'>Question " + q.num + " (relecture)</span><span class='q-type'>Correction</span></div></div>";
     quiz.showCorrection(q, quiz.getAnswers()[id].correct, "Relecture de la correction.");
