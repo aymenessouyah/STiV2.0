@@ -11,13 +11,14 @@ window.VideoController = (function () {
 
   // État
   var playing = false;
-  var loopCount = 0;          // nombre de boucles effectuées (vidéo de démo de 30 s)
+  var loopCount = 0;          // nombre de boucles effectuées
   var lastCurrentTime = 0;
-  var missionDuration = data.video.duration;          // 330 s timeline mission
-  var loopDuration = data.video.loopDuration;         // 30 s fichier réel
+  var missionDuration = data.video.duration;          // durée totale de la mission
+  var loopDuration = data.video.loopDuration;         // durée réelle du fichier (pas de boucle)
   var pausedForQuestion = false;                      // en pause pour une question
   var questionLocked = false;                         // une question est en cours de traitement
-  var answeredIds = new Set();                        // questions déjà traitées
+  var answeredIds = new Set();                        // questions déjà répondues
+  var nextQuestionIndex = 0;                          // index de la prochaine question à afficher (0-based)
   var videoFailed = false;                            // vrai si le fichier MP4 ne charge pas
   var questionPollTimer = null;                       // poller pour détecter les questions de façon fiable
 
@@ -72,7 +73,6 @@ window.VideoController = (function () {
       if (pausedForQuestion || questionLocked) return;
 
       var ct = video.currentTime;
-      // Détection d'un retour à 0 (boucle du fichier de démonstration)
       if (ct < lastCurrentTime - 1) {
         loopCount++;
       }
@@ -83,19 +83,13 @@ window.VideoController = (function () {
 
       if (onTimeUpdate) onTimeUpdate(missionTime, (missionTime / missionDuration) * 100);
 
-      // Déclenchement de la question programmée à cet instant
-      if (onQuestionTrigger) {
-        var q = nextQuestionAt(missionTime);
-        if (q && !answeredIds.has(q.id) && !questionLocked) {
-          triggerQuestion(q);
-        }
-      }
+      checkQuestionAtTime(missionTime);
     });
 
     // Polling supplémentaire pour détecter les questions de façon fiable
     // même si timeupdate ne tire pas assez fréquemment
     function checkQuestion() {
-      if (pausedForQuestion || questionLocked || !video) return;
+      if (questionLocked || !video) return;
       var ct = video.currentTime;
       if (ct < lastCurrentTime - 1) {
         loopCount++;
@@ -104,12 +98,7 @@ window.VideoController = (function () {
       var missionTime = ct + loopCount * loopDuration;
       if (missionTime > missionDuration) missionTime = missionDuration;
       if (onTimeUpdate) onTimeUpdate(missionTime, (missionTime / missionDuration) * 100);
-      if (onQuestionTrigger) {
-        var q = nextQuestionAt(missionTime);
-        if (q && !answeredIds.has(q.id) && !questionLocked) {
-          triggerQuestion(q);
-        }
-      }
+      checkQuestionAtTime(missionTime);
     }
     function startQuestionPoll() {
       if (questionPollTimer) return;
@@ -120,6 +109,18 @@ window.VideoController = (function () {
         clearInterval(questionPollTimer);
         questionPollTimer = null;
       }
+    }
+  }
+
+  // Déclenche la question si son temps est atteint et qu'elle n'a pas encore été traitée
+  function checkQuestionAtTime(t) {
+    if (nextQuestionIndex >= data.questions.length) return;
+    var q = data.questions[nextQuestionIndex];
+    // Pas de borne inférieure : une fois que t dépasse q.time - 0.5, la question
+    // reste déclenchable jusqu'à ce qu'elle soit répondue. Cela évite de manquer
+    // une question si le poller ne tire pas exactement au bon moment.
+    if (!answeredIds.has(q.id) && q.time <= t + 0.5) {
+      triggerQuestion(q);
     }
   }
 
@@ -156,11 +157,14 @@ window.VideoController = (function () {
     if (target < 0) target = 0;
     if (target > missionDuration) target = missionDuration;
 
-    var blocking = nextQuestionAt(target);
-    if (blocking && !answeredIds.has(blocking.id) && !questionLocked) {
-      // On se positionne juste avant la question, qui se déclenchera
-      target = blocking.time - 0.5;
-      if (target < 0) target = 0;
+    // Si on saute au-delà de la prochaine question non répondue,
+    // on se positionne juste avant pour qu'elle se déclenche
+    if (nextQuestionIndex < data.questions.length) {
+      var nextQ = data.questions[nextQuestionIndex];
+      if (!answeredIds.has(nextQ.id) && target > nextQ.time - 0.5) {
+        target = nextQ.time - 0.5;
+        if (target < 0) target = 0;
+      }
     }
 
     try { video.currentTime = target; } catch (e) {}
@@ -206,38 +210,44 @@ window.VideoController = (function () {
   }
 
   function nextQuestionAt(t) {
-    var qs = allQuestionsSorted();
-    for (var i = 0; i < qs.length; i++) {
-      // Déclenche la question si son temps est atteint (dans une marge de 1 s)
-      // ou si on l'a déjà dépassé (rattrapage si timeupdate a râté le créneau).
-      if (!answeredIds.has(qs[i].id) && qs[i].time >= t - 1.0 && qs[i].time <= t + 1.0) {
-        return qs[i];
-      }
+    // Retourne la prochaine question non répondue dont le temps est <= t + 0.5
+    // (permet le rattrapage si le poller a râté le créneau exact)
+    if (nextQuestionIndex >= data.questions.length) return null;
+    var q = data.questions[nextQuestionIndex];
+    if (!answeredIds.has(q.id) && q.time <= t + 0.5) {
+      return q;
     }
     return null;
   }
 
   function nextUnansweredTime() {
-    var qs = allQuestionsSorted();
-    var t = null;
-    for (var i = 0; i < qs.length; i++) {
-      if (!answeredIds.has(qs[i].id)) {
-        t = qs[i].time;
-        break;
+    if (nextQuestionIndex < data.questions.length) {
+      var q = data.questions[nextQuestionIndex];
+      if (!answeredIds.has(q.id)) return q.time;
+    }
+    // Sinon chercher la prochaine non répondue
+    for (var i = 0; i < data.questions.length; i++) {
+      if (!answeredIds.has(data.questions[i].id)) {
+        return data.questions[i].time;
       }
     }
-    return t;
+    return null;
   }
 
   function triggerQuestion(q) {
+    // Marquer comme traitée immédiatement pour éviter les redéclenchements
+    answeredIds.add(q.id);
+    nextQuestionIndex++;
     pausedForQuestion = true;
     questionLocked = true;
+    // Remettre le currentTime exactement au temps de la question pour éviter
+    // que la vidéo ne dépasse avant que pause() ne prenne effet
+    try { video.currentTime = Math.min(video.currentTime, q.time); } catch (e) {}
     video.pause();
     if (onQuestionTrigger) onQuestionTrigger(q);
   }
 
   function questionAnswered(q) {
-    answeredIds.add(q.id);
     questionLocked = false;
     pausedForQuestion = false;
   }
@@ -247,6 +257,10 @@ window.VideoController = (function () {
   function getAnsweredIds() { return answeredIds; }
   function setAnswered(ids) {
     if (Array.isArray(ids)) ids.forEach(function (id) { answeredIds.add(id); });
+    // Avancer nextQuestionIndex au-delà des questions déjà répondues
+    while (nextQuestionIndex < data.questions.length && answeredIds.has(data.questions[nextQuestionIndex].id)) {
+      nextQuestionIndex++;
+    }
   }
 
   function currentMissionTime() {
