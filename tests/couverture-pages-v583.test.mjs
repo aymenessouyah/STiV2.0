@@ -117,11 +117,11 @@ test('v583 : le repli hors-ligne de la roue reflète le manifeste et le Service 
      les autres fichiers du décompte restent au lot v583. */
   const revisionsAttendues = {
     './assets/pages-couverture.json': 'secours-plateforme-v598',
-    './assets/js/admin.js': 'guide-exercice-v614',
+    './assets/js/admin.js': 'guide-lisibilite-v615',
     './assets/js/analytique.js': 'secours-plateforme-v598',
     './assets/js/admin-couverture.js': 'couverture-v583',
     './assets/js/roue-couverture.js': 'couverture-v598',
-    './admin.html': 'guide-exercice-v614'
+    './admin.html': 'guide-lisibilite-v615'
   };
   for (const [url, revision] of Object.entries(revisionsAttendues)) {
     const ligne = sw.split('\n').find((l) => l.includes('url: "' + url + '"'));

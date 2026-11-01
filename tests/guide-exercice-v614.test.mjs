@@ -251,12 +251,14 @@ test('v614 — l’administration écrit le réglage là où les élèves le lis
 });
 
 test('v614 — publication : version, cache-busters, révisions et hors-ligne', () => {
-  assert.match(sw, /var VERSION_PUBLIEE = "v614";/);
-  assert.match(sw, /v614-guide-exercice-20261101/);
-  assert.match(adminHtml, /assets\/js\/admin\.js\?v=614-perf/);
+  /* v615 : la publication avance (lisibilité en mode ardoise) ; le module élève,
+     inchangé, garde son propre lot. */
+  assert.match(sw, /var VERSION_PUBLIEE = "v615";/);
+  assert.match(sw, /v615-guide-lisibilite-20261101/);
+  assert.match(adminHtml, /assets\/js\/admin\.js\?v=615-perf/);
   assert.ok(sw.includes('{ url: "./assets/js/guide-exercice.js", revision: "guide-exercice-v614" }'));
-  assert.ok(sw.includes('{ url: "./admin.html", revision: "guide-exercice-v614" }'));
-  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "guide-exercice-v614" }'));
+  assert.ok(sw.includes('{ url: "./admin.html", revision: "guide-lisibilite-v615" }'));
+  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "guide-lisibilite-v615" }'));
   assert.ok(sw.includes('"./assets/js/guide-exercice.js"'), 'le module est livré hors ligne');
   assert.ok(sw.includes('"./assets/guide-exercice-catalogue.json"'), 'le catalogue aussi');
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
