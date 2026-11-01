@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mission Cinéma – STI Version 2.0 By A'E</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ================= ÉCRAN D'ACCUEIL ================= -->
+  <section id="ecran-accueil" class="ecran actif">
+    <div class="accueil-cadre">
+      <div class="logo">STI Version 2.0 <em>By A'E</em></div>
+      <h1>MISSION CINÉMA</h1>
+      <p class="sous-titre">Devenez responsable de la base de données d'une société de production cinématographique.</p>
+
+      <div class="carte-accueil">
+        <h2>Bienvenue, futur administrateur de base de données.</h2>
+        <p>
+          Vous êtes recruté par une société de production cinématographique. Votre mission :
+          prendre le contrôle de sa base de données <b>cinema</b> (REALISATEUR, FILM, ACTEUR, JOUER, PROJECTION).
+        </p>
+        <p>
+          Une vidéo vous guide chapitre après chapitre. À des moments précis, elle se met en pause et une
+          question interactive apparaît : requêtes SQL, QCM, prévision de résultats… Vous répondez,
+          vous validez, et la correction pédagogique s'affiche avant que la vidéo ne reprenne.
+        </p>
+        <div class="etape">
+          <strong>Comment ça marche :</strong>
+          <ol>
+            <li>Entrez votre prénom/nom.</li>
+            <li>Démarrez la mission : la vidéo se lance.</li>
+            <li>À chaque point d'arrêt, répondez à la question puis cliquez sur « Valider ma réponse ».</li>
+            <li>Lisez la correction officielle, puis cliquez sur « Continuer la mission » pour reprendre la vidéo exactement là où elle s'était arrêtée.</li>
+          </ol>
+        </div>
+        <div class="champ-nom">
+          <label for="input-nom">Votre nom :</label>
+          <input type="text" id="input-nom" placeholder="Exemple : Aymen Essouyah" maxlength="60">
+        </div>
+        <button id="btn-start" class="btn btn-principal">Démarrer la mission ▶</button>
+        <p class="note">Progression sauvegardée automatiquement dans votre navigateur. Vous pouvez reprendre plus tard.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ÉCRAN DE MISSION ================= -->
+  <section id="ecran-mission" class="ecran cacher">
+    <header class="mission-header">
+      <div class="logo">STI Version 2.0 <em>By A'E</em></div>
+      <div class="titre-mission">
+        MISSION CINÉMA
+        <span>Devenez responsable de la base de données</span>
+      </div>
+      <div class="eleve">Élève : <span id="nom-eleve">—</span></div>
+    </header>
+
+    <div class="mission-body">
+      <!-- Panneau latéral -->
+      <aside class="panneau">
+        <h3>Progression</h3>
+        <div class="ligne-score">
+          <span class="etiquette">Score</span>
+          <span id="score">0</span> / <span id="total">0</span>
+        </div>
+        <div class="ligne-pct">
+          <span class="etiquette">Réussite</span>
+          <span id="progression-pct">0</span>%
+        </div>
+        <div class="ligne-temps">
+          <span class="etiquette">Temps de mission</span>
+          <span id="temps">00:00</span>
+        </div>
+        <h3>Questions traitées</h3>
+        <ul id="liste-questions"></ul>
+      </aside>
+
+      <!-- Zone principale -->
+      <div class="principal">
+        <div id="chapitre-actuel" class="chap-banniere">Préparation de la mission…</div>
+
+        <div class="video-wrap">
+          <div id="video-erreur" class="alerte cacher"></div>
+          <video id="video" src="assets/video/demo.mp4" playsinline preload="metadata"></video>
+
+          <div class="controles">
+            <button id="btn-play" class="btn">▶ Lire</button>
+            <button id="btn-pause" class="btn">⏸ Pause</button>
+            <div class="barre-tps">
+              <span id="temps-courant">0:00</span>
+              <input id="progress" type="range" min="0" max="100" value="0">
+              <span id="temps-total">0:00</span>
+            </div>
+            <div class="controles-secondaires">
+              <select id="vitesse">
+                <option value="1">×1 normal</option>
+                <option value="1.5">×1,5</option>
+                <option value="2">×2 rapide</option>
+              </select>
+              <button id="btn-plein-ecran" class="btn">⛶ Plein écran</button>
+              <button id="btn-sous-titres" class="btn">Sous-titres</button>
+              <button id="btn-son" class="btn">🔊 Son</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fenêtre interactive (apparait à chaque point d'arrêt de la vidéo) -->
+        <div id="overlay-question" class="overlay cacher">
+          <div class="overlay-fond"></div>
+          <div class="overlay-panel">
+            <div id="zone-interaction"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ÉCRAN DE BILAN ================= -->
+  <section id="ecran-bilan" class="ecran cacher">
+    <div class="bilan-wrap">
+      <h1>Bilan de la mission</h1>
+      <div id="contenu-bilan"></div>
+    </div>
+  </section>
+
+</div>
+
+<script src="js/questions.js"></script>
+<script src="js/video.js"></script>
+<script src="js/quiz.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
