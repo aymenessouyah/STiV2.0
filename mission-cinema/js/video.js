@@ -128,8 +128,8 @@ var nextQuestionAfterFreeze = null;  // question à afficher après le gel ("Pou
     var q = data.questions[nextQuestionIndex];
     if (answeredIds.has(q.id)) return;
 
-    // Q6 et Q7 sont automatiques : pas de bulle, pas de pause
-    if (q.num === 6 || q.num === 7) {
+    // Q6 est automatique : pas de bulle, pas de pause
+    if (q.num === 6) {
       answeredIds.add(q.id);
       nextQuestionIndex++;
       return;
@@ -160,8 +160,8 @@ var nextQuestionAfterFreeze = null;  // question à afficher après le gel ("Pou
     nextQuestionIndex++;
     pausedForQuestion = false;
     questionLocked = false;
-    // Q6 et Q7 sont automatiques : pas de bulle, pas de gel programmé
-    if (q.num === 6 || q.num === 7) {
+    // Q6 est automatique : pas de bulle, pas de gel programmé
+    if (q.num === 6) {
       nextFreezeTime = null;
       nextQuestionAfterFreeze = null;
       return;

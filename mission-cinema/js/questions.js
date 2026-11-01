@@ -124,7 +124,7 @@ window.QUESTIONS_DATA = (function () {
   },
   /* ================= Chapitre 2 — LMD (Manipulation des données) ================= */
   {
-    id: 6, num: 6, time: 93.500, chapter: 2, type: "sql",
+    id: 6, num: 6, time: 92.500, chapter: 2, type: "sql",
     enonce: "Insérer 3 réalisateurs, 6 films, 6 acteurs et au moins 10 lignes dans JOUER (+ 9 projections). Le cachet est exprimé en milliers de dollars ; les distributions et dates de naissance sont adaptées pour les besoins de l'exercice.",
     refs: [
       "INSERT INTO realisateur VALUES (1,'Nolan','Christopher','Britannique'),(2,'Scorsese','Martin','Américaine'),(3,'Hazanavicius','Michel','Française'); " +
@@ -147,7 +147,7 @@ window.QUESTIONS_DATA = (function () {
     explication: "Les insertions respectent l'ordre des dépendances : d'abord les tables parentes (REALISATEUR, FILM, ACTEUR), puis les tables liées par clés étrangères (JOUER, PROJECTION). 11 lignes dans JOUER et 9 projections ont été insérées."
   },
   {
-    id: 7, num: 7, time: 104.333, chapter: 2, type: "sql",
+    id: 7, num: 7, time: 105.333, stopTime: 111.667, chapter: 2, type: "sql",
     enonce: "Insérer un nouveau film en ne renseignant que le titre, le genre et le réalisateur.",
     refs: [
       "INSERT INTO film (titre, genre, idReal) VALUES ('Tenet', 'Action', 1);",
@@ -160,7 +160,7 @@ window.QUESTIONS_DATA = (function () {
     explication: "Les colonnes non renseignées prennent leur valeur par défaut (NULL ici, aucune contrainte NOT NULL ni DEFAULT sur ces colonnes)."
   },
   {
-    id: 8, num: 8, time: 112.667, chapter: 2, type: "sql",
+    id: 8, num: 8, time: 112.667, stopTime: 117.500, chapter: 2, type: "sql",
     enonce: "Mettre la durée du film « Inception » à 148 minutes.",
     refs: ["UPDATE film SET duree = 148 WHERE titre = 'Inception';"],
     resultat: {
