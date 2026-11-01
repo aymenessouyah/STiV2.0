@@ -260,6 +260,12 @@ textarea {
 textarea:focus { outline: 2px solid var(--or); border-color: transparent; }
 
 .q-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; align-items: center; }
+.q-actions .btn.valider {
+  background: var(--bleu);
+}
+.q-actions .btn.valider:hover {
+  background: #1d4ed8;
+}
 .q-declare { font-size: 0.8rem; color: var(--gris); display: flex; align-items: center; gap: 6px; margin-left: auto; }
 .q-declare input { accent-color: var(--or); }
 
