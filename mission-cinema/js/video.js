@@ -128,13 +128,6 @@ var nextQuestionAfterFreeze = null;  // question à afficher après le gel ("Pou
     var q = data.questions[nextQuestionIndex];
     if (answeredIds.has(q.id)) return;
 
-    // Q6 est automatique : pas de bulle, pas de pause
-    if (q.num === 6) {
-      answeredIds.add(q.id);
-      nextQuestionIndex++;
-      return;
-    }
-
     // Gel de la vidéo à l'heure programmée (fin de la question courante)
     if (nextFreezeTime != null && t >= nextFreezeTime) {
       pausedForQuestion = true;
@@ -160,18 +153,17 @@ var nextQuestionAfterFreeze = null;  // question à afficher après le gel ("Pou
     nextQuestionIndex++;
     pausedForQuestion = false;
     questionLocked = false;
-    // Q6 est automatique : pas de bulle, pas de gel programmé
-    if (q.num === 6) {
+    // Q6 et Q7 affichent une bulle mais la vidéo continue (pas de gel)
+    if (q.num === 6 || q.num === 7) {
       nextFreezeTime = null;
       nextQuestionAfterFreeze = null;
-      return;
     }
     // Programmer le gel à la fin de cette question (stopTime si défini,
-    // sinon au début de la question suivante = ancien comportement)
-    if (q.stopTime) {
+    // sinon une seconde avant la question suivante)
+    else if (q.stopTime) {
       nextFreezeTime = q.stopTime;
     } else if (nextQuestionIndex < data.questions.length) {
-      nextFreezeTime = data.questions[nextQuestionIndex].time;
+      nextFreezeTime = data.questions[nextQuestionIndex].time - 1.0;
     } else {
       nextFreezeTime = null;
     }
