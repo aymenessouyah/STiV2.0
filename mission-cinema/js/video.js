@@ -27,6 +27,8 @@ window.VideoController = (function () {
   var nextQuestionIndex = 0;
   var pauseTime = 0;
   var pendingQuestion = null;   // question dont la bulle doit s'afficher après "Poursuivre"
+var nextFreezeTime = null;    // instant auquel geler la vidéo (fin de la question courante)
+var nextQuestionAfterFreeze = null;  // question à afficher après le gel ("Poursuivre")
   var videoFailed = false;
   var questionPollTimer = null;
 
@@ -125,7 +127,6 @@ window.VideoController = (function () {
     if (nextQuestionIndex >= data.questions.length) return;
     var q = data.questions[nextQuestionIndex];
     if (answeredIds.has(q.id)) return;
-    if (q.time > t + 0.5) return;
 
     // Q6 et Q7 sont automatiques : pas de bulle, pas de pause
     if (q.num === 6 || q.num === 7) {
@@ -134,20 +135,23 @@ window.VideoController = (function () {
       return;
     }
 
-    // Si ce n'est pas la première question, c'est la fin de la précédente :
-    // on met en pause et on stocke Q_i pour affichage après "Poursuivre"
-    if (nextQuestionIndex > 0) {
+    // Gel de la vidéo à l'heure programmée (fin de la question courante)
+    if (nextFreezeTime != null && t >= nextFreezeTime) {
       pausedForQuestion = true;
       questionLocked = true;
-      pauseTime = q.time;
-      pendingQuestion = q;
+      pauseTime = nextFreezeTime;
+      pendingQuestion = nextQuestionAfterFreeze || q;
       video.pause();
       try { video.currentTime = pauseTime; } catch (e) {}
       video.pause();
+      nextFreezeTime = null;
+      nextQuestionAfterFreeze = null;
       return;
     }
 
-    // Q1 : afficher la bulle et continuer la vidéo
+    if (q.time > t + 0.5) return;
+
+    // Déclencher la bulle de la question courante, la vidéo continue
     triggerQuestion(q);
   }
 
@@ -156,13 +160,37 @@ window.VideoController = (function () {
     nextQuestionIndex++;
     pausedForQuestion = false;
     questionLocked = false;
+    // Q6 et Q7 sont automatiques : pas de bulle, pas de gel programmé
+    if (q.num === 6 || q.num === 7) {
+      nextFreezeTime = null;
+      nextQuestionAfterFreeze = null;
+      return;
+    }
+    // Programmer le gel à la fin de cette question (stopTime si défini,
+    // sinon au début de la question suivante = ancien comportement)
+    if (q.stopTime) {
+      nextFreezeTime = q.stopTime;
+    } else if (nextQuestionIndex < data.questions.length) {
+      nextFreezeTime = data.questions[nextQuestionIndex].time;
+    } else {
+      nextFreezeTime = null;
+    }
+    if (nextQuestionIndex < data.questions.length) {
+      nextQuestionAfterFreeze = data.questions[nextQuestionIndex];
+    } else {
+      nextQuestionAfterFreeze = null;
+    }
     if (onQuestionTrigger) onQuestionTrigger(q);
   }
 
-  // Reprend la lecture et affiche la bulle de la question en attente
+  // Reprend la lecture à l'heure de la question en attente, puis affiche sa bulle
   function handleResume() {
     pausedForQuestion = false;
     questionLocked = false;
+    var pending = getPendingQuestion();
+    if (pending && pending.time != null) {
+      try { video.currentTime = pending.time; } catch (e) {}
+    }
     return video.play().catch(function (err) {
       console.warn("Reprise lecture bloquée :", err);
     });
