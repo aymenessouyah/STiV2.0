@@ -126,7 +126,16 @@ h1 { font-size: 2.2rem; margin: 8px 0 4px; letter-spacing: 2px; text-transform: 
 .mission-header .logo { font-weight: 800; font-size: 1.25rem; color: var(--or-clair); letter-spacing: 1px; }
 .mission-header .titre-mission { font-size: 1.15rem; font-weight: 700; line-height: 1.25; }
 .mission-header .titre-mission span { display: block; font-size: 0.85rem; font-weight: 400; color: #94a3b8; margin-top: 2px; }
-.mission-header .eleve { font-size: 0.9rem; color: var(--gris); }
+.mission-header .eleve-badge {
+  display: flex; align-items: center;
+}
+.mission-header .eleve-badge .badge-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: var(--noir);
+}
 
 .mission-body {
   display: flex;
