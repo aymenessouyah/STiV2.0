@@ -196,18 +196,29 @@ window.AppController = (function () {
       var firstChapter = data.chapters[0];
       video.seekToSeconds(firstChapter ? firstChapter.timeStart : 0);
     }
+    var videoStarted = false;
+    videoEl.addEventListener("playing", function () { videoStarted = true; }, { once: true });
+
     video.forcePlay().catch(function () {
-      // Si la vidéo ne peut pas jouer, afficher l'alerte et basculer en mode simulation
-      var alert = document.getElementById("video-erreur");
-      if (alert) {
-        alert.innerHTML = "Le fichier vidéo n'a pas pu être chargé.<br>" +
-          "L'activité reste accessible : cliquez sur une question dans la barre latérale pour y répondre.<br>" +
-          "<button class='btn' onclick='AppController.modeSansVideo()'>Poursuivre sans la vidéo</button>";
-        alert.classList.remove("cacher");
-      }
-      afficherPlaceholder(true);
-      startSimulationClock();
+      // Échec immédiat de la lecture : basculer en mode simulation
+      basculerModeSansVideo();
     });
+
+    // Si la vidéo ne démarre pas après 2 secondes, basculer automatiquement en mode simulation
+    setTimeout(function () {
+      if (!videoStarted && !video.isFailed()) {
+        basculerModeSansVideo();
+      }
+    }, 2000);
+  }
+
+  function basculerModeSansVideo() {
+    // Masquer l'alerte d'erreur si présente
+    document.getElementById("video-erreur")?.classList.add("cacher");
+    // Afficher le placeholder et cacher la vidéo
+    afficherPlaceholder(true);
+    // Démarrer l'horloge de simulation (les questions se déclenchent sur le timeline)
+    startSimulationClock();
   }
 
   function startSimulationClock() {
