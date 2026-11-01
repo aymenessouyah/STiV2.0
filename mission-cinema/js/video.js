@@ -167,7 +167,9 @@ window.VideoController = (function () {
   function nextQuestionAt(t) {
     var qs = allQuestionsSorted();
     for (var i = 0; i < qs.length; i++) {
-      if (qs[i].time >= t - 0.5 && !answeredIds.has(qs[i].id)) {
+      // La question doit être programmée à l'instant t (tolérance ±0,5 s),
+      // pas dans le futur lointain. Sinon Q2 se déclencherait juste après Q1.
+      if (!answeredIds.has(qs[i].id) && qs[i].time >= t - 0.5 && qs[i].time <= t + 0.5) {
         return qs[i];
       }
     }
