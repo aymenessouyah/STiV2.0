@@ -120,7 +120,13 @@ window.AppController = (function () {
     quiz.on({
       onResume: function () {
         // Après correction : on reprend la lecture exactement là où on était
-        video.resume();
+        video.forcePlay().catch(function () {
+          // Si la vidéo ne reprend pas, basculer en mode simulation
+          document.getElementById("video-erreur")?.classList.remove("cacher");
+          videoEl.style.display = "none";
+          afficherPlaceholder(true);
+          startSimulationClock();
+        });
         rafraichirPanneau();
       },
       onAllDone: function () {

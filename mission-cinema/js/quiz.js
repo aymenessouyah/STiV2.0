@@ -169,8 +169,8 @@ window.QuizController = (function () {
       correct = true;
       motif = "Votre requête correspond à l'une des écritures de référence.";
     } else if (declared) {
-      correct = true;
-      motif = "Validation déclarative : vous affirmez que votre requête produit le même résultat que la référence (comparaison pédagogique, pas d'exécution MySQL dans le navigateur).";
+      correct = false;
+      motif = "Validation déclarative non retenue : votre requête ne correspond pas textuellement aux écritures de référence. Consultez la correction ci-dessous.";
     } else {
       correct = false;
       motif = "Votre requête ne correspond pas (textuellement) aux écritures de référence. Consultez la correction ci-dessous.";
