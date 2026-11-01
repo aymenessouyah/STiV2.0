@@ -2,7 +2,7 @@
    MISSION CINÉMA — STI Version 2.0 By A'E
    Données des questions interactives, extraites fidèlement de la série
    "Corrigé : Série de TD SQL (thème Cinéma)" — Lycée Rafèha / Aymen Essouyah
-   (fichier mis à jour : Corrige_TD_SQL_Cinema-2.pdf)
+   (fichier mis à jour : Corrige_TD_SQL_Cinema-3.pdf)
 
    Règles respectées (voir prompt du projet) :
    - Les questions, réponses et résultats sont ceux de la correction officielle.
