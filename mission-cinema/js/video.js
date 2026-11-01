@@ -19,6 +19,7 @@ window.VideoController = (function () {
   var questionLocked = false;                         // une question est en cours de traitement
   var answeredIds = new Set();                        // questions déjà répondues
   var nextQuestionIndex = 0;                          // index de la prochaine question à afficher (0-based)
+  var pauseTime = 0;                                  // temps auquel la vidéo est en pause pour une question
   var videoFailed = false;                            // vrai si le fichier MP4 ne charge pas
   var questionPollTimer = null;                       // poller pour détecter les questions de façon fiable
 
@@ -47,9 +48,9 @@ window.VideoController = (function () {
         playing = true;
         startQuestionPoll();
         // Sécurité : si la vidéo est censée être en pause pour une question,
-        // on force une nouvelle pause (le navigateur peut relancer l'autoplay
-        // après une pause programmée)
+        // on gèle currentTime et on force une nouvelle pause
         if (pausedForQuestion) {
+            video.currentTime = pauseTime;
             video.pause();
         }
     });
@@ -89,7 +90,7 @@ window.VideoController = (function () {
     // Polling supplémentaire pour détecter les questions de façon fiable
     // même si timeupdate ne tire pas assez fréquemment
     function checkQuestion() {
-      if (questionLocked || !video) return;
+      if (!video) return;
       var ct = video.currentTime;
       if (ct < lastCurrentTime - 1) {
         loopCount++;
@@ -97,6 +98,19 @@ window.VideoController = (function () {
       lastCurrentTime = ct;
       var missionTime = ct + loopCount * loopDuration;
       if (missionTime > missionDuration) missionTime = missionDuration;
+
+      // Si on est en pause pour une question, geler currentTime au moment de la pause
+      // et empêcher toute progression. Le poller revient ici toutes les 100 ms pour
+      // maintenir la position tant que la question n'est pas répondue.
+      if (pausedForQuestion) {
+        video.currentTime = pauseTime;
+        video.pause();
+        if (onTimeUpdate) onTimeUpdate(missionTime, (missionTime / missionDuration) * 100);
+        return;
+      }
+
+      if (questionLocked) return;
+
       if (onTimeUpdate) onTimeUpdate(missionTime, (missionTime / missionDuration) * 100);
       checkQuestionAtTime(missionTime);
     }
@@ -240,9 +254,10 @@ window.VideoController = (function () {
     nextQuestionIndex++;
     pausedForQuestion = true;
     questionLocked = true;
-    // Remettre le currentTime exactement au temps de la question pour éviter
-    // que la vidéo ne dépasse avant que pause() ne prenne effet
-    try { video.currentTime = Math.min(video.currentTime, q.time); } catch (e) {}
+    // Mémoriser le moment de la pause pour geler currentTime dans le poller
+    pauseTime = q.time;
+    // Remettre currentTime exactement au temps de la question
+    try { video.currentTime = q.time; } catch (e) {}
     video.pause();
     if (onQuestionTrigger) onQuestionTrigger(q);
   }
