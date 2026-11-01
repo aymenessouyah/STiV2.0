@@ -189,7 +189,7 @@ test('v612 — le recomprage est branché dans la page et dans l’interface', (
   assert.match(admin, /if \(!estHorsLigne && typeof recompterElevesAZero === "function"\) \{\s*clearTimeout\(minuteurRecompteAdmin\);\s*minuteurRecompteAdmin = setTimeout\(function \(\) \{ recompterElevesAZero\(\); \}, 1500\);/);
   /* Les valeurs vérifiées sont réappliquées à chaque rendu de la liste. */
   assert.match(admin, /function rendAbonnes\(\) \{\s*\/\* v612 : les compteurs vérifiés/);
-  assert.ok(admin.includes('appliquerCompteursRecomptesAdmin();\n    /* v582'), 'rendAbonnes réapplique les compteurs vérifiés');
+  assert.ok(/appliquerCompteursRecomptesAdmin\(\);\s*\n\s*\/\* v613/.test(admin), 'rendAbonnes réapplique les compteurs vérifiés');
   /* Bouton manuel. */
   assert.match(adminHtml, /id="btn-recompter-zero"/);
   assert.ok(adminHtml.includes('🔁 Recompter les 00'));
@@ -202,9 +202,9 @@ test('v612 — le recomprage est branché dans la page et dans l’interface', (
 test('v612 — publication : version, cache-busters et révisions', () => {
   assert.match(sw, /var VERSION_PUBLIEE = "v6\d\d";/);
   assert.match(sw, /v612-compteurs-zero-20261101/);
-  assert.match(adminHtml, /assets\/js\/admin\.js\?v=612-perf/);
-  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "compteurs-zero-v612" }'));
-  assert.ok(sw.includes('{ url: "./admin.html", revision: "compteurs-zero-v612" }'));
+  assert.match(adminHtml, /assets\/js\/admin\.js\?v=613-perf/);
+  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "videos-supabase-v613" }'));
+  assert.ok(sw.includes('{ url: "./admin.html", revision: "videos-supabase-v613" }'));
   /* Les invariants de cache ne bougent pas. */
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);

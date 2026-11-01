@@ -70,7 +70,7 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
     /* v587 : badge « Version V2.0 · v587 · 31/10/2026 11:31 » (date de mise à jour). */
     /* v597 : le guide d'administration annonce 151 pages de couverture (145 + les
        cinq ateliers « Systèmes » + la galerie des projets). */
-    'admin.html': '1a783dbec469876bb028e331086f135d3bb35ed6950e4bbbcecab967f679a8af',
+    'admin.html': '49eff8122a65ae6d0499b719c680b9b5f92aa1bc8de1fc1f9ff37af6dd1fd2da',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };
@@ -239,7 +239,7 @@ test('commandes d’administration : scripts et fonctions de la barre PC inchang
      18 tables), décompressées dans le navigateur avant la fouille des connexions ;
      empreinte d'admin.js réactualisée. */
   /* v596 : TOTAL_PAGES_SITE_ADMIN passe à 150 (repli hors manifeste). */
-  assert.equal(sha('assets/js/admin.js'), 'ee4a79f6e0426d6a1b89b57bb7c940024da9c5567e9a2596b204956eaa600094');
+  assert.equal(sha('assets/js/admin.js'), 'f16adf2ffb2320a986f3cdd276bd020adbe28508f876aadedda8b4f79f6f5c09');
   assert.equal(sha('assets/js/rayonsx-surligneur.js'), '1b7fe2067629766ef4043fa3060199b71124d8486e36d92aaac0b45bd861847c');
   const protection = lire('assets/js/protection.js');
   const debut = protection.indexOf('  function estAppareilPC()');

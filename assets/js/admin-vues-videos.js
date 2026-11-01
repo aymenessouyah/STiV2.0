@@ -537,27 +537,72 @@
       var erreur = res[0] && res[0].error;
       var profils = (res[1] && res[1].data) || [];
       donneesBrutes = { lignes: lignes, profils: profils };
-      if (!lignes.length) {
-        etat(erreur ? "⚠️ Lecture refusée : " + (erreur.message || "session admin ?") : "ℹ️ Aucune progression vidéo synchronisée pour le moment.", erreur ? "#b91c1c" : "");
-        dernier = analyser([], profils, { classe: classeActive, jours: periodeActive });
-        rendre(dernier);
-        remplirClasses(dernier.classes);
-        return dernier;
-      }
-      rafraichirAffichage();
-      var h = new Date();
-      var details = [];
-      if (periodeActive > 0) details.push(dernier.jours + " derniers jours");
-      if (classeActive !== CLASSE_TOUTES) details.push("classe " + classeActive);
-      etat("✅ À jour à " + String(h.getHours()).padStart(2, "0") + ":" + String(h.getMinutes()).padStart(2, "0") +
-        (details.length ? " · " + details.join(" · ") : ""), "#16a34a");
-      return dernier;
+      /* v613 — la lecture paginée s'arrête à 5 000 lignes : au-delà, les élèves
+         suivants n'étaient jamais lus et leurs vidéos n'apparaissaient pas dans
+         ce coin. On complète donc individuellement ceux qui manquent. */
+      return completerElevesManquants(c, lignes, profils).then(function (lignesCompletes) {
+        return finaliser(lignesCompletes, profils, erreur);
+      });
     }).catch(function (e) {
       chargementEnCours = false;
       if (btn) btn.disabled = false;
       etat("⚠️ " + (e && e.message ? e.message : "échec de lecture des progressions"), "#b91c1c");
       return null;
     });
+  }
+
+  /* Élèves présents dans `profiles` mais absents des progressions lues :
+     on va chercher leur ligne, une par une, sans dépasser un plafond. */
+  var MAX_ELEVES_COMPLETES = 40;
+  function completerElevesManquants(c, lignes, profils) {
+    var vus = {};
+    (lignes || []).forEach(function (r) {
+      if (r && r.user_id) vus[r.user_id] = true;
+      var em = String((r && r.email) || "").trim().toLowerCase();
+      if (em) vus["mail:" + em] = true;
+    });
+    var manquants = (profils || []).filter(function (p) {
+      if (!p || !p.id) return false;
+      if (vus[p.id]) return false;
+      var em = String(p.email || "").trim().toLowerCase();
+      return !(em && vus["mail:" + em]);
+    }).slice(0, MAX_ELEVES_COMPLETES);
+    if (!manquants.length || !c) return Promise.resolve(lignes);
+    var ajoutees = (lignes || []).slice();
+    return new Promise(function (resoudre) {
+      var i = 0, erreurs = 0;
+      function suivant() {
+        if (i >= manquants.length || erreurs >= 5) { resoudre(ajoutees); return; }
+        var p = manquants[i++];
+        c.from("sti_progressions").select("user_id,email,donnees").eq("user_id", p.id).limit(1)
+          .then(function (r) {
+            if (r && !r.error && Array.isArray(r.data) && r.data.length) ajoutees.push(r.data[0]);
+            else if (r && r.error) erreurs += 1;
+            setTimeout(suivant, 40);
+          }).catch(function () { erreurs += 1; setTimeout(suivant, 40); });
+      }
+      suivant();
+    });
+  }
+
+  /* Suite commune : mémoriser, afficher, annoncer. */
+  function finaliser(lignes, profils, erreur) {
+    donneesBrutes = { lignes: lignes, profils: profils };
+    if (!lignes.length) {
+      etat(erreur ? "⚠️ Lecture refusée : " + (erreur.message || "session admin ?") : "ℹ️ Aucune progression vidéo synchronisée pour le moment.", erreur ? "#b91c1c" : "");
+      dernier = analyser([], profils, { classe: classeActive, jours: periodeActive });
+      rendre(dernier);
+      remplirClasses(dernier.classes);
+      return dernier;
+    }
+    rafraichirAffichage();
+    var h = new Date();
+    var details = [];
+    if (periodeActive > 0) details.push(dernier.jours + " derniers jours");
+    if (classeActive !== CLASSE_TOUTES) details.push("classe " + classeActive);
+    etat("✅ À jour à " + String(h.getHours()).padStart(2, "0") + ":" + String(h.getMinutes()).padStart(2, "0") +
+      (details.length ? " · " + details.join(" · ") : ""), "#16a34a");
+    return dernier;
   }
 
   function monter() {
