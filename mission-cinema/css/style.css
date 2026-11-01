@@ -396,6 +396,39 @@ textarea:focus { outline: 2px solid var(--or); border-color: transparent; }
   border-color: transparent;
 }
 
+/* ---------- bulle résultats Q6-Q7 automatiques (sous vidéo) ---------- */
+.bulle-resultats {
+  margin: 12px 0 0;
+  padding: 14px 16px;
+  background: var(--noir-doux);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--rayon);
+  color: var(--blanc);
+}
+.bulle-resultats.cacher { display: none; }
+.bulle-resultats-en-tete {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+}
+.bulle-resultats-en-tete h4 {
+  margin: 0; font-size: 0.95rem; color: var(--or-clair);
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.bulle-resultats-compte {
+  font-size: 0.8rem; color: var(--gris); background: rgba(255,255,255,0.06);
+  padding: 2px 8px; border-radius: 10px;
+}
+#resultats-auto-contenu {
+  font-size: 0.9rem; line-height: 1.6;
+}
+#resultats-auto-contenu .resultat-ligne {
+  display: flex; justify-content: space-between; margin: 4px 0;
+  padding: 6px 8px; background: rgba(255,255,255,0.03);
+  border-radius: 6px; border-left: 3px solid var(--vert);
+}
+#resultats-auto-contenu .resultat-libelle { color: #cbd5e1; }
+#resultats-auto-contenu .resultat-statut { color: var(--vert); font-weight: 700; }
+
 /* ---------- correction ---------- */
 #zone-correction { margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0; display: none; }
 #zone-correction.visible, .correction-affichee { display: block; }
