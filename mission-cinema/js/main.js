@@ -30,13 +30,6 @@ window.AppController = (function () {
   var listeQuestions = document.getElementById("liste-questions");
   var spanChapitre = document.getElementById("chapitre-actuel");
 
-  var btnPlay = document.getElementById("btn-play");
-
-  var inputProgress = document.getElementById("progress");
-  var btnVitesse = document.getElementById("vitesse");
-  var btnPleinEcran = document.getElementById("btn-plein-ecran");
-  var btnSousTitres = document.getElementById("btn-sous-titres");
-  var btnSon = document.getElementById("btn-son");
   var videoPlaceholder = document.getElementById("video-placeholder");
   var panneauQuestion = document.getElementById("panneau-question");
   var bulleResultatsAuto = document.getElementById("bulle-resultats-auto");
@@ -86,28 +79,8 @@ window.AppController = (function () {
     inputNom.addEventListener("input", function () { inputNom.classList.remove("erreur"); });
     inputNom.addEventListener("keydown", function (e) { if (e.key === "Enter") btnStart.click(); });
 
-    // Contrôles vidéo
-    btnPlay.addEventListener("click", function () {
-      video.forcePlay().catch(function () {
-        // Si la vidéo ne peut pas jouer, basculer en mode simulation
-        if (video.isFailed()) {
-          document.getElementById("video-erreur")?.classList.remove("cacher");
-          videoEl.style.display = "none";
-          startSimulationClock();
-        }
-      });
-    });
-
-    btnVitesse.addEventListener("change", function () { video.setSpeed(btnVitesse.value); });
-    btnPleinEcran.addEventListener("click", function () { video.toggleFullscreen(); });
-
-    inputProgress.addEventListener("input", function () {
-      var pct = parseFloat(inputProgress.value) || 0;
-      video.seekToSeconds((pct / 100) * data.video.duration);
-    });
-
-    btnSousTitres.addEventListener("click", function () { toggleSousTitres(); });
-    btnSon.addEventListener("click", function () { toggleSon(); });
+    // Pas de contrôles manuels : la vidéo est pilotée par le système
+    // (démarrage auto à t=0, pause aux questions, reprise via "Poursuivre")
 
     // Sauvegarde de la position de lecture (reprise après interruption)
     var POS_KEY = "stiv2_cinema_position";
@@ -143,12 +116,7 @@ window.AppController = (function () {
       },
       onTimeUpdate: function (missionTime, pct) {
         if (detectedError) return;
-        spanTempsVideo.textContent = video.formatTime(missionTime);
-        if (!inputProgress.matches(":focus")) {
-          inputProgress.value = pct;
-          inputProgress.max = 100;
-        }
-        spanTemps.textContent = video.formatTime(missionTime);
+        if (spanTemps) spanTemps.textContent = video.formatTime(missionTime);
         var chap = chapitrePourTemps(missionTime);
         if (chap && spanChapitre) {
           spanChapitre.textContent = "Chapitre " + chap.id + " : " + chap.title;
@@ -244,9 +212,7 @@ window.AppController = (function () {
       var elapsed = (Date.now() - base) / 1000;
       var missionTime = Math.min(saved + elapsed, data.video.duration);
       var pct = (missionTime / data.video.duration) * 100;
-      spanTempsVideo.textContent = video.formatTime(missionTime);
-      if (!inputProgress.matches(":focus")) inputProgress.value = pct;
-      spanTemps.textContent = video.formatTime(missionTime);
+      if (spanTemps) spanTemps.textContent = video.formatTime(missionTime);
       var chap = chapitrePourTemps(missionTime);
       if (chap && spanChapitre) spanChapitre.textContent = "Chapitre " + chap.id + " : " + chap.title;
       rafraichirPanneau();
@@ -453,17 +419,6 @@ window.AppController = (function () {
     return String(texte)
       .replace(/&/g, "&amp;").replace(/</g, "&lt;")
       .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-  }
-
-  function toggleSousTitres() {
-    var tracks = videoEl.querySelectorAll("track");
-    tracks.forEach(function (t) { t.mode = t.mode === "showing" ? "hidden" : "showing"; });
-  }
-
-  function toggleSon() {
-    if (!videoEl) return;
-    videoEl.muted = !videoEl.muted;
-    btnSon.textContent = videoEl.muted ? "🔇 Son" : "🔊 Son";
   }
 
   return {
