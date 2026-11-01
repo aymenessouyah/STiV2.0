@@ -214,24 +214,11 @@ window.AppController = (function () {
       video.seekToSeconds(savedPos);
     } else {
       // Nouvelle mission : commencer au début du premier chapitre
-      // et laisser la vidéo jouer naturellement jusqu'à la première question
       var firstChapter = data.chapters[0];
       video.seekToSeconds(firstChapter ? firstChapter.timeStart : 0);
     }
-    var videoStarted = false;
-    videoEl.addEventListener("playing", function () { videoStarted = true; }, { once: true });
-
-    video.forcePlay().catch(function () {
-      // Échec immédiat de la lecture : basculer en mode simulation
-      basculerModeSansVideo();
-    });
-
-    // Si la vidéo ne démarre pas après 2 secondes, basculer automatiquement en mode simulation
-    setTimeout(function () {
-      if (!videoStarted && !video.isFailed()) {
-        basculerModeSansVideo();
-      }
-    }, 2000);
+    // La vidéo ne démarre PAS automatiquement : l'utilisateur clique sur "Lire"
+    // quand il est prêt. La vidéo se mettra en pause à chaque question.
   }
 
   function basculerModeSansVideo() {
@@ -324,7 +311,7 @@ window.AppController = (function () {
     quiz.hideCorrection();
   }
 
-  // appelé par le bouton "Continuer la mission" (dans quiz.showCorrection)
+  // appelé par le bouton "Poursuivre" (dans quiz.showCorrection)
   function reprendreVideo() {
     cacherQuestion();
     video.resume();
