@@ -55,7 +55,7 @@ test('le petit coin « Vues des vidéos » est monté dans la vue d’ensemble d
   assert.match(section, /<select id="vues-videos-classe"[^>]*><option value="\*">/, 'sélecteur de classe amorcé sur « toutes »');
   /* Le bloc reste discret : après la grille afficheur + compteurs, avant le bandeau Labo 3. */
   assert.ok(section.indexOf('class="vue-ensemble-corps"') < section.indexOf('id="vues-videos-admin"'));
-  assert.match(html, /<script src="assets\/js\/admin-vues-videos\.js\?v=531" defer><\/script>/);
+  assert.match(html, /<script src="assets\/js\/admin-vues-videos\.js\?v=613-perf" defer><\/script>/);
   /* Styles dédiés (liste compacte et défilante). */
   assert.match(html, /\.vues-videos-liste\s*\{[^}]*max-height/);
   assert.match(html, /\.vues-video-jauge/);
@@ -468,12 +468,13 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
     'assets/js/reprendre.js']) {
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${REV}"`), chemin);
   }
-  assert.ok(delta.includes('url: "./admin.html", revision: "compteurs-zero-v612"'),
+  assert.ok(delta.includes('url: "./admin.html", revision: "videos-supabase-v613"'),
     'la page d’administration repart au lot v585 (Smart Book 3SI à 81 pages)');
-  assert.ok(delta.includes('url: "./assets/js/admin-vues-videos.js", revision: "cours-sti-v578"'),
-    'le coin des vues repart au lot v549');
+  /* v613 : le coin des vues porte désormais sa propre révision (comptage en base). */
+  assert.ok(delta.includes('url: "./assets/js/admin-vues-videos.js", revision: "videos-supabase-v613"'),
+    'le coin des vues suit la v613');
   assert.match(delta, /url: "\.\/assets\/js\/sync-progressions\.js", revision: "pastille-sync-v534"/);
-  assert.match(delta, /url: "\.\/offline-complete-manifest\.json", revision: "compteurs-zero-v612"/);
+  assert.match(delta, /url: "\.\/offline-complete-manifest\.json", revision: "videos-supabase-v613"/);
   /* Budget du delta préservé : le module entre dans la liste, une annexe figée en sort. */
   const urls = [...delta.matchAll(/url:\s*"([^"]+)"/g)].map((m) => m[1]);
   assert.equal(new Set(urls).size, urls.length, 'aucun doublon');

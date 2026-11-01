@@ -3626,7 +3626,10 @@
   if (btnRecompterZero) {
     btnRecompterZero.addEventListener("click", function () {
       btnRecompterZero.disabled = true;
+      /* v612 (connexions et durée) puis v613 (vidéos), l'un après l'autre. */
       recompterElevesAZero({ onDemande: true }).then(function () {
+        return recompterMediasEleves({ onDemande: true });
+      }).then(function () {
         btnRecompterZero.disabled = false;
       }, function () { btnRecompterZero.disabled = false; });
     });
@@ -5109,6 +5112,11 @@
       if (!estHorsLigne && typeof recompterElevesAZero === "function") {
         clearTimeout(minuteurRecompteAdmin);
         minuteurRecompteAdmin = setTimeout(function () { recompterElevesAZero(); }, 1500);
+      }
+      /* v613 : même traitement pour les élèves sans aucune vidéo affichée. */
+      if (!estHorsLigne && typeof recompterMediasEleves === "function") {
+        clearTimeout(minuteurRecompteMediaAdmin);
+        minuteurRecompteMediaAdmin = setTimeout(function () { recompterMediasEleves(); }, 2400);
       }
       if (estHorsLigne) {
         var dtStr = tsCache ? new Date(tsCache).toLocaleString("fr-FR") : "récemment";
@@ -6871,10 +6879,151 @@
   window.__stiRecompterCompteursAdmin = recompterElevesAZero;
   window.__stiCompteursRecomptesAdmin = compteursRecomptesAdmin;
 
+  /* ══════════════════════════════════════════════════════════════════════════
+     🎬 v613 — « les compteurs des vidéos, comme les nouveaux compteurs ? »
+
+     Même défaut que les connexions, autre journal. Les compteurs vidéo d'un
+     élève viennent de deux sources, toutes deux bornées :
+       • `sti_progressions.donnees["sti-media-prog-v1"]`, lu par pages de 5 000
+         lignes : au-delà, les élèves suivants ne sont jamais lus ;
+       • le journal `acces` (page « PROG_MEDIA »), dont la page ne garde que les
+         600 lignes les plus récentes de TOUTE la plateforme.
+     Un élève dont la progression n'a pas été relue, ou dont les traces vidéo
+     sont plus anciennes que ces 600 lignes, affiche donc « 0/27 » alors que la
+     base connaît ses vidéos.
+
+     Ici, pour chaque élève sans aucune donnée vidéo, on interroge la base
+     POUR LUI SEUL : sa ligne `sti_progressions` et ses lignes `acces`
+     « PROG_MEDIA ». Les pourcentages lus sont fusionnés au maximum (jamais
+     écrasés par une valeur plus faible), comme partout ailleurs.
+     Rien n'est inventé : un élève qui n'a réellement rien regardé est mémorisé
+     « vérifié », pour ne pas réinterroger la base à chaque rendu.
+     ══════════════════════════════════════════════════════════════════════════ */
+  var mediasRecomptesAdmin = {};   /* uid → { clé média → pourcentage } */
+  var echecsRecompteMediaAdmin = {};
+  var recompteMediaEnCours = false;
+  var minuteurRecompteMediaAdmin = 0;
+  var MAX_MEDIAS_RECOMPTES = 24;
+  var MAX_LIGNES_PROG_MEDIA = 200;
+
+  /* Fusionne un pourcentage dans la mémoire vidéo d'un élève, sans recul. */
+  function fusionnerMediaAdmin(uid, cle, pct) {
+    var clePropre = normaliserCleMediaAdmin(cle);
+    if (!clePropre || !(pct > 0)) return;
+    if (!progMediaParUser[uid]) progMediaParUser[uid] = {};
+    if (pct > (progMediaParUser[uid][clePropre] || 0)) progMediaParUser[uid][clePropre] = pct;
+  }
+
+  /* Élèves sans aucune donnée vidéo et pas encore vérifiés. */
+  function elevesSansMediaAdmin() {
+    return (profils || []).filter(function (p) {
+      if (!p || !p.id) return false;
+      var pm = progMediaParUser[p.id];
+      if (pm && Object.keys(pm).length) return false;
+      if (mediasRecomptesAdmin[p.id]) return false;
+      return (echecsRecompteMediaAdmin[p.id] || 0) < 3;
+    });
+  }
+
+  /* Remet les pourcentages vérifiés en base sur la mémoire vidéo. */
+  function appliquerMediasRecomptesAdmin() {
+    Object.keys(mediasRecomptesAdmin).forEach(function (uid) {
+      var map = mediasRecomptesAdmin[uid];
+      if (!map) return;
+      Object.keys(map).forEach(function (k) { fusionnerMediaAdmin(uid, k, Number(map[k]) || 0); });
+    });
+  }
+
+  /* Lit dans la base la progression vidéo d'UN élève (deux sources). */
+  function compterMediasEleveAdmin(uid) {
+    var prog = sb.from("sti_progressions").select("user_id,donnees,maj").eq("user_id", uid).limit(1)
+      .then(function (r) { return r && !r.error ? ((r.data || [])[0] || null) : null; })
+      .catch(function () { return null; });
+    var traces = sb.from("acces").select(COLONNES_ACCES_ADMIN).eq("user_id", uid).eq("page", "PROG_MEDIA")
+      .order("id", { ascending: false }).limit(MAX_LIGNES_PROG_MEDIA)
+      .then(function (r) { return r && !r.error ? (r.data || []) : null; })
+      .catch(function () { return null; });
+    return Promise.all([prog, traces]).then(function (res) {
+      var ligne = res[0], tracesMedia = res[1];
+      if (ligne === null && tracesMedia === null) return null; /* base muette : on réessaiera */
+      var map = {};
+      function retenir(cle, pct) {
+        var c = normaliserCleMediaAdmin(cle);
+        if (!c || !(pct > 0)) return;
+        if (pct > (map[c] || 0)) map[c] = pct;
+      }
+      if (ligne) {
+        var d = parserObjetJsonSoupleAdmin(ligne.donnees);
+        var mProg = d ? parserObjetJsonSoupleAdmin(d["sti-media-prog-v1"]) : null;
+        if (mProg && typeof mProg === "object") {
+          Object.keys(mProg).forEach(function (k) { retenir(k, extrairePctMediaEntreeAdmin(mProg[k])); });
+        }
+      }
+      (tracesMedia || []).forEach(function (a) {
+        try {
+          var pm = JSON.parse(a.lieu || "{}");
+          if (!pm || !pm.m || typeof pm.m !== "object") return;
+          Object.keys(pm.m).forEach(function (k) { retenir(k, Number(pm.m[k]) || 0); });
+        } catch (e) {}
+      });
+      return map;
+    });
+  }
+
+  function recompterMediasEleves(options) {
+    var onDemande = Boolean(options && options.onDemande);
+    if (recompteMediaEnCours || !sb || (typeof navigator !== "undefined" && !navigator.onLine)) {
+      if (onDemande) msg("⏳ La vérification des vidéos est déjà en cours, ou l’appareil est hors-ligne.", "err");
+      return Promise.resolve(0);
+    }
+    var cibles = onDemande
+      ? (profils || []).filter(function (p) { return p && p.id && !Object.keys(progMediaParUser[p.id] || {}).length; })
+      : elevesSansMediaAdmin();
+    if (!cibles.length) {
+      if (onDemande) msg("✅ Aucun élève affiché à 0 vidéo non vérifié : rien à recompter.", "ok");
+      return Promise.resolve(0);
+    }
+    cibles = cibles.slice(0, MAX_MEDIAS_RECOMPTES);
+    recompteMediaEnCours = true;
+    if (onDemande) msg("⏳ Vérification des vidéos de " + cibles.length + " élève(s) dans la base…", "");
+    return new Promise(function (resolve) {
+      var trouves = 0, i = 0;
+      function suivant() {
+        if (i >= cibles.length) {
+          recompteMediaEnCours = false;
+          appliquerMediasRecomptesAdmin();
+          rendAbonnes();
+          if (onDemande) {
+            msg(trouves > 0
+              ? "✅ " + trouves + " élève(s) : leurs vidéos ont été retrouvées dans la base et les compteurs sont à jour."
+              : "ℹ️ Vérification terminée : ces élèves n’ont réellement aucune vidéo enregistrée — leur 0 est exact.", "ok");
+          }
+          resolve(trouves);
+          return;
+        }
+        var p = cibles[i++];
+        compterMediasEleveAdmin(p.id).then(function (map) {
+          if (!map) {
+            echecsRecompteMediaAdmin[p.id] = (echecsRecompteMediaAdmin[p.id] || 0) + 1;
+          } else {
+            mediasRecomptesAdmin[p.id] = map;
+            if (Object.keys(map).length) trouves += 1;
+          }
+          setTimeout(suivant, 60);
+        });
+      }
+      suivant();
+    });
+  }
+  window.__stiRecompterMediasAdmin = recompterMediasEleves;
+  window.__stiMediasRecomptesAdmin = mediasRecomptesAdmin;
+
   function rendAbonnes() {
     /* v612 : les compteurs vérifiés directement en base survivent aux rendus
        (chaque rechargement du journal les recalculerait à zéro). */
     appliquerCompteursRecomptesAdmin();
+    /* v613 : les pourcentages vidéo retrouvés dans la base survivent aux rendus. */
+    appliquerMediasRecomptesAdmin();
     /* v582 : l'en-tête de la colonne suit la période choisie (cumul par défaut). */
     var thDureeAbonnes = document.querySelector("#wrap-table-abonnes thead th:nth-child(6)");
     if (thDureeAbonnes) {

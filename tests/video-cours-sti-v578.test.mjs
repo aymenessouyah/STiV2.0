@@ -215,7 +215,8 @@ test('la vidéo est dans le paquet hors-ligne et versionnée', () => {
   assert.ok(sw.includes(`"./assets/subtitles/CoursSystemesInternet-fr-v578.vtt"`), 'VTT hors-ligne');
   assert.ok(sw.includes(`{ url: "./assets/js/protection.js", revision: "${REV}" }`), 'révision du lecteur');
   assert.ok(sw.includes(`{ url: "./assets/js/lecteur-commun.js", revision: "${REV}" }`), 'révision du lecteur commun');
-  assert.ok(sw.includes(`{ url: "./assets/js/admin-vues-videos.js", revision: "${REV}" }`), 'révision de la vue admin');
+  /* v613 : la vue admin a sa propre révision (comptage vidéo depuis la base). */
+  assert.ok(sw.includes('{ url: "./assets/js/admin-vues-videos.js", revision: "videos-supabase-v613" }'), 'révision de la vue admin');
   assert.ok(sw.includes(`{ url: "./${PAGE}", revision: "cours-sti-v596", refreshIfCached: true }`), 'révision du cours');
 });
 

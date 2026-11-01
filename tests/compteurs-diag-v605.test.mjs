@@ -70,7 +70,7 @@ test('v605 — le rapport est lisible, copiable et refermable', () => {
 });
 
 test('v605 — la page d’administration charge la nouvelle version du script', () => {
-  assert.match(adminHtml, /assets\/js\/admin\.js\?v=612-perf/);
+  assert.match(adminHtml, /assets\/js\/admin\.js\?v=613-perf/);
 });
 
 test('v605 — la publication avance et le service worker reverra admin.js', () => {
@@ -78,6 +78,6 @@ test('v605 — la publication avance et le service worker reverra admin.js', () 
   assert.match(sw, /var PUBLIEE_LE = "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z";/);
   assert.match(sw, /v605-compteurs-expliques-20261101/);
   /* v606 : la version publiée avance, mais la révision d’admin.js reste celle de v605. */
-  assert.match(sw, /\{ url: "\.\/assets\/js\/admin\.js", revision: "compteurs-zero-v612" \}/);
-  assert.match(sw, /\{ url: "\.\/admin\.html", revision: "compteurs-zero-v612" \}/);
+  assert.match(sw, /\{ url: "\.\/assets\/js\/admin\.js", revision: "videos-supabase-v613" \}/);
+  assert.match(sw, /\{ url: "\.\/admin\.html", revision: "videos-supabase-v613" \}/);
 });

@@ -83,9 +83,9 @@ test('la nouvelle mesure est servie avec un cache-buster et une révision à jou
 
   /* v560 : admin.js change encore (bascule automatique des photos base64),
      le cache-buster et les deux révisions suivent. */
-  assert.match(admin, /assets\/js\/admin\.js\?v=612-perf/);
-  assert.match(sw, /url: "\.\/admin\.html", revision: "compteurs-zero-v612"/);
-  assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "compteurs-zero-v612"/);
+  assert.match(admin, /assets\/js\/admin\.js\?v=613-perf/);
+  assert.match(sw, /url: "\.\/admin\.html", revision: "videos-supabase-v613"/);
+  assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "videos-supabase-v613"/);
   /* Rappel : le cache et le lot général ne bougent pas. */
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
