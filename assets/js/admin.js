@@ -7037,7 +7037,93 @@
          maj: ISO }
      Ce que la page applique est décrit dans assets/js/guide-exercice.js.
      ══════════════════════════════════════════════════════════════════════════ */
+  /* v616 : COPIE DE SECOURS du catalogue, embarquée dans ce fichier.
+     Le tableau de bord lisait la liste uniquement dans
+     assets/guide-exercice-catalogue.json ; si ce fichier ne se charge pas
+     (réseau, hors ligne, ouverture depuis un disque), la section restait
+     VIDE sans explication. Ces 72 entrées garantissent que la liste
+     s'affiche toujours. Elles sont générées depuis le JSON : le test
+     guide-exercice-catalogue-v616 vérifie qu'elles restent identiques. */
+  var GUIDE_CATALOGUE_REPLI = [
+    { chemin: "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Enonce.pdf.html", titre: "TP Explore Tunisie — Énoncé (HTML5 / CSS3)", matiere: "html-css", correction: true, video: false },
+    { chemin: "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-float.html", titre: "Explore Tunisie", matiere: "html-css", correction: true, video: false },
+    { chemin: "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-position.html", titre: "Explore Tunisie", matiere: "html-css", correction: true, video: false },
+    { chemin: "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index.html", titre: "Explore Tunisie", matiere: "html-css", correction: true, video: false },
+    { chemin: "exercices/html-css/TP1-css.pdf.html", titre: "TP 1 — Structure & Balises sémantiques (CSS3)", matiere: "html-css", correction: true, video: false },
+    { chemin: "exercices/html-css/TP2-css.pdf.html", titre: "TP 2 — Layout & Menu de navigation (CSS3)", matiere: "html-css", correction: true, video: false },
+    { chemin: "exercices/html-css/TP2/tp2corrposition.html", titre: "TP N°2 - Correction pas à pas - Lycée Rafèha", matiere: "html-css", correction: true, video: false },
+    { chemin: "exercices/html-css/TP3-css.pdf.html", titre: "TP 3 — Page d'accueil interactive, Ariana (CSS3)", matiere: "html-css", correction: true, video: false },
+    { chemin: "exercices/html-css/activite-html-css/Act1/page1.html", titre: "Exercice CSS", matiere: "html-css", correction: true, video: true },
+    { chemin: "exercices/html-css/activite-html-css/Act2/page2.html", titre: "Projet HTML/CSS", matiere: "html-css", correction: true, video: true },
+    { chemin: "exercices/html-css/activite1-2-position-animation-css3.pdf.html", titre: "Activités 1 & 2 — Positionnement flottant & animations (CSS3)", matiere: "html-css", correction: true, video: false },
+    { chemin: "exercices/html-css/box-shadow-text-shadow-css3.html", titre: "box-shadow en détail", matiere: "html-css", correction: false, video: false },
+    { chemin: "exercices/html-css/emploi-temps/emploidutemps.html", titre: "Emploi du temps - 4ème Sciences de l'Informatique 2", matiere: "html-css", correction: true, video: true },
+    { chemin: "exercices/html-css/formulaire-inscription.pdf.html", titre: "Énoncé — Formulaire d'inscription (HTML5/CSS3)", matiere: "html-css", correction: true, video: false },
+    { chemin: "exercices/html-css/tp-display-float-position/index.html", titre: "TP : display, float et position", matiere: "html-css", correction: true, video: false },
+    { chemin: "exercices/html-css/tp-evenements-liens/index.html", titre: "TP : Événements JavaScript, liens et arrière-plans", matiere: "html-css", correction: true, video: false },
+    { chemin: "exercices/html-css/tp-formulaire-tableau-autre/index.html", titre: "TP : Formulaire, Tableau, Autres .... HTML5 / CSS3", matiere: "html-css", correction: true, video: true },
+    { chemin: "exercices/html-css/tp-transitions-animations/exercice1.html", titre: "Corrigé 1 — transitions et animations CSS3", matiere: "html-css", correction: true, video: false },
+    { chemin: "exercices/html-css/tp-transitions-animations/exercice2.html", titre: "Corrigé 2 — menu et sous-menus animés", matiere: "html-css", correction: true, video: false },
+    { chemin: "exercices/html-css/tp-transitions-animations/index.html", titre: "TP : transitions et animations CSS3", matiere: "html-css", correction: true, video: false },
+    { chemin: "exercices/javascript/TP Train/Enonce_TP_TrainTN_JavaScript.html", titre: "SNCFT · TP JavaScript — énoncé", matiere: "javascript", correction: true, video: false },
+    { chemin: "exercices/javascript/TP Train/Ressource_eleve_TrainTN.html", titre: "SNCFT · Réserver un billet de train — ressource élève", matiere: "javascript", correction: true, video: false },
+    { chemin: "exercices/javascript/TP Train/TP_Train_JavaScript_cORRECTION.html", titre: "SNCFT · TP JavaScript — corrigé", matiere: "javascript", correction: true, video: false },
+    { chemin: "exercices/javascript/TP Train/index.html", titre: "🚆 Série 6 · TP Train — Réserver un billet — STI V2.0", matiere: "javascript", correction: true, video: true },
+    { chemin: "exercices/javascript/Tp1-Correction-js.html", titre: "TP1 JavaScript - Corrigé", matiere: "javascript", correction: true, video: true },
+    { chemin: "exercices/javascript/Tp1-js.html", titre: "TP1 JavaScript - Énoncé", matiere: "javascript", correction: true, video: true },
+    { chemin: "exercices/javascript/Tp2-Correction-js.html", titre: "TP2 JavaScript - Corrigé", matiere: "javascript", correction: true, video: true },
+    { chemin: "exercices/javascript/Tp2-js.html", titre: "TP2 JavaScript - Énoncé", matiere: "javascript", correction: true, video: true },
+    { chemin: "exercices/javascript/Tp3-Correction-js.html", titre: "TP3 JavaScript - Corrigé", matiere: "javascript", correction: true, video: true },
+    { chemin: "exercices/javascript/Tp3-js.html", titre: "TP3 JavaScript - Énoncé", matiere: "javascript", correction: true, video: true },
+    { chemin: "exercices/javascript/Tp4-Correction-js.html", titre: "TP4 JavaScript - Corrigé", matiere: "javascript", correction: true, video: true },
+    { chemin: "exercices/javascript/Tp4-js.html", titre: "TP4 JavaScript - Énoncé", matiere: "javascript", correction: true, video: true },
+    { chemin: "exercices/javascript/Tp5-Correction-js.html", titre: "TP5 JavaScript - Corrigé", matiere: "javascript", correction: true, video: true },
+    { chemin: "exercices/javascript/Tp5-js.html", titre: "TP5 JavaScript - Énoncé Reformulé", matiere: "javascript", correction: true, video: true },
+    { chemin: "exercices/javascript/js-37-defis-tt.html", titre: "Les 37 Défis — JavaScript • STI Quiz", matiere: "javascript", correction: true, video: false },
+    { chemin: "exercices/php/4STi-dc-6-2025-2026.pdf.html", titre: "Devoir de Contrôle N°6 (2025-2026) — Épreuve Pratique 4e SI (PHP / MySQLi)", matiere: "php", correction: true, video: false },
+    { chemin: "exercices/php/Tp1-Correction-php.html", titre: "Corrigé Série 1 PHP — Chaînes, Fonctions, Tableaux et Dates", matiere: "php", correction: true, video: true },
+    { chemin: "exercices/php/Tp1-php.html", titre: "Série 1 PHP — Chaînes, Fonctions, Tableaux et Dates (Énoncé)", matiere: "php", correction: true, video: true },
+    { chemin: "exercices/php/Tp2-Correction-php.html", titre: "Corrigé : Série d'Exercices sur les chaînes de caractères (PHP)", matiere: "php", correction: true, video: true },
+    { chemin: "exercices/php/Tp2-php.html", titre: "Série d'Exercices : Les fonctions relatives aux chaînes de caractères (PHP)", matiere: "php", correction: true, video: true },
+    { chemin: "exercices/php/Tp3-correction-php.html", titre: "Corrigé : Série d'Exercices sur les Tableaux en PHP", matiere: "php", correction: true, video: true },
+    { chemin: "exercices/php/Tp3-php.html", titre: "Série d'Exercices : Les Tableaux en PHP", matiere: "php", correction: true, video: true },
+    { chemin: "exercices/php/Tp4-Correction-php.html", titre: "Corrigé Série 4 PHP : MySQLi Procédural et Connexion à une base de données", matiere: "php", correction: true, video: true },
+    { chemin: "exercices/php/Tp4-php.html", titre: "Série 4 PHP : MySQLi Procédural et Connexion à une base de données", matiere: "php", correction: true, video: true },
+    { chemin: "exercices/php/Tp5-Correction-php.html", titre: "Corrigé Série 5 PHP — Sujet Blanc Complet Type Bac Pratique", matiere: "php", correction: true, video: true },
+    { chemin: "exercices/php/Tp5-php.html", titre: "Série 5 PHP — Sujet Blanc Complet Type Bac Pratique (Barème / 20)", matiere: "php", correction: true, video: true },
+    { chemin: "exercices/php/debogage-php-bac.html", titre: "Atelier Débogage PHP / MySQLi / SQL / JS — Trouver et Corriger l'Erreur", matiere: "php", correction: true, video: false },
+    { chemin: "exercices/php/ordre-php-bac.html", titre: "Atelier Interactif PHP/MySQLi & SQL — Remise en ordre des scripts du Bac STI", matiere: "php", correction: true, video: false },
+    { chemin: "exercices/php/sondage-parcours-pas-a-pas.html", titre: "sondage.php : le parcours pas à pas", matiere: "php", correction: true, video: false },
+    { chemin: "exercices/php/statphpanimee.html", titre: "🎬 Exécution pas à pas — stats_sondage.php", matiere: "php", correction: true, video: false },
+    { chemin: "exercices/php/trace-fetch-php.html", titre: "Visualiseur Pas-à-Pas : Boucle while & mysqli_fetch_assoc / fetch_row / fetch_array", matiere: "php", correction: true, video: false },
+    { chemin: "exercices/resume-fonctions-standards.html", titre: "Résumé Fonctions Standards — STI Quiz", matiere: "", correction: false, video: true },
+    { chemin: "exercices/series-exercices.html", titre: "Séries et exercices — STI Quiz", matiere: "", correction: true, video: true },
+    { chemin: "exercices/sql/CommentConstruireunerequêteSQL.html", titre: "Construire une requête SQL", matiere: "sql", correction: true, video: false },
+    { chemin: "exercices/sql/Tp-BD-Jointure-sous-requetes-Group-By.html", titre: "Série BD : Jointure - sous-requêtes - Group By (Lycée Rafèha)", matiere: "sql", correction: true, video: true },
+    { chemin: "exercices/sql/Tp-GroupBy-bd.html", titre: "TP : LMD (Group By) - Lycée Rafeha", matiere: "sql", correction: true, video: true },
+    { chemin: "exercices/sql/Tp-date-ssr-j-gp-bd.html", titre: "Série BD : Date - Jointure - Sous-requêtes - Group By (Gesthotel)", matiere: "sql", correction: true, video: true },
+    { chemin: "exercices/sql/Tp-date-ssr-j-gp-correction-bd.html", titre: "Corrigé : Série 5 BD - Date, Jointure, Sous-requêtes, Group By (Gesthotel)", matiere: "sql", correction: true, video: true },
+    { chemin: "exercices/sql/Tp1-Correction-bd.html", titre: "Corrigé : Série 1 BD - Requêtes LDD simples (Hôpital & Location)", matiere: "sql", correction: true, video: true },
+    { chemin: "exercices/sql/Tp1-bd.html", titre: "Série d'Exercices - LDD (Lycée Rafeha)", matiere: "sql", correction: true, video: true },
+    { chemin: "exercices/sql/Tp2-Correction-bd.html", titre: "Corrigé : Série 2 BD - LMD Jointures et sous-requêtes", matiere: "sql", correction: true, video: true },
+    { chemin: "exercices/sql/Tp2-bd.html", titre: "Série de Révision : BD - SQL - LMD (Lycée Rafèha)", matiere: "sql", correction: true, video: true },
+    { chemin: "exercices/sql/Tp3-Correction-bd.html", titre: "Corrigé : Série 3 BD - LMD (Group By) (bdtp5, Employés & Notes)", matiere: "sql", correction: true, video: true },
+    { chemin: "exercices/sql/Tp4-correction-bd.html", titre: "Corrigé : Série 4 BD - Jointures, Sous-requêtes et Group By (Lycée Rafèha)", matiere: "sql", correction: true, video: true },
+    { chemin: "exercices/sql/atelier_sql_3_fenetres.html", titre: "Atelier SQL — Question, SGBD, Résultat", matiere: "sql", correction: true, video: true },
+    { chemin: "exercices/sql/sql-correction.html", titre: "Corrigé : Série 6 BD - Récap LDD + LMD (Base ÉTUDIANT)", matiere: "sql", correction: true, video: true },
+    { chemin: "exercices/sql/sql.html", titre: "Série 6 : Récap LDD + LMD (Base ÉTUDIANT) - Lycée Rafeha", matiere: "sql", correction: true, video: true },
+    { chemin: "exercices/systemes/atelier-1-systemes-exploitation.html", titre: "Atelier 1 — Les systèmes d’exploitation · Exercices 3ᵉ SI", matiere: "systemes", correction: true, video: true },
+    { chemin: "exercices/systemes/atelier-2-reseaux.html", titre: "Atelier 2 — Les réseaux informatiques · Exercices 3ᵉ SI", matiere: "systemes", correction: true, video: true },
+    { chemin: "exercices/systemes/atelier-3-machine-virtuelle.html", titre: "Atelier 3 — La machine virtuelle · Exercices 3ᵉ SI", matiere: "systemes", correction: true, video: true },
+    { chemin: "exercices/systemes/atelier-4-objets-connectes.html", titre: "Atelier 4 — Les objets connectés · Exercices 3ᵉ SI", matiere: "systemes", correction: true, video: true },
+    { chemin: "exercices/systemes/index.html", titre: "Exercices — Systèmes, technologies et Internet · STI V2.0", matiere: "systemes", correction: true, video: true }
+  ];
+
   var GUIDE_ID_CONFIG = "guide_exercice";
+  /* v616 : vrai quand la liste affichée vient de la copie de secours, et vrai
+     quand le fichier du dépôt a réellement été lu (pour ne pas le relire). */
+  var guideCatalogueRepli = false;
+  var guideCatalogueFichier = false;
   var guideCatalogue = null;      /* liste des exercices (JSON du dépôt) */
   var guideReglage = null;        /* réglage courant, édité dans la page */
   var guideChargeLe = 0;
@@ -7061,14 +7147,31 @@
   /* Catalogue : fichier généré depuis le dépôt (titres, corrections et vidéos
      détectées). Si le fichier manque, on liste au moins les chemins connus. */
   function chargerCatalogueGuide() {
-    if (guideCatalogue) return Promise.resolve(guideCatalogue);
+    if (guideCatalogueFichier) return Promise.resolve(guideCatalogue);
+    /* v616 : la page ouverte depuis un disque (file://) ne peut pas lire le
+       JSON par fetch ; autant aller droit au repli. */
+    var surDisque = typeof location !== "undefined" && location.protocol === "file:";
+    if (surDisque || typeof fetch !== "function") {
+      guideCatalogue = GUIDE_CATALOGUE_REPLI.slice();
+      guideCatalogueRepli = true;
+      return Promise.resolve(guideCatalogue);
+    }
     return fetch(cfg.RACINE + "assets/guide-exercice-catalogue.json", { cache: "no-cache" })
       .then(function (r) { return r && r.ok ? r.json() : null; })
       .then(function (j) {
-        guideCatalogue = (j && Array.isArray(j.pages)) ? j.pages : [];
+        var pages = (j && Array.isArray(j.pages)) ? j.pages : [];
+        if (!pages.length) throw new Error("catalogue vide");
+        guideCatalogue = pages;
+        guideCatalogueFichier = true;
+        guideCatalogueRepli = false;
         return guideCatalogue;
       })
-      .catch(function () { guideCatalogue = []; return guideCatalogue; });
+      .catch(function () {
+        /* Fichier absent ou illisible : on affiche quand même les 72 exercices. */
+        guideCatalogue = GUIDE_CATALOGUE_REPLI.slice();
+        guideCatalogueRepli = true;
+        return guideCatalogue;
+      });
   }
 
   function reglageGuidePropre(brut) {
@@ -7203,10 +7306,14 @@
   function majGuideResume() {
     var c = reglageGuidePropre(guideReglage);
     var nb = Object.keys(c.parExercice).length;
+    /* v616 : l'état dit aussi d'où vient la liste — et reste orange tant qu'elle
+       vient de la copie de secours, pour que le professeur le sache. */
     guideEtat("Défaut : corrections " + (c.corrections ? "visibles" : "masquées") +
       ", vidéos " + (c.videos ? "visibles" : "masquées") +
       (nb ? " · " + nb + " exception(s)" : "") +
-      (guideChargeLe ? "" : " · non enregistré"), "var(--adm-green)");
+      (guideChargeLe ? "" : " · non enregistré") +
+      (guideCatalogueRepli ? " · liste de secours" : ""),
+      guideCatalogueRepli ? "var(--adm-amber)" : "var(--adm-green)");
   }
 
   function enregistrerReglageGuide() {
@@ -7278,20 +7385,56 @@
         function () { bEnr.disabled = false; });
     });
 
-    Promise.all([chargerCatalogueGuide(), lireReglageGuide()]).then(function () {
-      if (selMatiere) {
-        var vues = {};
-        (guideCatalogue || []).forEach(function (p) { if (p.matiere) vues[p.matiere] = true; });
-        Object.keys(vues).sort().forEach(function (m) {
-          var o = document.createElement("option");
-          o.value = m; o.textContent = m.toUpperCase();
-          selMatiere.appendChild(o);
-        });
-      }
+    function remplirMatieres() {
+      if (!selMatiere) return;
+      var dejaLa = {};
+      Array.prototype.forEach.call(selMatiere.options, function (o) { dejaLa[o.value] = true; });
+      var vues = {};
+      (guideCatalogue || []).forEach(function (p) { if (p.matiere) vues[p.matiere] = true; });
+      Object.keys(vues).sort().forEach(function (m) {
+        if (dejaLa[m]) return;
+        var o = document.createElement("option");
+        o.value = m; o.textContent = m.toUpperCase();
+        selMatiere.appendChild(o);
+      });
+    }
+
+    function peindreListe(etatTexte, etatCouleur) {
       recalquerDefauts();
+      remplirMatieres();
       rendreGuideListe();
       majGuideResume();
-      if (guideChargeLe) guideEtat("Réglage lu dans la base.", "var(--adm-green)");
+      if (etatTexte) guideEtat(etatTexte, etatCouleur);
+    }
+
+    /* v616 : la liste s'affiche TOUT DE SUITE à partir de la copie embarquée,
+       puis s'affine avec le fichier du dépôt et le réglage de la base. Avant,
+       les deux lectures étaient enchaînées en « Promise.all » : un pépin sur
+       l'une laissait la section vide, sans le moindre message. */
+    if (!guideCatalogue || !guideCatalogue.length) {
+      guideCatalogue = GUIDE_CATALOGUE_REPLI.slice();
+      guideCatalogueRepli = true;
+    }
+    peindreListe("⏳ Lecture du fichier et du réglage…", "var(--adm-muted)");
+
+    /* Un appel qui lève AVANT de rendre sa promesse (Supabase indisponible,
+       par exemple) ne doit pas interrompre le montage : on le range dans une
+       promesse rejetée, traitée comme les autres pannes. */
+    function tentative(fn) {
+      try { return Promise.resolve(fn()); }
+      catch (e) { return Promise.reject(e); }
+    }
+
+    tentative(chargerCatalogueGuide).then(function () {
+      peindreListe();
+    }).catch(function () {
+      peindreListe("⚠️ Catalogue du dépôt injoignable — liste de secours affichée.", "var(--adm-amber)");
+    });
+
+    tentative(lireReglageGuide).then(function () {
+      peindreListe();
+    }).catch(function () {
+      peindreListe("⚠️ Réglage illisible — tout est affiché par défaut.", "var(--adm-red)");
     });
   }
   window.__stiMonterGuideExercice = monterGuideExercice;

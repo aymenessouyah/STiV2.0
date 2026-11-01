@@ -136,12 +136,12 @@ test('v615 — le bandeau récapitulatif est peint avec la palette, pas en crèm
 /* ── 4. publication ─────────────────────────────────────────────────────── */
 
 test('v615 — publication : version, lot, cache-buster et révisions', () => {
-  assert.match(sw, /var VERSION_PUBLIEE = "v615";/);
-  assert.match(sw, /var PUBLIEE_LE = "2026-11-01T16:45:00Z";/);
-  assert.match(sw, /Historique lots : v615-guide-lisibilite-20261101,/);
-  assert.match(adminHtml, /assets\/js\/admin\.js\?v=615-perf/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v616";/);
+  assert.match(sw, /var PUBLIEE_LE = "2026-11-01T17:15:00Z";/);
+  assert.match(sw, /Historique lots : v616-guide-secours-20261101/);
+  assert.match(adminHtml, /assets\/js\/admin\.js\?v=616-perf/);
   for (const chemin of ['assets/js/admin.js', 'admin.html', 'offline-complete-manifest.json']) {
-    assert.ok(sw.includes('{ url: "./' + chemin + '", revision: "guide-lisibilite-v615" }'), chemin);
+    assert.ok(sw.includes('{ url: "./' + chemin + '", revision: "guide-secours-v616" }'), chemin);
   }
   /* Le module élève ne change pas : il garde son lot. */
   assert.ok(sw.includes('{ url: "./assets/js/guide-exercice.js", revision: "guide-exercice-v614" }'));

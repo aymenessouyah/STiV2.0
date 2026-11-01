@@ -142,7 +142,7 @@ test('v592 : une archive illisible ne fait pas planter l’import', async () => 
 test('v592 : la page d’administration et le cache suivent la nouvelle version', () => {
   const sw = read('sw.js');
   assert.match(sw, /var VERSION_PUBLIEE = "v(?:6(?:1[1-9]|[2-9]\d)|[7-9]\d\d)";/, 'le badge de publication suit la dernière version');
-  assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "guide-lisibilite-v615"/,
+  assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "guide-secours-v616"/,
     'admin.js est réinvalidé sous sa nouvelle révision');
   const page = read('admin.html');
   assert.match(page, /assets\/js\/admin\.js\?v=[0-9a-z-]+/, 'admin.html charge bien admin.js');

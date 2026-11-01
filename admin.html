@@ -4985,7 +4985,17 @@
       });
       /* v614 : le Guide exercice se monte à sa première ouverture (il lit la base). */
       if (secId === "bloc-sec-guide-exercice" && typeof window.__stiMonterGuideExercice === "function") {
-        try { window.__stiMonterGuideExercice(); } catch (eMonte) {}
+        /* v616 : si le montage échoue, on le DIT au lieu de laisser la section
+           vide en silence (c'était le cas depuis la v614). */
+        try { window.__stiMonterGuideExercice(); }
+        catch (eMonte) {
+          var lgGuide = document.getElementById("guide-liste");
+          if (lgGuide && !lgGuide.children.length) {
+            lgGuide.innerHTML = "<p style='margin:10px;font-weight:800;color:var(--adm-red)'>" +
+              "La liste des exercices n’a pas pu s’afficher. Rechargez la page (Ctrl + F5)." +
+              "</p>";
+          }
+        }
       }
       try {
         window.dispatchEvent(new CustomEvent("sti:section-admin-ouverte", { detail: { secId: secId } }));
@@ -5078,7 +5088,7 @@
 <script src="assets/js/supabase-umd.js" defer></script>
 <script src="assets/js/config.js?v=479" defer></script>
 <script src="assets/js/protection.js?v=474" defer></script>
-  <script src="assets/js/admin.js?v=615-perf" defer></script>
+  <script src="assets/js/admin.js?v=616-perf" defer></script>
   <script src="assets/js/admin-couverture.js?v=469" defer></script>
   <script src="assets/js/admin-dbsupbase.js?v=466" defer></script>
   <script src="assets/js/admin-revision.js?v=469" defer></script>
