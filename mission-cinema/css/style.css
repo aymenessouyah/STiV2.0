@@ -188,6 +188,8 @@ aside.panneau ul#liste-questions {
   font-weight: 700; font-size: 0.8rem; background: #334155; color: #94a3b8;
 }
 .q-item.traitee .q-badge { background: var(--vert); color: var(--blanc); }
+.q-item.incorrecte { background: var(--rouge-fond); border-color: var(--rouge); color: var(--noir); }
+.q-item.incorrecte .q-badge { background: var(--rouge); color: var(--blanc); }
 
 .principal { flex: 1; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
 
