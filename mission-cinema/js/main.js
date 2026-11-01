@@ -264,7 +264,7 @@ window.AppController = (function () {
     panneauQuestion.classList.remove("cacher");
     zoneInteraction.classList.remove("cacher");
     zoneInteraction.innerHTML = "";
-    video.pause(); // s'assurer que la vidéo est en pause
+    // La vidéo CONTINUE pendant l'affichage de la question (pas de pause ici)
     quiz.renderQuestion(q, zoneInteraction);
     rafraichirPanneau();
     // Afficher la bulle résultats Q6-Q7 à partir de Q8
@@ -282,7 +282,12 @@ window.AppController = (function () {
   // appelé par le bouton "Poursuivre" (dans quiz.showCorrection)
   function reprendreVideo() {
     cacherQuestion();
-    video.resume();
+    video.handleResume();
+    var pending = video.getPendingQuestion();
+    if (pending) {
+        video.triggerQuestion(pending);
+        video.clearPendingQuestion();
+    }
   }
 
   function chapitrePourTemps(t) {
