@@ -39,9 +39,9 @@ a { color: var(--or-clair); }
 /* ---------- écran d'accueil ---------- */
 .accueil-cadre {
   max-width: 720px;
-  margin: 0 auto;
+  margin: 0;
   padding: 40px 16px;
-  text-align: center;
+  text-align: left;
 }
 
 .logo {
@@ -125,8 +125,8 @@ h1 { font-size: 2.2rem; margin: 8px 0 4px; letter-spacing: 2px; text-transform: 
   display: flex;
   gap: 24px;
   padding: 24px;
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
   align-items: flex-start;
 }
 
@@ -179,7 +179,7 @@ aside.panneau ul#liste-questions {
   padding: 10px 16px; border-radius: var(--rayon);
   background: var(--noir-doux); border: 1px solid rgba(255,255,255,0.08);
   font-weight: 700; color: var(--or-clair); font-size: 0.95rem;
-  text-align: center;
+  text-align: left;
 }
 
 /* Présentation de la base de données */
@@ -210,7 +210,7 @@ aside.panneau ul#liste-questions {
   max-height: 45vh;
   object-fit: contain;
   display: block;
-  margin: 0 auto;
+  margin: 0;
   border-radius: var(--rayon);
   border: 1px solid rgba(255,255,255,0.08);
   background: #000;
@@ -386,7 +386,7 @@ textarea:focus { outline: 2px solid var(--or); border-color: transparent; }
 .alerte button:hover { opacity: 0.9; }
 
 /* ---------- bilan ---------- */
-.bilan-wrap { max-width: 720px; margin: 0 auto; padding: 40px 16px; text-align: center; }
+.bilan-wrap { max-width: 720px; margin: 0; padding: 40px 16px; text-align: left; }
 .bilan-wrap h1 { margin-top: 0; }
 .bilan-accroche { font-size: 1.25rem; color: var(--or-clair); margin: 10px 0 26px; }
 .bilan-score { font-size: 2.5rem; font-weight: 800; margin: 18px 0 8px; color: var(--blanc); }
@@ -411,7 +411,7 @@ textarea:focus { outline: 2px solid var(--or); border-color: transparent; }
 .revision-item span:not(.q-num) { color: #cbd5e1; font-size: 0.9rem; flex: 1; margin-left: 10px; }
 .vide { color: var(--vert); font-weight: 700; padding: 16px; background: var(--vert-fond); border-radius: 8px; border: 1px solid rgba(21,128,61,0.15); }
 
-.bilan-actions { display: flex; gap: 12px; justify-content: center; margin-top: 30px; flex-wrap: wrap; }
+.bilan-actions { display: flex; gap: 12px; justify-content: flex-start; margin-top: 30px; flex-wrap: wrap; }
 
 /* ---------- responsive ---------- */
 @media (max-width: 900px) {
