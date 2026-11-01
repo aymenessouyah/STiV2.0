@@ -104,7 +104,7 @@ test('v575 : couvertures, PDF et index ne restent plus sur l’ancienne édition
 
 test('v575 : le tableau de bord n’affiche plus v560', () => {
   const admin = lire('admin.html');
-  assert.match(admin, /assets\/js\/admin\.js\?v=610-perf/);
+  assert.match(admin, /assets\/js\/admin\.js\?v=612-perf/);
   const script = Number((admin.match(/admin\.js\?v=(\d+)/) || [])[1]);
   const config = Number((lire('assets/js/config.js').match(/VERSION_AFFICHEE:\s*(\d+)/) || [])[1]);
   /* Le badge affiche max(?v= du script, VERSION_AFFICHEE). */

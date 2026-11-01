@@ -3622,6 +3622,15 @@
     sb.auth.signOut().catch(function () {}).then(function () { location.replace(cfg.RACINE + "portail.html#deconnecte"); });
   });
   document.getElementById("btn-refresh").addEventListener("click", function () { charge(false, true); });
+  var btnRecompterZero = document.getElementById("btn-recompter-zero");
+  if (btnRecompterZero) {
+    btnRecompterZero.addEventListener("click", function () {
+      btnRecompterZero.disabled = true;
+      recompterElevesAZero({ onDemande: true }).then(function () {
+        btnRecompterZero.disabled = false;
+      }, function () { btnRecompterZero.disabled = false; });
+    });
+  }
   document.getElementById("btn-stats").addEventListener("click", function () {
     triParAcces = !triParAcces;
     this.classList.toggle("on", triParAcces);
@@ -5094,6 +5103,13 @@
       rendAcces();
       calculerQuotaSupabase(tous, tousAcces, window.__stiCountProfils, window.__stiCountAcces);
       if (!estHorsLigne) verifierNouvellesDemandes();
+      /* v612 : les élèves restés à « 00 » sont recomptés dans la base, une fois
+         le tableau affiché (débounce : le chargement d'arrière-plan appelle
+         cette fonction plusieurs fois d'affilée). */
+      if (!estHorsLigne && typeof recompterElevesAZero === "function") {
+        clearTimeout(minuteurRecompteAdmin);
+        minuteurRecompteAdmin = setTimeout(function () { recompterElevesAZero(); }, 1500);
+      }
       if (estHorsLigne) {
         var dtStr = tsCache ? new Date(tsCache).toLocaleString("fr-FR") : "récemment";
         msg("📴 Mode Hors-ligne — Consultation des dernières données synchronisées (" + dtStr + ") : " + profils.length + " abonné(s).", "ok");
@@ -6668,8 +6684,9 @@
       } else if (totalBase > 0 && chargees === 0) {
         lignes.push("   → Les lignes existent en base, mais la page n'en a chargé aucune pour lui :");
         lignes.push("     le journal affiché ne couvre que les dernières activités de tout le monde.");
-        lignes.push("     Cliquez sur « Connexions » plus tard (le chargement continue en arrière-plan),");
-        lignes.push("     ou vérifiez un filtre de période / une purge de mois.");
+        lignes.push("     Depuis la v612, ce cas est corrigé tout seul : l'élève est recompté");
+        lignes.push("     dans la base et ses lignes sont ramenées dans le journal.");
+        lignes.push("     Si le zéro persiste, cliquez sur « 🔁 Recompter les 00 ».");
       } else if (chargees > 0) {
         lignes.push("   → Les lignes sont chargées : le compteur affiché devrait suivre.");
         lignes.push("     Si la carte reste à 00, rechargez le tableau de bord (Ctrl+F5).");
@@ -6686,7 +6703,178 @@
   }
   window.__stiDiagCompteurs = diagCompteursAbonne;
 
+  /* ══════════════════════════════════════════════════════════════════════════
+     🔁 v612 — « je trouve encore des candidats avec les compteurs à zéro »
+
+     La v605 expliquait le pourquoi ; il fallait maintenant le corriger sans
+     intervention du professeur.
+
+     Les trois instruments d'une carte (Connexions · Durée · Accès 24 h) sont
+     calculés sur le journal `acces` **chargé dans la page** : au mieux les
+     5 000 lignes les plus récentes de TOUTE la plateforme. Un élève qui n'a
+     rien fait depuis longtemps — ou dont l'activité est plus ancienne que ces
+     5 000 lignes — tombe hors de la fenêtre et s'affiche à « 00 » alors que la
+     base connaît très bien son travail.
+
+     Ici, pour chaque élève affiché à zéro, on demande directement à la base
+     SES lignes (index `idx_acces_user_debut_desc`), on compte exactement, on
+     additionne la durée et on re-mesure les 24 h. Les lignes ramenées sont
+     fusionnées au journal de la page : la carte, la fiche, le tableau et
+     l'export Excel disent alors tous la même chose. Aucune ligne n'est
+     inventée : si la base ne renvoie rien, le zéro est vrai et il est mémorisé
+     pour ne pas réinterroger l'élève à chaque rendu.
+     ══════════════════════════════════════════════════════════════════════════ */
+  var MAX_ELEVES_RECOMPTES = 24;     /* par passe : on ne martèle pas la base */
+  var MAX_LIGNES_RECOMPTE = 400;     /* lignes lues par élève (durée et 24 h) */
+  var compteursRecomptesAdmin = {};  /* uid → { le, connexions, dureeSec, acces24 } */
+  var echecsRecompteAdmin = {};      /* uid → nombre d'échecs (on abandonne après 3) */
+  var recompteEnCours = false;
+  var minuteurRecompteAdmin = 0;
+  var accesRecompesAdmin = [];       /* lignes ramenées, fusionnées une seule fois */
+
+  /* Une purge de mois décidée par le professeur reste respectée : on ne
+     ressuscite pas des lignes qu'il a volontairement sorties du journal. */
+  function seuilPurgeAccesAdmin() {
+    var ts = 0;
+    try {
+      var pm = cfgEcoles && cfgEcoles.purgesMois;
+      if (pm && typeof pm === "object") {
+        Object.keys(pm).forEach(function (k) {
+          var v = Number(pm[k]) || 0;
+          if (v > ts) ts = v;
+        });
+      }
+    } catch (e) {}
+    return ts;
+  }
+
+  /* Élèves affichés à zéro et pas encore vérifiés, les plus récemment vus
+     d'abord : c'est pour eux que le zéro choque le plus. */
+  function elevesAZeroAdmin() {
+    return (profils || []).filter(function (p) {
+      if (!p || !p.id) return false;
+      if ((counts[p.id] || 0) > 0) return false;
+      if (compteursRecomptesAdmin[p.id]) return false;
+      return (echecsRecompteAdmin[p.id] || 0) < 3;
+    }).sort(function (a, b) {
+      var ta = (derniereVisiteCloudParUser[a.id] && derniereVisiteCloudParUser[a.id].ts) || 0;
+      var tb = (derniereVisiteCloudParUser[b.id] && derniereVisiteCloudParUser[b.id].ts) || 0;
+      return tb - ta;
+    });
+  }
+
+  /* Remet les valeurs vérifiées en base sur les compteurs affichés. */
+  function appliquerCompteursRecomptesAdmin() {
+    Object.keys(compteursRecomptesAdmin).forEach(function (uid) {
+      var c = compteursRecomptesAdmin[uid];
+      if (!c || !c.le) return;
+      if (c.connexions > 0 && (counts[uid] || 0) < c.connexions) counts[uid] = c.connexions;
+      if (c.dureeSec > 0 && (dureesTotales[uid] || 0) < c.dureeSec) dureesTotales[uid] = c.dureeSec;
+    });
+  }
+
+  /* Demande à la base les lignes d'un seul élève : compte exact, durée et 24 h. */
+  function compterLignesEleveAdmin(uid) {
+    var seuil = Date.now() - 24 * 3600 * 1000;
+    var purge = seuilPurgeAccesAdmin();
+    var requete = sb.from("acces")
+      .select(COLONNES_ACCES_ADMIN, { count: "exact" })
+      .eq("user_id", uid)
+      .neq("page", "PROG_MEDIA");
+    if (purge > 0) requete = requete.gt("debut", new Date(purge).toISOString());
+    return requete.order("id", { ascending: false }).limit(MAX_LIGNES_RECOMPTE).then(function (r) {
+      if (!r || r.error) return null;
+      var lignes = Array.isArray(r.data) ? r.data : [];
+      var duree = 0, nb24 = 0;
+      lignes.forEach(function (a) {
+        duree += dureeLigne(a);
+        var t = new Date(a && (a.fin || a.debut)).getTime();
+        if (!isNaN(t) && t >= seuil) nb24 += 1;
+      });
+      var total = typeof r.count === "number" ? r.count : lignes.length;
+      return { connexions: total, dureeSec: duree, acces24: nb24, lignes: lignes };
+    }).catch(function () { return null; });
+  }
+
+  /* `onDemande` : clic du professeur → on réinterroge les élèves à zéro, même
+     déjà vérifiés, et on annonce le résultat dans le bandeau. */
+  function recompterElevesAZero(options) {
+    var onDemande = Boolean(options && options.onDemande);
+    if (recompteEnCours || !sb || (typeof navigator !== "undefined" && !navigator.onLine)) {
+      if (onDemande) msg("⏳ Recompter est déjà en cours, ou l’appareil est hors-ligne.", "err");
+      return Promise.resolve(0);
+    }
+    var cibles = onDemande
+      ? (profils || []).filter(function (p) { return p && p.id && (counts[p.id] || 0) === 0; })
+      : elevesAZeroAdmin();
+    if (!cibles.length) {
+      if (onDemande) msg("✅ Aucun élève affiché à zéro : rien à recompter.", "ok");
+      return Promise.resolve(0);
+    }
+    cibles = cibles.slice(0, onDemande ? MAX_ELEVES_RECOMPTES * 2 : MAX_ELEVES_RECOMPTES);
+    recompteEnCours = true;
+    if (onDemande) msg("⏳ Recomposition des compteurs de " + cibles.length + " élève(s)…", "");
+    return new Promise(function (resolve) {
+      var corriges = 0, i = 0;
+      function suivant() {
+        if (i >= cibles.length) {
+          recompteEnCours = false;
+          appliquerRecompteFinal(onDemande, corriges);
+          resolve(corriges);
+          return;
+        }
+        var p = cibles[i++];
+        compterLignesEleveAdmin(p.id).then(function (res) {
+          if (!res) {
+            /* Base muette ou droits refusés : on réessaiera, mais pas sans fin. */
+            echecsRecompteAdmin[p.id] = (echecsRecompteAdmin[p.id] || 0) + 1;
+          }
+          if (res) {
+            compteursRecomptesAdmin[p.id] = {
+              le: Date.now(),
+              connexions: res.connexions || 0,
+              dureeSec: res.dureeSec || 0,
+              acces24: res.acces24 || 0
+            };
+            if (res.connexions > 0) {
+              corriges += 1;
+              (res.lignes || []).forEach(function (a) { if (a && a.id != null) accesRecompesAdmin.push(a); });
+            }
+          }
+          setTimeout(suivant, 60);
+        });
+      }
+      suivant();
+    });
+  }
+
+  function appliquerRecompteFinal(onDemande, corriges) {
+    var nouvelleFusion = null;
+    if (accesRecompesAdmin.length) {
+      nouvelleFusion = fusionnerAccesAdmin(accesRecompesAdmin);
+      accesRecompesAdmin = [];
+    }
+    if (nouvelleFusion) {
+      var snap = sauvegarderSnapshotAdmin(profilsBrutsAdmin, nouvelleFusion, signauxCompatBrutAdmin);
+      appliquerDonneesAdmin(profilsBrutsAdmin, nouvelleFusion, signauxCompatBrutAdmin, false, snap.ts);
+    }
+    appliquerCompteursRecomptesAdmin();
+    rendAbonnes();
+    if (onDemande) {
+      if (corriges > 0) {
+        msg("✅ " + corriges + " élève(s) recompté(s) directement dans la base : connexions et durée sont maintenant affichées.", "ok");
+      } else {
+        msg("ℹ️ Vérification terminée : ces élèves n’ont réellement aucune ligne dans le journal — leur zéro est exact.", "ok");
+      }
+    }
+  }
+  window.__stiRecompterCompteursAdmin = recompterElevesAZero;
+  window.__stiCompteursRecomptesAdmin = compteursRecomptesAdmin;
+
   function rendAbonnes() {
+    /* v612 : les compteurs vérifiés directement en base survivent aux rendus
+       (chaque rechargement du journal les recalculerait à zéro). */
+    appliquerCompteursRecomptesAdmin();
     /* v582 : l'en-tête de la colonne suit la période choisie (cumul par défaut). */
     var thDureeAbonnes = document.querySelector("#wrap-table-abonnes thead th:nth-child(6)");
     if (thDureeAbonnes) {

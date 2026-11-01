@@ -109,9 +109,9 @@ test('cache-buster, révision du service worker et outil manuel restent cohéren
   const sw = lire('sw.js');
   const outil = lire('migration-photos-bucket.html');
 
-  assert.match(admin, /assets\/js\/admin\.js\?v=610-perf/);
-  assert.match(sw, /url: "\.\/admin\.html", revision: "maj-visible-v610"/);
-  assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "maj-visible-v610"/);
+  assert.match(admin, /assets\/js\/admin\.js\?v=612-perf/);
+  assert.match(sw, /url: "\.\/admin\.html", revision: "compteurs-zero-v612"/);
+  assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "compteurs-zero-v612"/);
   /* Le cache et le lot général ne bougent pas. */
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
