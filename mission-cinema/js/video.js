@@ -42,7 +42,16 @@ window.VideoController = (function () {
   function bindEvents() {
     if (!video) return;
 
-    video.addEventListener("play", function () { playing = true; startQuestionPoll(); });
+    video.addEventListener("play", function () {
+        playing = true;
+        startQuestionPoll();
+        // Sécurité : si la vidéo est censée être en pause pour une question,
+        // on force une nouvelle pause (le navigateur peut relancer l'autoplay
+        // après une pause programmée)
+        if (pausedForQuestion) {
+            video.pause();
+        }
+    });
     video.addEventListener("pause", function () { playing = false; stopQuestionPoll(); });
     video.addEventListener("ended", function () {
       stopQuestionPoll();
