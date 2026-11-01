@@ -39,6 +39,8 @@ window.AppController = (function () {
   var btnSon = document.getElementById("btn-son");
   var videoPlaceholder = document.getElementById("video-placeholder");
   var panneauQuestion = document.getElementById("panneau-question");
+  var bulleResultatsAuto = document.getElementById("bulle-resultats-auto");
+  var contenuResultatsAuto = document.getElementById("resultats-auto-contenu");
 
   // État UI
   var updateUITimer = null;
@@ -183,6 +185,7 @@ window.AppController = (function () {
   };
 
   function startMission() {
+    cacherBulleResultatsAuto();
     spanScore.textContent = quiz.getScore();
     rafraichirListeQuestions();
     rafraichirPanneau();
@@ -270,11 +273,33 @@ window.AppController = (function () {
     if (nom === "bilan") ecranBilan.classList.remove("cacher");
   }
 
+  function afficherBulleResultatsAuto() {
+    if (!bulleResultatsAuto || !contenuResultatsAuto) return;
+    var a6 = quiz.getAnswers()[6];
+    var a7 = quiz.getAnswers()[7];
+    var html = "";
+    if (a6) {
+      html += "<div class='resultat-ligne'><span class='resultat-libelle'>Q6 — Insertion données initiales</span><span class='resultat-statut'>✓ Validée (auto)</span></div>";
+    }
+    if (a7) {
+      html += "<div class='resultat-ligne'><span class='resultat-libelle'>Q7 — Nouvel inséré (Tenet)</span><span class='resultat-statut'>✓ Validée (auto)</span></div>";
+    }
+    contenuResultatsAuto.innerHTML = html;
+    bulleResultatsAuto.classList.remove("cacher");
+  }
+
+  function cacherBulleResultatsAuto() {
+    if (bulleResultatsAuto) bulleResultatsAuto.classList.add("cacher");
+  }
+
   function afficherQuestion(q) {
     panneauQuestion.classList.remove("cacher");
     video.pause(); // s'assurer que la vidéo est en pause
     quiz.renderQuestion(q, zoneInteraction);
     rafraichirPanneau();
+    // Afficher la bulle résultats Q6-Q7 à partir de Q8
+    if (q.num >= 8) afficherBulleResultatsAuto();
+    else cacherBulleResultatsAuto();
   }
 
   function cacherQuestion() {

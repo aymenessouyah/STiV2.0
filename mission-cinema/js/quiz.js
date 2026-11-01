@@ -488,6 +488,24 @@ window.QuizController = (function () {
     }
   }
 
+  function marquezQuestionsAuto() {
+    // Q6 et Q7 : correctes par défaut, non posées à l'élève
+    [6, 7].forEach(function (id) {
+      if (!state.answers[id]) {
+        state.answers[id] = {
+          reponse: "Question automatique (pré-validée)",
+          correct: true,
+          type: "sql",
+          declared: false,
+          time: 0
+        };
+        state.score++;
+      }
+    });
+    var ids = Object.keys(state.answers);
+    video.setAnswered(ids);
+  }
+
   function chargerSauvegarde() {
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
@@ -498,8 +516,7 @@ window.QuizController = (function () {
       state.answers = p.answers || {};
       state.score = p.score || 0;
       state.total = p.total || 0;
-      var ids = Object.keys(state.answers);
-      video.setAnswered(ids);
+      marquezQuestionsAuto();
       return p;
     } catch (e) {
       return null;
@@ -517,7 +534,12 @@ window.QuizController = (function () {
   function getPct() { var t = getTotal(); return t ? Math.round((state.score / t) * 100) : 0; }
   function getAnswers() { return state.answers; }
   function getNom() { return state.nom; }
-  function setNom(n) { state.nom = n; if (!state.startedAt) state.startedAt = new Date().toISOString(); persist(); }
+  function setNom(n) {
+    state.nom = n;
+    if (!state.startedAt) state.startedAt = new Date().toISOString();
+    marquezQuestionsAuto();
+    persist();
+  }
   function isAnswered(id) { return !!state.answers[id]; }
   function isComplete() {
     for (var i = 0; i < data.questions.length; i++) {
