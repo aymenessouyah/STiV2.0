@@ -76,7 +76,7 @@ window.AppController = (function () {
       }
       inputNom.classList.remove("erreur");
       quiz.setNom(nom);
-      spanNom.textContent = nom;
+      if (spanNom) spanNom.textContent = nom;
       afficherEcran("mission");
       startMission();
     });
