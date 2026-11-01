@@ -671,9 +671,12 @@ window.QUESTIONS_DATA = (function () {
   ];
 
   var VIDEO = {
-    src: "assets/video/demo.mp4",
+    src: "assets/video/TD_SQL_Cinema_questions.mp4",
+    // TODO : une fois le fichier physique TD_SQL_Cinema_questions.mp4 ajouté,
+    // ajuster duration (timeline mission, doit couvrir Q45 à t=450) et
+    // loopDuration (durée réelle du fichier MP4 en boucle).
     duration: 460,              // timeline de la mission (secondes)
-    loopDuration: 30,           // durée réelle du fichier MP4 de démonstration (boucle)
+    loopDuration: 30,           // durée réelle du fichier MP4 (boucle) — À AJUSTER
     poster: null
   };
 
