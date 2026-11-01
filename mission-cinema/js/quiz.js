@@ -62,6 +62,120 @@ window.QuizController = (function () {
     return true;
   }
 
+  // ----------------------------- données de référence des tables (Q40-45) -----------------------------
+  var TABLE_DATA = {
+    40: {titre: "Table FILM — après ajout de paysOrigine (DEFAULT 'Inconnue')",
+         colonnes: ["idFilm","titre","genre","annee","duree","budget","idReal","paysOrigine"],
+         lignes: [
+           [1,"Inception","Science-fiction",2010,148,160000000,1,"Inconnue"],
+           [2,"Interstellar","Science-fiction",2014,169,165000000,1,"Inconnue"],
+           [3,"The Dark Knight","Action",2008,152,185000000,1,"Inconnue"],
+           [4,"Les Infiltrés","Action",2006,151,90000000,2,"Inconnue"],
+           [5,"Shutter Island","Thriller",2010,138,80000000,2,"Inconnue"],
+           [6,"OSS 117","Comédie",2006,99,14000000,3,"Inconnue"],
+           [7,"Tenet","Action",null,null,0,1,"Inconnue"]
+         ]},
+    41: {titre: "Table FILM — nouveau DEFAULT 'Tunisie' (film test inséré)",
+         colonnes: ["idFilm","titre","genre","annee","duree","budget","idReal","paysOrigine"],
+         lignes: [
+           [1,"Inception","Science-fiction",2010,148,160000000,1,"Inconnue"],
+           [2,"Interstellar","Science-fiction",2014,169,165000000,1,"Inconnue"],
+           [3,"The Dark Knight","Action",2008,152,185000000,1,"Inconnue"],
+           [4,"Les Infiltrés","Action",2006,151,90000000,2,"Inconnue"],
+           [5,"Shutter Island","Thriller",2010,138,80000000,2,"Inconnue"],
+           [6,"OSS 117","Comédie",2006,99,14000000,3,"Inconnue"],
+           [7,"Tenet","Action",null,null,0,1,"Inconnue"],
+           [8,"Film test","Drame",null,null,null,1,"Tunisie"]
+         ]},
+    42: {titre: "Table ACTEUR — ligne idActeur = 8",
+         colonnes: ["idActeur","nom","nationalite"],
+         lignes: [[8,"Hathaway","Non precisee"]]},
+    43: {titre: "Table projection_test — après UPDATE cascade (idFilm 7→70)",
+         colonnes: ["idProj","idFilm","salle"],
+         lignes: [[101,70,"Salle A"],[102,1,"Salle B"]]},
+    44: {titre: "Table projection_test — après DELETE cascade (idFilm 70 supprimé)",
+         colonnes: ["idProj","idFilm","salle"],
+         lignes: [[102,1,"Salle B"]]},
+    45: {titre: "Résultat de la requête — à remplir",
+         colonnes: ["idProj","idFilm","titre"],
+         lignes: []}
+  };
+
+  function renderTableEditor(parent, titre, colonnes, lignes, onCapture) {
+    var box = document.createElement("div");
+    box.className = "table-editor";
+
+    var h = document.createElement("h4");
+    h.textContent = titre;
+    box.appendChild(h);
+
+    var tbl = document.createElement("table");
+    tbl.className = "result-table";
+    var thead = document.createElement("thead");
+    var trh = document.createElement("tr");
+    colonnes.forEach(function(c){
+      var th = document.createElement("th");
+      th.textContent = c;
+      trh.appendChild(th);
+    });
+    thead.appendChild(trh);
+    tbl.appendChild(thead);
+
+    var tbody = document.createElement("tbody");
+    lignes.forEach(function(lig, ri){
+      var tr = document.createElement("tr");
+      colonnes.forEach(function(c, ci){
+        var td = document.createElement("td");
+        var input = document.createElement("input");
+        input.type = "text";
+        input.className = "table-cell";
+        input.value = lig[ci] == null ? "" : String(lig[ci]);
+        input.dataset.r = ri;
+        input.dataset.c = ci;
+        td.appendChild(input);
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);
+    box.appendChild(tbl);
+
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn valider";
+    btn.textContent = "Valider le tableau";
+    btn.onclick = function(){
+      var lignesSaisies = {};
+      var inputs = tbl.querySelectorAll("input.table-cell");
+      inputs.forEach(function(inp){
+        var r = parseInt(inp.dataset.r,10);
+        var c = parseInt(inp.dataset.c,10);
+        if(!lignesSaisies[r]) lignesSaisies[r] = {};
+        lignesSaisies[r][c] = inp.value;
+      });
+      var keys = Object.keys(lignesSaisies).sort(function(a,b){return parseInt(a)-parseInt(b);});
+      var saisie = [];
+      keys.forEach(function(r){
+        var lig = lignesSaisies[r];
+        var row = [];
+        for(var c=0;c<colonnes.length;c++){
+          row.push(lig[c] != null ? lig[c] : "");
+        }
+        saisie.push(row.join(" | "));
+      });
+      var texte = colonnes.join(" | ") + "\n" + saisie.join("\n");
+      if(onCapture) onCapture(texte, saisie);
+    };
+    box.appendChild(btn);
+
+    var info = document.createElement("p");
+    info.className = "q-hint";
+    info.textContent = "Modifiez les cellules puis cliquez sur Valider le tableau pour saisir vos données.";
+    box.appendChild(info);
+
+    parent.appendChild(box);
+  }
+
   // ----------------------------- rendu question -----------------------------
   function renderQuestion(q, container) {
     container.innerHTML = "";
@@ -97,6 +211,18 @@ window.QuizController = (function () {
       hint.textContent = "Comparaison pédagogique avec la réponse officielle (espaces, retours à la ligne et casse ignorés).";
       wrap.appendChild(hint);
 
+      // Tableau éditable pour les questions 40 à 44
+      if (q.num >= 40 && TABLE_DATA[q.num]) {
+        var td = TABLE_DATA[q.num];
+        renderTableEditor(wrap, td.titre, td.colonnes, td.lignes, function(texte, saisie){
+          var saved = state.answers[q.id];
+          if (!saved) saved = {};
+          saved.reponseTableau = texte;
+          saved.saisieTableau = saisie;
+          state.answers[q.id] = saved;
+        });
+      }
+
       var ligne = document.createElement("div");
       ligne.className = "q-actions";
       var btn = document.createElement("button");
@@ -128,12 +254,23 @@ window.QuizController = (function () {
 
     // ---- D. Prévoir le résultat d'une requête ----
     if (q.type === "resultat") {
-      var ta2 = document.createElement("textarea");
-      ta2.placeholder = "Décrivez le résultat attendu (lignes et colonnes)…";
-      ta2.spellcheck = false;
-      var saved2 = state.answers[q.id];
-      if (saved2 && saved2.reponse != null) ta2.value = saved2.reponse;
-      wrap.appendChild(ta2);
+      // Pour Q45 : le tableau éditable est la zone de saisie du résultat
+      if (q.num >= 45 && TABLE_DATA[q.num]) {
+        var td = TABLE_DATA[q.num];
+        renderTableEditor(wrap, td.titre, td.colonnes, td.lignes, function(texte, saisie){
+          var saved = state.answers[q.id];
+          if (!saved) saved = {};
+          saved.reponse = texte;
+          state.answers[q.id] = saved;
+        });
+      } else {
+        var ta2 = document.createElement("textarea");
+        ta2.placeholder = "Décrivez le résultat attendu (lignes et colonnes)…";
+        ta2.spellcheck = false;
+        var saved2 = state.answers[q.id];
+        if (saved2 && saved2.reponse != null) ta2.value = saved2.reponse;
+        wrap.appendChild(ta2);
+      }
 
       var ligne2 = document.createElement("div");
       ligne2.className = "q-actions";
@@ -141,7 +278,11 @@ window.QuizController = (function () {
       btn2.type = "button";
       btn2.className = "btn valider";
       btn2.textContent = "Valider ma réponse";
-      btn2.onclick = function () { validateResult(q, ta2.value); };
+      btn2.onclick = function () {
+        var saved = state.answers[q.id];
+        var reponse = saved && saved.reponse != null ? saved.reponse : "";
+        validateResult(q, reponse);
+      };
       ligne2.appendChild(btn2);
       wrap.appendChild(ligne2);
     }
