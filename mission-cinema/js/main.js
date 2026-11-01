@@ -188,10 +188,13 @@ window.AppController = (function () {
     var savedPos = 0;
     try { savedPos = parseInt(localStorage.getItem(POS_KEY) || "0", 10) || 0; } catch (e) {}
     if (savedPos > 5 && savedPos < data.video.duration - 5) {
+      // Reprise d'une activité interrompue : se positionner à la dernière position connue
       video.seekToSeconds(savedPos);
     } else {
-      var next = video.nextUnansweredTime();
-      if (next != null) video.seekToSeconds(Math.max(0, next - 1));
+      // Nouvelle mission : commencer au début du premier chapitre
+      // et laisser la vidéo jouer naturellement jusqu'à la première question
+      var firstChapter = data.chapters[0];
+      video.seekToSeconds(firstChapter ? firstChapter.timeStart : 0);
     }
     video.forcePlay().catch(function () {
       // Si la vidéo ne peut pas jouer, afficher l'alerte et basculer en mode simulation
