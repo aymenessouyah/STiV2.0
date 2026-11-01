@@ -138,8 +138,8 @@ h1 { font-size: 2.2rem; margin: 8px 0 4px; letter-spacing: 2px; text-transform: 
 }
 
 aside.panneau {
-  flex: 0 0 300px;
-  max-width: 300px;
+  flex: 0 0 250px;
+  max-width: 250px;
   display: flex; flex-direction: column; gap: 16px;
   /* Colonne Progression calée à gauche, reste visible lors du défilement */
   position: sticky;
@@ -267,7 +267,7 @@ aside.panneau ul#liste-questions {
   width: 100%;
 }
 .video-wrap {
-  flex: 1 1 0;
+  flex: 1;
   min-width: 0;
   position: relative; background: #000; border-radius: var(--rayon); overflow: hidden; box-shadow: var(--ombre);
   min-height: 420px;
@@ -276,8 +276,7 @@ aside.panneau ul#liste-questions {
 
 /* Panneau de question à droite de la vidéo */
 .panneau-question {
-  flex: 0 0 420px;
-  width: 420px;
+  flex: 1;
   max-height: 88vh;
   overflow-y: auto;
   background: var(--blanc); color: var(--noir);
