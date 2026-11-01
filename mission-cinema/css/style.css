@@ -109,9 +109,11 @@ h1 { font-size: 2.2rem; margin: 8px 0 4px; letter-spacing: 2px; text-transform: 
 .mission-header {
   display: flex; align-items: center; justify-content: space-between;
   gap: 16px;
-  padding: 14px 24px;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 10px 16px;
+  background: var(--noir-doux);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--rayon);
+  margin-bottom: 12px;
   flex-wrap: wrap;
 }
 .mission-header .logo { font-weight: 800; font-size: 1.25rem; color: var(--or-clair); letter-spacing: 1px; }
@@ -125,6 +127,7 @@ h1 { font-size: 2.2rem; margin: 8px 0 4px; letter-spacing: 2px; text-transform: 
   padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
+  align-items: flex-start;
 }
 
 aside.panneau {
@@ -204,7 +207,7 @@ aside.panneau ul#liste-questions {
   width: 100%;
   max-width: 100%;
   height: auto;
-  max-height: 70vh;
+  max-height: 45vh;
   object-fit: contain;
   display: block;
   margin: 0 auto;
@@ -214,8 +217,8 @@ aside.panneau ul#liste-questions {
 }
 
 /* ---------- vidéo ---------- */
-.video-wrap { position: relative; background: #000; border-radius: var(--rayon); overflow: hidden; box-shadow: var(--ombre); }
-.video-wrap video { width: 100%; height: auto; display: block; background: #000; }
+.video-wrap { position: relative; background: #000; border-radius: var(--rayon); overflow: hidden; box-shadow: var(--ombre); min-height: 520px; }
+.video-wrap video { width: 100%; height: 100%; object-fit: contain; display: block; background: #000; }
 
 .video-placeholder {
   position: absolute; inset: 0; display: flex; flex-direction: column;
