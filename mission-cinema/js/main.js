@@ -310,8 +310,9 @@ window.AppController = (function () {
     data.questions.forEach(function (q) {
       var li = document.createElement("li");
       var re = quiz.isAnswered(q.id);
-      li.className = "q-item " + (re ? "traitee" : "");
-      var badge = re ? (quiz.getAnswers()[q.id].correct ? "✓" : "✗") : "?";
+      var a = quiz.getAnswers()[q.id];
+      li.className = "q-item " + (re ? (a.correct ? "traitee" : "incorrecte") : "");
+      var badge = re ? (a.correct ? "✓" : "✗") : "?";
       li.innerHTML = "<span class='q-badge'>" + badge + "</span> Q" + q.num;
       li.title = q.enonce.replace(/<[^>]*>/g, "").slice(0, 60);
       li.onclick = function () {
