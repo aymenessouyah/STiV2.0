@@ -39,6 +39,11 @@ window.AppController = (function () {
   var updateUITimer = null;
   var detectedError = false;
 
+  // État mode révision
+  var revisionMode = false;
+  var revisionQuestions = [];
+  var revisionIndex = 0;
+
   function afficherPlaceholder(montrer) {
     if (!videoPlaceholder) return;
     if (montrer) {
@@ -78,6 +83,16 @@ window.AppController = (function () {
 
     inputNom.addEventListener("input", function () { inputNom.classList.remove("erreur"); });
     inputNom.addEventListener("keydown", function (e) { if (e.key === "Enter") btnStart.click(); });
+
+    // Bouton audio (activer/désactiver le son)
+    var btnAudio = document.getElementById("btn-audio");
+    if (btnAudio) {
+      btnAudio.addEventListener("click", function () {
+        var enabled = quiz.toggleAudio();
+        btnAudio.textContent = enabled ? "🔊" : "🔇";
+        btnAudio.classList.toggle("mute", !enabled);
+      });
+    }
 
     // Pas de contrôles manuels : la vidéo est pilotée par le système
     // (démarrage auto à t=0, pause aux questions, reprise via "Poursuivre")
@@ -392,6 +407,7 @@ window.AppController = (function () {
     }
 
     bilanHtml += "<div class='bilan-actions'>" +
+                 (faux.length > 0 ? "<button class='btn' onclick='AppController.startRevision()'>Mode révision — revoir les erreurs</button>" : "") +
                  "<button class='btn' onclick='AppController.recommencer()'>Recommencer la mission</button>" +
                  "<button class='btn secondaire' onclick='location.reload()'>Quitter</button>" +
                  "</div>";
@@ -403,12 +419,131 @@ window.AppController = (function () {
   var revoirQuestion = function (id) {
     var q = data.questions.find(function (x) { return x.id === id; });
     if (!q) return;
+    if (revisionMode) {
+      montrerQuestionRevision(id);
+      return;
+    }
     video.pause();
     panneauQuestion.classList.remove("cacher");
     zoneInteraction.classList.remove("cacher");
     zoneInteraction.innerHTML = "<div class='q-card'><div class='q-meta'><span class='q-num'>Question " + q.num + " (relecture)</span><span class='q-type'>Correction</span></div></div>";
     quiz.showCorrection(q, quiz.getAnswers()[id].correct, "Relecture de la correction.");
     afficherEcran("mission");
+  };
+
+  // Démarre le mode révision sur les questions incorrectes
+  var startRevision = function () {
+    var faux = data.questions.filter(function (q) {
+      var a = quiz.getAnswers()[q.id];
+      return a && !a.correct;
+    });
+    if (faux.length === 0) return;
+    revisionQuestions = faux;
+    revisionIndex = 0;
+    revisionMode = true;
+    cacherBulleResultatsAuto();
+    montrerQuestionRevision();
+  };
+
+  // Affiche la question de révision courante pour re-réponse
+  var montrerQuestionRevision = function () {
+    if (revisionIndex >= revisionQuestions.length) {
+      exitRevision();
+      return;
+    }
+    var q = revisionQuestions[revisionIndex];
+    video.pause();
+    panneauQuestion.classList.remove("cacher");
+    zoneInteraction.classList.remove("cacher");
+
+    var html = "<div class='q-card revision-card'>";
+    html += "<div class='q-meta'>";
+    html += "<span class='q-num'>Révision Q" + q.num + "</span>";
+    html += "<span class='q-type'>Question " + (revisionIndex + 1) + " / " + revisionQuestions.length + "</span>";
+    html += "</div>";
+    html += "<div class='q-enonce'>" + q.enonce + "</div>";
+
+    if (q.type === "sql") {
+      html += "<textarea placeholder='Écrivez votre requête SQL…' id='revision-reponse'></textarea>";
+    } else {
+      html += "<textarea placeholder='Décrivez le résultat attendu…' id='revision-reponse'></textarea>";
+    }
+
+    html += "<div class='q-actions'>";
+    html += "<button class='btn valider' onclick='AppController.validerRevision()'>Valider ma réponse</button>";
+    html += "<button class='btn secondaire' onclick='AppController.sauterRevision()'>Passer</button>";
+    html += "</div>";
+    html += "<div id='revision-resultat'></div>";
+    html += "</div>";
+
+    zoneInteraction.innerHTML = html;
+    var ta = document.getElementById("revision-reponse");
+    if (ta) ta.focus();
+    afficherEcran("mission");
+  };
+
+  // Valide la réponse de révision
+  var validerRevision = function () {
+    if (revisionIndex >= revisionQuestions.length) return;
+    var q = revisionQuestions[revisionIndex];
+    var ta = document.getElementById("revision-reponse");
+    var reponse = ta ? ta.value : "";
+    var resDiv = document.getElementById("revision-resultat");
+
+    if (reponse.trim() === "") {
+      resDiv.innerHTML = "<span style='color:var(--rouge); font-weight:700;'>Réponse vide.</span>";
+      return;
+    }
+
+    var correct = false;
+    var motif = "";
+
+    if (q.type === "sql") {
+      var r = quiz.normaliserSQL(reponse);
+      for (var i = 0; i < q.refs.length; i++) {
+        if (r === quiz.normaliserSQL(q.refs[i])) {
+          correct = true;
+          motif = "Votre requête correspond à une écriture de référence.";
+          break;
+        }
+      }
+    } else {
+      correct = quiz.motsClesPresent(reponse, q.attendu);
+      motif = correct ? "Valeurs attendues retrouvées." : "Valeurs attendues non retrouvées.";
+    }
+
+    if (correct) {
+      quiz.playCorrectSound();
+      quiz.reviseQuestion(q, reponse, true, false, motif);
+      resDiv.innerHTML = "<span style='color:var(--vert); font-weight:700;'>✓ Correct !</span>";
+      resDiv.innerHTML += "<div style='margin-top:10px;'><button class='btn' style='padding:6px 12px;font-size:0.9rem;' onclick='AppController.nextRevision()'>Suivant</button></div>";
+    } else {
+      quiz.playIncorrectSound();
+      quiz.reviseQuestion(q, reponse, false, false, "Incorrect.");
+      resDiv.innerHTML = "<span style='color:var(--rouge); font-weight:700;'>✗ Incorrect</span>";
+      resDiv.innerHTML += "<div style='margin-top:10px;'><button class='btn' style='padding:6px 12px;font-size:0.9rem;' onclick='AppController.nextRevision()'>Voir la correction</button></div>";
+    }
+  };
+
+  // Passe à la question de révision suivante
+  var nextRevision = function () {
+    revisionIndex++;
+    montrerQuestionRevision();
+  };
+
+  // Sauter une question de révision
+  var sauterRevision = function () {
+    revisionIndex++;
+    montrerQuestionRevision();
+  };
+
+  // Quitte le mode révision
+  var exitRevision = function () {
+    revisionMode = false;
+    revisionQuestions = [];
+    revisionIndex = 0;
+    cacherQuestion();
+    afficherBilan();
   };
 
   var recommencer = function () {
@@ -432,7 +567,12 @@ window.AppController = (function () {
     reprendreVideo: reprendreVideo,
     revoirQuestion: revoirQuestion,
     recommencer: recommencer,
-    modeSansVideo: modeSansVideo
+    modeSansVideo: modeSansVideo,
+    startRevision: startRevision,
+    validerRevision: validerRevision,
+    nextRevision: nextRevision,
+    sauterRevision: sauterRevision,
+    exitRevision: exitRevision
   };
 })();
 

@@ -710,6 +710,29 @@ textarea:focus { outline: none; border-color: var(--or); box-shadow: 0 0 0 3px r
   }
 }
 
+/* ---------- mode révision ---------- */
+.revision-card { border: 2px solid var(--or); background: var(--or-fond); }
+.revision-card .q-num { background: var(--or); color: var(--noir); }
+.revision-card .q-type { color: var(--or); }
+
+/* ---------- bouton audio (muet/son) ---------- */
+.btn-audio {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  color: var(--blanc);
+  cursor: pointer;
+  transition: var(--trans);
+  font-size: 1.1rem;
+}
+.btn-audio:hover { background: var(--or); color: var(--noir); }
+.btn-audio.mute { color: #64748b; }
+.btn-audio.mute:hover { background: rgba(100,116,139,0.2); color: #64748b; }
+
 /* impression / réduction de mouvement */
 @media (prefers-reduced-motion: reduce) {
   .overlay-panel { animation: none; }

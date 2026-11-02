@@ -1,0 +1,26 @@
+{
+  "name": "Mission Cinéma — STI Version 2.0",
+  "short_name": "Mission Cinéma",
+  "start_url": "/STiV2.0/mission-cinema/index.html",
+  "display": "standalone",
+  "background_color": "#0b0f19",
+  "theme_color": "#f59e0b",
+  "orientation": "portrait",
+  "scope": "/STiV2.0/mission-cinema/",
+  "icons": [
+    {
+      "src": "assets/images/sti-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/sti-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["education"],
+  "lang": "fr",
+  "dir": "ltr"
+}

@@ -11,16 +11,63 @@ window.QuizController = (function () {
   var data = window.QUESTIONS_DATA;
   var video = window.VideoController;
 
-  // ----------------------------- état -----------------------------
-  var STORAGE_KEY = "stiv2_mission_cinema_v1";
-  var state = {
+// ----------------------------- état -----------------------------
+var STORAGE_KEY = "stiv2_mission_cinema_v1";
+var state = {
     nom: "",
     startedAt: null,
     answers: {},     // id -> {reponse, correct, type, declared, time}
     currentQuestion: null,
     score: 0,
     total: 0
-  };
+};
+
+// ----------------------------- feedback audio (Web Audio API) -----------------------------
+var audioCtx = null;
+var audioEnabled = true;
+
+function ensureAudio() {
+    if (!audioCtx) {
+        try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+            audioCtx = null;
+        }
+    }
+    return audioCtx;
+}
+
+function playTone(freq, duration, type) {
+    if (!audioEnabled) return;
+    var ctx = ensureAudio();
+    if (!ctx) return;
+    try {
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.type = type || "sine";
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration / 1000);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + duration / 1000);
+    } catch (e) {}
+}
+
+function playCorrectSound() {
+    playTone(800, 150, "sine");
+    setTimeout(function () { playTone(1000, 150, "sine"); }, 120);
+}
+
+function playIncorrectSound() {
+    playTone(300, 300, "sawtooth");
+}
+
+function toggleAudio() {
+    audioEnabled = !audioEnabled;
+    return audioEnabled;
+}
 
   var callbacks = {
     onValidate: null,   // function(result)
@@ -371,6 +418,7 @@ window.QuizController = (function () {
       motif = "Votre requête ne correspond pas (textuellement) aux écritures de référence. Consultez la correction ci-dessous.";
     }
 
+    if (correct) playCorrectSound(); else playIncorrectSound();
     record(q, reponse, correct, declared, motif);
     showCorrection(q, correct, motif);
   }
@@ -388,6 +436,7 @@ window.QuizController = (function () {
       correct = false;
       motif = "Les valeurs attendues n'ont pas été retrouvées dans votre réponse.";
     }
+    if (correct) playCorrectSound(); else playIncorrectSound();
     record(q, reponse, correct, false, motif);
     showCorrection(q, correct, motif);
   }
@@ -411,6 +460,26 @@ window.QuizController = (function () {
     var treated = 0;
     for (var k = 0; k < all.length; k++) if (state.answers[all[k].id]) treated++;
     if (treated >= all.length && callbacks.onAllDone) callbacks.onAllDone();
+  }
+
+  // Met à jour une réponse lors du mode révision (question déjà traitée)
+  function reviseQuestion(q, reponse, correct, declared, motif) {
+    var prev = state.answers[q.id];
+    if (!prev) return false;
+    var wasCorrect = prev.correct;
+    state.answers[q.id] = {
+      reponse: reponse || "",
+      correct: !!correct,
+      declared: !!declared,
+      type: q.type,
+      time: video ? video.currentMissionTime() : 0,
+      revised: true
+    };
+    if (correct && !wasCorrect) state.score++;   // nouveau bon point
+    if (!correct && wasCorrect) state.score--;   // point perdu
+    persist();
+    if (callbacks.onValidate) callbacks.onValidate({ question: q, correct: correct, score: state.score, total: state.total });
+    return true;
   }
 
   // ----------------------------- correction -----------------------------
@@ -628,6 +697,11 @@ window.QuizController = (function () {
     isComplete: isComplete,
     typeLabel: typeLabel,
     on: on,
-    normaliserSQL: normaliserSQL
+    normaliserSQL: normaliserSQL,
+    toggleAudio: toggleAudio,
+    isAudioEnabled: function () { return audioEnabled; },
+    reviseQuestion: reviseQuestion,
+    playCorrectSound: playCorrectSound,
+    playIncorrectSound: playIncorrectSound
   };
 })();
