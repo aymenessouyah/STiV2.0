@@ -1,5 +1,7 @@
 # Paquet d'installation `.stipack` — fabrication et contrôle
 
+> Mode d'emploi court (installer et mettre à jour les postes) : [`README.md`](README.md).
+
 > En une phrase : **le paquet se fabrique de deux façons, et dans les deux cas
 > il part de la dernière mise à jour** — depuis le tableau de bord de l'admin
 > (bouton « 🧱 Nouveau stipack », sans poste de développement), ou depuis une
