@@ -18,6 +18,7 @@ window.AppController = (function () {
   var zoneInteraction = document.getElementById("zone-interaction");
 
   var btnStart = document.getElementById("btn-start");
+  var btnPlayVideo = document.getElementById("btn-play-video");
   var spanNom = document.getElementById("nom-eleve");
 
   var spanProgression = document.getElementById("progression-pct");
@@ -69,6 +70,14 @@ window.AppController = (function () {
       afficherEcran("mission");
       startMission();
     });
+
+    // Bouton Play sur le poste vidéo : lance la vidéo et disparaît
+    if (btnPlayVideo) {
+      btnPlayVideo.addEventListener("click", function () {
+        btnPlayVideo.classList.add("cacher");
+        video.forcePlay().catch(function () {});
+      });
+    }
 
     // Bouton audio (activer/désactiver le son)
     var btnAudio = document.getElementById("btn-audio");
@@ -142,6 +151,11 @@ window.AppController = (function () {
         // Mode simulation : horloge qui fait défiler le timeline de la mission
         startSimulationClock();
       }
+    });
+
+    // Cacher définitivement le bouton Play quand la vidéo commence à jouer
+    videoEl.addEventListener("play", function () {
+      if (btnPlayVideo) btnPlayVideo.classList.add("cacher");
     });
 
     spanTotal.textContent = quiz.getTotal();
