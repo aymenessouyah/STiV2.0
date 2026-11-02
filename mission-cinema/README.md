@@ -1,83 +1,91 @@
-# Mission Cinéma – STI Version 2.0 By A'E
+# Mission Cinéma — STI Version 2.0 By A'E
 
-Application pédagogique interactive : une vidéo sur le thème du cinéma, entrecoupée de questions tirées fidèlement de la série de TD SQL corrigée (thème cinéma, Lycée Rafèha – A. Essouyah).
+Application pédagogique interactive d'apprentissage du SQL (thème Cinéma) pour les élèves de spécialité NSI / STI.
 
-## Structure des fichiers
+## Vue d'ensemble
 
-```
-/mission-cinema/
-├── index.html              # Application monopage (accueil, mission, bilan)
-├── README.md               # Ce guide
-├── css/
-│   └── style.css           # Charte graphique (responsive : PC, tablette, smartphone)
-├── js/
-│   ├── questions.js        # Données : 44 questions (n°6-45, hors n°11 vierge), chapitres, instants de pause, réponses de référence
-│   ├── video.js            # Lecteur HTML5 VIDEO, synchronisation currentTime, pause/play, gestion des boucles, verrous de navigation
-│   ├── quiz.js             # Rendu des questions, validation, correction, score, sauvegarde localStorage
-│   └── main.js             # Contrôleur principal, écrans, nom d'élève, bilan
-└── assets/
-    ├── video/demo.mp4      # Vidéo de démonstration (remplaçable sans toucher au code)
-    ├── images/             # Illustrations (à compléter)
-    └── audio/              # Ambiance sonore (à compléter)
-```
+L'élève incarne un administrateur de base de données recruté par une société de production cinématographique. Une vidéo le guide chapitre après chapitre. À des moments précis, des questions interactives apparaissent : requêtes SQL, QCM, prévision de résultats. L'élève répond, valide, lit la correction officielle, puis clique sur « Poursuivre » pour reprendre la vidéo.
 
-## Fonctionnement interactif (spécification respectée)
+## Fonctionnalités
 
-1. L'élève entre son nom et démarre la mission → la vidéo se lance (après action utilisateur, contrainte des navigateurs).
-2. À l'instant programmé, la vidéo se met en pause et une fenêtre interactive apparaît.
-3. L'élève répond (zone de saisie SQL multiligne) et clique sur « Valider ma réponse ».
-4. Le système évalue la réponse et affiche la correction pédagogique (réponse officielle + résultat de référence + explication issue du corrigé).
-5. L'élève clique sur « Continuer la mission » → la vidéo reprend **exactement là où elle s'était arrêtée**.
+### Vidéo synchronisée
+- Démarrage automatique à t = 0
+- La vidéo continue pendant l'affichage des bulles de questions
+- Elle se gèle uniquement à la fin de chaque question (début de la suivante)
+- Bouton « Poursuivre » pour reprendre exactement là où elle s'était arrêtée
+- Aucun contrôle manuel vidéo (pas de lecture, pas de barre d'avancement, pas de vitesse/plein écran/sous-titres/son)
 
-Règles :
-- Une question ne s'affiche qu'une fois (interdiction de répétition).
-- On ne peut pas sauter en avant une question non répondue (seek bloqué).
-- Les réponses vides sont gérées (comptabilisées comme incorrectes, aucun plantage).
-- Erreur de chargement de la vidéo : mode dégradé (horloge de mission simulée, les questions restent accessibles).
-- Progression sauvegardée dans `localStorage` ; reprise automatique à la réouverture.
-- Le SQL saisi par l'élève n'est **jamais exécuté** dans le navigateur : c'est une comparaison pédagogique avec la réponse officielle.
+### Questions (Q1 à Q45)
+- Q1–Q5 : LDD (CREATE, ALTER, DROP)
+- Q6–Q7 : insertion de données (automatiques, pré-validées)
+- Q8–Q12 : mise à jour de données (UPDATE)
+- Q13–Q15 : suppression de données (DELETE)
+- Q16–Q39 : requêtes de sélection (SELECT)
+- Q40–Q44 : contraintes, DEFAULT, clés étrangères, cascade
+- Q45 : prévision de résultat de requête
+- Q6 et Q7 s'affichent sans arrêter la vidéo (pas de bulle bloquante)
+- Timings exacts : Q1 à 50.583 s … Q45 à 414.917 s (durée totale 434.167 s)
 
-## Questions
+### Validation
+- Comparaison pédagogique avec la correction officielle (jamais d'exécution SQL dans le navigateur)
+- Chaque écriture de référence dans `q.refs` est testée (aucune écriture valide n'est rejetée)
+- Case « Autre écriture valide » acceptée comme correcte
+- Fausse réponse colorée en rouge dans le panneau latéral de progression
+- Délai de 5 secondes avant activation du bouton « Valider ma réponse »
 
-Les 44 questions proviennent intégralement du document « Corrigé : Série de TD SQL (thème Cinéma) » (questions 6 à 45 ; la question 11 est vierge dans le document source, les questions 1-5 n'y figurent pas : aucune n'a été inventée, conformément à la consigne de fidélité).
+### Mode révision
+- Bouton « Mode révision — revoir les erreurs » dans le bilan
+- Re-répondre aux questions échouées une par une
+- Mise à jour du score en cas de réussite
 
-Chaque question conserve : son numéro, son énoncé, ses écritures SQL de référence (y compris les « autres écritures »), son résultat de référence et son explication pédagogique.
+### Feedback audio
+- Web Audio API : bip montant (correct) / bip grave (incorrect)
+- Bouton 🔊/🔇 dans le header pour activer/désactiver le son
 
-## Remplacer la vidéo
+### Narration vocale finale
+- À la fin, une voix annonce le score et détaille chaque échec avec sa nature d'opération (création de tables, modification de structure, insertion, mise à jour, suppression, sélection, contraintes/clés étrangères, prévision de résultat)
+- Langue : français (fr-FR)
+- Bouton « Écouter le bilan vocal » pour rejouer à la demande
 
-Le fichier `assets/video/demo.mp4` est un exemple de démonstration (30 s, bouclé sur la timeline de la mission de 330 s). Pour le remplacer :
+### PWA / Hors ligne
+- `manifest.json` : installation comme application autonome
+- `service-worker.js` : stratégie cache-first, ressources statiques mises en cache
+- Fonctionne hors ligne après le premier chargement
 
-1. Déposer un nouveau fichier MP4 à `assets/video/demo.mp4` (même nom, aucun changement de code nécessaire – le chemin est lu dans `js/questions.js`, clé `video.src`).
-2. Ajuster, si nécessaire, `js/questions.js` :
-   - `video.duration` : durée totale de la timeline de la mission (secondes).
-   - `video.loopDuration` : durée réelle du fichier MP4 (si le nouveau fichier ne boucle pas, mettez `loopDuration` égal à `duration`).
-   - Les instants `time` de chaque question (secondes sur la timeline de la mission) et les plages `timeStart`/`timeEnd` des chapitres.
+### Design
+- Charte graphique cinéma (noir profond, or, bleu)
+- Glassmorphism (backdrop-filter) sur les cartes et panneaux
+- Responsive : breakpoints 900 / 640 / 480 px
+- Tout le contenu aligné à gauche, logo STI officiel, badge image élève
 
-Le lecteur utilise l'élément HTML5 `<video>` standard : n'importe quel MP4 (H.264) lisible par le navigateur convient.
+## Fichiers clés
 
-## Modifier les questions
+| Fichier | Rôle |
+|---------|------|
+| `index.html` | Point d'entrée, structure DOM, enregistrement du Service Worker |
+| `css/style.css` | Styles, charte graphique, responsive |
+| `js/questions.js` | 45 questions, timings, chapitres, données de référence |
+| `js/video.js` | Contrôleur vidéo et synchronisation des questions |
+| `js/quiz.js` | Moteur des questions, validation, score, narration vocale |
+| `js/main.js` | Contrôleur principal, écrans, bilan, mode révision |
+| `manifest.json` | Manifeste PWA |
+| `service-worker.js` | Cache hors ligne |
 
-Toutes les questions sont centralisées dans `js/questions.js` (aucune autre modification requise). Chaque entrée :
+## Données
 
-```js
-{
-  id: 16, num: 16, time: 114, chapter: 4, type: "sql",
-  enonce: "...",
-  refs: ["SELECT * FROM film ORDER BY annee DESC, titre ASC;"],
-  resultat: { colonnes: [...], lignes: [[...]] },
-  explication: "..."
-}
-```
+Toutes les questions, réponses et résultats sont extraits fidèlement du document « Corrige_TD_SQL_Cinema-3.pdf ». Aucun nom de table, attribut ou contrainte n'a été modifié. La vidéo utilisée est `assets/video/TD_SQL_Cinema_questions.mp4` (434 s).
 
-- `type: "sql"` → zone de saisie SQL multiligne (validation textuelle contre `refs`, espaces/casse/retours à la ligne ignorés ; une case permet la déclaration d'une autre écriture équivalente).
-- `type: "resultat"` → prévision de résultat (ex. question 45).
+## Déploiement
 
-Ajouter/supprimer des questions ne nécessite aucun changement dans `video.js`, `quiz.js` ou `main.js` (les instants de pause sont lus dynamiquement).
+L'application est hébergée sur GitHub Pages :
+https://aymenessouyah.github.io/STiV2.0/mission-cinema/index.html
 
-## Technologies
+## Contraintes respectées
 
-HTML5, CSS3, JavaScript natif. Aucun framework lourd. Compatible ordinateur, tablette et smartphone. Données des questions en fichier JavaScript isolé, prête pour une migration ultérieure vers PHP/MySQL (enregistrement des résultats, identification des élèves, tableau de bord enseignant) comme prévu par la spécification.
-
-## Fidélité pédagogique
-
-Aucune requête SQL, aucun nom de table/attribut et aucun résultat n'a été modifié par rapport au corrigé officiel. L'ordre et la numérotation de la série sont respectés.
+- Respect exact des questions, réponses et résultats du corrigé officiel
+- Aucune exécution de SQL élève dans le navigateur (comparaison pédagogique uniquement)
+- CURDATE() = 01/11/2026 pour les questions de dates
+- Q6 et Q7 correctes par défaut, non posées, résultats dans bulle sous vidéo à partir de Q8
+- Tableau éditable avec inputs pour Q40–45
+- Logo officiel de STI avant le texte « STI Version 2.0 By A'E »
+- Élève représenté par badge image
