@@ -2044,3 +2044,42 @@ body {
   .mission-header { padding: 12px 16px; }
   .header-actions { gap: 12px; }
 }
+
+/* ---------- bouton Play départ (apparaît seulement sur le poste vidéo) ---------- */
+.video-wrap {
+  position: relative;
+}
+.btn-play-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(245, 158, 11, 0.9);
+  border: none;
+  color: #0b0f19;
+  font-size: 2rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 12px rgba(245, 158, 11, 0.3);
+  transition: var(--trans);
+  z-index: 20;
+  line-height: 1;
+  padding-left: 4px;
+}
+.btn-play-video:hover {
+  background: #fbbf24;
+  transform: translate(-50%, -50%) scale(1.05);
+  box-shadow: 0 0 0 16px rgba(245, 158, 11, 0.4);
+}
+.btn-play-video:active {
+  transform: translate(-50%, -50%) scale(0.95);
+}
+.btn-play-video.cacher {
+  display: none !important;
+}
