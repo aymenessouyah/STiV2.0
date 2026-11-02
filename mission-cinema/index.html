@@ -3,8 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f59e0b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Mission Cinéma">
   <title>Mission Cinéma – STI Version 2.0 By A'E</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/images/sti-icon-192.png">
 </head>
 <body>
 
@@ -78,6 +84,7 @@
             <span>Devenez responsable de la base de données</span>
           </div>
           <div class="eleve-badge"><img src="assets/images/sti-badge.png" alt="Badge élève" class="badge-img"></div>
+          <button class="btn-audio" id="btn-audio" title="Activer/désactiver le son">🔊</button>
         </header>
 
         <div id="chapitre-actuel" class="chap-banniere">Préparation de la mission…</div>
@@ -133,5 +140,14 @@
 <script src="js/video.js"></script>
 <script src="js/quiz.js"></script>
 <script src="js/main.js"></script>
+
+<script>
+  // Enregistrement du Service Worker (PWA / offline)
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./service-worker.js")
+      .then(function () {})
+      .catch(function (err) { console.warn("SW enregistrement échoué :", err); });
+  }
+</script>
 </body>
 </html>
