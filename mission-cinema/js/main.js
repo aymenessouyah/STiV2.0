@@ -234,12 +234,23 @@ window.AppController = (function () {
   }
 
   function afficherEcran(nom) {
-    ecranAccueil.classList.add("cacher");
-    ecranMission.classList.add("cacher");
-    ecranBilan.classList.add("cacher");
-    if (nom === "accueil") ecranAccueil.classList.remove("cacher");
-    if (nom === "mission") ecranMission.classList.remove("cacher");
-    if (nom === "bilan") ecranBilan.classList.remove("cacher");
+    var actuel = document.querySelector("#app .ecran.actif");
+
+    ecranAccueil.classList.remove("actif", "entrer", "sortir", "cacher");
+    ecranMission.classList.remove("actif", "entrer", "sortir", "cacher");
+    ecranBilan.classList.remove("actif", "entrer", "sortir", "cacher");
+
+    if (nom === "accueil") ecranAccueil.classList.add("actif", "entrer");
+    if (nom === "mission") ecranMission.classList.add("actif", "entrer");
+    if (nom === "bilan") ecranBilan.classList.add("actif", "entrer");
+
+    if (actuel && actuel.id !== (nom === "accueil" ? "ecran-accueil" : nom === "mission" ? "ecran-mission" : "ecran-bilan")) {
+      actuel.classList.add("sortir");
+      setTimeout(function () {
+        actuel.classList.remove("sortir", "entrer");
+        actuel.classList.add("cacher");
+      }, 450);
+    }
   }
 
   function afficherBulleResultatsAuto() {
