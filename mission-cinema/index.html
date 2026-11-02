@@ -57,9 +57,27 @@
       <aside class="panneau">
         <div class="logo"><img src="assets/images/sti-logo.png" alt="Logo STI" class="sti-logo">STI Version 2.0 <em>By A'E</em></div>
         <h3>Progression</h3>
-        <div class="ligne-score">
-          <span class="etiquette">Score</span>
-          <span id="score">0</span> / <span id="total">0</span>
+        <!-- Score circulaire moderne (cercle, %, points, niveau) -->
+        <div class="score-cercle">
+          <div class="score-anneau">
+            <svg class="score-svg" width="140" height="140">
+              <circle class="score-fond" cx="70" cy="70" r="58" stroke="#1e293b" stroke-width="10" fill="none"/>
+              <circle class="score-remplissage" id="score-cercle-progress" cx="70" cy="70" r="58" stroke="#f59e0b" stroke-width="10" fill="none" stroke-dasharray="364" stroke-dashoffset="364"/>
+            </svg>
+            <div class="score-centre">
+              <span id="score-pct" class="score-pourcentage">0</span>%
+            </div>
+          </div>
+          <div class="score-details">
+            <div class="score-item">
+              <span class="score-label">Score</span>
+              <span id="score-points" class="score-valeur">0</span> <span class="score-unite">PTS</span>
+            </div>
+            <div class="score-item">
+              <span class="score-label">Niveau</span>
+              <span id="score-niveau" class="score-valeur">1</span>
+            </div>
+          </div>
         </div>
         <div class="ligne-pct">
           <span class="etiquette">Réussite</span>

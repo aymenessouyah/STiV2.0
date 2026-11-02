@@ -960,3 +960,96 @@ textarea:focus { outline: none; border-color: var(--or); box-shadow: 0 0 0 3px r
 @media (prefers-reduced-motion: reduce) {
   .overlay-panel { animation: none; }
 }
+
+/* ---------- score circulaire moderne ---------- */
+.score-cercle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  background: var(--glass);
+  border-radius: var(--rayon);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px);
+  margin-bottom: 16px;
+}
+.score-anneau {
+  position: relative;
+  width: 140px;
+  height: 140px;
+}
+.score-svg {
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+.score-fond {
+  stroke: #1e293b;
+}
+.score-remplissage {
+  stroke: var(--or);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.score-centre {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.score-pourcentage {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--blanc);
+}
+.score-centre::after {
+  content: "%";
+  font-size: 0.9rem;
+  color: var(--gris);
+  margin-left: 2px;
+}
+.score-details {
+  display: flex;
+  gap: 24px;
+  width: 100%;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.score-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.score-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--gris);
+}
+.score-valeur {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--blanc);
+}
+.score-unite {
+  font-size: 0.85rem;
+  color: var(--or-clair);
+}
+
+/* Masquer l'ancienne ligne de score texte */
+.ligne-score {
+  display: none;
+}
+
+/* Responsive score-cercle */
+@media (max-width: 640px) {
+  .score-cercle { gap: 10px; padding: 12px; }
+  .score-anneau { width: 120px; height: 120px; }
+  .score-pourcentage { font-size: 1.5rem; }
+  .score-details { gap: 16px; }
+  .score-valeur { font-size: 1.25rem; }
+}

@@ -24,6 +24,10 @@ window.AppController = (function () {
   var spanScore = document.getElementById("score");
   var spanTotal = document.getElementById("total");
   var spanTemps = document.getElementById("temps");
+  var spanScorePct = document.getElementById("score-pct");
+  var spanScorePoints = document.getElementById("score-points");
+  var spanScoreNiveau = document.getElementById("score-niveau");
+  var cercleProgress = document.getElementById("score-cercle-progress");
   var spanTempsVideo = document.getElementById("temps-courant");
   var spanDuree = document.getElementById("temps-total");
   var listeQuestions = document.getElementById("liste-questions");
@@ -150,6 +154,7 @@ window.AppController = (function () {
   function startMission() {
     cacherBulleResultatsAuto();
     spanScore.textContent = quiz.getScore();
+    rafraichirPanneau();
     rafraichirListeQuestions();
     rafraichirPanneau();
     if (quiz.isComplete()) {
@@ -294,8 +299,22 @@ window.AppController = (function () {
   }
 
   function rafraichirPanneau() {
-    spanProgression.textContent = quiz.getPct();
+    var pct = quiz.getPct();
+    var points = quiz.getPoints();
+    var niveau = quiz.getNiveau();
+
+    spanProgression.textContent = pct;
     spanScore.textContent = quiz.getScore();
+
+    // Cercle de score moderne
+    if (spanScorePct) spanScorePct.textContent = pct;
+    if (spanScorePoints) spanScorePoints.textContent = points;
+    if (spanScoreNiveau) spanScoreNiveau.textContent = niveau;
+    if (cercleProgress) {
+      var offset = 364 * (1 - pct / 100);
+      cercleProgress.style.strokeDashoffset = offset;
+    }
+
     rafraichirListeQuestions();
   }
 
@@ -762,6 +781,10 @@ window.AppController = (function () {
     video.setAnswered([]);
     spanScore.textContent = "0";
     spanProgression.textContent = "0";
+    if (spanScorePct) spanScorePct.textContent = "0";
+    if (spanScorePoints) spanScorePoints.textContent = "0";
+    if (spanScoreNiveau) spanScoreNiveau.textContent = "1";
+    if (cercleProgress) cercleProgress.style.strokeDashoffset = "364";
     afficherEcran("accueil");
   };
 
