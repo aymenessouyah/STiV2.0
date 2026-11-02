@@ -28,6 +28,7 @@ window.AppController = (function () {
   var spanScorePoints = document.getElementById("score-points");
   var spanScoreNiveau = document.getElementById("score-niveau");
   var cercleProgress = document.getElementById("score-cercle-progress");
+  var modulesListe = document.getElementById("modules-liste");
   var spanTempsVideo = document.getElementById("temps-courant");
   var spanDuree = document.getElementById("temps-total");
   var listeQuestions = document.getElementById("liste-questions");
@@ -315,7 +316,33 @@ window.AppController = (function () {
       cercleProgress.style.strokeDashoffset = offset;
     }
 
+    rafraichirModulesSQL();
     rafraichirListeQuestions();
+  }
+
+  // Génère la liste des modules SQL avec progression par chapitre
+  function rafraichirModulesSQL() {
+    if (!modulesListe || !data.chapters) return;
+    modulesListe.innerHTML = "";
+    data.chapters.forEach(function (chap) {
+      var qs = chap.questionIds || [];
+      var ok = 0, traite = 0, tot = qs.length;
+      qs.forEach(function (id) {
+        var a = quiz.getAnswers()[id];
+        if (a) { traite++; if (a.correct) ok++; }
+      });
+      var pc = tot ? Math.round((ok / tot) * 100) : 0;
+      var termine = ok === tot && tot > 0;
+
+      var div = document.createElement("div");
+      div.className = "module-item" + (termine ? " termine" : "");
+      div.innerHTML =
+        "<span class='module-num'>" + chap.id + "</span>" +
+        "<span class='module-titre'>" + echapperHtml(chap.title) + "</span>" +
+        "<span class='module-pct'>" + pc + "%</span>" +
+        "<div class='module-barre'><div class='module-barre-remplissage' style='width:" + pc + "%'></div></div>";
+      modulesListe.appendChild(div);
+    });
   }
 
   function rafraichirListeQuestions() {

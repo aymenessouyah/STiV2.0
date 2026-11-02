@@ -1053,3 +1053,177 @@ textarea:focus { outline: none; border-color: var(--or); box-shadow: 0 0 0 3px r
   .score-details { gap: 16px; }
   .score-valeur { font-size: 1.25rem; }
 }
+
+/* ---------- modules SQL (sidebar) ---------- */
+.modules-sql {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--glass-border);
+}
+.modules-sql h3 {
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--or-clair);
+  margin-bottom: 10px;
+}
+.module-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: rgba(11, 15, 25, 0.3);
+  border-radius: var(--rayon-sm);
+  margin-bottom: 6px;
+  border: 1px solid rgba(245, 158, 11, 0.15);
+  transition: var(--trans);
+}
+.module-item:hover {
+  border-color: var(--or);
+  background: rgba(245, 158, 11, 0.08);
+}
+.module-item.termine {
+  border-color: var(--vert);
+  background: rgba(34, 197, 94, 0.08);
+}
+.module-num {
+  font-weight: 800;
+  color: var(--or-clair);
+  min-width: 24px;
+  text-align: center;
+}
+.module-item.termine .module-num {
+  color: var(--vert);
+}
+.module-titre {
+  flex: 1;
+  font-size: 0.85rem;
+  color: var(--blanc);
+}
+.module-pct {
+  font-size: 0.8rem;
+  color: var(--gris);
+}
+.module-barre {
+  width: 60px;
+  height: 6px;
+  background: #1e293b;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-left: 6px;
+}
+.module-barre-remplissage {
+  height: 100%;
+  background: var(--or);
+  width: 0%;
+  transition: width 0.5s ease;
+}
+.module-item.termine .module-barre-remplissage {
+  background: var(--vert);
+}
+
+/* ---------- panneau largeur ajustée pour modules ---------- */
+.panneau {
+  width: 320px;
+  max-width: 35%;
+}
+
+/* ---------- éditeur SQL stylisé (zone de saisie) ---------- */
+.q-card textarea {
+  width: 100%;
+  min-height: 120px;
+  font-family: "Courier New", monospace;
+  font-size: 0.9rem;
+  background: #0f172a;
+  color: #e2e8f0;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--rayon-sm);
+  padding: 12px;
+  box-sizing: border-box;
+  resize: vertical;
+  margin: 8px 0;
+}
+.q-card textarea:focus {
+  outline: none;
+  border-color: var(--or);
+}
+
+/* Bouton "Valider" style Run Query (or, sans exécution SQL réelle) */
+.q-card .btn.valider {
+  background: var(--or);
+  color: var(--noir);
+  border: none;
+  padding: 10px 20px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: var(--rayon-sm);
+  cursor: pointer;
+  transition: var(--trans);
+  margin-top: 4px;
+}
+.q-card .btn.valider:not(:disabled):hover {
+  background: #fbbf24;
+  transform: translateY(-1px);
+}
+.q-card .btn.valider:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Délai avant validation (style moderne) */
+.q-delai {
+  font-size: 0.8rem;
+  color: var(--gris);
+  margin-top: 6px;
+  display: block;
+}
+
+/* Tableau éditable Q40-44 */
+.table-editor {
+  background: rgba(11, 15, 25, 0.4);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--rayon-sm);
+  padding: 12px;
+  margin-top: 12px;
+}
+.table-editor h4 {
+  font-size: 0.9rem;
+  color: var(--or-clair);
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.result-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Courier New", monospace;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+.result-table th, .result-table td {
+  border: 1px solid var(--glass-border);
+  padding: 6px 8px;
+  text-align: left;
+  background: #0f172a;
+  color: #e2e8f0;
+}
+.result-table th {
+  background: #1e293b;
+  color: var(--or-clair);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+.result-table input.table-cell {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  padding: 2px;
+}
+.result-table input.table-cell:focus {
+  outline: 1px solid var(--or);
+}
