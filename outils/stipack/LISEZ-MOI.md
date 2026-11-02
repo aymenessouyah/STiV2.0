@@ -106,6 +106,42 @@ Options reconnues : `--volume leger|complet`, `--seuil-mo <n>`,
 `--sortie <fichier>`, `--mot-de-passe <mdp>`, `--fabrique-le <iso>`,
 `--verifier <fichier>`.
 
+## Préparer le disque pour 20 postes (une seule fois)
+
+```bash
+# Média complet : tout le site + l'installateur + la procédure
+node outils/stipack/preparer-disque.mjs \
+  --sortie /media/USB/STI-Labo3-20-postes \
+  --installeur ~/Téléchargements/STI-Labo3-Windows-v316.zip
+
+# Média réduit (fichiers jusqu'à 0,5 Mo), pour une clé de petite taille
+node outils/stipack/preparer-disque.mjs --volume leger --seuil-mo 0.5
+
+# Contrôler un média déjà copié
+node outils/stipack/preparer-disque.mjs --verifier /media/USB/STI-Labo3-20-postes
+```
+
+Le dossier produit :
+
+```
+STI-Labo3-20-postes/
+├── STI-Labo3-Windows-v316.exe            l’installateur (copié, ou extrait du ZIP)
+├── STI-Labo3-Plateforme.stipack          le paquet du dernier commit
+├── LISEZ-MOI-20-POSTES.txt               la procédure + tableau de suivi des 20 postes
+├── empreintes.txt                        SHA-256 de chaque fichier du média
+├── verifier-media.cmd                    double-clic : contrôle avant installation
+└── verifier-media.ps1                    le même contrôle, appelé par le .cmd
+```
+
+Sur chaque poste : double-clic sur `verifier-media.cmd`, puis sur l'EXE —
+l'installateur reprend tout seul le `.stipack` placé à côté de lui.
+
+`--installeur` accepte indifféremment l'EXE ou le ZIP de la release ; l'empreinte
+est comparée à celle publiée pour `windows-v316` et le média est **refusé** si elle
+ne correspond à rien (`--accepter-installeur-inconnu` pour passer outre en
+connaissance de cause). `--webview2 <fichier>` ajoute l'installateur WebView2 au
+média pour les postes qui en manquent.
+
 ## Toujours la dernière mise à jour
 
 Trois verrous, pour qu'un paquet ne puisse pas décrire une version dépassée :

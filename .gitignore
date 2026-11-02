@@ -84,3 +84,6 @@ build/
 # Paquet d’installation produit par outils/stipack (artefact de fabrication)
 /STI-Labo3-Plateforme.stipack
 *.stipack.partiel
+
+# Média d’installation pour les postes (outils/stipack/preparer-disque.mjs)
+/dist-stipack/
