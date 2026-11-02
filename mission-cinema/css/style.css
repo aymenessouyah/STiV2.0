@@ -192,8 +192,8 @@ h1 { font-size: 2.4rem; margin: 8px 0 4px; letter-spacing: -0.5px; text-transfor
 }
 
 aside.panneau {
-  flex: 0 0 260px;
-  max-width: 260px;
+  flex: 0 0 14%;
+  max-width: 14%;
   display: flex; flex-direction: column; gap: 16px;
   position: sticky;
   top: 24px;
@@ -236,7 +236,7 @@ aside.panneau ul#liste-questions {
 .q-item.incorrecte { background: var(--rouge-fond); border-color: var(--rouge); color: var(--noir); }
 .q-item.incorrecte .q-badge { background: var(--rouge); color: var(--blanc); box-shadow: 0 0 0 3px rgba(239,68,68,0.2); }
 
-.principal { flex: 1; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.principal { flex: 0 0 85%; max-width: 85%; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
 
 .chap-banniere {
   padding: 12px 20px; border-radius: var(--rayon);
@@ -1705,9 +1705,10 @@ textarea:focus { outline: none; border-color: var(--or); box-shadow: 0 0 0 3px r
 /* Zone principale */
 .mission-body {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 20px;
+  flex-direction: row;
+  gap: 24px;
+  padding: 24px;
+  align-items: flex-start;
 }
 .mission-principale {
   display: flex;
