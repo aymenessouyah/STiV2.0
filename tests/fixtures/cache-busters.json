@@ -51,6 +51,9 @@
     "assets/js/admin-revision.js": [
       "469"
     ],
+    "assets/js/admin-stipack.js": [
+      "616"
+    ],
     "assets/js/admin-vues-videos.js": [
       "613-perf"
     ],
@@ -145,6 +148,9 @@
     ],
     "assets/js/sql-playground.js": [
       "396"
+    ],
+    "assets/js/stipack.js": [
+      "616"
     ],
     "assets/js/sync-progressions.js": [
       "463",
