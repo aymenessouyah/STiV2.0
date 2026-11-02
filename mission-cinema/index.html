@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Mission Cinéma">
   <title>Mission Cinéma – STI Version 2.0 By A'E</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=3.0">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" sizes="192x192" href="assets/images/sti-icon-192.png">
 </head>
@@ -38,16 +38,12 @@
         <div class="etape">
           <strong>Comment ça marche :</strong>
           <ol>
-            <li>Entrez votre prénom/nom.</li>
             <li>Démarrez la mission : la vidéo se lance.</li>
             <li>À chaque point d'arrêt, répondez à la question puis cliquez sur « Valider ma réponse ».</li>
             <li>Lisez la correction officielle, puis cliquez sur « Poursuivre » pour reprendre la vidéo exactement là où elle s'était arrêtée.</li>
           </ol>
         </div>
-        <div class="champ-nom">
-          <label for="input-nom">Votre nom :</label>
-          <input type="text" id="input-nom" placeholder="Exemple : Aymen Essouyah" maxlength="60">
-        </div>
+        <div class="eleve-badge-home"><img src="assets/images/sti-badge.png" alt="Badge abonné" class="badge-img-home"></div>
         <button id="btn-start" class="btn btn-principal">Démarrer la mission ▶</button>
         <p class="note">Progression sauvegardée automatiquement dans votre navigateur. Vous pouvez reprendre plus tard.</p>
       </div>
@@ -57,14 +53,39 @@
   <!-- ================= ÉCRAN DE MISSION ================= -->
   <section id="ecran-mission" class="ecran cacher">
     <div class="mission-body">
-      <!-- Panneau latéral (Progression + Questions traitées) -->
+      <!-- Panneau latéral (Progression + Modules SQL + Questions traitées) -->
       <aside class="panneau">
         <div class="logo"><img src="assets/images/sti-logo.png" alt="Logo STI" class="sti-logo">STI Version 2.0 <em>By A'E</em></div>
-        <h3>Progression</h3>
-        <div class="ligne-score">
-          <span class="etiquette">Score</span>
-          <span id="score">0</span> / <span id="total">0</span>
+
+        <!-- Score circulaire proéminent (style référence) -->
+        <div class="score-cercle">
+          <div class="score-anneau">
+            <svg class="score-svg" width="160" height="160">
+              <circle class="score-fond" cx="80" cy="80" r="68" stroke="#1e293b" stroke-width="12" fill="none"/>
+              <circle class="score-remplissage" id="score-cercle-progress" cx="80" cy="80" r="68" stroke="#f59e0b" stroke-width="12" fill="none" stroke-dasharray="427" stroke-dashoffset="427"/>
+            </svg>
+            <div class="score-centre">
+              <span id="score-pct" class="score-pourcentage">0</span>%
+            </div>
+          </div>
+          <div class="score-details">
+            <div class="score-item">
+              <span class="score-label">Score</span>
+              <span id="score-points" class="score-valeur">0</span> <span class="score-unite">PTS</span>
+            </div>
+            <div class="score-item">
+              <span class="score-label">Niveau</span>
+              <span id="score-niveau" class="score-valeur">1</span>
+            </div>
+          </div>
         </div>
+
+        <!-- Modules SQL (sidebar progression par chapitre) -->
+        <div class="modules-sql">
+          <h3>Modules SQL</h3>
+          <div id="modules-liste"></div>
+        </div>
+
         <div class="ligne-pct">
           <span class="etiquette">Réussite</span>
           <span id="progression-pct">0</span>%
@@ -73,6 +94,7 @@
           <span class="etiquette">Temps de mission</span>
           <span id="temps">00:00</span>
         </div>
+
         <h3>Questions traitées</h3>
         <ul id="liste-questions"></ul>
       </aside>
@@ -84,7 +106,10 @@
             MISSION CINÉMA
             <span>Devenez responsable de la base de données</span>
           </div>
-          <div class="eleve-badge"><img src="assets/images/sti-badge.png" alt="Badge élève" class="badge-img"></div>
+          <div class="eleve-badge">
+            <img src="assets/images/sti-badge.png" alt="Badge élève" class="badge-img">
+            <span class="badge-niveau" id="badge-niveau">Niv. 1</span>
+          </div>
           <button class="btn-audio" id="btn-audio" title="Activer/désactiver le son">🔊</button>
         </header>
 

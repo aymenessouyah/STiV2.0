@@ -18,13 +18,18 @@ window.AppController = (function () {
   var zoneInteraction = document.getElementById("zone-interaction");
 
   var btnStart = document.getElementById("btn-start");
-  var inputNom = document.getElementById("input-nom");
   var spanNom = document.getElementById("nom-eleve");
 
   var spanProgression = document.getElementById("progression-pct");
   var spanScore = document.getElementById("score");
   var spanTotal = document.getElementById("total");
   var spanTemps = document.getElementById("temps");
+  var spanScorePct = document.getElementById("score-pct");
+  var spanScorePoints = document.getElementById("score-points");
+  var spanScoreNiveau = document.getElementById("score-niveau");
+  var badgeNiveau = document.getElementById("badge-niveau");
+  var cercleProgress = document.getElementById("score-cercle-progress");
+  var modulesListe = document.getElementById("modules-liste");
   var spanTempsVideo = document.getElementById("temps-courant");
   var spanDuree = document.getElementById("temps-total");
   var listeQuestions = document.getElementById("liste-questions");
@@ -56,33 +61,14 @@ window.AppController = (function () {
   }
 
   function init() {
-    // Sauvegarde existante ?
-    var sauve = quiz.chargerSauvegarde();
-    if (sauve && sauve.nom) {
-      inputNom.value = sauve.nom;
-      quiz.setNom(sauve.nom);
-      afficherEcran("mission");
-      startMission();
-      return;
-    }
     afficherEcran("accueil");
 
     btnStart.addEventListener("click", function () {
-      var nom = String(inputNom.value || "").trim();
-      if (nom === "") {
-        inputNom.focus();
-        inputNom.classList.add("erreur");
-        return;
-      }
-      inputNom.classList.remove("erreur");
-      quiz.setNom(nom);
-      if (spanNom) spanNom.textContent = nom;
+      quiz.setNom("Abonné");
+      if (spanNom) spanNom.textContent = "Abonné";
       afficherEcran("mission");
       startMission();
     });
-
-    inputNom.addEventListener("input", function () { inputNom.classList.remove("erreur"); });
-    inputNom.addEventListener("keydown", function (e) { if (e.key === "Enter") btnStart.click(); });
 
     // Bouton audio (activer/désactiver le son)
     var btnAudio = document.getElementById("btn-audio");
@@ -170,6 +156,7 @@ window.AppController = (function () {
   function startMission() {
     cacherBulleResultatsAuto();
     spanScore.textContent = quiz.getScore();
+    rafraichirPanneau();
     rafraichirListeQuestions();
     rafraichirPanneau();
     if (quiz.isComplete()) {
@@ -248,12 +235,23 @@ window.AppController = (function () {
   }
 
   function afficherEcran(nom) {
-    ecranAccueil.classList.add("cacher");
-    ecranMission.classList.add("cacher");
-    ecranBilan.classList.add("cacher");
-    if (nom === "accueil") ecranAccueil.classList.remove("cacher");
-    if (nom === "mission") ecranMission.classList.remove("cacher");
-    if (nom === "bilan") ecranBilan.classList.remove("cacher");
+    var actuel = document.querySelector("#app .ecran.actif");
+
+    ecranAccueil.classList.remove("actif", "entrer", "sortir", "cacher");
+    ecranMission.classList.remove("actif", "entrer", "sortir", "cacher");
+    ecranBilan.classList.remove("actif", "entrer", "sortir", "cacher");
+
+    if (nom === "accueil") ecranAccueil.classList.add("actif", "entrer");
+    if (nom === "mission") ecranMission.classList.add("actif", "entrer");
+    if (nom === "bilan") ecranBilan.classList.add("actif", "entrer");
+
+    if (actuel && actuel.id !== (nom === "accueil" ? "ecran-accueil" : nom === "mission" ? "ecran-mission" : "ecran-bilan")) {
+      actuel.classList.add("sortir");
+      setTimeout(function () {
+        actuel.classList.remove("sortir", "entrer");
+        actuel.classList.add("cacher");
+      }, 450);
+    }
   }
 
   function afficherBulleResultatsAuto() {
@@ -314,9 +312,50 @@ window.AppController = (function () {
   }
 
   function rafraichirPanneau() {
-    spanProgression.textContent = quiz.getPct();
+    var pct = quiz.getPct();
+    var points = quiz.getPoints();
+    var niveau = quiz.getNiveau();
+
+    spanProgression.textContent = pct;
     spanScore.textContent = quiz.getScore();
+
+    // Cercle de score moderne
+    if (spanScorePct) spanScorePct.textContent = pct;
+    if (spanScorePoints) spanScorePoints.textContent = points;
+    if (spanScoreNiveau) spanScoreNiveau.textContent = niveau;
+    if (badgeNiveau) badgeNiveau.textContent = "Niv. " + niveau;
+    if (cercleProgress) {
+      var offset = 427 * (1 - pct / 100);
+      cercleProgress.style.strokeDashoffset = offset;
+    }
+
+    rafraichirModulesSQL();
     rafraichirListeQuestions();
+  }
+
+  // Génère la liste des modules SQL avec progression par chapitre
+  function rafraichirModulesSQL() {
+    if (!modulesListe || !data.chapters) return;
+    modulesListe.innerHTML = "";
+    data.chapters.forEach(function (chap) {
+      var qs = chap.questionIds || [];
+      var ok = 0, traite = 0, tot = qs.length;
+      qs.forEach(function (id) {
+        var a = quiz.getAnswers()[id];
+        if (a) { traite++; if (a.correct) ok++; }
+      });
+      var pc = tot ? Math.round((ok / tot) * 100) : 0;
+      var termine = ok === tot && tot > 0;
+
+      var div = document.createElement("div");
+      div.className = "module-item" + (termine ? " termine" : "");
+      div.innerHTML =
+        "<span class='module-num'>" + chap.id + "</span>" +
+        "<span class='module-titre'>" + echapperHtml(chap.title) + "</span>" +
+        "<span class='module-pct'>" + pc + "%</span>" +
+        "<div class='module-barre'><div class='module-barre-remplissage' style='width:" + pc + "%'></div></div>";
+      modulesListe.appendChild(div);
+    });
   }
 
   function rafraichirListeQuestions() {
@@ -782,9 +821,12 @@ window.AppController = (function () {
     video.setAnswered([]);
     spanScore.textContent = "0";
     spanProgression.textContent = "0";
+    if (spanScorePct) spanScorePct.textContent = "0";
+    if (spanScorePoints) spanScorePoints.textContent = "0";
+    if (spanScoreNiveau) spanScoreNiveau.textContent = "1";
+    if (badgeNiveau) badgeNiveau.textContent = "Niv. 1";
+    if (cercleProgress) cercleProgress.style.strokeDashoffset = "427";
     afficherEcran("accueil");
-    inputNom.value = "";
-    inputNom.focus();
   };
 
   function echapperHtml(texte) {

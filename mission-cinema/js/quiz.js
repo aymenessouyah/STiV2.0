@@ -655,6 +655,8 @@ function toggleAudio() {
   function getScore() { return state.score; }
   function getTotal() { return data.questions.length; }
   function getPct() { var t = getTotal(); return t ? Math.round((state.score / t) * 100) : 0; }
+  function getPoints() { return state.score * 100; }
+  function getNiveau() { return Math.floor(state.score / 5) + 1; }
   function getAnswers() { return state.answers; }
   function getNom() { return state.nom; }
   function setNom(n) {
@@ -865,6 +867,8 @@ function getAdvRevisionStats() {
     getScore: getScore,
     getTotal: getTotal,
     getPct: getPct,
+    getPoints: getPoints,
+    getNiveau: getNiveau,
     getAnswers: getAnswers,
     getNom: getNom,
     setNom: setNom,
