@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Mission Cinéma">
   <title>Mission Cinéma – STI Version 2.0 By A'E</title>
-  <link rel="stylesheet" href="css/style.css?v=5.0">
+  <link rel="stylesheet" href="css/style.css?v=6.0">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" sizes="192x192" href="assets/images/sti-icon-192.png">
 </head>
@@ -53,53 +53,60 @@
   <!-- ================= ÉCRAN DE MISSION ================= -->
   <section id="ecran-mission" class="ecran cacher">
     <div class="mission-body">
-      <!-- Panneau latéral (Progression + Modules SQL + Questions traitées) -->
+      <!-- Panneau latéral bien organisé avec cartes séparées -->
       <aside class="panneau">
         <div class="logo"><img src="assets/images/sti-logo.png" alt="Logo STI" class="sti-logo">STI Version 2.0 <em>By A'E</em></div>
 
-        <!-- Score circulaire proéminent (style référence) -->
-        <div class="score-cercle">
-          <div class="score-anneau">
-            <svg class="score-svg" width="160" height="160">
-              <circle class="score-fond" cx="80" cy="80" r="68" stroke="#1e293b" stroke-width="12" fill="none"/>
-              <circle class="score-remplissage" id="score-cercle-progress" cx="80" cy="80" r="68" stroke="#f59e0b" stroke-width="12" fill="none" stroke-dasharray="427" stroke-dashoffset="427"/>
-            </svg>
-            <div class="score-centre">
-              <span id="score-pct" class="score-pourcentage">0</span>%
+        <!-- Carte Score -->
+        <div class="carte-claire carte-score">
+          <div class="section-titre">Score</div>
+          <div class="score-cercle">
+            <div class="score-anneau">
+              <svg class="score-svg" width="160" height="160">
+                <circle class="score-fond" cx="80" cy="80" r="68" stroke="#1e293b" stroke-width="12" fill="none"/>
+                <circle class="score-remplissage" id="score-cercle-progress" cx="80" cy="80" r="68" stroke="#f59e0b" stroke-width="12" fill="none" stroke-dasharray="427" stroke-dashoffset="427"/>
+              </svg>
+              <div class="score-centre">
+                <span id="score-pct" class="score-pourcentage">0</span>%
+              </div>
             </div>
-          </div>
-          <div class="score-details">
-            <div class="score-item">
-              <span class="score-label">Score</span>
-              <span id="score-points" class="score-valeur">0</span> <span class="score-unite">PTS</span>
-            </div>
-            <div class="score-item">
-              <span class="score-label">Niveau</span>
-              <span id="score-niveau" class="score-valeur">1</span>
+            <div class="score-details">
+              <div class="score-item">
+                <span class="score-label">Score</span>
+                <span id="score-points" class="score-valeur">0</span> <span class="score-unite">PTS</span>
+              </div>
+              <div class="score-item">
+                <span class="score-label">Niveau</span>
+                <span id="score-niveau" class="score-valeur">1</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="separateur"></div>
-        <div class="section-titre">Modules SQL</div>
-        <div class="modules-sql">
+        <!-- Carte Modules SQL -->
+        <div class="carte-claire carte-modules">
+          <div class="section-titre">Modules SQL</div>
           <div id="modules-liste"></div>
         </div>
 
-        <div class="separateur"></div>
-        <div class="section-titre">Progression</div>
-        <div class="ligne-pct">
-          <span class="etiquette">Réussite</span>
-          <span id="progression-pct">0</span>%
-        </div>
-        <div class="ligne-temps">
-          <span class="etiquette">Temps de mission</span>
-          <span id="temps">00:00</span>
+        <!-- Carte Progression -->
+        <div class="carte-claire carte-progression">
+          <div class="section-titre">Progression de mission</div>
+          <div class="ligne-pct">
+            <span class="etiquette">Réussite</span>
+            <span id="progression-pct">0</span>%
+          </div>
+          <div class="ligne-temps">
+            <span class="etiquette">Temps de mission</span>
+            <span id="temps">00:00</span>
+          </div>
         </div>
 
-        <div class="separateur"></div>
-        <div class="section-titre">Questions traitées</div>
-        <ul id="liste-questions"></ul>
+        <!-- Carte Questions traitées -->
+        <div class="carte-claire carte-questions">
+          <div class="section-titre">Questions traitées</div>
+          <ul id="liste-questions"></ul>
+        </div>
       </aside>
 
       <!-- Zone principale -->
@@ -109,11 +116,13 @@
             MISSION CINÉMA
             <span>Devenez responsable de la base de données</span>
           </div>
-          <div class="eleve-badge">
-            <img src="assets/images/sti-badge.png" alt="Badge élève" class="badge-img">
-            <span class="badge-niveau" id="badge-niveau">Niv. 1</span>
+          <div class="header-actions">
+            <div class="eleve-badge">
+              <img src="assets/images/sti-badge.png" alt="Badge élève" class="badge-img">
+              <span class="badge-niveau" id="badge-niveau">Niv. 1</span>
+            </div>
+            <button class="btn-audio" id="btn-audio" title="Activer/désactiver le son">🔊</button>
           </div>
-          <button class="btn-audio" id="btn-audio" title="Activer/désactiver le son">🔊</button>
         </header>
 
         <div id="chapitre-actuel" class="chap-banniere">Préparation de la mission…</div>
