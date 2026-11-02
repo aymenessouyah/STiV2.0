@@ -38,6 +38,13 @@ L'élève incarne un administrateur de base de données recruté par une sociét
 - Re-répondre aux questions échouées une par une
 - Mise à jour du score en cas de réussite
 
+### Mode révision avancé
+- **Révision par chapitre** : sélecteur radio dans le bilan pour choisir quel chapitre réviser (LDD, LMD, SELECT, Contraintes, etc.)
+- **Indices contextuels** : indice pédagogique affiché selon la nature de l'erreur (création de tables, modification de structure, insertion, mise à jour, suppression, sélection, contraintes/clés étrangères, prévision de résultat)
+- **Barre de progression** : suivi en temps réel de la révision (questions traitées / total, pourcentage)
+- **Plusieurs tentatives** : l'élève peut tenter plusieurs fois une question, l'historique des tentatives est conservé
+- **Écran de résumé** : score de révision, taux de réussite, nombre de questions traitées
+
 ### Feedback audio
 - Web Audio API : bip montant (correct) / bip grave (incorrect)
 - Bouton 🔊/🔇 dans le header pour activer/désactiver le son
