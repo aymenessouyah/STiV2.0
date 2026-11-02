@@ -144,6 +144,7 @@ window.QuizController = (function () {
     btn.type = "button";
     btn.className = "btn valider";
     btn.textContent = "Valider le tableau";
+    btn.disabled = true;
     btn.onclick = function(){
       var lignesSaisies = {};
       var inputs = tbl.querySelectorAll("input.table-cell");
@@ -167,6 +168,23 @@ window.QuizController = (function () {
       if(onCapture) onCapture(texte, saisie);
     };
     box.appendChild(btn);
+
+    var delaiMsgTbl = document.createElement("span");
+    delaiMsgTbl.className = "q-delai";
+    delaiMsgTbl.textContent = "Réponse disponible dans 5 secondes…";
+    box.appendChild(delaiMsgTbl);
+
+    var secondesRestantesTbl = 5;
+    var timerDelaiTbl = setInterval(function () {
+      secondesRestantesTbl--;
+      if (secondesRestantesTbl > 0) {
+        delaiMsgTbl.textContent = "Réponse disponible dans " + secondesRestantesTbl + " secondes…";
+      } else {
+        clearInterval(timerDelaiTbl);
+        btn.disabled = false;
+        delaiMsgTbl.textContent = "";
+      }
+    }, 1000);
 
     var info = document.createElement("p");
     info.className = "q-hint";
@@ -229,8 +247,26 @@ window.QuizController = (function () {
       btn.type = "button";
       btn.className = "btn valider";
       btn.textContent = "Valider ma réponse";
+      btn.disabled = true;
       btn.onclick = function () { validateSQL(q, ta.value); };
       ligne.appendChild(btn);
+
+      var delaiMsg = document.createElement("span");
+      delaiMsg.className = "q-delai";
+      delaiMsg.textContent = "Réponse disponible dans 5 secondes…";
+      ligne.appendChild(delaiMsg);
+
+      var secondesRestantes = 5;
+      var timerDelai = setInterval(function () {
+        secondesRestantes--;
+        if (secondesRestantes > 0) {
+          delaiMsg.textContent = "Réponse disponible dans " + secondesRestantes + " secondes…";
+        } else {
+          clearInterval(timerDelai);
+          btn.disabled = false;
+          delaiMsg.textContent = "";
+        }
+      }, 1000);
 
       var chk = document.createElement("label");
       chk.className = "q-declare";
@@ -278,12 +314,30 @@ window.QuizController = (function () {
       btn2.type = "button";
       btn2.className = "btn valider";
       btn2.textContent = "Valider ma réponse";
+      btn2.disabled = true;
       btn2.onclick = function () {
         var saved = state.answers[q.id];
         var reponse = saved && saved.reponse != null ? saved.reponse : "";
         validateResult(q, reponse);
       };
       ligne2.appendChild(btn2);
+
+      var delaiMsg2 = document.createElement("span");
+      delaiMsg2.className = "q-delai";
+      delaiMsg2.textContent = "Réponse disponible dans 5 secondes…";
+      ligne2.appendChild(delaiMsg2);
+
+      var secondesRestantes2 = 5;
+      var timerDelai2 = setInterval(function () {
+        secondesRestantes2--;
+        if (secondesRestantes2 > 0) {
+          delaiMsg2.textContent = "Réponse disponible dans " + secondesRestantes2 + " secondes…";
+        } else {
+          clearInterval(timerDelai2);
+          btn2.disabled = false;
+          delaiMsg2.textContent = "";
+        }
+      }, 1000);
       wrap.appendChild(ligne2);
     }
 
