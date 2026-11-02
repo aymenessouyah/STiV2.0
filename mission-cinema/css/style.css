@@ -1904,3 +1904,142 @@ body {
   .carte-claire { padding: 16px; }
   .section-titre { font-size: 0.85rem; }
 }
+
+/* ============================================================================
+   ORGANISATION V4 — Structure claire, cartes séparées, en-tête ordonné
+   ============================================================================ */
+
+/* En-tête de mission bien ordonné */
+.mission-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background: var(--glass);
+  border-bottom: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px);
+  gap: 20px;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.titre-mission h1 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--blanc);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+.titre-mission span {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+/* Panneau latéral : cartes séparées avec marge */
+.panneau {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--rayon);
+  padding: 20px 16px;
+  backdrop-filter: blur(20px);
+  box-shadow: var(--ombre-card);
+}
+
+/* Carte Score */
+.carte-score {
+  text-align: center;
+  background: rgba(11, 15, 25, 0.4);
+  border: 1px solid rgba(245,158,11,0.2);
+}
+.carte-score .score-cercle {
+  margin: 12px 0;
+}
+.carte-score .score-details {
+  gap: 24px;
+}
+
+/* Carte Modules SQL */
+.carte-modules {
+  background: rgba(11, 15, 25, 0.3);
+  border: 1px solid rgba(245,158,11,0.15);
+}
+
+/* Carte Progression */
+.carte-progression {
+  background: rgba(11, 15, 25, 0.3);
+  border: 1px solid rgba(59,130,246,0.15);
+}
+.carte-progression .ligne-pct,
+.carte-progression .ligne-temps {
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding-bottom: 8px;
+}
+
+/* Carte Questions traitées */
+.carte-questions {
+  background: rgba(11, 15, 25, 0.3);
+  border: 1px solid rgba(16,185,129,0.15);
+}
+
+/* Score circulaire centré dans sa carte */
+.score-cercle {
+  margin-bottom: 16px;
+}
+.score-pourcentage {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(245,158,11,0.3);
+}
+
+/* Badge élève plus net */
+.badge-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 2px solid var(--or);
+  background: var(--noir);
+  box-shadow: 0 4px 12px -4px rgba(245,158,11,0.4);
+}
+.badge-img-home {
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  border: 3px solid var(--or);
+  background: var(--noir);
+  box-shadow: 0 8px 24px -4px rgba(245,158,11,0.5);
+}
+.badge-niveau {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--or-clair);
+  text-shadow: 0 0 10px rgba(245,158,11,0.4);
+}
+
+/* Section titres bien espacés */
+.section-titre {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--or-clair);
+  font-weight: 800;
+  margin: 0 0 10px 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .score-pourcentage { font-size: 1.8rem; }
+  .panneau { padding: 16px 12px; }
+  .mission-header { padding: 12px 16px; }
+  .header-actions { gap: 12px; }
+}
