@@ -408,7 +408,7 @@ window.AppController = (function () {
 
     bilanHtml += "<div class='bilan-actions'>" +
                  "<button class='btn secondaire' onclick='AppController.rejouerBilanVocal()'>Écouter le bilan vocal</button>" +
-                 (faux.length > 0 ? "<button class='btn' onclick='AppController.startRevision()'>Mode révision — revoir les erreurs</button>" : "") +
+                 "<button class='btn' onclick='AppController.voirCorrectionVideo()'>Voir la correction (vidéo)</button>" +
                  "<button class='btn' onclick='AppController.recommencer()'>Recommencer la mission</button>" +
                  "<button class='btn secondaire' onclick='location.reload()'>Quitter</button>" +
                  "</div>";
@@ -425,6 +425,14 @@ window.AppController = (function () {
   // Rejoue la narration vocale du bilan à la demande
   var rejouerBilanVocal = function () {
     quiz.speakBilanSummary();
+  };
+
+  // Relance la vidéo depuis le début pour revoir la correction (vidéo)
+  var voirCorrectionVideo = function () {
+    afficherEcran("mission");
+    cacherQuestion();
+    try { video.seekToSeconds(0); } catch (e) {}
+    video.forcePlay().catch(function () {});
   };
 
   var revoirQuestion = function (id) {
@@ -584,7 +592,8 @@ window.AppController = (function () {
     nextRevision: nextRevision,
     sauterRevision: sauterRevision,
     exitRevision: exitRevision,
-    rejouerBilanVocal: rejouerBilanVocal
+    rejouerBilanVocal: rejouerBilanVocal,
+    voirCorrectionVideo: voirCorrectionVideo
   };
 })();
 
