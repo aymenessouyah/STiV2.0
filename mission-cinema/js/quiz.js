@@ -678,6 +678,59 @@ function toggleAudio() {
     if (cb.onAllDone) callbacks.onAllDone = cb.onAllDone;
   }
 
+  // ----------------------------- nature de l'échec par question -----------------------------
+  function getFailureNature(num) {
+    // Retourne la nature de l'opération pour une question donnée, en français
+    if (num === 1) return "création de tables";
+    if (num >= 2 && num <= 5) return "modification de structure de table";
+    if (num >= 6 && num <= 7) return "insertion de données";
+    if (num >= 8 && num <= 12) return "mise à jour de données";
+    if (num >= 13 && num <= 15) return "suppression de données";
+    if (num >= 16 && num <= 39) return "requête de sélection";
+    if (num >= 40 && num <= 44) return "contraintes et clés étrangères";
+    if (num === 45) return "prévision de résultat";
+    return "opération SQL";
+  }
+
+  // ----------------------------- narration vocale du bilan -----------------------------
+  function speakBilanSummary() {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+
+    var total = data.questions.length;
+    var score = state.score;
+    var faux = [];
+    data.questions.forEach(function (q) {
+      var a = state.answers[q.id];
+      if (a && !a.correct) faux.push(q);
+    });
+
+    var texte = "";
+    if (faux.length === 0) {
+      texte = "Mission terminée avec un score parfait de " + score + " sur " + total + ". Félicitations, toutes les réponses sont correctes.";
+    } else {
+      texte = "Mission terminée. Votre score est de " + score + " sur " + total + ". " + faux.length + " réponse" + (faux.length > 1 ? "s" : "") + " incorrecte" + (faux.length > 1 ? "s" : "") + ".";
+
+      faux.forEach(function (q, index) {
+        var nature = getFailureNature(q.num);
+        if (index === 0) {
+          texte += " La première erreur porte sur la question " + q.num + ", " + nature + ".";
+        } else if (index === faux.length - 1) {
+          texte += " La dernière erreur concerne la question " + q.num + ", " + nature + ".";
+        } else {
+          texte += " La question " + q.num + ", " + nature + ".";
+        }
+      });
+    }
+
+    var utterance = new SpeechSynthesisUtterance(texte);
+    utterance.lang = "fr-FR";
+    utterance.rate = 0.9;
+    utterance.pitch = 1.0;
+    utterance.volume = 1.0;
+    window.speechSynthesis.speak(utterance);
+  }
+
   return {
     renderQuestion: renderQuestion,
     validateSQL: validateSQL,
@@ -702,6 +755,7 @@ function toggleAudio() {
     isAudioEnabled: function () { return audioEnabled; },
     reviseQuestion: reviseQuestion,
     playCorrectSound: playCorrectSound,
-    playIncorrectSound: playIncorrectSound
+    playIncorrectSound: playIncorrectSound,
+    speakBilanSummary: speakBilanSummary
   };
 })();
