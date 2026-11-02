@@ -678,8 +678,8 @@ function toggleAudio() {
     if (cb.onAllDone) callbacks.onAllDone = cb.onAllDone;
   }
 
-  // ----------------------------- nature de l'échec par question -----------------------------
-  function getFailureNature(num) {
+// ----------------------------- nature de l'échec par question -----------------------------
+function getFailureNature(num) {
     // Retourne la nature de l'opération pour une question donnée, en français
     if (num === 1) return "création de tables";
     if (num >= 2 && num <= 5) return "modification de structure de table";
@@ -690,7 +690,129 @@ function toggleAudio() {
     if (num >= 40 && num <= 44) return "contraintes et clés étrangères";
     if (num === 45) return "prévision de résultat";
     return "opération SQL";
-  }
+}
+
+// ----------------------------- indices contextuels par question -----------------------------
+function getHints(q) {
+    var hints = [];
+    var nature = getFailureNature(q.num);
+
+    if (nature === "création de tables") {
+      hints.push("N'oubliez pas les clés primaires (PRIMARY KEY) et étrangères (FOREIGN KEY).");
+      hints.push("Les contraintes CHECK s'écrivent dans la définition de la colonne.");
+    } else if (nature === "modification de structure de table") {
+      hints.push("Utilisez ALTER TABLE avec ADD, DROP COLUMN ou MODIFY.");
+      hints.push("Vérifiez le nom exact de la table et de la colonne.");
+    } else if (nature === "insertion de données") {
+      hints.push("Respectez l'ordre des colonnes dans INSERT INTO.");
+      hints.push("Les valeurs texte doivent être entre guillemets simples.");
+    } else if (nature === "mise à jour de données") {
+      hints.push("UPDATE nécessite une clause WHERE pour cibler les lignes.");
+      hints.push("Pour plusieurs tables, utilisez la syntaxe multi-table UPDATE.");
+    } else if (nature === "suppression de données") {
+      hints.push("DELETE supprime des lignes, DROP TABLE supprime toute la table.");
+      hints.push("WHERE est obligatoire pour ne pas tout supprimer.");
+    } else if (nature === "requête de sélection") {
+      hints.push("SELECT ... FROM ... WHERE pour filtrer les résultats.");
+      hints.push("GROUP BY avec HAVING pour filtrer après agrégation.");
+    } else if (nature === "contraintes et clés étrangères") {
+      hints.push("DEFAULT fournit une valeur par défaut lors de l'insertion.");
+      hints.push("ON UPDATE CASCADE / ON DELETE CASCADE propagent les modifications.");
+    } else if (nature === "prévision de résultat") {
+      hints.push("Tracez pas à pas les opérations sur les données.");
+      hints.push("Vérifiez les jointures et les filtres avant de donner le résultat.");
+    }
+
+    return hints;
+}
+
+// ----------------------------- questions par chapitre -----------------------------
+function getQuestionsByChapter(chapterId) {
+    return data.questions.filter(function (q) { return q.chapter === chapterId; });
+}
+
+// ----------------------------- état révision avancée -----------------------------
+var revisionAdvState = {
+    active: false,
+    chapterId: null,
+    questions: [],
+    index: 0,
+    score: 0,
+    maxScore: 0,
+    attempts: {},  // id -> {ok: boolean, tries: number}
+    startedAt: null
+};
+
+function startAdvancedRevision(chapterId) {
+    var qs = chapterId ? getQuestionsByChapter(chapterId) : data.questions.filter(function(q) {
+        var a = state.answers[q.id];
+        return a && !a.correct;
+    });
+
+    if (qs.length === 0) return null;
+
+    revisionAdvState.active = true;
+    revisionAdvState.chapterId = chapterId;
+    revisionAdvState.questions = qs;
+    revisionAdvState.index = 0;
+    revisionAdvState.score = 0;
+    revisionAdvState.maxScore = qs.length;
+    revisionAdvState.attempts = {};
+    revisionAdvState.startedAt = new Date().toISOString();
+
+    return qs[0];
+}
+
+function getCurrentAdvRevisionQuestion() {
+    if (!revisionAdvState.active) return null;
+    if (revisionAdvState.index >= revisionAdvState.questions.length) return null;
+    return revisionAdvState.questions[revisionAdvState.index];
+}
+
+function recordAdvRevisionAttempt(qId, correct, tries) {
+    if (!revisionAdvState.active) return;
+    revisionAdvState.attempts[qId] = { ok: correct, tries: tries };
+    if (correct && !revisionAdvState.attempts[qId].ok) {
+      revisionAdvState.score++;
+    }
+}
+
+function nextAdvRevisionQuestion() {
+    if (!revisionAdvState.active) return null;
+    revisionAdvState.index++;
+    if (revisionAdvState.index >= revisionAdvState.questions.length) {
+      revisionAdvState.active = false;
+      return null;
+    }
+    return revisionAdvState.questions[revisionAdvState.index];
+}
+
+function exitAdvancedRevision() {
+    revisionAdvState.active = false;
+    revisionAdvState.chapterId = null;
+    revisionAdvState.questions = [];
+    revisionAdvState.index = 0;
+    revisionAdvState.score = 0;
+    revisionAdvState.maxScore = 0;
+    revisionAdvState.attempts = {};
+    revisionAdvState.startedAt = null;
+}
+
+function getAdvRevisionStats() {
+    if (!revisionAdvState.active) return null;
+    var total = revisionAdvState.questions.length;
+    var revised = Object.keys(revisionAdvState.attempts).length;
+    var ok = 0;
+    Object.values(revisionAdvState.attempts).forEach(function(a) { if (a.ok) ok++; });
+    return {
+      total: total,
+      revised: revised,
+      ok: ok,
+      score: revisionAdvState.score,
+      maxScore: revisionAdvState.maxScore,
+      pct: total ? Math.round((revisionAdvState.score / revisionAdvState.maxScore) * 100) : 0
+    };
+}
 
   // ----------------------------- narration vocale du bilan -----------------------------
   function speakBilanSummary() {
@@ -756,6 +878,15 @@ function toggleAudio() {
     reviseQuestion: reviseQuestion,
     playCorrectSound: playCorrectSound,
     playIncorrectSound: playIncorrectSound,
-    speakBilanSummary: speakBilanSummary
+    speakBilanSummary: speakBilanSummary,
+    getHints: getHints,
+    getQuestionsByChapter: getQuestionsByChapter,
+    startAdvancedRevision: startAdvancedRevision,
+    getCurrentAdvRevisionQuestion: getCurrentAdvRevisionQuestion,
+    recordAdvRevisionAttempt: recordAdvRevisionAttempt,
+    nextAdvRevisionQuestion: nextAdvRevisionQuestion,
+    exitAdvancedRevision: exitAdvancedRevision,
+    getAdvRevisionStats: getAdvRevisionStats,
+    getFailureNature: getFailureNature
   };
 })();
