@@ -407,6 +407,7 @@ window.AppController = (function () {
     }
 
     bilanHtml += "<div class='bilan-actions'>" +
+                 "<button class='btn secondaire' onclick='AppController.rejouerBilanVocal()'>Écouter le bilan vocal</button>" +
                  (faux.length > 0 ? "<button class='btn' onclick='AppController.startRevision()'>Mode révision — revoir les erreurs</button>" : "") +
                  "<button class='btn' onclick='AppController.recommencer()'>Recommencer la mission</button>" +
                  "<button class='btn secondaire' onclick='location.reload()'>Quitter</button>" +
@@ -414,7 +415,17 @@ window.AppController = (function () {
 
     document.getElementById("contenu-bilan").innerHTML = bilanHtml;
     afficherEcran("bilan");
+
+    // Narration vocale automatique du bilan (après un léger délai pour laisser le rendu se faire)
+    setTimeout(function () {
+      quiz.speakBilanSummary();
+    }, 800);
   }
+
+  // Rejoue la narration vocale du bilan à la demande
+  var rejouerBilanVocal = function () {
+    quiz.speakBilanSummary();
+  };
 
   var revoirQuestion = function (id) {
     var q = data.questions.find(function (x) { return x.id === id; });
@@ -572,7 +583,8 @@ window.AppController = (function () {
     validerRevision: validerRevision,
     nextRevision: nextRevision,
     sauterRevision: sauterRevision,
-    exitRevision: exitRevision
+    exitRevision: exitRevision,
+    rejouerBilanVocal: rejouerBilanVocal
   };
 })();
 
