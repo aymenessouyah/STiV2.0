@@ -1601,3 +1601,217 @@ textarea:focus { outline: none; border-color: var(--or); box-shadow: 0 0 0 3px r
   .badge-img { width: 30px; height: 30px; }
   .badge-img-home { width: 52px; height: 52px; }
 }
+
+/* ============================================================================
+   MODERNISATION V2 — Cartes glassmorphism, typographie, mise en page
+   ============================================================================ */
+
+/* Fond dégradé animé */
+.bg-grad {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(245, 158, 11, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+    var(--noir-profond);
+  z-index: -1;
+}
+
+/* Écran d'accueil modernisé */
+.accueil-cadre {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  text-align: center;
+}
+.carte-accueil {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--rayon);
+  padding: 32px 24px;
+  backdrop-filter: blur(24px);
+  box-shadow: var(--ombre-card);
+  margin-top: 24px;
+}
+.carte-accueil h2 {
+  font-size: 1.3rem;
+  color: var(--blanc);
+  margin-bottom: 16px;
+}
+.carte-accueil p {
+  color: #cbd5e1;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+.etape {
+  text-align: left;
+  margin: 24px 0;
+  padding: 16px;
+  background: rgba(11, 15, 25, 0.4);
+  border-radius: var(--rayon-sm);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.etape strong {
+  color: var(--or-clair);
+  display: block;
+  margin-bottom: 12px;
+}
+.etape ol {
+  margin: 0;
+  padding-left: 20px;
+  color: #cbd5e1;
+}
+.etape li {
+  margin-bottom: 8px;
+}
+.btn-principal {
+  background: linear-gradient(135deg, var(--or), #d97706);
+  color: var(--noir);
+  border: none;
+  padding: 14px 28px;
+  font-size: 1rem;
+  font-weight: 800;
+  border-radius: var(--rayon-sm);
+  cursor: pointer;
+  transition: var(--trans);
+  margin-top: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px -4px rgba(245,158,11,0.4);
+}
+.btn-principal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -4px rgba(245,158,11,0.5);
+}
+.btn-principal:active {
+  transform: translateY(0);
+}
+.note {
+  margin-top: 20px;
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+/* En-tête de mission modernisé */
+.mission-header {
+  gap: 20px;
+  padding: 16px 24px;
+}
+.titre-mission h1 {
+  letter-spacing: -0.5px;
+}
+
+/* Zone principale */
+.mission-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+.mission-principale {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: stretch;
+}
+@media (min-width: 900px) {
+  .mission-principale {
+    flex-direction: row;
+  }
+}
+
+/* Schéma BD modernisé */
+.schema-bd {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--rayon);
+  padding: 20px;
+  backdrop-filter: blur(16px);
+}
+.schema-bd h3 {
+  font-size: 1rem;
+  color: var(--or-clair);
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.schema-image {
+  width: 100%;
+  border-radius: var(--rayon-sm);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--ombre-card);
+}
+
+/* Chap-banniere modernisé */
+.chap-banniere {
+  background: rgba(11, 15, 25, 0.4);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--rayon-sm);
+  padding: 12px 16px;
+  font-weight: 700;
+  color: var(--blanc);
+  font-size: 1rem;
+}
+
+/* Liste questions modernisée */
+#liste-questions {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.q-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: rgba(11, 15, 25, 0.2);
+  border-radius: var(--rayon-sm);
+  margin-bottom: 6px;
+  border: 1px solid rgba(255,255,255,0.04);
+  transition: var(--trans);
+  cursor: pointer;
+}
+.q-item:hover {
+  border-color: rgba(245,158,11,0.3);
+  background: rgba(245,158,11,0.06);
+}
+.q-item.traitee {
+  border-color: var(--vert);
+  background: rgba(16,185,129,0.06);
+}
+.q-item.incorrecte {
+  border-color: var(--rouge);
+  background: rgba(239,68,68,0.06);
+}
+.q-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+.q-item .q-badge { width: 28px; height: 28px; font-size: 0.8rem; }
+.q-item.traitee .q-badge { background: var(--vert); color: var(--blanc); box-shadow: 0 0 0 3px rgba(16,185,129,0.2); }
+.q-item.incorrecte .q-badge { background: var(--rouge); color: var(--blanc); box-shadow: 0 0 0 3px rgba(239,68,68,0.2); }
+
+/* Temps de mission */
+.ligne-temps {
+  font-size: 0.85rem;
+  margin-top: 8px;
+}
+
+/* Correction badge */
+.correction-badge {
+  padding: 9px 16px;
+  font-size: 0.9rem;
+  border-radius: var(--rayon-sm);
+  font-weight: 700;
+  margin-top: 12px;
+}
+.correction-badge.ok { background: var(--vert-fond); color: var(--vert); border: 1px solid rgba(16,185,129,0.2); }
+.correction-badge.ko { background: var(--rouge-fond); color: var(--rouge); border: 1px solid rgba(239,68,68,0.2); }
