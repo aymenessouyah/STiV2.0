@@ -200,11 +200,8 @@ window.AppController = (function () {
       // Nouvelle mission : commencer à l'instant 0 de la vidéo
       video.seekToSeconds(0);
     }
-    // Démarrage automatique de la vidéo dès le lancement de la mission
-    video.forcePlay().catch(function () {
-      // Si la vidéo ne peut pas jouer, basculer en mode simulation
-      basculerModeSansVideo();
-    });
+    // La vidéo ne se lance que quand l'utilisateur clique sur le bouton Play
+    // (pas d'autoplay, pas de lecture automatique)
   }
 
   function basculerModeSansVideo() {

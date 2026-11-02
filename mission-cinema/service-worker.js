@@ -3,7 +3,7 @@
    Met en cache les ressources statiques pour utilisation hors ligne.
    ============================================================================ */
 
-var CACHE_NAME = "stiv2-cinema-v4";
+var CACHE_NAME = "stiv2-cinema-v5";
 var ASSETS = [
   "./",
   "./index.html",
