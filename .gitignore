@@ -80,3 +80,7 @@ build/
 # Sauvegarde de secours de la plateforme (outils/secours) : les archives sont
 # produites à la demande et déposées sur Google Drive, jamais dans Git.
 /dist-secours/
+
+# Paquet d’installation produit par outils/stipack (artefact de fabrication)
+/STI-Labo3-Plateforme.stipack
+*.stipack.partiel
