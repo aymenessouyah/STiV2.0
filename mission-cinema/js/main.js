@@ -18,7 +18,6 @@ window.AppController = (function () {
   var zoneInteraction = document.getElementById("zone-interaction");
 
   var btnStart = document.getElementById("btn-start");
-  var inputNom = document.getElementById("input-nom");
   var spanNom = document.getElementById("nom-eleve");
 
   var spanProgression = document.getElementById("progression-pct");
@@ -56,33 +55,14 @@ window.AppController = (function () {
   }
 
   function init() {
-    // Sauvegarde existante ?
-    var sauve = quiz.chargerSauvegarde();
-    if (sauve && sauve.nom) {
-      inputNom.value = sauve.nom;
-      quiz.setNom(sauve.nom);
-      afficherEcran("mission");
-      startMission();
-      return;
-    }
     afficherEcran("accueil");
 
     btnStart.addEventListener("click", function () {
-      var nom = String(inputNom.value || "").trim();
-      if (nom === "") {
-        inputNom.focus();
-        inputNom.classList.add("erreur");
-        return;
-      }
-      inputNom.classList.remove("erreur");
-      quiz.setNom(nom);
-      if (spanNom) spanNom.textContent = nom;
+      quiz.setNom("Abonné");
+      if (spanNom) spanNom.textContent = "Abonné";
       afficherEcran("mission");
       startMission();
     });
-
-    inputNom.addEventListener("input", function () { inputNom.classList.remove("erreur"); });
-    inputNom.addEventListener("keydown", function (e) { if (e.key === "Enter") btnStart.click(); });
 
     // Bouton audio (activer/désactiver le son)
     var btnAudio = document.getElementById("btn-audio");
@@ -783,8 +763,6 @@ window.AppController = (function () {
     spanScore.textContent = "0";
     spanProgression.textContent = "0";
     afficherEcran("accueil");
-    inputNom.value = "";
-    inputNom.focus();
   };
 
   function echapperHtml(texte) {
