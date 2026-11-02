@@ -733,6 +733,224 @@ textarea:focus { outline: none; border-color: var(--or); box-shadow: 0 0 0 3px r
 .btn-audio.mute { color: #64748b; }
 .btn-audio.mute:hover { background: rgba(100,116,139,0.2); color: #64748b; }
 
+/* ---------- mode révision avancé ---------- */
+.revision-avancee-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--rayon);
+  padding: 20px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(12px);
+  box-shadow: var(--ombre-card);
+}
+
+.revision-avancee-card h3 {
+  margin-top: 0;
+  color: var(--or-clair);
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.revision-chap-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.revision-chap-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--rayon-sm);
+  cursor: pointer;
+  transition: var(--trans);
+}
+
+.revision-chap-item:hover {
+  background: rgba(255,255,255,0.07);
+  border-color: var(--or);
+}
+
+.revision-chap-item input[type="radio"] {
+  accent-color: var(--or);
+}
+
+.revision-chap-info {
+  flex: 1;
+}
+
+.revision-chap-nom {
+  font-weight: 700;
+  color: var(--blanc);
+  font-size: 0.95rem;
+}
+
+.revision-chap-stats {
+  font-size: 0.8rem;
+  color: var(--gris);
+}
+
+.revision-chap-stats .ok { color: var(--vert); }
+.revision-chap-stats .ko { color: var(--rouge); }
+
+.revision-progress {
+  margin: 16px 0;
+}
+
+.revision-progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--gris);
+  margin-bottom: 6px;
+}
+
+.revision-progress-bar {
+  height: 8px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.revision-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--or), var(--or-clair));
+  width: 0%;
+  transition: width 0.3s var(--trans);
+}
+
+.revision-hint {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: rgba(245,158,11,0.08);
+  border: 1px solid rgba(245,158,11,0.2);
+  border-radius: var(--rayon-sm);
+  font-size: 0.85rem;
+  color: var(--gris);
+}
+
+.revision-hint h4 {
+  margin: 0 0 6px;
+  color: var(--or-clair);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.revision-hint p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.revision-attempt {
+  font-size: 0.8rem;
+  color: var(--gris);
+  margin-top: 8px;
+}
+
+.revision-attempt .badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-right: 6px;
+}
+
+.revision-attempt .badge.ok {
+  background: var(--vert-fond);
+  color: var(--vert);
+}
+
+.revision-attempt .badge.ko {
+  background: var(--rouge-fond);
+  color: var(--rouge);
+}
+
+.revision-summary {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--rayon);
+  padding: 24px;
+  margin-top: 24px;
+  backdrop-filter: blur(12px);
+  box-shadow: var(--ombre-card);
+  text-align: center;
+}
+
+.revision-summary h3 {
+  margin-top: 0;
+  color: var(--or-clair);
+  font-size: 1.3rem;
+}
+
+.revision-summary-score {
+  font-size: 3rem;
+  font-weight: 800;
+  margin: 12px 0;
+  color: var(--blanc);
+}
+
+.revision-summary-score .delta {
+  font-size: 1.5rem;
+  color: var(--vert);
+}
+
+.revision-summary-stats {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin: 20px 0;
+}
+
+.revision-summary-stat {
+  text-align: center;
+}
+
+.revision-summary-stat .valeur {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--or-clair);
+}
+
+.revision-summary-stat .libelle {
+  font-size: 0.8rem;
+  color: var(--gris);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.revision-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+/* ---------- bouton audio (muet/son) ---------- */
+.btn-audio {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  color: var(--blanc);
+  cursor: pointer;
+  transition: var(--trans);
+  font-size: 1.1rem;
+}
+.btn-audio:hover { background: var(--or); color: var(--noir); }
+.btn-audio.mute { color: #64748b; }
+.btn-audio.mute:hover { background: rgba(100,116,139,0.2); color: #64748b; }
+
 /* impression / réduction de mouvement */
 @media (prefers-reduced-motion: reduce) {
   .overlay-panel { animation: none; }
