@@ -27,6 +27,7 @@ window.AppController = (function () {
   var spanScorePct = document.getElementById("score-pct");
   var spanScorePoints = document.getElementById("score-points");
   var spanScoreNiveau = document.getElementById("score-niveau");
+  var badgeNiveau = document.getElementById("badge-niveau");
   var cercleProgress = document.getElementById("score-cercle-progress");
   var modulesListe = document.getElementById("modules-liste");
   var spanTempsVideo = document.getElementById("temps-courant");
@@ -322,8 +323,9 @@ window.AppController = (function () {
     if (spanScorePct) spanScorePct.textContent = pct;
     if (spanScorePoints) spanScorePoints.textContent = points;
     if (spanScoreNiveau) spanScoreNiveau.textContent = niveau;
+    if (badgeNiveau) badgeNiveau.textContent = "Niv. " + niveau;
     if (cercleProgress) {
-      var offset = 364 * (1 - pct / 100);
+      var offset = 427 * (1 - pct / 100);
       cercleProgress.style.strokeDashoffset = offset;
     }
 
@@ -822,7 +824,8 @@ window.AppController = (function () {
     if (spanScorePct) spanScorePct.textContent = "0";
     if (spanScorePoints) spanScorePoints.textContent = "0";
     if (spanScoreNiveau) spanScoreNiveau.textContent = "1";
-    if (cercleProgress) cercleProgress.style.strokeDashoffset = "364";
+    if (badgeNiveau) badgeNiveau.textContent = "Niv. 1";
+    if (cercleProgress) cercleProgress.style.strokeDashoffset = "427";
     afficherEcran("accueil");
   };
 
