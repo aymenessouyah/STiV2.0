@@ -71,8 +71,10 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
     /* v597 : le guide d'administration annonce 151 pages de couverture (145 + les
        cinq ateliers « Systèmes » + la galerie des projets). */
     /* v614 : admin.html accueille l'onglet et la section « 📘 Guide exercice ».
-       v615 : cache-buster admin.js passé en ?v=615-perf ; empreinte réactualisée. */
-    'admin.html': 'ddbf649c73a1973f82a5f49aec0ebcfb3e534cf8e31b354d7c710c017df89003',
+       v615 : cache-buster admin.js passé en ?v=615-perf ; empreinte réactualisée.
+       v616 : le guide Windows porte le bloc « 🧱 Nouveau stipack » (fabrication et
+       téléchargement du paquet d'installation) ; empreinte réactualisée. */
+    'admin.html': 'c63c71bbad8d3ef443088e0a7d9e794cf3ae46aa4ba119aa7306e614ae9e7c69',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };

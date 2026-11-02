@@ -678,6 +678,54 @@
     .aide-windows-grille { grid-template-columns: 1fr; }
   }
 
+  /* ── Fabrication du paquet .stipack (bouton « Nouveau stipack ») ── */
+  .stipack-bloc {
+    grid-column: 1 / -1; margin-top: 10px; background: #fff;
+    border: 2px solid #23201a; border-radius: 14px;
+    box-shadow: 2.5px 2.5px 0 rgba(35,32,26,.75); padding: 12px 14px;
+  }
+  .stipack-entete {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 10px; flex-wrap: wrap;
+  }
+  .stipack-entete h3 { margin: 0; color: #1e3a8a; font-size: 13.5px; }
+  .stipack-entete p { margin: 4px 0 0; color: #4b5563; font-size: 11.5px; font-weight: 700; line-height: 1.45; max-width: 62ch; }
+  .stipack-commandes {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 10px;
+  }
+  .stipack-commandes label {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: #23201a; font-size: 11.5px; font-weight: 900;
+  }
+  .stipack-commandes select,
+  .stipack-commandes input {
+    border: 2px solid #23201a; border-radius: 999px; padding: 6px 11px;
+    background: #fffdf7; color: #23201a; font-weight: 800; font-size: 12px;
+  }
+  .stipack-commandes input { width: 68px; }
+  .stipack-commandes .btn-outil[disabled] { opacity: .5; cursor: progress; }
+  .stipack-progression { margin-top: 10px; }
+  .stipack-barre {
+    height: 10px; border: 2px solid #23201a; border-radius: 999px;
+    background: #fffdf7; overflow: hidden;
+  }
+  .stipack-barre span {
+    display: block; height: 100%; width: 0;
+    background: linear-gradient(90deg, #1d4ed8, #f4511e);
+    transition: width .18s ease;
+  }
+  .stipack-progression p { margin: 6px 0 0; font-size: 11.5px; font-weight: 900; color: #1e3a8a; }
+  .stipack-progression p.stipack-detail { margin-top: 2px; color: #5a5244; font-weight: 700; font-size: 10.5px; word-break: break-all; }
+  .stipack-journal { max-height: 160px; overflow: auto; margin: 0; padding-left: 18px; }
+  .stipack-journal li { font-size: 10.5px; }
+  .stipack-journal li.stipack-erreur { color: #b91c1c; font-weight: 900; }
+  .stipack-journal li.stipack-ok { color: #15803d; font-weight: 900; }
+  html.admin-moderne body.cockpit-airbus .stipack-bloc { background: var(--ab-panel); border-color: var(--ab-line); box-shadow: none; }
+  html.admin-moderne body.cockpit-airbus .stipack-entete h3,
+  html.admin-moderne body.cockpit-airbus .stipack-progression p { color: var(--ab-white); }
+  html.admin-moderne body.cockpit-airbus .stipack-entete p,
+  html.admin-moderne body.cockpit-airbus .stipack-progression p.stipack-detail { color: var(--ab-muted, #cbd5e1); }
+
   /* ── 3) Cartes Statistiques en direct (cliquables pour filtrer) ── */
   .stats {
     display: grid;
@@ -2538,6 +2586,43 @@
           </ul>
         </div>
       </details>
+    </div>
+    <div class="stipack-bloc" id="bloc-stipack">
+      <div class="stipack-entete">
+        <div>
+          <h3>🧱 Nouveau stipack</h3>
+          <p>Fabrication du paquet d’installation à partir des fichiers du site, puis téléchargement — à conserver pour réinstaller en cas de besoin.</p>
+        </div>
+        <div class="aide-windows-meta" aria-label="Contenu du paquet">
+          <span id="stipack-meta-fichiers">liste en cours…</span>
+          <span id="stipack-meta-poids">—</span>
+        </div>
+      </div>
+      <div class="stipack-commandes">
+        <label for="stipack-volume">Contenu
+          <select id="stipack-volume">
+            <option value="complet" selected>Tout le site — vidéos, sons et PDF</option>
+            <option value="leger">Allégé — sans les fichiers volumineux</option>
+          </select>
+        </label>
+        <label for="stipack-seuil" id="stipack-seuil-wrap" hidden>Seuil
+          <input id="stipack-seuil" type="number" min="0.5" max="64" step="0.5" value="2" inputmode="decimal"> Mo
+        </label>
+        <button class="btn-outil" id="stipack-btn-creer" type="button" title="Assembler le paquet .stipack à partir des fichiers du site">🧱 Créer le paquet</button>
+        <button class="btn-outil" id="stipack-btn-annuler" type="button" hidden>■ Annuler</button>
+        <a class="btn-outil vert" id="stipack-btn-telecharger" href="#" hidden download>⬇ Télécharger le paquet</a>
+      </div>
+      <div class="stipack-progression" id="stipack-progression" hidden>
+        <div class="stipack-barre" role="progressbar" aria-labelledby="stipack-etat"><span id="stipack-barre-remplissage"></span></div>
+        <p id="stipack-etat" aria-live="polite">Prêt.</p>
+        <p id="stipack-detail" class="stipack-detail"></p>
+      </div>
+      <p class="aide-windows-note" id="stipack-dernier" hidden></p>
+      <details id="stipack-journal-wrap" hidden>
+        <summary>Journal de fabrication</summary>
+        <div class="aide-windows-contenu"><ul id="stipack-journal" class="stipack-journal"></ul></div>
+      </details>
+      <p class="aide-windows-note">Le paquet contient <code>plateforme/</code>, <code>stipack.json</code> (empreinte SHA-256 de chaque fichier), <code>empreintes.txt</code> et <code>LISEZ-MOI.txt</code> ; rien n’est envoyé sur le réseau.</p>
     </div>
     <p class="aide-windows-note">Le code source est réservé aux développeurs : les utilisateurs ont uniquement besoin du ZIP d’installation.</p>
   </section>
@@ -5091,6 +5176,8 @@
   <script src="assets/js/export-drive.js?v=603" defer></script>
   <script src="assets/js/sauvegarde.js?v=609" defer></script>
 <script src="assets/js/sante.js?v=471" defer></script>
+  <script src="assets/js/stipack.js?v=616" defer></script>
+  <script src="assets/js/admin-stipack.js?v=616" defer></script>
 <!-- v606 : bouton du ruban « Services ». Il est placé hors écran tant que le
      ruban ne l'a pas adopté ; ensuite, la feuille de style de l'administration le
      remet dans le flux (position: static !important) avec les autres services. -->

@@ -76,5 +76,5 @@ test('v607 — publication : cache-buster, révisions et version', () => {
     'révision attendue pour ./assets/js/acces.js');
   assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "guide-lisibilite-v615" }'),
     'révision attendue pour ./assets/js/admin.js');
-  assert.match(sw, /\{ url: "\.\/admin\.html", revision: "guide-lisibilite-v615" \}/);
+  assert.match(sw, /\{ url: "\.\/admin\.html", revision: "stipack-admin-v616" \}/);
 });

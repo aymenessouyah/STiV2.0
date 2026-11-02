@@ -1,8 +1,39 @@
 # Paquet d'installation `.stipack` — fabrication et contrôle
 
-> En une phrase : **une commande suffit pour reconstruire
-> `STI-Labo3-Plateforme.stipack` à partir de la dernière mise à jour du dépôt**,
-> avec la liste et l'empreinte SHA-256 de chacun des fichiers qu'il contient.
+> En une phrase : **le paquet se fabrique de deux façons, et dans les deux cas
+> il part de la dernière mise à jour** — depuis le tableau de bord de l'admin
+> (bouton « 🧱 Nouveau stipack », sans poste de développement), ou depuis une
+> ligne de commande, avec la liste et l'empreinte SHA-256 de chaque fichier.
+
+---
+
+## Les deux fabriques
+
+| Où | Comment | Ce qu'elle produit |
+|---|---|---|
+| **Tableau de bord admin** — section « Application Windows v316 » | bouton **🧱 Nouveau stipack** (`assets/js/stipack.js` + `assets/js/admin-stipack.js`) | le même format, assemblé dans le navigateur à partir des fichiers du site, puis téléchargé |
+| **Poste de développement** | `node outils/stipack/construire-stipack.mjs` | le même format, écrit directement sur le disque, avec contrôle CRC32 + SHA-256 après écriture |
+
+Les deux écrivent la même structure, vérifiable par le même `--verifier`.
+
+### Le bouton du tableau de bord
+
+Dans « 🪟 Application Windows v316 — guide et assistance », le bloc
+« 🧱 Nouveau stipack » :
+
+1. lit `offline-complete-manifest.json` (la liste du paquet hors ligne) et affiche
+   le nombre de fichiers et le poids ;
+2. propose **Tout le site** (vidéos, sons, PDF) ou **Allégé** (avec un seuil en Mo) ;
+3. récupère les fichiers un par un, les empreinte en SHA-256 et les compresse ;
+4. écrit le paquet **directement dans un fichier** quand le navigateur le permet
+   (Chrome, Edge : rien en mémoire), sinon l'assemble en mémoire et le télécharge ;
+5. affiche la progression, garde un lien pour retélécharger le paquet, et mémorise
+   la dernière fabrication (nom, taille, date, poste).
+
+Rien n'est envoyé sur le réseau en écriture : la fabrication est locale. Un fichier
+illisible **interrompt** la fabrication — un paquet troué n'est jamais proposé — et
+le journal nomme le fichier fautif (il faut alors régénérer le manifeste hors ligne
+avec `resynchroniser-manifeste.mjs`).
 
 ---
 
@@ -75,6 +106,22 @@ node outils/stipack/construire-stipack.mjs --volume complet \
 Options reconnues : `--volume leger|complet`, `--seuil-mo <n>`,
 `--sortie <fichier>`, `--mot-de-passe <mdp>`, `--fabrique-le <iso>`,
 `--verifier <fichier>`.
+
+## Remettre le manifeste hors ligne à jour
+
+`offline-complete-manifest.json` porte la taille et l'empreinte SHA-1 de chaque
+fichier livré : c'est la liste que l'installation hors ligne dépose, et la source
+de la fabrication dans l'admin. Dès qu'un fichier livré change, l'entrée devient
+fausse.
+
+```bash
+node outils/stipack/resynchroniser-manifeste.mjs            # contrôle seul (code 1 si périmé)
+node outils/stipack/resynchroniser-manifeste.mjs --ecrire   # corrige les entrées existantes
+node outils/stipack/resynchroniser-manifeste.mjs --ecrire --ajouter assets/js/nouveau.js
+```
+
+L'outil ne corrige que les entrées qui existent déjà et n'ajoute que les fichiers
+nommés : la liste voulue n'est jamais remplacée par un simple reflet du dépôt.
 
 ## Contrôler un paquet reçu
 
