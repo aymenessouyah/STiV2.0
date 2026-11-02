@@ -236,8 +236,13 @@ var nextQuestionAfterFreeze = null;  // question à afficher après le gel ("Pou
     if (!video) return Promise.reject(new Error("vidéo non initialisée"));
     pausedForQuestion = false;
     return video.play().catch(function (err) {
-      console.warn("Lecture vidéo bloquée :", err);
-      throw err;
+      console.warn("Lecture vidéo bloquée avec son :", err);
+      // Fallback : retenter en mode muet (navigateur bloque l'autoplay avec son)
+      video.muted = true;
+      return video.play().catch(function (err2) {
+        console.warn("Lecture vidéo bloquée même en muet :", err2);
+        throw err2;
+      });
     });
   }
 
