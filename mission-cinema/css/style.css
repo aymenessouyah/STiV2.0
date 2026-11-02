@@ -287,8 +287,24 @@ aside.panneau ul#liste-questions {
 }
 
 /* ---------- vidéo ---------- */
-.video-wrap { position: relative; background: var(--noir-profond); border-radius: var(--rayon); overflow: hidden; box-shadow: var(--ombre); min-height: 520px; border: 1px solid var(--glass-border); }
-.video-wrap video { width: 100%; height: 100%; object-fit: contain; display: block; background: #000; }
+.video-wrap {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  background: var(--noir-profond);
+  border-radius: var(--rayon);
+  overflow: hidden;
+  box-shadow: var(--ombre);
+  min-height: 520px;
+  border: 1px solid var(--glass-border);
+}
+.video-wrap video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  background: #000;
+}
 
 .video-placeholder {
   position: absolute; inset: 0; display: flex; flex-direction: column;
@@ -331,14 +347,6 @@ aside.panneau ul#liste-questions {
   align-items: flex-start;
   width: 100%;
 }
-.video-wrap {
-  flex: 1;
-  min-width: 0;
-  position: relative; background: var(--noir-profond); border-radius: var(--rayon); overflow: hidden; box-shadow: var(--ombre);
-  min-height: 420px;
-  border: 1px solid var(--glass-border);
-}
-.video-wrap video { width: 100%; height: auto; display: block; background: #000; }
 
 /* Panneau de question à droite de la vidéo */
 .panneau-question {
@@ -947,24 +955,6 @@ textarea:focus { outline: none; border-color: var(--or); box-shadow: 0 0 0 3px r
   margin-top: 20px;
   flex-wrap: wrap;
 }
-
-/* ---------- bouton audio (muet/son) ---------- */
-.btn-audio {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: var(--glass);
-  border: 1px solid var(--glass-border);
-  color: var(--blanc);
-  cursor: pointer;
-  transition: var(--trans);
-  font-size: 1.1rem;
-}
-.btn-audio:hover { background: var(--or); color: var(--noir); }
-.btn-audio.mute { color: #64748b; }
-.btn-audio.mute:hover { background: rgba(100,116,139,0.2); color: #64748b; }
 
 /* impression / réduction de mouvement */
 @media (prefers-reduced-motion: reduce) {
