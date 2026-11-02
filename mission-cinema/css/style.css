@@ -165,6 +165,21 @@ h1 { font-size: 2.4rem; margin: 8px 0 4px; letter-spacing: -0.5px; text-transfor
   box-shadow: 0 4px 12px -4px rgba(0,0,0,0.3);
 }
 
+/* Badge abonné sur l'écran d'accueil */
+.eleve-badge-home {
+  display: flex;
+  justify-content: center;
+  margin: 24px 0;
+}
+.badge-img-home {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  border: 2px solid var(--or);
+  background: var(--noir);
+  box-shadow: 0 6px 20px -4px rgba(245,158,11,0.4);
+}
+
 .mission-body {
   display: flex;
   gap: 24px;
