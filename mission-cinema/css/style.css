@@ -1815,3 +1815,92 @@ textarea:focus { outline: none; border-color: var(--or); box-shadow: 0 0 0 3px r
 }
 .correction-badge.ok { background: var(--vert-fond); color: var(--vert); border: 1px solid rgba(16,185,129,0.2); }
 .correction-badge.ko { background: var(--rouge-fond); color: var(--rouge); border: 1px solid rgba(239,68,68,0.2); }
+
+/* ============================================================================
+   CLARTÉ V3 — Lisibilité, contraste, séparation des sections
+   ============================================================================ */
+
+body {
+  color: #e2e8f0;
+  line-height: 1.6;
+}
+.carte-accueil p, .carte-accueil h2, .titre-mission, .titre-mission span, .chap-banniere {
+  color: #ffffff;
+}
+.carte-accueil p {
+  font-size: 1rem;
+  color: #cbd5e1;
+}
+
+.section-titre {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--or-clair);
+  font-weight: 800;
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.carte-claire {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--rayon);
+  padding: 20px;
+  margin-bottom: 16px;
+  backdrop-filter: blur(16px);
+  box-shadow: var(--ombre-card);
+}
+
+.separateur {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(245,158,11,0.3), transparent);
+  margin: 24px 0;
+  border: none;
+}
+
+.score-pourcentage {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(245,158,11,0.3);
+}
+
+.btn-principal {
+  font-size: 1.05rem;
+  padding: 16px 32px;
+}
+
+.badge-img {
+  width: 40px;
+  height: 40px;
+}
+.badge-img-home {
+  width: 72px;
+  height: 72px;
+}
+.badge-niveau {
+  font-size: 1rem;
+  text-shadow: 0 0 10px rgba(245,158,11,0.4);
+}
+
+.ligne-pct, .ligne-temps {
+  font-size: 0.9rem;
+  color: #e2e8f0;
+}
+.etiquette {
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.q-item {
+  font-size: 0.9rem;
+  padding: 10px 14px;
+}
+
+@media (max-width: 640px) {
+  .score-pourcentage { font-size: 1.8rem; }
+  .carte-claire { padding: 16px; }
+  .section-titre { font-size: 0.85rem; }
+}

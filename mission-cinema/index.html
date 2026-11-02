@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Mission Cinéma">
   <title>Mission Cinéma – STI Version 2.0 By A'E</title>
-  <link rel="stylesheet" href="css/style.css?v=4.0">
+  <link rel="stylesheet" href="css/style.css?v=5.0">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" sizes="192x192" href="assets/images/sti-icon-192.png">
 </head>
@@ -24,7 +24,7 @@
       <h1>MISSION CINÉMA</h1>
       <p class="sous-titre">Devenez responsable de la base de données d'une société de production cinématographique.</p>
 
-      <div class="carte-accueil">
+        <div class="carte-accueil carte-claire">
         <h2>Bienvenue, futur administrateur de base de données.</h2>
         <p>
           Vous êtes recruté par une société de production cinématographique. Votre mission :
@@ -80,12 +80,14 @@
           </div>
         </div>
 
-        <!-- Modules SQL (sidebar progression par chapitre) -->
+        <div class="separateur"></div>
+        <div class="section-titre">Modules SQL</div>
         <div class="modules-sql">
-          <h3>Modules SQL</h3>
           <div id="modules-liste"></div>
         </div>
 
+        <div class="separateur"></div>
+        <div class="section-titre">Progression</div>
         <div class="ligne-pct">
           <span class="etiquette">Réussite</span>
           <span id="progression-pct">0</span>%
@@ -95,7 +97,8 @@
           <span id="temps">00:00</span>
         </div>
 
-        <h3>Questions traitées</h3>
+        <div class="separateur"></div>
+        <div class="section-titre">Questions traitées</div>
         <ul id="liste-questions"></ul>
       </aside>
 
@@ -116,8 +119,8 @@
         <div id="chapitre-actuel" class="chap-banniere">Préparation de la mission…</div>
 
         <!-- Présentation de la base de données (schéma graphique) -->
-        <div class="schema-bd">
-          <h3>Base de données « cinema » — Schéma relationnel</h3>
+        <div class="schema-bd carte-claire">
+          <div class="section-titre">Base de données « cinema »</div>
           <img src="assets/images/schema-bd.jpg" alt="Schéma relationnel de la base de données cinéma" class="schema-image">
         </div>
 
