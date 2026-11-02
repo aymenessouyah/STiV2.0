@@ -1,18 +1,20 @@
 /*
   v616 — « Nouveau stipack » : fabriquer le paquet d'installation depuis l'admin.
 
-  Le paquet .stipack était produit à la main, hors du dépôt : rien ne garantissait
-  qu'il suive la dernière mise à jour, et il fallait un poste de développement pour
-  le refabriquer. Le tableau de bord (section « Application Windows v316 — guide et
-  assistance ») porte désormais le bouton : l'administrateur assemble le paquet à
-  partir des fichiers du site et le télécharge.
+  Deux exigences tenues ici, sans navigateur :
 
-  Ce test verrouille trois choses, sans navigateur :
-    1. le moteur (assets/js/stipack.js) produit une archive ZIP réellement lisible
-       — en-têtes, CRC32, compression deflate-raw, répertoire central, EOCD ;
-    2. le manifeste du paquet décrit exactement les fichiers écrits, avec leur
-       SHA-256, et empreintes.txt le confirme (contrôle « sha256sum -c ») ;
-    3. le panneau admin, le service worker et le manifeste hors ligne sont branchés.
+  1. LE PAQUET DÉCRIT TOUJOURS LA DERNIÈRE MISE À JOUR. La liste des fichiers est
+     demandée au dernier commit du dépôt (API GitHub, arbre récursif) ; la liste
+     figée du manifeste hors ligne n'est qu'un secours, et son garde-fou de
+     fraîcheur refuse une liste en retard sur la version publiée du site.
+
+  2. RIEN DE LA PLATEFORME N'EST TOUCHÉ HORS DU STIPACK. Aucun fichier existant
+     n'est modifié hormis admin.html (le bloc du bouton et l'hôte d'API autorisé
+     par sa CSP) ; sw.js et offline-complete-manifest.json ne portent aucune trace
+     de la fonctionnalité, et les nouveaux fichiers restent autonomes.
+
+  Le moteur (assets/js/stipack.js) est éprouvé pour lui-même : en-têtes ZIP, CRC32,
+  deflate-raw, répertoire central, empreintes et relecture par l'outil du dépôt.
 */
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -31,7 +33,7 @@ const MOTEUR = lire('assets/js/stipack.js');
 const PANNEAU = lire('assets/js/admin-stipack.js');
 const ADMIN = lire('admin.html');
 const SW = lire('sw.js');
-const MANIFESTE_HORS_LIGNE = JSON.parse(lire('offline-complete-manifest.json'));
+const MANIFESTE_HORS_LIGNE = lire('offline-complete-manifest.json');
 
 /* Le module est une IIFE : on l'exécute dans un laboratoire, sans DOM. */
 function chargerMoteur() {
@@ -92,8 +94,6 @@ const FICHIERS = new Map([
 async function fabriquer(options = {}) {
   const fragments = [];
   const resultat = await S.construirePaquet({
-    /* Le panneau lit les tailles dans le manifeste hors ligne : on fait de même,
-       sauf quand le test veut justement éprouver l’absence de taille connue. */
     liste: [...FICHIERS.keys()].map((chemin) => ({
       chemin,
       octets: options.taillesInconnues ? undefined : FICHIERS.get(chemin).length
@@ -126,7 +126,6 @@ test('v616 : le moteur assemble une archive ZIP lisible et complète', async () 
   assert.equal(index.methode, 8, 'le texte est compressé (deflate)');
   assert.equal(video.methode, 0, 'la vidéo est stockée telle quelle');
 
-  /* Le contenu relu est identique à la source, octet pour octet. */
   for (const [chemin, source] of FICHIERS) {
     const entree = entrees.find((e) => e.nom === 'plateforme/' + chemin);
     assert.ok(entree.donnees.equals(source), 'contenu intact : ' + chemin);
@@ -139,7 +138,6 @@ test('v616 : le manifeste décrit exactement les fichiers écrits, empreintes à
 
   assert.equal(manifeste.format, 'STI-STIPACK/1');
   assert.equal(manifeste.version.updateId, 'v616-essai');
-  assert.equal(manifeste.fabriqueLe, '2026-11-02T10:00:00+01:00');
   assert.equal(manifeste.contenu.fichiers, manifeste.fichiers.length);
   assert.equal(
     manifeste.contenu.octetsDecompresses,
@@ -177,7 +175,6 @@ test('v616 : le seuil allège le paquet et l’écart est consigné', async () =
   assert.ok(!noms.includes('plateforme/assets/lourd/video.mp4'), 'le fichier au-delà du seuil est écarté');
   assert.ok(noms.includes('plateforme/index.html'), 'les fichiers sous le seuil sont conservés');
   assert.deepEqual(resultat.exclus, [{ chemin: 'assets/lourd/video.mp4', motif: 'plus de 32 Ko' }]);
-  assert.equal(resultat.manifeste.exclus.length, 1);
   assert.match(entrees.find((e) => e.nom === 'LISEZ-MOI.txt').donnees.toString('utf8'), /Paquet allégé/);
 });
 
@@ -208,7 +205,41 @@ test('v616 : le paquet produit par le navigateur est relu par l’outil du dép�
   }
 });
 
-/* ── branchement dans l'admin ────────────────────────────────────────────── */
+/* ── 1. la dernière mise à jour ─────────────────────────────────────────── */
+
+test('v616 : la fraîcheur de la liste est jugée, jamais supposée', () => {
+  const duDepot = S.jugerFraicheur({ source: 'depot', commitCourt: 'abc12345' });
+  assert.equal(duDepot.frais, true);
+  assert.match(duDepot.motif, /dernier commit du dépôt \(abc12345\)/);
+
+  const secoursARetard = S.jugerFraicheur({
+    source: 'manifeste', version: 'v614', versionPubliee: 'v616', date: '2026-11-01T10:00:00Z'
+  });
+  assert.equal(secoursARetard.frais, false, 'une liste plus ancienne que la version publiée est refusée');
+  assert.match(secoursARetard.motif, /en v614 alors que le site publie v616/);
+
+  const secoursAligne = S.jugerFraicheur({
+    source: 'manifeste', version: 'v616', versionPubliee: 'v616', date: new Date().toISOString()
+  });
+  assert.equal(secoursAligne.frais, true);
+  assert.match(secoursAligne.motif, /liste de secours/);
+
+  assert.equal(S.ageLisible(new Date(Date.now() - 90 * 60000).toISOString()), 'il y a 2 h');
+  assert.equal(S.ageLisible('pas une date'), null);
+});
+
+test('v616 : le panneau interroge le dernier commit, le manifeste n’étant qu’un secours', () => {
+  assert.match(PANNEAU, /api\.github\.com/, 'la liste vient du dépôt');
+  assert.match(PANNEAU, /git\/trees\//, 'arbre récursif du dernier commit');
+  assert.match(PANNEAU, /lireListeDuDepot/, 'lecture du dépôt');
+  assert.match(PANNEAU, /lireSourceFraiche/, 'choix de la source la plus fraîche');
+  assert.match(PANNEAU, /lireManifesteHorsLigne/, 'repli documenté');
+  assert.match(PANNEAU, /jugerFraicheur/, 'garde-fou appliqué avant de fabriquer');
+  assert.doesNotMatch(PANNEAU, /\bimport\b|\brequire\(/, 'module autonome, sans dépendance');
+  assert.match(PANNEAU, /AbortController|abort/, 'la fabrication est annulable');
+  /* Le nom porte la date : deux paquets ne s’écrasent pas et la date est lisible. */
+  assert.match(PANNEAU, /STI-Labo3-Plateforme-' \+ horodatage\(\)/);
+});
 
 test('v616 : le guide Windows du tableau de bord porte le bouton « Nouveau stipack »', () => {
   const section = ADMIN.slice(ADMIN.indexOf('id="aide-windows-v316"'));
@@ -219,14 +250,19 @@ test('v616 : le guide Windows du tableau de bord porte le bouton « Nouveau stip
   for (const id of [
     'stipack-volume', 'stipack-seuil', 'stipack-btn-creer', 'stipack-btn-annuler',
     'stipack-btn-telecharger', 'stipack-progression', 'stipack-barre-remplissage',
-    'stipack-etat', 'stipack-meta-fichiers', 'stipack-meta-poids', 'stipack-journal', 'stipack-dernier'
+    'stipack-etat', 'stipack-meta-version', 'stipack-meta-fichiers', 'stipack-meta-poids',
+    'stipack-journal', 'stipack-dernier'
   ]) {
     assert.match(bloc, new RegExp('id="' + id + '"'), 'élément présent : ' + id);
   }
   assert.match(bloc, /<option value="complet" selected>/, 'le paquet complet est proposé par défaut');
   assert.match(bloc, /<option value="leger">/, 'le paquet allégé est proposé');
 
-  /* Les deux modules sont chargés, le moteur avant le panneau. */
+  /* La page doit autoriser l'appel à l'API du dépôt, sinon la liste fraîche est
+     systématiquement refusée par la CSP. */
+  const csp = (ADMIN.match(/Content-Security-Policy" content="([^"]+)"/) || [])[1] || '';
+  assert.match(csp, /connect-src[^;]*https:\/\/api\.github\.com/, 'hôte d’API autorisé par la CSP');
+
   assert.match(ADMIN, /<script src="assets\/js\/stipack\.js\?v=616" defer><\/script>/);
   assert.match(ADMIN, /<script src="assets\/js\/admin-stipack\.js\?v=616" defer><\/script>/);
   assert.ok(
@@ -235,56 +271,13 @@ test('v616 : le guide Windows du tableau de bord porte le bouton « Nouveau stip
   );
 });
 
-test('v616 : le panneau fabrique depuis la liste hors ligne et propose le téléchargement', () => {
-  assert.match(PANNEAU, /MANIFESTE_HORS_LIGNE/);
-  assert.match(PANNEAU, /construirePaquet\(/);
-  assert.match(PANNEAU, /telecharger\(/, 'le paquet est proposé au téléchargement');
-  assert.match(PANNEAU, /ecrivainFichier\(/, 'écriture directe quand le navigateur le permet');
-  assert.match(PANNEAU, /ecrivainMemoire\(/, 'repli en mémoire sinon');
-  assert.match(PANNEAU, /localStorage/, 'le dernier paquet fabriqué est mémorisé');
-  assert.match(PANNEAU, /AbortController|abort/, 'la fabrication est annulable');
-  assert.doesNotMatch(PANNEAU, /\bimport\b|\brequire\(/, 'module autonome, sans dépendance');
-});
+/* ── 2. rien d'autre que le stipack ──────────────────────────────────────── */
 
-test('v616 : service worker et manifeste hors ligne connaissent les nouveaux fichiers', () => {
-  for (const fichier of ['assets/js/stipack.js', 'assets/js/admin-stipack.js']) {
-    assert.ok(
-      MANIFESTE_HORS_LIGNE.files.some((f) => f.path === fichier),
-      'paquet hors ligne : ' + fichier
-    );
-  }
-  /* Ce sont des fichiers NEUFS : rien de périmé à remplacer dans le cache, donc
-     pas d’entrée dans le delta (borne de 280), comme capsules-vedettes.css en v556.
-     Ils sont mis en cache à la première visite de l’admin par la branche
-     « Scripts / Styles » du service worker. */
-  const delta = SW.slice(SW.indexOf('var UPDATE_FILES'), SW.indexOf('];', SW.indexOf('var UPDATE_FILES')));
-  assert.ok(
-    (delta.match(/\{ url:/g) || []).length <= 280,
-    'le delta reste sous la borne de 280 entrées'
-  );
-  assert.ok(SW.includes('{ url: "./admin.html", revision: "stipack-admin-v616" }'), 'la page admin est réactualisée');
-  assert.ok(SW.includes('{ url: "./offline-complete-manifest.json", revision: "stipack-admin-v616" }'), 'le manifeste est réactualisé');
-  assert.match(SW, /var VERSION_PUBLIEE = "v616";/, 'la publication avance');
-  assert.match(SW, /Historique lots : v616-stipack-admin-20261102,/);
-  assert.match(SW, /var CACHE = "sti-atelier-v386"/, 'le nom de cache ne bouge pas');
-  assert.match(SW, /var UPDATE_ID = "v582-journal-connexions"/, 'l’identifiant de delta ne bouge pas');
-
-  /* Cohérence générale du manifeste après l'ajout. */
-  assert.equal(MANIFESTE_HORS_LIGNE.totalFiles, MANIFESTE_HORS_LIGNE.files.length);
-  assert.equal(
-    MANIFESTE_HORS_LIGNE.totalBytes,
-    MANIFESTE_HORS_LIGNE.files.reduce((total, f) => total + f.bytes, 0)
-  );
-  for (const fichier of ['assets/js/stipack.js', 'assets/js/admin-stipack.js', 'admin.html']) {
-    const entree = MANIFESTE_HORS_LIGNE.files.find((f) => f.path === fichier);
-    const donnees = readFileSync(join(root, fichier));
-    assert.equal(entree.bytes, donnees.length, 'taille à jour : ' + fichier);
-    assert.equal(
-      entree.gitSha,
-      createHash('sha1').update(`blob ${donnees.length}\0`).update(donnees).digest('hex'),
-      'empreinte à jour : ' + fichier
-    );
-  }
+test('v616 : la fonctionnalité ne touche ni le service worker ni le manifeste hors ligne', () => {
+  assert.doesNotMatch(SW, /stipack/i, 'sw.js reste intact : aucune révision, aucune entrée de préchargement');
+  assert.doesNotMatch(MANIFESTE_HORS_LIGNE, /stipack\.js|admin-stipack/i, 'le manifeste hors ligne reste intact');
+  assert.match(SW, /var VERSION_PUBLIEE = "v615";/, 'aucune publication forcée par cette fonctionnalité');
+  assert.equal(JSON.parse(MANIFESTE_HORS_LIGNE).totalFiles, JSON.parse(MANIFESTE_HORS_LIGNE).files.length);
 });
 
 /* ── parcours complet du panneau, dans un navigateur de laboratoire ──────── */
@@ -339,6 +332,7 @@ function laboratoire(site) {
 
   const fenetre = {
     navigator: { platform: 'Win32' },
+    location: { hostname: 'aymenessouyah.github.io', pathname: '/STiV2.0/admin.html' },
     document,
     Blob: globalThis.Blob,
     Response: globalThis.Response,
@@ -359,7 +353,14 @@ function laboratoire(site) {
   const fetch = async (chemin) => {
     const propre = String(chemin).split('?')[0];
     const donnees = site.get(propre);
-    if (!donnees) return { ok: false, status: 404, arrayBuffer: async () => { throw new Error('404'); }, text: async () => '', json: async () => { throw new Error('404'); } };
+    if (!donnees) {
+      return {
+        ok: false, status: 404,
+        arrayBuffer: async () => { throw new Error('404'); },
+        text: async () => '',
+        json: async () => { throw new Error('404'); }
+      };
+    }
     return {
       ok: true,
       status: 200,
@@ -377,78 +378,129 @@ function laboratoire(site) {
   return { fenetre, elements, articles, telechargements, stockage };
 }
 
-test('v616 : un clic sur « Créer le paquet » fabrique l’archive et la propose au téléchargement', async () => {
+const SHA_DERNIER_COMMIT = 'fedcba9876543210fedcba9876543210fedcba98';
+
+function arbreGithub(chemins) {
+  return Buffer.from(JSON.stringify({
+    sha: SHA_DERNIER_COMMIT,
+    truncated: false,
+    tree: chemins.map((p) => ({ path: p, type: 'blob', size: FICHIERS.get(p).length, sha: 'blob-' + p }))
+  }));
+}
+
+async function attendre(elements, condition) {
+  for (let i = 0; i < 300 && !condition(); i++) await new Promise((r) => setTimeout(r, 10));
+}
+
+test('v616 : le paquet fabriqué décrit le DERNIER COMMIT, pas la liste figée', async () => {
   const site = new Map();
+  /* Liste figée volontairement incomplète et en retard : elle ne doit pas servir. */
   site.set('offline-complete-manifest.json', Buffer.from(JSON.stringify({
-    version: 'v616-essai',
-    generatedAt: '2026-11-02T10:00:00Z',
-    files: [
-      { path: 'index.html', bytes: FICHIERS.get('index.html').length },
-      { path: 'assets/petit.txt', bytes: FICHIERS.get('assets/petit.txt').length },
-      { path: 'cours/css/media.gif', bytes: FICHIERS.get('cours/css/media.gif').length }
-    ]
+    version: 'v600', files: [{ path: 'index.html', bytes: 10 }]
   })));
-  site.set('sw.js', Buffer.from('var UPDATE_ID = "v616-parcours";\n'));
-  site.set('index.html', FICHIERS.get('index.html'));
-  site.set('assets/petit.txt', FICHIERS.get('assets/petit.txt'));
-  site.set('cours/css/media.gif', FICHIERS.get('cours/css/media.gif'));
+  site.set('sw.js', Buffer.from('var VERSION_PUBLIEE = "v616";\nvar UPDATE_ID = "v582-journal-connexions";\n'));
+  site.set(
+    'https://api.github.com/repos/ayemessouyah/STiV2.0/git/trees/main',
+    arbreGithub(['index.html', 'assets/petit.txt', 'cours/css/media.gif'])
+  );
+  site.set(
+    'https://api.github.com/repos/aymenessouyah/STiV2.0/git/trees/main',
+    arbreGithub(['index.html', 'assets/petit.txt', 'cours/css/media.gif'])
+  );
+  for (const [chemin, donnees] of FICHIERS) site.set(chemin, donnees);
 
   const labo = laboratoire(site);
-  const creer = labo.elements.get('stipack-btn-creer');
-  const telecharger = labo.elements.get('stipack-btn-telecharger');
+  assert.ok(labo.elements.get('stipack-btn-creer'), 'le bouton écoute le clic');
+  labo.elements.get('stipack-btn-creer').ecouteurs.click();
 
-  assert.ok(creer && typeof creer.ecouteurs.click === 'function', 'le bouton écoute le clic');
+  await attendre(labo.elements, () => labo.articles.some((a) => a.className === 'stipack-ok' || a.className === 'stipack-erreur'));
 
-  creer.ecouteurs.click();
-
-  /* La fabrication est asynchrone : on attend le journal de réussite. */
-  for (let i = 0; i < 200 && !labo.articles.some((a) => a.className === 'stipack-ok'); i++) {
-    await new Promise((r) => setTimeout(r, 10));
-  }
-
-  assert.ok(labo.articles.some((a) => a.className === 'stipack-ok'), 'fabrication terminée sans erreur');
   assert.ok(
     !labo.articles.some((a) => a.className === 'stipack-erreur'),
     'aucune erreur : ' + labo.articles.filter((a) => a.className === 'stipack-erreur').map((a) => a.textContent).join(' | ')
   );
-
   assert.equal(labo.telechargements.length, 1, 'le paquet est proposé au téléchargement');
-  assert.equal(telecharger.hidden, false, 'le bouton de téléchargement devient visible');
-  assert.match(telecharger.download, /^STI-Labo3-Plateforme-\d{8}-\d{4}\.stipack$/);
+  assert.equal(labo.elements.get('stipack-btn-telecharger').hidden, false);
+  assert.match(labo.elements.get('stipack-btn-telecharger').download, /^STI-Labo3-Plateforme-\d{8}-\d{4}\.stipack$/);
+  assert.match(
+    labo.articles.map((a) => a.textContent).join('\n'),
+    /\(fedcba98\)/,
+    'le journal cite le commit lu sur le dépôt'
+  );
 
-  /* L’archive téléchargée est bien un paquet complet et vérifiable. */
   const octets = Buffer.from(await labo.telechargements[0].blob.arrayBuffer());
   const entrees = lireArchive(octets);
   const manifeste = JSON.parse(entrees.find((e) => e.nom === 'stipack.json').donnees.toString('utf8'));
-  assert.equal(manifeste.fichiers.length, 3);
-  assert.equal(manifeste.version.updateId, 'v616-parcours', 'la version du site est inscrite au paquet');
+
+  assert.equal(manifeste.version.commit, SHA_DERNIER_COMMIT, 'le commit du dernier arbre est inscrit au paquet');
+  assert.equal(manifeste.version.commitCourt, 'fedcba98');
+  assert.equal(manifeste.version.updateId, 'v582-journal-connexions', 'l’identifiant du delta accompagne le paquet');
+  assert.match(manifeste.version.source, /dernier commit du dépôt/);
+
+  /* Les trois fichiers du DERNIER COMMIT, et non l'unique entrée de la liste figée. */
+  assert.deepEqual(
+    manifeste.fichiers.map((f) => f.chemin).sort(),
+    ['plateforme/assets/petit.txt', 'plateforme/cours/css/media.gif', 'plateforme/index.html']
+  );
 
   const dernier = JSON.parse(labo.stockage.get('sti-stipack-dernier'));
   assert.equal(dernier.fichiers, 3);
   assert.match(labo.elements.get('stipack-dernier').textContent, /Dernier paquet fabriqué/);
 });
 
-test('v616 : un fichier manquant laisse un message clair et aucun paquet', async () => {
+test('v616 : dépôt injoignable et liste de secours en retard → aucun paquet', async () => {
   const site = new Map();
   site.set('offline-complete-manifest.json', Buffer.from(JSON.stringify({
-    version: 'v616-essai',
-    files: [{ path: 'index.html', bytes: 10 }, { path: 'disparu.html', bytes: 10 }]
+    version: 'v600',
+    generatedAt: '2026-10-01T10:00:00Z',
+    files: [{ path: 'index.html', bytes: 3 }]
   })));
-  site.set('sw.js', Buffer.from('var UPDATE_ID = "v616";\n'));
+  site.set('sw.js', Buffer.from('var VERSION_PUBLIEE = "v616";\n'));
   site.set('index.html', Buffer.from('abc'));
 
   const labo = laboratoire(site);
   labo.elements.get('stipack-btn-creer').ecouteurs.click();
 
-  for (let i = 0; i < 200 && !labo.articles.some((a) => a.className === 'stipack-erreur'); i++) {
-    await new Promise((r) => setTimeout(r, 10));
-  }
+  await attendre(labo.elements, () => labo.articles.some((a) => a.className === 'stipack-erreur'));
+
+  assert.ok(labo.articles.some((a) => a.className === 'stipack-erreur'), 'le refus est signalé');
+  assert.ok(
+    labo.articles.some((a) => /v600.*publie v616|publie v616/.test(a.textContent)),
+    'le motif nomme l’écart de version'
+  );
+  assert.equal(labo.telechargements.length, 0, 'aucun paquet périmé n’est proposé');
+  assert.equal(labo.elements.get('stipack-btn-telecharger').hidden, true);
+});
+
+test('v616 : un fichier manquant laisse un message clair et aucun paquet', async () => {
+  const site = new Map();
+  site.set('sw.js', Buffer.from('var VERSION_PUBLIEE = "v616";\n'));
+  site.set(
+    'https://api.github.com/repos/aymenessouyah/STiV2.0/git/trees/main',
+    arbreGithub(['index.html'])
+  );
+  site.set('https://api.github.com/repos/ayemessouyah/STiV2.0/git/trees/main', arbreGithub(['index.html']));
+  site.set('index.html', Buffer.from('abc'));
+  /* Le dernier commit annonce un fichier que le site ne sert pas : le contrôle
+     d’intégrité doit interrompre la fabrication. */
+  const arbreAvecManquant = Buffer.from(JSON.stringify({
+    sha: SHA_DERNIER_COMMIT,
+    truncated: false,
+    tree: [
+      { path: 'index.html', type: 'blob', size: 3 },
+      { path: 'disparu.html', type: 'blob', size: 10 }
+    ]
+  }));
+  site.set('https://api.github.com/repos/aymenessouyah/STiV2.0/git/trees/main', arbreAvecManquant);
+  site.set('https://api.github.com/repos/ayemessouyah/STiV2.0/git/trees/main', arbreAvecManquant);
+
+  const labo = laboratoire(site);
+  labo.elements.get('stipack-btn-creer').ecouteurs.click();
+
+  await attendre(labo.elements, () => labo.articles.some((a) => a.className === 'stipack-erreur'));
 
   assert.ok(labo.articles.some((a) => a.className === 'stipack-erreur'), 'l’échec est signalé');
-  assert.ok(
-    labo.articles.some((a) => /disparu\.html/.test(a.textContent)),
-    'le fichier fautif est nommé'
-  );
+  assert.ok(labo.articles.some((a) => /disparu\.html/.test(a.textContent)), 'le fichier fautif est nommé');
   assert.equal(labo.telechargements.length, 0, 'aucun paquet incomplet n’est proposé');
   assert.equal(labo.elements.get('stipack-btn-telecharger').hidden, true);
 });

@@ -323,10 +323,10 @@
       plateforme: PLATEFORME,
       version: {
         updateId: options.updateId || null,
-        commit: null,
-        commitCourt: null,
-        date: fabriqueLe,
-        source: 'site en ligne au moment de la fabrication'
+        commit: options.commit || null,
+        commitCourt: options.commit ? String(options.commit).slice(0, 8) : null,
+        date: options.dateVersion || fabriqueLe,
+        source: options.sourceVersion || 'fichiers du site au moment de la fabrication'
       },
       fabriqueLe: fabriqueLe,
       volume: volume,
@@ -443,7 +443,49 @@
     }
   }
 
+  /* ------------------------------------------------------------ fraîcheur */
+
+  /* « dernière mise à jour » : on refuse de présenter comme frais un paquet
+     bâti sur une liste plus ancienne que la version publiée du site. */
+  function ageLisible(iso, maintenant) {
+    if (!iso) return null;
+    var debut = Date.parse(iso);
+    if (isNaN(debut)) return null;
+    var minutes = Math.round(((maintenant ? maintenant.getTime() : Date.now()) - debut) / 60000);
+    if (minutes < 1) return 'à l’instant';
+    if (minutes < 60) return 'il y a ' + minutes + ' min';
+    var heures = Math.round(minutes / 60);
+    if (heures < 48) return 'il y a ' + heures + ' h';
+    return 'il y a ' + Math.round(heures / 24) + ' jours';
+  }
+
+  /**
+   * Décide si la liste des fichiers est assez fraîche pour être empaquetée.
+   * `etat` = { source: 'depot'|'manifeste', date: ISO, version, versionPubliee }
+   * Renvoie { frais: bool, motif: string }.
+   */
+  function jugerFraicheur(etat) {
+    var e = etat || {};
+    if (e.source === 'depot') {
+      return { frais: true, motif: 'liste prise sur le dernier commit du dépôt' + (e.commitCourt ? ' (' + e.commitCourt + ')' : '') };
+    }
+    if (e.version && e.versionPubliee && e.version !== e.versionPubliee) {
+      return {
+        frais: false,
+        motif: 'la liste de secours est en ' + e.version + ' alors que le site publie ' + e.versionPubliee +
+          ' : elle ne décrit pas la dernière mise à jour'
+      };
+    }
+    var age = ageLisible(e.date);
+    return {
+      frais: true,
+      motif: 'liste de secours' + (age ? ' datant de ' + age : '') + ' — à resynchroniser pour la garantie complète'
+    };
+  }
+
   global.STIStipack = {
+    ageLisible: ageLisible,
+    jugerFraicheur: jugerFraicheur,
     FORMAT: FORMAT,
     NOM_PAR_DEFAUT: NOM_PAR_DEFAUT,
     MANIFESTE_HORS_LIGNE: MANIFESTE_HORS_LIGNE,

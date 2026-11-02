@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-02T10:13:00Z",
+  "generatedAt": "2026-11-02T12:23:38Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 777,
-  "totalBytes": 1114196113,
+  "totalFiles": 775,
+  "totalBytes": 1114163616,
   "files": [
     {
       "path": "404.html",
@@ -62,13 +62,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 72049,
-      "gitSha": "e9fe96ac2870d6516df17c2970f4110aa8eadcc7"
+      "bytes": 71912,
+      "gitSha": "f8b8124c0178bda56595696171e903702a311108"
     },
     {
       "path": "admin.html",
-      "bytes": 357632,
-      "gitSha": "3563e4bd203fde1d4d72e75c847e81a1a557bd8a"
+      "bytes": 357790,
+      "gitSha": "9900c10f0f8d07a105b7b32945be748d45ab778d"
     },
     {
       "path": "assets/audio/cours-sti-ch1.mp3",
@@ -726,11 +726,6 @@
       "gitSha": "ee69677da8004f6915327dd374e6960798005baa"
     },
     {
-      "path": "assets/js/admin-stipack.js",
-      "bytes": 14260,
-      "gitSha": "410a3c20245b3d31904e5ad7cc8d2ff214a83d41"
-    },
-    {
       "path": "assets/js/admin-vues-videos.js",
       "bytes": 33442,
       "gitSha": "045099480c7e2d63466c8b6c53967da302cd7dfd"
@@ -1029,11 +1024,6 @@
       "path": "assets/js/sqljs/sql-wasm.wasm",
       "bytes": 659806,
       "gitSha": "f2497a7bff9462c3282784d798eb38f4405d0d6e"
-    },
-    {
-      "path": "assets/js/stipack.js",
-      "bytes": 17816,
-      "gitSha": "1b8062ce41616ebdb18a8a8c4d5b12f89e22a46d"
     },
     {
       "path": "assets/js/suivi-profil.js",
@@ -3887,8 +3877,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 105468,
-      "gitSha": "0a41dd654c40831f945044c68bae4aaba57e0a34"
+      "bytes": 105026,
+      "gitSha": "d598fb0c796d960d8ffecfa4455c3a25ed785c99"
     }
   ]
 }

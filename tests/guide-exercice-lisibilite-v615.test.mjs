@@ -136,15 +136,12 @@ test('v615 — le bandeau récapitulatif est peint avec la palette, pas en crèm
 /* ── 4. publication ─────────────────────────────────────────────────────── */
 
 test('v615 — publication : version, lot, cache-buster et révisions', () => {
-  /* v616 a repris la main sur admin.html et le manifeste hors ligne : les deux
-     révisions sont passées à « stipack-admin-v616 », admin.js garde le lot v615. */
-  assert.match(sw, /var VERSION_PUBLIEE = "v6\d\d";/);
-  assert.match(sw, /var PUBLIEE_LE = "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z";/);
-  assert.match(sw, /Historique lots : v616-stipack-admin-20261102, v615-guide-lisibilite-20261101,/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v615";/);
+  assert.match(sw, /var PUBLIEE_LE = "2026-11-01T16:45:00Z";/);
+  assert.match(sw, /Historique lots : v615-guide-lisibilite-20261101,/);
   assert.match(adminHtml, /assets\/js\/admin\.js\?v=615-perf/);
-  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "guide-lisibilite-v615" }'), 'admin.js');
-  for (const chemin of ['admin.html', 'offline-complete-manifest.json']) {
-    assert.ok(sw.includes('{ url: "./' + chemin + '", revision: "stipack-admin-v616" }'), chemin);
+  for (const chemin of ['assets/js/admin.js', 'admin.html', 'offline-complete-manifest.json']) {
+    assert.ok(sw.includes('{ url: "./' + chemin + '", revision: "guide-lisibilite-v615" }'), chemin);
   }
   /* Le module élève ne change pas : il garde son lot. */
   assert.ok(sw.includes('{ url: "./assets/js/guide-exercice.js", revision: "guide-exercice-v614" }'));

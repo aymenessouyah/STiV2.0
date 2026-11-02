@@ -99,5 +99,5 @@ test('v610 — publication : version, cache-buster et révisions', () => {
   assert.match(sw, /v610-maj-visible-20261101/);
   assert.match(adminHtml, /assets\/js\/admin\.js\?v=615-perf/);
   assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "guide-lisibilite-v615" }'));
-  assert.ok(sw.includes('{ url: "./admin.html", revision: "stipack-admin-v616" }'));
+  assert.ok(sw.includes('{ url: "./admin.html", revision: "guide-lisibilite-v615" }'));
 });

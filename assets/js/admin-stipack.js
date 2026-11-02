@@ -97,14 +97,74 @@
 
   /* ------------------------------------------------------------- lecture */
 
+  /* Dépôt lu pour connaître la dernière mise à jour. Déduit de l’adresse quand
+     le site est publié sur GitHub Pages ; sinon, valeur du fichier de config. */
+  function depot() {
+    if (window.STIStipack && window.STIStipack.DEPOT) return window.STIStipack.DEPOT;
+    var hote = (window.location && window.location.hostname) || '';
+    var morceaux = (window.location && window.location.pathname || '/').split('/').filter(Boolean);
+    if (/\.github\.io$/i.test(hote) && morceaux.length) {
+      return { proprietaire: hote.split('.')[0], nom: morceaux[0], branche: 'main' };
+    }
+    return { proprietaire: 'aymenessouyah', nom: 'STiV2.0', branche: 'main' };
+  }
+
+  /* Liste des fichiers telle qu’elle est AU DERNIER COMMIT du dépôt : c’est elle
+     qui garantit que le paquet décrit la dernière mise à jour, et non une liste
+     figée qui vieillit entre deux livraisons. */
+  async function lireListeDuDepot() {
+    var d = depot();
+    var url = 'https://api.github.com/repos/' + d.proprietaire + '/' + d.nom +
+      '/git/trees/' + encodeURIComponent(d.branche) + '?recursive=1';
+    var reponse = await fetch(url, { headers: { Accept: 'application/vnd.github+json' }, cache: 'no-store' });
+    if (!reponse.ok) throw new Error('dépôt illisible (HTTP ' + reponse.status + ')');
+    var arbre = await reponse.json();
+    if (arbre.truncated) throw new Error('arbre du dépôt tronqué par l’API');
+    var fichiers = (arbre.tree || [])
+      .filter(function (e) { return e.type === 'blob' && e.path && !/^\.git\//.test(e.path); })
+      .map(function (e) { return { chemin: e.path, octets: e.size || 0, empreinte: e.sha || null }; })
+      .sort(function (a, b) { return a.chemin < b.chemin ? -1 : a.chemin > b.chemin ? 1 : 0; });
+    if (!fichiers.length) throw new Error('arbre du dépôt vide');
+    return {
+      source: 'depot',
+      fichiers: fichiers,
+      version: null,
+      date: null,
+      commit: arbre.sha || null,
+      commitCourt: arbre.sha ? String(arbre.sha).slice(0, 8) : null,
+      depot: d.proprietaire + '/' + d.nom
+    };
+  }
+
   async function lireManifesteHorsLigne() {
     var reponse = await fetch(window.STIStipack.MANIFESTE_HORS_LIGNE + '?stipack=' + Date.now(), { cache: 'no-cache' });
     if (!reponse.ok) throw new Error('liste des fichiers illisible (HTTP ' + reponse.status + ')');
     var manifeste = await reponse.json();
     var fichiers = (manifeste.files || [])
       .map(function (f) { return { chemin: f.path, octets: f.bytes || 0 }; })
-      .filter(function (f) { return f.chemin; });
-    return { version: manifeste.version || null, fichiers: fichiers, genereLe: manifeste.generatedAt || null };
+      .filter(function (f) { return f.chemin; })
+      .sort(function (a, b) { return a.chemin < b.chemin ? -1 : a.chemin > b.chemin ? 1 : 0; });
+    return {
+      source: 'manifeste',
+      fichiers: fichiers,
+      version: manifeste.version || null,
+      date: manifeste.generatedAt || null,
+      commit: null,
+      commitCourt: null
+    };
+  }
+
+  /* Version publiée du site (sw.js), pour juger de la fraîcheur d’une liste. */
+  async function lireVersionPubliee() {
+    try {
+      var reponse = await fetch('sw.js?stipack=' + Date.now(), { cache: 'no-cache' });
+      if (!reponse.ok) return null;
+      var texte = await reponse.text();
+      var trouve = /var\s+VERSION_PUBLIEE\s*=\s*"([^"]+)"/.exec(texte);
+      return trouve ? trouve[1] : null;
+    } catch (erreur) {
+      return null;
+    }
   }
 
   /** Récupère les fichiers dans l’ordre, avec quelques lectures en avance. */
@@ -137,6 +197,28 @@
         avance.delete(chemin);
       }
     };
+  }
+
+  /* ------------------------------------------------------------- fraîcheur */
+
+  /* « Le stipack doit toujours faire la dernière mise à jour » : on interroge
+     d’abord le dernier commit du dépôt. La liste figée du manifeste n’est qu’un
+     secours, et seulement si son garde-fou de fraîcheur le permet. */
+  async function lireSourceFraiche() {
+    var versionPubliee = await lireVersionPubliee();
+    try {
+      var duDepot = await lireListeDuDepot();
+      duDepot.version = versionPubliee;
+      duDepot.jugement = window.STIStipack.jugerFraicheur(duDepot);
+      journal('Liste prise sur le dépôt ' + duDepot.depot + ' (' + duDepot.commitCourt + ').');
+      return duDepot;
+    } catch (erreurDepot) {
+      journal('Dépôt injoignable (' + (erreurDepot.message || erreurDepot) + ') : repli sur la liste de secours.', 'erreur');
+    }
+    var secours = await lireManifesteHorsLigne();
+    secours.versionPubliee = versionPubliee;
+    secours.jugement = window.STIStipack.jugerFraicheur(secours);
+    return secours;
   }
 
   /* ------------------------------------------------------------- fabrication */
@@ -173,19 +255,25 @@
         ecriture = null;
       }
 
-      afficherProgression(0, 'Lecture de la liste des fichiers…');
-      var horsLigne = await lireManifesteHorsLigne();
+      afficherProgression(0, 'Lecture de la dernière mise à jour…');
+      var sourced = await lireSourceFraiche();
+      var liste = sourced.fichiers;
       var volume = el.volume && el.volume.value === 'leger' ? 'leger' : 'complet';
       var seuilMo = el.seuil ? Number(el.seuil.value) || SEUIL_DEFAUT_MO : SEUIL_DEFAUT_MO;
       var seuil = volume === 'leger' ? Math.round(seuilMo * 1024 * 1024) : 0;
-      var liste = horsLigne.fichiers;
       var totalOctets = liste.reduce(function (somme, f) { return somme + (f.octets || 0); }, 0);
       var updateId = await window.STIStipack.lireUpdateId(async function (chemin) {
         var reponse = await fetch(chemin, { cache: 'no-cache' });
         return reponse.ok ? reponse.text() : '';
       });
 
-      journal('Liste : ' + liste.length + ' fichiers, ' + tailleLisible(totalOctets) + ' (version ' + (updateId || horsLigne.version || 'inconnue') + ').');
+      journal(
+        'Dernière mise à jour : ' + liste.length + ' fichiers, ' + tailleLisible(totalOctets) +
+        ' — ' + sourced.jugement.motif + '.'
+      );
+      if (!sourced.jugement.frais) {
+        throw new Error(sourced.jugement.motif);
+      }
 
       var recuperer = sourceFichiers(liste, controleur ? controleur.signal : undefined);
 
@@ -221,6 +309,11 @@
         seuil: seuil,
         volume: volume,
         updateId: updateId,
+        commit: sourced.commit || null,
+        dateVersion: sourced.date || null,
+        sourceVersion: sourced.source === 'depot'
+          ? 'dernier commit du dépôt ' + (sourced.depot || '') + ' — liste lue à la fabrication'
+          : 'liste de secours ' + (sourced.version || 'inconnue'),
         nom: nom,
         signal: controleur ? controleur.signal : null,
         onProgres: function (p) {
@@ -308,7 +401,8 @@
       journal: $('stipack-journal'),
       journalWrap: $('stipack-journal-wrap'),
       metaFichiers: $('stipack-meta-fichiers'),
-      metaPoids: $('stipack-meta-poids')
+      metaPoids: $('stipack-meta-poids'),
+      metaVersion: $('stipack-meta-version')
     };
     if (!el.bloc) return;
 
@@ -326,13 +420,20 @@
     afficherDernier();
 
     /* Renseigne les deux pastilles (nombre de fichiers, poids) sans bloquer la page. */
-    lireManifesteHorsLigne().then(function (horsLigne) {
-      var octets = horsLigne.fichiers.reduce(function (somme, f) { return somme + (f.octets || 0); }, 0);
-      if (el.metaFichiers) el.metaFichiers.textContent = horsLigne.fichiers.length + ' fichiers';
+    lireSourceFraiche().then(function (sourced) {
+      var octets = sourced.fichiers.reduce(function (somme, f) { return somme + (f.octets || 0); }, 0);
+      if (el.metaFichiers) el.metaFichiers.textContent = sourced.fichiers.length + ' fichiers';
       if (el.metaPoids) el.metaPoids.textContent = tailleLisible(octets);
+      if (el.metaVersion) {
+        el.metaVersion.textContent = sourced.commitCourt
+          ? 'dernière mise à jour ' + sourced.commitCourt
+          : 'liste de secours';
+      }
+      if (el.etat) el.etat.textContent = 'Prêt — ' + sourced.jugement.motif + '.';
     }).catch(function (erreur) {
-      if (el.metaFichiers) el.metaFichiers.textContent = 'liste hors ligne indisponible';
-      journal('Liste hors ligne illisible : ' + (erreur.message || erreur), 'erreur');
+      if (el.metaFichiers) el.metaFichiers.textContent = 'liste indisponible';
+      if (el.etat) el.etat.textContent = 'Liste indisponible : ' + (erreur.message || erreur);
+      journal('Liste illisible : ' + (erreur.message || erreur), 'erreur');
     });
   }
 

@@ -21,8 +21,8 @@ Les deux écrivent la même structure, vérifiable par le même `--verifier`.
 Dans « 🪟 Application Windows v316 — guide et assistance », le bloc
 « 🧱 Nouveau stipack » :
 
-1. lit `offline-complete-manifest.json` (la liste du paquet hors ligne) et affiche
-   le nombre de fichiers et le poids ;
+1. demande la liste des fichiers **au dernier commit du dépôt** (API GitHub, arbre
+   récursif) et affiche le nombre de fichiers, le poids et le commit retenu ;
 2. propose **Tout le site** (vidéos, sons, PDF) ou **Allégé** (avec un seuil en Mo) ;
 3. récupère les fichiers un par un, les empreinte en SHA-256 et les compresse ;
 4. écrit le paquet **directement dans un fichier** quand le navigateur le permet
@@ -32,8 +32,7 @@ Dans « 🪟 Application Windows v316 — guide et assistance », le bloc
 
 Rien n'est envoyé sur le réseau en écriture : la fabrication est locale. Un fichier
 illisible **interrompt** la fabrication — un paquet troué n'est jamais proposé — et
-le journal nomme le fichier fautif (il faut alors régénérer le manifeste hors ligne
-avec `resynchroniser-manifeste.mjs`).
+le journal nomme le fichier fautif.
 
 ---
 
@@ -107,12 +106,32 @@ Options reconnues : `--volume leger|complet`, `--seuil-mo <n>`,
 `--sortie <fichier>`, `--mot-de-passe <mdp>`, `--fabrique-le <iso>`,
 `--verifier <fichier>`.
 
+## Toujours la dernière mise à jour
+
+Trois verrous, pour qu'un paquet ne puisse pas décrire une version dépassée :
+
+| Verrou | Ce qu'il garantit |
+|---|---|
+| **Source de la liste** | ligne de commande : `git ls-files` sur `HEAD` ; navigateur : arbre du dernier commit de la branche, lu sur l'API GitHub |
+| **Garde-fou de fraîcheur** | si le dépôt est injoignable, la liste figée du manifeste n'est utilisée que si sa version est celle que publie `sw.js` (`VERSION_PUBLIEE`) ; sinon la fabrication **s'arrête** avec le motif |
+| **Traçabilité** | `stipack.json` inscrit le commit (complet et court), la date, la version publiée et la provenance de la liste |
+
+Conséquence pratique : le paquet produit dans le navigateur contient les fichiers
+du **dernier commit**, y compris ceux qu'une liste figée aurait oubliés. Il suffit
+que le site publié corresponde à ce commit — c'est le cas dès que GitHub Pages a
+déployé, ce que le badge de version du tableau de bord indique.
+
+Le bouton n'a donc pas besoin d'une mise à jour à chaque livraison — et c'est
+volontaire : il ne modifie rien de la plateforme. Si l'API GitHub est bloquée
+(réseau du lycée, quota), le repli sur la liste du manifeste s'applique, avec un
+avertissement dans le journal de fabrication.
+
 ## Remettre le manifeste hors ligne à jour
 
 `offline-complete-manifest.json` porte la taille et l'empreinte SHA-1 de chaque
-fichier livré : c'est la liste que l'installation hors ligne dépose, et la source
-de la fabrication dans l'admin. Dès qu'un fichier livré change, l'entrée devient
-fausse.
+fichier livré : c'est la liste que l'installation hors ligne dépose, et le **secours**
+de la fabrication dans l'admin quand le dépôt est injoignable. Dès qu'un fichier
+livré change, l'entrée devient fausse.
 
 ```bash
 node outils/stipack/resynchroniser-manifeste.mjs            # contrôle seul (code 1 si périmé)
