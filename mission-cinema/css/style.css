@@ -350,6 +350,25 @@ textarea:focus { outline: 2px solid var(--or); border-color: transparent; }
 .q-declare { font-size: 0.8rem; color: var(--gris); display: flex; align-items: center; gap: 6px; margin-left: auto; }
 .q-declare input { accent-color: var(--or); }
 
+/* ---------- délai avant validation ---------- */
+.q-delai {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.75rem;
+  color: var(--gris);
+}
+
+.btn[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: rgba(255,255,255,0.06) !important;
+  border-color: rgba(255,255,255,0.10) !important;
+  color: rgba(255,255,255,0.45) !important;
+}
+.btn[disabled]:hover {
+  background: rgba(255,255,255,0.06) !important;
+}
+
 /* ---------- tableau éditable (questions 40-45) ---------- */
 .table-editor {
   margin: 14px 0 6px;
