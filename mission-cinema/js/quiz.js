@@ -104,6 +104,12 @@ function toggleAudio() {
     s = s.replace(/\bfrom\s+([a-z_][a-z0-9_]*)\s+([a-z_][a-z0-9_])(?=\s|$|,|join|where|on|left|right|inner)/gi, "from $1");
     s = s.replace(/\bjoin\s+([a-z_][a-z0-9_]*)\s+([a-z_][a-z0-9_])(?=\s|$|,|join|where|on|left|right|inner)/gi, "join $1");
 
+    // Supprimer les alias de colonnes avec AS (col AS alias, col AS "alias", col AS 'alias')
+    s = s.replace(/\bas\s+["']?[a-z_][a-z0-9_]*["']?(?=\s|,|from|where|group|order|having|limit|$)/gi, " ");
+
+    // Convertir BETWEEN a AND b en >= a AND <= b
+    s = s.replace(/(\b[a-z_][a-z0-9_]*)\s+between\s+([a-z0-9_'."]+)\s+and\s+([a-z0-9_'."]+)/gi, "$1 >= $2 AND $1 <= $3");
+
     // Normaliser les opérateurs de comparaison
     s = s.replace(/\s*=\s*/g, " = ");
     s = s.replace(/\s*<>\s*/g, " <> ");
