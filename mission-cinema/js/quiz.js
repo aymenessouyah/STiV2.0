@@ -87,22 +87,13 @@ function toggleAudio() {
       .replace(/[\s\u00A0]+/g, " ")
       .trim();
 
-    // Standardiser les mots-clés JOIN
+    // Standardiser les mots-clés JOIN (garde les préfixes de table pour les jointures implicites)
     s = s.replace(/\binner\s+join\b/g, " join ");
     s = s.replace(/\bleft\s+outer\s+join\b/g, " left join ");
     s = s.replace(/\bright\s+outer\s+join\b/g, " right join ");
     s = s.replace(/\bfull\s+outer\s+join\b/g, " full join ");
     s = s.replace(/\bnatural\s+join\b/g, " join ");
     s = s.replace(/\bcross\s+join\b/g, " join ");
-
-    // Supprimer les préfixes de table/alias avant les colonnes (t.nom → nom)
-    s = s.replace(/\b([a-z_][a-z0-9_]*)\.([a-z_][a-z0-9_]*)\b/g, "$2");
-
-    // Supprimer les alias de table dans FROM/JOIN (table AS alias → table, table alias → table)
-    s = s.replace(/\bfrom\s+([a-z_][a-z0-9_]*)\s+as\s+([a-z_][a-z0-9_]*)/gi, "from $1");
-    s = s.replace(/\bjoin\s+([a-z_][a-z0-9_]*)\s+as\s+([a-z_][a-z0-9_]*)/gi, "join $1");
-    s = s.replace(/\bfrom\s+([a-z_][a-z0-9_]*)\s+([a-z_][a-z0-9_])(?=\s|$|,|join|where|on|left|right|inner)/gi, "from $1");
-    s = s.replace(/\bjoin\s+([a-z_][a-z0-9_]*)\s+([a-z_][a-z0-9_])(?=\s|$|,|join|where|on|left|right|inner)/gi, "join $1");
 
     // Supprimer les alias de colonnes avec AS (col AS alias, col AS "alias", col AS 'alias')
     s = s.replace(/\bas\s+["']?[a-z_][a-z0-9_]*["']?(?=\s|,|from|where|group|order|having|limit|$)/gi, " ");
