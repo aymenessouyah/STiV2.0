@@ -5,25 +5,25 @@
    ============================================================================ */
 
 :root {
-  --noir-salle: #0b0d14;
-  --noir-card: #14161c;
-  --gris: #94a3b8;
+  --noir-salle: #1e1e2a;
+  --noir-card: #222430;
+  --gris: #c7c7c7;
   --or: #f59e0b;
   --or-clair: #fbbf24;
   --or-marquee: #ffd700;
-  --rouge-velours: #8b0000;
-  --rouge-velours-fonce: #5a0000;
-  --blanc: #f0f0f0;
-  --blanc-second: #b8b8b8;
+  --rouge-velours: #a00000;
+  --rouge-velours-fonce: #6a0000;
+  --blanc: #ffffff;
+  --blanc-second: #e5e7eb;
   --vert: #10b981;
   --rouge: #ef4444;
-  --ombre: 0 30px 60px -15px rgba(0, 0, 0, 0.8);
-  --ombre-card: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  --ombre: 0 30px 60px -15px rgba(0, 0, 0, 0.7);
+  --ombre-card: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
   --rayon: 20px;
   --rayon-sm: 12px;
   --trans: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  --glass: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.15);
 }
 
 /* ===== RESET & BASE ===== */
@@ -58,7 +58,10 @@ p { color: var(--blanc-second); line-height: 1.7; }
 .cinema-salle {
   position: relative;
   min-height: 100vh;
-  background: var(--noir-salle);
+  background:
+    radial-gradient(circle at 25% 30%, rgba(245, 158, 11, 0.20) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(59, 130, 246, 0.10) 0%, transparent 50%),
+    var(--noir-salle);
 }
 
 /* Rideaux de velours */
@@ -183,14 +186,15 @@ h1 {
   margin: 0 0 16px 0;
   color: var(--blanc);
   letter-spacing: -1px;
-  text-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
+  text-shadow: 0 0 50px rgba(255, 255, 255, 0.7), 0 0 100px rgba(245, 158, 11, 0.5);
 }
 .sous-titre {
-  color: var(--blanc-second);
+  color: #e5e7eb;
   line-height: 1.8;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   max-width: 600px;
   margin: 0 auto 36px auto;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 .btn-principal {
   background: linear-gradient(135deg, var(--or), #d97706);
