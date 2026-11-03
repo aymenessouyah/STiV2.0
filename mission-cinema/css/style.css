@@ -1,50 +1,43 @@
 /* ============================================================================
-   MISSION CINÉMA — STI Version 2.0 — Style Moderne
-   Charte graphique : sombre, or, verre dépoli, cinéma
+   MISSION CINÉMA — STI Version 2.0 — Style Cinéma Complet
+   Thème : salle de cinéma, réalisateur, matériel de tournage
    Polices : Playfair Display (titres) + Inter (corps)
    ============================================================================ */
 
 :root {
-  --noir: #0b0f19;
-  --noir-profond: #080a12;
-  --noir-card: #141419;
+  --noir-salle: #0b0d14;
+  --noir-card: #14161c;
   --gris: #94a3b8;
   --or: #f59e0b;
   --or-clair: #fbbf24;
-  --or-fond: rgba(245, 158, 11, 0.15);
-  --blanc: #f8fafc;
-  --blanc-second: #cbd5e1;
-  --bleu: #3b82f6;
+  --or-marquee: #ffd700;
+  --rouge-velours: #8b0000;
+  --rouge-velours-fonce: #5a0000;
+  --blanc: #f0f0f0;
+  --blanc-second: #b8b8b8;
   --vert: #10b981;
-  --vert-fond: rgba(16, 185, 129, 0.15);
   --rouge: #ef4444;
-  --rouge-fond: rgba(239, 68, 68, 0.15);
-  --ombre: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
-  --ombre-card: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
-  --ombre-or: 0 0 0 12px rgba(245, 158, 11, 0.35);
+  --ombre: 0 30px 60px -15px rgba(0, 0, 0, 0.8);
+  --ombre-card: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
   --rayon: 20px;
   --rayon-sm: 12px;
-  --trans: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  --glass: rgba(255, 255, 255, 0.04);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-hover: rgba(255, 255, 255, 0.12);
+  --trans: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  --glass: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.06);
 }
 
 /* ===== RESET & BASE ===== */
 * { box-sizing: border-box; }
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
   padding: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: var(--noir-profond);
+  background: var(--noir-salle);
   color: var(--blanc);
   overflow-x: hidden;
-  line-height: 1.6;
 }
 
 h1, h2, h3, h4 {
@@ -55,31 +48,108 @@ h1, h2, h3, h4 {
   letter-spacing: -0.5px;
 }
 
-h1 { font-size: 2.25rem; letter-spacing: -1px; }
+h1 { font-size: 2.5rem; letter-spacing: -1px; }
 h2 { font-size: 1.75rem; }
 h3 { font-size: 1.25rem; }
 
-p {
-  color: var(--blanc-second);
-  line-height: 1.7;
+p { color: var(--blanc-second); line-height: 1.7; }
+
+/* ===== SALLE DE CINÉMA ===== */
+.cinema-salle {
+  position: relative;
+  min-height: 100vh;
+  background: var(--noir-salle);
 }
 
-a { color: var(--or-clair); text-decoration: none; }
-a:hover { color: var(--or); }
+/* Rideaux de velours */
+.rideau {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 20vw;
+  min-width: 120px;
+  background:
+    linear-gradient(180deg, var(--rouge-velours) 0%, var(--rouge-velours-fonce) 50%, var(--rouge-velours) 100%);
+  background-size: 100% 200%;
+  background-position: 0% 0%;
+  z-index: 10;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
+}
+.rideau-gauche {
+  left: 0;
+  transform: translateX(-100%);
+}
+.rideau-droit {
+  right: 0;
+  transform: translateX(100%);
+}
 
-/* Utilitaires */
+/* Salles ouvertes */
+.rideau-gauche.ouvert { transform: translateX(0); }
+.rideau-droit.ouvert { transform: translateX(0); }
+
+/* Projecteurs */
+.projecteur {
+  position: absolute;
+  top: 10px;
+  width: 100px;
+  height: 120px;
+  background: #1a1a1e;
+  border: 3px solid #333;
+  border-radius: 8px 8px 0 0;
+  z-index: 5;
+  box-shadow: 0 0 20px rgba(0,0,0,0.8);
+}
+.projecteur-gauche { left: 30px; }
+.projecteur-droit { right: 30px; }
+
+.projecteur::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 30px;
+  background: #555;
+}
+.projecteur::after {
+  content: "";
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 10px;
+  background: #1a1a1e;
+  border: 2px solid #333;
+  border-radius: 5px;
+}
+
+/* Lumière salle (éteinte par défaut) */
+.lumiere-salle {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.95);
+  z-index: 1;
+  transition: opacity 1.5s ease;
+}
+.lumiere-salle.allumee { opacity: 0.3; }
+
+/* ===== UTILITAIRES ===== */
 .cacher { display: none !important; }
 .section-titre {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--or-clair);
+  letter-spacing: 1.5px;
+  color: var(--or-marquee);
   font-weight: 800;
-  margin: 0 0 12px 0;
-  padding-bottom: 8px;
+  margin: 0 0 14px 0;
+  padding-bottom: 10px;
   border-bottom: 1px solid var(--glass-border);
 }
-.carte-claire {
+.carte-cinema {
   background: var(--glass);
   border: 1px solid var(--glass-border);
   border-radius: var(--rayon);
@@ -87,17 +157,6 @@ a:hover { color: var(--or); }
   margin-bottom: 20px;
   backdrop-filter: blur(20px);
   box-shadow: var(--ombre-card);
-}
-
-/* ===== FOND DÉGRADÉ ANIMÉ ===== */
-.bg-grad {
-  position: fixed;
-  inset: 0;
-  background:
-    radial-gradient(circle at 25% 30%, rgba(245, 158, 11, 0.12) 0%, transparent 45%),
-    radial-gradient(circle at 75% 75%, rgba(59, 130, 246, 0.08) 0%, transparent 45%),
-    var(--noir-profond);
-  z-index: -1;
 }
 
 /* ===== ÉCRAN D'ACCUEIL ===== */
@@ -118,47 +177,42 @@ a:hover { color: var(--or); }
   justify-content: center;
 }
 .sti-logo { width: 36px; height: 36px; }
-.logo em { color: var(--or-clair); font-style: normal; font-weight: 600; }
+.logo em { color: var(--or-marquee); font-style: normal; font-weight: 600; }
 h1 {
-  font-size: 2.75rem;
+  font-size: 3rem;
   margin: 0 0 16px 0;
   color: var(--blanc);
-  letter-spacing: -1.5px;
+  letter-spacing: -1px;
+  text-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
 }
 .sous-titre {
   color: var(--blanc-second);
   line-height: 1.8;
   font-size: 1.1rem;
   max-width: 600px;
-  margin: 0 auto 32px auto;
+  margin: 0 auto 36px auto;
 }
 .btn-principal {
   background: linear-gradient(135deg, var(--or), #d97706);
-  color: var(--noir);
+  color: var(--noir-salle);
   border: none;
   padding: 18px 40px;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 800;
   border-radius: var(--rayon-sm);
   cursor: pointer;
   transition: var(--trans);
-  box-shadow: var(--ombre-or);
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  box-shadow: var(--ombre-or);
 }
 .btn-principal:hover {
   transform: translateY(-3px);
-  box-shadow: 0 0 0 16px rgba(245, 158, 11, 0.4);
+  box-shadow: 0 0 0 18px rgba(245, 158, 11, 0.4);
 }
-.btn-principal:active {
-  transform: translateY(-1px);
-}
-.note {
-  margin-top: 28px;
-  font-size: 0.85rem;
-  color: #6b7280;
-}
+.btn-principal:active { transform: translateY(-1px); }
+.note { margin-top: 28px; font-size: 0.85rem; color: #6b7280; }
 
 /* ===== MISSION BODY ===== */
 .mission-body {
@@ -167,7 +221,6 @@ h1 {
   gap: 24px;
   padding: 32px 20px;
 }
-
 @media (min-width: 900px) {
   .mission-body {
     flex-direction: row;
@@ -186,7 +239,6 @@ h1 {
   max-width: 340px;
   flex-shrink: 0;
 }
-
 .panneau .logo {
   font-size: 1.25rem;
   font-weight: 800;
@@ -218,7 +270,7 @@ h1 {
   width: 100%;
   height: 100%;
 }
-.score-fond { stroke: #1e293b; }
+.score-fond { stroke: #1a1a2e; }
 .score-remplissage {
   stroke: var(--or);
   stroke-linecap: round;
@@ -267,10 +319,7 @@ h1 {
   font-weight: 800;
   color: var(--blanc);
 }
-.score-unite {
-  font-size: 0.8rem;
-  color: var(--or-clair);
-}
+.score-unite { font-size: 0.8rem; color: var(--or-clair); }
 
 /* Modules SQL */
 .panneau h3 {
@@ -400,7 +449,7 @@ h1 {
   height: 40px;
   border-radius: 12px;
   border: 2px solid var(--or);
-  background: var(--noir);
+  background: var(--noir-salle);
   box-shadow: 0 0 16px rgba(245, 158, 11, 0.3);
 }
 .badge-niveau {
@@ -429,9 +478,7 @@ h1 {
   backdrop-filter: blur(16px);
   box-shadow: var(--ombre-card);
 }
-.schema-bd .section-titre {
-  margin-bottom: 16px;
-}
+.schema-bd .section-titre { margin-bottom: 16px; }
 .schema-image {
   width: 100%;
   border-radius: var(--rayon-sm);
@@ -456,12 +503,12 @@ h1 {
   .panneau-question { flex: 1; max-height: none; height: auto; }
 }
 
-/* Vidéo */
+/* Cadre cinéma autour de la vidéo */
 .video-wrap {
   flex: 1;
   min-width: 0;
   position: relative;
-  background: #000;
+  background: #0a0a0c;
   border-radius: var(--rayon);
   overflow: hidden;
   box-shadow: var(--ombre);
@@ -485,7 +532,7 @@ h1 {
   border-radius: 50%;
   background: linear-gradient(135deg, var(--or), #d97706);
   border: none;
-  color: var(--noir);
+  color: var(--noir-salle);
   font-size: 2.25rem;
   font-weight: 900;
   cursor: pointer;
@@ -500,9 +547,7 @@ h1 {
   transform: translate(-50%, -50%) scale(1.08);
   box-shadow: 0 0 0 18px rgba(245, 158, 11, 0.45);
 }
-.btn-play-video:active {
-  transform: translate(-50%, -50%) scale(0.95);
-}
+.btn-play-video:active { transform: translate(-50%, -50%) scale(0.95); }
 .btn-play-video.cacher { display: none !important; }
 
 .video-placeholder {
@@ -537,7 +582,7 @@ h1 {
   max-height: 86vh;
   overflow-y: auto;
   background: var(--glass);
-  color: var(--noir);
+  color: var(--noir-salle);
   border-radius: var(--rayon);
   box-shadow: var(--ombre-card);
   border: 1px solid var(--glass-border);
@@ -604,7 +649,7 @@ h1 {
 }
 .q-actions .btn.valider {
   background: linear-gradient(135deg, var(--or), #d97706);
-  color: var(--noir);
+  color: var(--noir-salle);
   border: none;
 }
 .q-actions .btn.valider:not(:disabled):hover {
@@ -612,18 +657,13 @@ h1 {
   transform: translateY(-1px);
   box-shadow: 0 0 0 8px rgba(245, 158, 11, 0.3);
 }
-.q-actions .btn.valider:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+.q-actions .btn.valider:disabled { opacity: 0.5; cursor: not-allowed; }
 .q-actions .btn.secondaire {
   background: var(--glass);
   color: var(--blanc);
   border: 1px solid var(--glass-border);
 }
-.q-actions .btn.secondaire:hover {
-  background: var(--glass-hover);
-}
+.q-actions .btn.secondaire:hover { background: rgba(255,255,255,0.05); }
 
 /* Correction */
 .correction-badge {
@@ -646,14 +686,12 @@ h1 {
   color: var(--blanc);
   border: 1px solid rgba(239, 68, 68, 0.4);
 }
-
 .correction-motif {
   margin: 14px 0;
   color: var(--blanc-second);
   font-size: 0.9rem;
   line-height: 1.6;
 }
-
 .correction-bloc {
   margin: 14px 0;
   padding: 16px;
@@ -661,12 +699,10 @@ h1 {
   border-radius: var(--rayon-sm);
   border: 1px solid var(--glass-border);
 }
-
 .correction-bloc strong {
   color: var(--or-clair);
   font-weight: 800;
 }
-
 .correction-bloc pre {
   margin: 10px 0 0 0;
   padding: 14px;
@@ -679,11 +715,7 @@ h1 {
   font-family: 'JetBrains Mono', 'Courier New', monospace;
   line-height: 1.5;
 }
-
-.correction-bloc code {
-  color: var(--or-clair);
-}
-
+.correction-bloc code { color: var(--or-clair); }
 .result-caption {
   margin: 14px 0 8px 0;
   color: var(--gris);
@@ -692,14 +724,12 @@ h1 {
   letter-spacing: 0.8px;
   font-weight: 800;
 }
-
 .result-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 6px;
 }
-.result-table th,
-.result-table td {
+.result-table th, .result-table td {
   border: 1px solid var(--glass-border);
   padding: 8px 10px;
   text-align: left;
@@ -718,7 +748,7 @@ h1 {
 /* Bouton Poursuivre */
 .btn.continuer {
   background: linear-gradient(135deg, var(--or), #d97706);
-  color: var(--noir);
+  color: var(--noir-salle);
   border: none;
   padding: 14px 28px;
   font-weight: 800;
@@ -734,9 +764,7 @@ h1 {
   transform: translateY(-2px);
   box-shadow: 0 0 0 10px rgba(245, 158, 11, 0.3);
 }
-.btn.continuer:active {
-  transform: translateY(0);
-}
+.btn.continuer:active { transform: translateY(0); }
 
 /* ===== BILAN ===== */
 .bilan-wrap {
@@ -745,23 +773,32 @@ h1 {
   padding: 56px 20px;
   text-align: center;
 }
-.bilan-wrap h1 {
-  font-size: 2.5rem;
-  margin-bottom: 32px;
-}
+.bilan-wrap h1 { font-size: 2.5rem; margin-bottom: 32px; }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 640px) {
   .panneau { width: 100%; max-width: 100%; }
-  .score-pourcentage { font-size: 1.75rem; }
+  .score-pourcentage { font-size: 1.5rem; }
   .score-anneau { width: 130px; height: 130px; }
   .mission-header { flex-direction: column; align-items: flex-start; gap: 12px; }
   .btn-play-video { width: 80px; height: 80px; font-size: 1.75rem; }
   .accueil-cadre { padding: 40px 16px; }
   h1 { font-size: 2rem; }
+  .rideau { min-width: 60px; }
 }
 
 /* ===== RÉDUCTION DE MOUVEMENT ===== */
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
+  .rideau { transition: none; }
+}
+
+/* ===== ANIMATIONS SALLE ===== */
+@keyrides-briller {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
+.projecteur.allume::after {
+  box-shadow: 0 0 40px var(--or-marquee);
+  animation: briller 2s ease-in-out infinite;
 }
