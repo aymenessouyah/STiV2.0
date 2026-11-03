@@ -18,13 +18,19 @@ window.AppController = (function () {
   var zoneInteraction = document.getElementById("zone-interaction");
 
   var btnStart = document.getElementById("btn-start");
-  var inputNom = document.getElementById("input-nom");
+  var btnPlayVideo = document.getElementById("btn-play-video");
   var spanNom = document.getElementById("nom-eleve");
 
   var spanProgression = document.getElementById("progression-pct");
   var spanScore = document.getElementById("score");
   var spanTotal = document.getElementById("total");
   var spanTemps = document.getElementById("temps");
+  var spanScorePct = document.getElementById("score-pct");
+  var spanScorePoints = document.getElementById("score-points");
+  var spanScoreNiveau = document.getElementById("score-niveau");
+  var badgeNiveau = document.getElementById("badge-niveau");
+  var cercleProgress = document.getElementById("score-cercle-progress");
+  var modulesListe = document.getElementById("modules-liste");
   var spanTempsVideo = document.getElementById("temps-courant");
   var spanDuree = document.getElementById("temps-total");
   var listeQuestions = document.getElementById("liste-questions");
@@ -56,33 +62,22 @@ window.AppController = (function () {
   }
 
   function init() {
-    // Sauvegarde existante ?
-    var sauve = quiz.chargerSauvegarde();
-    if (sauve && sauve.nom) {
-      inputNom.value = sauve.nom;
-      quiz.setNom(sauve.nom);
-      afficherEcran("mission");
-      startMission();
-      return;
-    }
     afficherEcran("accueil");
 
     btnStart.addEventListener("click", function () {
-      var nom = String(inputNom.value || "").trim();
-      if (nom === "") {
-        inputNom.focus();
-        inputNom.classList.add("erreur");
-        return;
-      }
-      inputNom.classList.remove("erreur");
-      quiz.setNom(nom);
-      if (spanNom) spanNom.textContent = nom;
+      quiz.setNom("Abonné");
+      if (spanNom) spanNom.textContent = "Abonné";
       afficherEcran("mission");
       startMission();
     });
 
-    inputNom.addEventListener("input", function () { inputNom.classList.remove("erreur"); });
-    inputNom.addEventListener("keydown", function (e) { if (e.key === "Enter") btnStart.click(); });
+    // Bouton Play sur le poste vidéo : lance la vidéo et disparaît
+    if (btnPlayVideo) {
+      btnPlayVideo.addEventListener("click", function () {
+        btnPlayVideo.classList.add("cacher");
+        video.forcePlay().catch(function () {});
+      });
+    }
 
     // Bouton audio (activer/désactiver le son)
     var btnAudio = document.getElementById("btn-audio");
@@ -158,6 +153,11 @@ window.AppController = (function () {
       }
     });
 
+    // Cacher définitivement le bouton Play quand la vidéo commence à jouer
+    videoEl.addEventListener("play", function () {
+      if (btnPlayVideo) btnPlayVideo.classList.add("cacher");
+    });
+
     spanTotal.textContent = quiz.getTotal();
   }
 
@@ -170,6 +170,7 @@ window.AppController = (function () {
   function startMission() {
     cacherBulleResultatsAuto();
     spanScore.textContent = quiz.getScore();
+    rafraichirPanneau();
     rafraichirListeQuestions();
     rafraichirPanneau();
     if (quiz.isComplete()) {
@@ -199,11 +200,8 @@ window.AppController = (function () {
       // Nouvelle mission : commencer à l'instant 0 de la vidéo
       video.seekToSeconds(0);
     }
-    // Démarrage automatique de la vidéo dès le lancement de la mission
-    video.forcePlay().catch(function () {
-      // Si la vidéo ne peut pas jouer, basculer en mode simulation
-      basculerModeSansVideo();
-    });
+    // La vidéo ne se lance que quand l'utilisateur clique sur le bouton Play
+    // (pas d'autoplay, pas de lecture automatique)
   }
 
   function basculerModeSansVideo() {
@@ -248,12 +246,23 @@ window.AppController = (function () {
   }
 
   function afficherEcran(nom) {
-    ecranAccueil.classList.add("cacher");
-    ecranMission.classList.add("cacher");
-    ecranBilan.classList.add("cacher");
-    if (nom === "accueil") ecranAccueil.classList.remove("cacher");
-    if (nom === "mission") ecranMission.classList.remove("cacher");
-    if (nom === "bilan") ecranBilan.classList.remove("cacher");
+    var actuel = document.querySelector("#app .ecran.actif");
+
+    ecranAccueil.classList.remove("actif", "entrer", "sortir", "cacher");
+    ecranMission.classList.remove("actif", "entrer", "sortir", "cacher");
+    ecranBilan.classList.remove("actif", "entrer", "sortir", "cacher");
+
+    if (nom === "accueil") ecranAccueil.classList.add("actif", "entrer");
+    if (nom === "mission") ecranMission.classList.add("actif", "entrer");
+    if (nom === "bilan") ecranBilan.classList.add("actif", "entrer");
+
+    if (actuel && actuel.id !== (nom === "accueil" ? "ecran-accueil" : nom === "mission" ? "ecran-mission" : "ecran-bilan")) {
+      actuel.classList.add("sortir");
+      setTimeout(function () {
+        actuel.classList.remove("sortir", "entrer");
+        actuel.classList.add("cacher");
+      }, 450);
+    }
   }
 
   function afficherBulleResultatsAuto() {
@@ -314,9 +323,50 @@ window.AppController = (function () {
   }
 
   function rafraichirPanneau() {
-    spanProgression.textContent = quiz.getPct();
+    var pct = quiz.getPct();
+    var points = quiz.getPoints();
+    var niveau = quiz.getNiveau();
+
+    spanProgression.textContent = pct;
     spanScore.textContent = quiz.getScore();
+
+    // Cercle de score moderne
+    if (spanScorePct) spanScorePct.textContent = pct;
+    if (spanScorePoints) spanScorePoints.textContent = points;
+    if (spanScoreNiveau) spanScoreNiveau.textContent = niveau;
+    if (badgeNiveau) badgeNiveau.textContent = "Niv. " + niveau;
+    if (cercleProgress) {
+      var offset = 427 * (1 - pct / 100);
+      cercleProgress.style.strokeDashoffset = offset;
+    }
+
+    rafraichirModulesSQL();
     rafraichirListeQuestions();
+  }
+
+  // Génère la liste des modules SQL avec progression par chapitre
+  function rafraichirModulesSQL() {
+    if (!modulesListe || !data.chapters) return;
+    modulesListe.innerHTML = "";
+    data.chapters.forEach(function (chap) {
+      var qs = chap.questionIds || [];
+      var ok = 0, traite = 0, tot = qs.length;
+      qs.forEach(function (id) {
+        var a = quiz.getAnswers()[id];
+        if (a) { traite++; if (a.correct) ok++; }
+      });
+      var pc = tot ? Math.round((ok / tot) * 100) : 0;
+      var termine = ok === tot && tot > 0;
+
+      var div = document.createElement("div");
+      div.className = "module-item" + (termine ? " termine" : "");
+      div.innerHTML =
+        "<span class='module-num'>" + chap.id + "</span>" +
+        "<span class='module-titre'>" + echapperHtml(chap.title) + "</span>" +
+        "<span class='module-pct'>" + pc + "%</span>" +
+        "<div class='module-barre'><div class='module-barre-remplissage' style='width:" + pc + "%'></div></div>";
+      modulesListe.appendChild(div);
+    });
   }
 
   function rafraichirListeQuestions() {
@@ -406,9 +456,34 @@ window.AppController = (function () {
       });
     }
 
+    // Révision avancée par chapitre
+    bilanHtml += "<div class='revision-avancee-card'>";
+    bilanHtml += "<h3>Révision avancée par chapitre</h3>";
+    bilanHtml += "<div class='revision-chap-selector'>";
+    data.chapters.forEach(function (chap) {
+      var qs = chap.questionIds;
+      var ok = 0, tot = 0;
+      qs.forEach(function (id) {
+        var a = state.answers[id];
+        if (a) { tot++; if (a.correct) ok++; }
+      });
+      var ko = tot - ok;
+      var pct = tot ? Math.round((ok / tot) * 100) : 0;
+      bilanHtml += "<div class='revision-chap-item'>";
+      bilanHtml += "<input type='radio' name='revision-chap' id='chap-" + chap.id + "' value='" + chap.id + "'>";
+      bilanHtml += "<div class='revision-chap-info'>";
+      bilanHtml += "<span class='revision-chap-nom'>Chapitre " + chap.id + " – " + chap.title + "</span>";
+      bilanHtml += "<span class='revision-chap-stats'><span class='" + (ko > 0 ? "ko" : "ok") + "'>" + ok + "/" + tot + " correctes</span> (" + pct + "%)</span>";
+      bilanHtml += "</div>";
+      bilanHtml += "</div>";
+    });
+    bilanHtml += "</div>";
+    bilanHtml += "<button class='btn' onclick='AppController.startAdvancedRevisionFromSelection()'>Réviser ce chapitre</button>";
+    bilanHtml += "</div>";
+
     bilanHtml += "<div class='bilan-actions'>" +
                  "<button class='btn secondaire' onclick='AppController.rejouerBilanVocal()'>Écouter le bilan vocal</button>" +
-                 (faux.length > 0 ? "<button class='btn' onclick='AppController.startRevision()'>Mode révision — revoir les erreurs</button>" : "") +
+                 "<button class='btn' onclick='AppController.voirCorrectionVideo()'>Voir la correction (vidéo)</button>" +
                  "<button class='btn' onclick='AppController.recommencer()'>Recommencer la mission</button>" +
                  "<button class='btn secondaire' onclick='location.reload()'>Quitter</button>" +
                  "</div>";
@@ -425,6 +500,14 @@ window.AppController = (function () {
   // Rejoue la narration vocale du bilan à la demande
   var rejouerBilanVocal = function () {
     quiz.speakBilanSummary();
+  };
+
+  // Relance la vidéo depuis le début pour revoir la correction (vidéo)
+  var voirCorrectionVideo = function () {
+    afficherEcran("mission");
+    cacherQuestion();
+    try { video.seekToSeconds(0); } catch (e) {}
+    video.forcePlay().catch(function () {});
   };
 
   var revoirQuestion = function (id) {
@@ -557,14 +640,204 @@ window.AppController = (function () {
     afficherBilan();
   };
 
+  // ----------------------------- Révision avancée -----------------------------
+
+  // Démarre la révision avancée à partir du chapitre sélectionné dans le bilan
+  var startAdvancedRevisionFromSelection = function () {
+    var radios = document.getElementsByName("revision-chap");
+    var selected = null;
+    for (var i = 0; i < radios.length; i++) {
+      if (radios[i].checked) { selected = parseInt(radios[i].value, 10); break; }
+    }
+    if (selected === null) return;
+    startAdvancedRevision(selected);
+  };
+
+  // Lance la révision avancée pour un chapitre donné (ou toutes les erreurs si null)
+  var startAdvancedRevision = function (chapterId) {
+    var firstQ = quiz.startAdvancedRevision(chapterId);
+    if (!firstQ) return;
+    cacherBulleResultatsAuto();
+    montrerQuestionAdvRevision();
+  };
+
+  // Affiche la question de révision avancée courante avec indices et progression
+  var montrerQuestionAdvRevision = function () {
+    var q = quiz.getCurrentAdvRevisionQuestion();
+    if (!q) {
+      montrerResumeAdvRevision();
+      return;
+    }
+
+    var stats = quiz.getAdvRevisionStats();
+    var hints = quiz.getHints(q);
+    var attempt = quiz.getAdvRevisionStats() && revisionAdvAttempts[q.id];
+
+    video.pause();
+    panneauQuestion.classList.remove("cacher");
+    zoneInteraction.classList.remove("cacher");
+
+    var html = "<div class='q-card revision-card'>";
+    html += "<div class='q-meta'>";
+    html += "<span class='q-num'>Révision Q" + q.num + "</span>";
+    html += "<span class='q-type'>Chapitre " + q.chapter + "</span>";
+    html += "</div>";
+
+    // Barre de progression
+    html += "<div class='revision-progress'>";
+    html += "<div class='revision-progress-label'><span>Progression</span><span>" + stats.revised + "/" + stats.total + "</span></div>";
+    html += "<div class='revision-progress-bar'><div class='revision-progress-fill' style='width:" + stats.pct + "%'></div></div>";
+    html += "</div>";
+
+    html += "<div class='q-enonce'>" + q.enonce + "</div>";
+
+    // Indices contextuels
+    if (hints && hints.length > 0) {
+      html += "<div class='revision-hint'>";
+      html += "<h4>💡 Indice</h4>";
+      html += "<p>" + hints[Math.min(stats.revised, hints.length - 1)] + "</p>";
+      html += "</div>";
+    }
+
+    if (q.type === "sql") {
+      html += "<textarea placeholder='Écrivez votre requête SQL…' id='adv-revision-reponse'></textarea>";
+    } else {
+      html += "<textarea placeholder='Décrivez le résultat attendu…' id='adv-revision-reponse'></textarea>";
+    }
+
+    // Historique des tentatives
+    if (attempt) {
+      html += "<div class='revision-attempt'>";
+      html += "<span class='badge " + (attempt.ok ? "ok" : "ko") + "'>" + (attempt.ok ? "✓ Validé" : "✗ Échec") + "</span>";
+      html += "Tentative n°" + attempt.tries;
+      html += "</div>";
+    }
+
+    html += "<div class='q-actions'>";
+    html += "<button class='btn valider' onclick='AppController.validerAdvRevision()'>Valider ma réponse</button>";
+    html += "<button class='btn secondaire' onclick='AppController.sauterAdvRevision()'>Passer</button>";
+    html += "</div>";
+    html += "<div id='adv-revision-resultat'></div>";
+    html += "</div>";
+
+    zoneInteraction.innerHTML = html;
+    var ta = document.getElementById("adv-revision-reponse");
+    if (ta) ta.focus();
+    afficherEcran("mission");
+  };
+
+  // État des tentatives pour la révision avancée
+  var revisionAdvAttempts = {};
+
+  // Valide la réponse en révision avancée (plusieurs tentatives autorisées)
+  var validerAdvRevision = function () {
+    var q = quiz.getCurrentAdvRevisionQuestion();
+    if (!q) return;
+    var ta = document.getElementById("adv-revision-reponse");
+    var reponse = ta ? ta.value : "";
+    var resDiv = document.getElementById("adv-revision-resultat");
+
+    if (reponse.trim() === "") {
+      resDiv.innerHTML = "<span style='color:var(--rouge); font-weight:700;'>Réponse vide.</span>";
+      return;
+    }
+
+    var correct = false;
+    var motif = "";
+
+    if (q.type === "sql") {
+      var r = quiz.normaliserSQL(reponse);
+      for (var i = 0; i < q.refs.length; i++) {
+        if (r === quiz.normaliserSQL(q.refs[i])) {
+          correct = true;
+          motif = "Votre requête correspond à une écriture de référence.";
+          break;
+        }
+      }
+    } else {
+      correct = quiz.motsClesPresent(reponse, q.attendu);
+      motif = correct ? "Valeurs attendues retrouvées." : "Valeurs attendues non retrouvées.";
+    }
+
+    var tries = (revisionAdvAttempts[q.id] && revisionAdvAttempts[q.id].tries || 0) + 1;
+
+    if (correct) {
+      quiz.playCorrectSound();
+      revisionAdvAttempts[q.id] = { ok: true, tries: tries };
+      quiz.recordAdvRevisionAttempt(q.id, true, tries);
+      resDiv.innerHTML = "<span style='color:var(--vert); font-weight:700;'>✓ Correct !</span>";
+      resDiv.innerHTML += "<div style='margin-top:10px;'><button class='btn' style='padding:6px 12px;font-size:0.9rem;' onclick='AppController.nextAdvRevision()'>Question suivante</button></div>";
+    } else {
+      quiz.playIncorrectSound();
+      revisionAdvAttempts[q.id] = { ok: false, tries: tries };
+      quiz.recordAdvRevisionAttempt(q.id, false, tries);
+      resDiv.innerHTML = "<span style='color:var(--rouge); font-weight:700;'>✗ Incorrect (tentative " + tries + ")</span>";
+      resDiv.innerHTML += "<div style='margin-top:10px;'><button class='btn' style='padding:6px 12px;font-size:0.9rem;' onclick='AppController.nextAdvRevision()'>Voir la correction</button></div>";
+    }
+  };
+
+  // Passe à la question suivante en révision avancée
+  var nextAdvRevision = function () {
+    var nextQ = quiz.nextAdvRevisionQuestion();
+    if (!nextQ) {
+      montrerResumeAdvRevision();
+      return;
+    }
+    montrerQuestionAdvRevision();
+  };
+
+  // Sauter une question en révision avancée
+  var sauterAdvRevision = function () {
+    var q = quiz.getCurrentAdvRevisionQuestion();
+    if (q) {
+      revisionAdvAttempts[q.id] = { ok: false, tries: (revisionAdvAttempts[q.id] && revisionAdvAttempts[q.id].tries || 0) + 1 };
+      quiz.recordAdvRevisionAttempt(q.id, false, revisionAdvAttempts[q.id].tries);
+    }
+    nextAdvRevision();
+  };
+
+  // Affiche l'écran de résumé de la révision avancée
+  var montrerResumeAdvRevision = function () {
+    var stats = quiz.getAdvRevisionStats();
+    if (!stats) return;
+
+    cacherQuestion();
+    var html = "<div class='revision-summary'>";
+    html += "<h3>Résumé de la révision</h3>";
+    html += "<div class='revision-summary-score'>" + stats.score + "/" + stats.maxScore + "<span class='delta'>+" + (stats.score - (stats.ok || 0)) + "</span></div>";
+    html += "<div class='revision-summary-stats'>";
+    html += "<div class='revision-summary-stat'><span class='valeur'>" + stats.revised + "</span><span class='libelle'>questions traitées</span></div>";
+    html += "<div class='revision-summary-stat'><span class='valeur'>" + stats.ok + "</span><span class='libelle'>réussies</span></div>";
+    html += "<div class='revision-summary-stat'><span class='valeur'>" + stats.pct + "%</span><span class='libelle'>taux de réussite</span></div>";
+    html += "</div>";
+    html += "<div class='revision-actions'>";
+    html += "<button class='btn' onclick='AppController.exitAdvancedRevision()'>Terminer la révision</button>";
+    html += "<button class='btn secondaire' onclick='AppController.recommencer()'>Recommencer la mission</button>";
+    html += "</div>";
+    html += "</div>";
+
+    document.getElementById("contenu-bilan").innerHTML = html;
+    afficherEcran("bilan");
+  };
+
+  // Quitte la révision avancée et retourne au bilan
+  var exitAdvancedRevision = function () {
+    quiz.exitAdvancedRevision();
+    revisionAdvAttempts = {};
+    afficherBilan();
+  };
+
   var recommencer = function () {
     quiz.resetProgress();
     video.setAnswered([]);
     spanScore.textContent = "0";
     spanProgression.textContent = "0";
+    if (spanScorePct) spanScorePct.textContent = "0";
+    if (spanScorePoints) spanScorePoints.textContent = "0";
+    if (spanScoreNiveau) spanScoreNiveau.textContent = "1";
+    if (badgeNiveau) badgeNiveau.textContent = "Niv. 1";
+    if (cercleProgress) cercleProgress.style.strokeDashoffset = "427";
     afficherEcran("accueil");
-    inputNom.value = "";
-    inputNom.focus();
   };
 
   function echapperHtml(texte) {
@@ -584,7 +857,14 @@ window.AppController = (function () {
     nextRevision: nextRevision,
     sauterRevision: sauterRevision,
     exitRevision: exitRevision,
-    rejouerBilanVocal: rejouerBilanVocal
+    rejouerBilanVocal: rejouerBilanVocal,
+    startAdvancedRevisionFromSelection: startAdvancedRevisionFromSelection,
+    startAdvancedRevision: startAdvancedRevision,
+    validerAdvRevision: validerAdvRevision,
+    nextAdvRevision: nextAdvRevision,
+    sauterAdvRevision: sauterAdvRevision,
+    exitAdvancedRevision: exitAdvancedRevision,
+    voirCorrectionVideo: voirCorrectionVideo
   };
 })();
 

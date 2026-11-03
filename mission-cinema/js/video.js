@@ -183,17 +183,28 @@ var nextQuestionAfterFreeze = null;  // question à afficher après le gel ("Pou
     if (pending && pending.time != null) {
       try { video.currentTime = pending.time; } catch (e) {}
     }
+    video.muted = false;
     return video.play().catch(function (err) {
-      console.warn("Reprise lecture bloquée :", err);
+      console.warn("Reprise lecture bloquée avec son :", err);
+      video.muted = true;
+      return video.play().catch(function (err2) {
+        console.warn("Reprise lecture bloquée même en muet :", err2);
+        throw err2;
+      });
     });
   }
 
   function play() {
     if (!video) return Promise.reject(new Error("vidéo non initialisée"));
     pausedForQuestion = false;
+    video.muted = false;
     return video.play().catch(function (err) {
-      console.warn("Lecture vidéo bloquée :", err);
-      throw err;
+      console.warn("Lecture vidéo bloquée avec son :", err);
+      video.muted = true;
+      return video.play().catch(function (err2) {
+        console.warn("Lecture vidéo bloquée même en muet :", err2);
+        throw err2;
+      });
     });
   }
 
@@ -205,8 +216,14 @@ var nextQuestionAfterFreeze = null;  // question à afficher après le gel ("Pou
 
   function resume() {
     pausedForQuestion = false;
+    video.muted = false;
     return video.play().catch(function (err) {
-      console.warn("Reprise lecture bloquée :", err);
+      console.warn("Reprise lecture bloquée avec son :", err);
+      video.muted = true;
+      return video.play().catch(function (err2) {
+        console.warn("Reprise lecture bloquée même en muet :", err2);
+        throw err2;
+      });
     });
   }
 
@@ -235,9 +252,14 @@ var nextQuestionAfterFreeze = null;  // question à afficher après le gel ("Pou
     if (videoFailed) return Promise.reject(new Error("vidéo indisponible"));
     if (!video) return Promise.reject(new Error("vidéo non initialisée"));
     pausedForQuestion = false;
+    video.muted = false;
     return video.play().catch(function (err) {
-      console.warn("Lecture vidéo bloquée :", err);
-      throw err;
+      console.warn("Lecture vidéo bloquée avec son :", err);
+      video.muted = true;
+      return video.play().catch(function (err2) {
+        console.warn("Lecture vidéo bloquée même en muet :", err2);
+        throw err2;
+      });
     });
   }
 
