@@ -179,14 +179,5 @@
 <script src="js/video.js"></script>
 <script src="js/quiz.js"></script>
 <script src="js/main.js"></script>
-
-<script>
-  // Enregistrement du Service Worker (PWA / offline)
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./service-worker.js")
-      .then(function () {})
-      .catch(function (err) { console.warn("SW enregistrement échoué :", err); });
-  }
-</script>
 </body>
 </html>
