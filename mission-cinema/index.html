@@ -4,85 +4,86 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MISSION CINÉMA – STI Version 2.0</title>
+<link rel="stylesheet" href="css/style.css?v=9.0">
 </head>
 <body>
-  <div id="salle">
-    <div id="rideau-gauche"></div>
-    <div id="rideau-droit"></div>
-    <div id="projecteur-gauche"></div>
-    <div id="projecteur-droit"></div>
-    <div id="lumiere-salle"></div>
+  <div id="salle" class="cinema-salle">
+    <div id="rideau-gauche" class="rideau rideau-gauche"></div>
+    <div id="rideau-droit" class="rideau rideau-droit"></div>
+    <div id="projecteur-gauche" class="projecteur projecteur-gauche"></div>
+    <div id="projecteur-droit" class="projecteur projecteur-droit"></div>
+    <div id="lumiere-salle" class="lumiere-salle"></div>
 
     <div id="app">
 
       <!-- ÉCRAN D'ACCUEIL -->
-      <section id="ecran-accueil">
-        <div id="cadre-accueil">
-          <div id="logo">STI Version 2.0 <em>By A'E</em></div>
+      <section id="ecran-accueil" class="ecran actif">
+        <div id="cadre-accueil" class="accueil-cadre">
+          <div id="logo" class="logo">STI Version 2.0 <em>By A'E</em></div>
           <h1>MISSION CINÉMA</h1>
-          <p>Devenez responsable de la base de données d'une société de production cinématographique.</p>
-          <button id="btn-start">DÉMARRER LA SÉANCE ▶</button>
-          <p id="note">Progression sauvegardée automatiquement.</p>
+          <p class="sous-titre">Devenez responsable de la base de données d'une société de production cinématographique.</p>
+          <button id="btn-start" class="btn-principal">DÉMARRER LA SÉANCE ▶</button>
+          <p class="note">Progression sauvegardée automatiquement.</p>
         </div>
       </section>
 
       <!-- ÉCRAN DE MISSION -->
-      <section id="ecran-mission">
-        <div id="mission-body">
+      <section id="ecran-mission" class="ecran cacher">
+        <div id="mission-body" class="mission-body">
           <!-- Panneau latéral -->
-          <aside id="panneau">
-            <div id="logo-mission">STI Version 2.0</div>
-            <div id="score-cercle">
-              <div id="score-anneau">
-                <svg width="160" height="160">
+          <aside id="panneau" class="panneau carte-cinema">
+            <div id="logo-mission" class="logo">STI Version 2.0</div>
+            <div id="score-cercle" class="score-cercle">
+              <div id="score-anneau" class="score-anneau">
+                <svg width="160" height="160" class="score-svg">
                   <circle class="score-fond" cx="80" cy="80" r="68" stroke="#1a1a2e" stroke-width="12" fill="none"/>
-                  <circle id="score-cercle-progress" cx="80" cy="80" r="68" stroke="#f59e0b" stroke-width="12" fill="none" stroke-dasharray="427" stroke-dashoffset="427"/>
+                  <circle id="score-cercle-progress" class="score-remplissage" cx="80" cy="80" r="68" stroke="#f59e0b" stroke-width="12" fill="none" stroke-dasharray="427" stroke-dashoffset="427"/>
                 </svg>
-                <div id="score-centre">
-                  <span id="score-pct">0</span>%
+                <div id="score-centre" class="score-centre">
+                  <span id="score-pct" class="score-pourcentage">0</span>%
                 </div>
               </div>
-              <div id="score-details">
-                <div class="score-item"><span class="score-label">Score</span><span id="score-points">0</span> <span class="score-unite">PTS</span></div>
-                <div class="score-item"><span class="score-label">Niveau</span><span id="score-niveau">1</span></div>
+              <div id="score-details" class="score-details">
+                <div class="score-item"><span class="score-label">Score</span><span id="score-points" class="score-valeur">0</span> <span class="score-unite">PTS</span></div>
+                <div class="score-item"><span class="score-label">Niveau</span><span id="score-niveau" class="score-valeur">1</span></div>
               </div>
             </div>
-            <div id="titre-programme">Programme de Séance</div>
+            <div id="titre-programme" class="section-titre">Programme de Séance</div>
             <div id="modules-liste"></div>
-            <div id="titre-questions">Questions Traités</div>
+            <div id="titre-questions" class="section-titre">Questions Traités</div>
             <ul id="liste-questions"></ul>
           </aside>
 
           <!-- Zone principale -->
-          <div id="principal">
-            <header id="mission-header">
-              <div id="titre-mission">
+          <div id="principal" class="principal">
+            <header id="mission-header" class="mission-header">
+              <div id="titre-mission" class="titre-mission">
                 MISSION CINÉMA
                 <span>Base de données « cinema »</span>
               </div>
-              <div id="eleve-badge">
-                <img src="assets/images/sti-badge.png" alt="Badge élève" id="badge-img">
-                <span id="badge-niveau">Niv. 1</span>
+              <div id="eleve-badge" class="eleve-badge">
+                <img src="assets/images/sti-badge.png" alt="Badge élève" id="badge-img" class="badge-img">
+                <span id="badge-niveau" class="badge-niveau">Niv. 1</span>
               </div>
             </header>
 
-            <div id="chapitre-actuel">Préparation de la séance…</div>
+            <div id="chapitre-actuel" class="chap-banniere">Préparation de la séance…</div>
 
-            <div id="mission-principale">
-              <div id="video-wrap">
-                <div id="ecran-cinema">
+            <div id="mission-principale" class="mission-principale">
+              <div id="video-wrap" class="video-wrap">
+                <div id="ecran-cinema" class="ecran-cinema">
                   <video id="video" src="assets/video/TD_SQL_Cinema_questions.mp4" playsinline preload="metadata"
                          poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='360' viewBox='0 0 640 360'%3E%3Crect fill='%230a0a0c' width='640' height='360'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='24' fill='%2394a3b8' text-anchor='middle' dominant-baseline='middle'%3EMISSION CINÉMA%3C/text%3E%3C/svg%3E"></video>
-                  <button id="btn-play-video">▶</button>
-                  <div id="video-placeholder">
-                    <div id="placeholder-icone">🎬</div>
-                    <div id="placeholder-titre">MISSION CINÉMA</div>
-                    <div id="placeholder-sous">Cliquez sur le clapet pour lancer la séance</div>
+                  <button id="btn-play-video" class="btn-play-video">▶</button>
+                  <div id="video-placeholder" class="video-placeholder cacher">
+                    <div id="placeholder-icone" class="placeholder-icone">🎬</div>
+                    <div id="placeholder-titre" class="placeholder-titre">MISSION CINÉMA</div>
+                    <div id="placeholder-sous" class="placeholder-sous">Cliquez sur le clapet pour lancer la séance</div>
                   </div>
                 </div>
               </div>
 
-              <div id="panneau-question">
+              <div id="panneau-question" class="panneau-question cacher">
                 <div id="zone-interaction"></div>
               </div>
             </div>
@@ -91,8 +92,8 @@
       </section>
 
       <!-- ÉCRAN DE BILAN -->
-      <section id="ecran-bilan">
-        <div id="bilan-wrap">
+      <section id="ecran-bilan" class="ecran cacher">
+        <div id="bilan-wrap" class="bilan-wrap carte-cinema">
           <h1>BILAN DE LA SÉANCE</h1>
           <div id="contenu-bilan"></div>
         </div>
@@ -101,9 +102,9 @@
     </div>
   </div>
 
-<script src="js/questions.js?v=8.0"></script>
-<script src="js/video.js?v=8.0"></script>
-<script src="js/quiz.js?v=8.0"></script>
-<script src="js/main.js?v=8.0"></script>
+<script src="js/questions.js?v=9.0"></script>
+<script src="js/video.js?v=9.0"></script>
+<script src="js/quiz.js?v=9.0"></script>
+<script src="js/main.js?v=9.0"></script>
 </body>
 </html>

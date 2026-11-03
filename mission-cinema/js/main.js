@@ -43,12 +43,12 @@ window.AppController = (function () {
 
   function afficherEcran(nom) {
     tryOp(function () {
-      if (ecranAccueil) ecranAccueil.classList.add("cacher");
-      if (ecranMission) ecranMission.classList.add("cacher");
-      if (ecranBilan) ecranBilan.classList.add("cacher");
-      if (nom === "accueil" && ecranAccueil) ecranAccueil.classList.remove("cacher");
-      if (nom === "mission" && ecranMission) ecranMission.classList.remove("cacher");
-      if (nom === "bilan" && ecranBilan) ecranBilan.classList.remove("cacher");
+      if (ecranAccueil) { ecranAccueil.classList.add("cacher"); ecranAccueil.classList.remove("actif"); }
+      if (ecranMission) { ecranMission.classList.add("cacher"); ecranMission.classList.remove("actif"); }
+      if (ecranBilan) { ecranBilan.classList.add("cacher"); ecranBilan.classList.remove("actif"); }
+      if (nom === "accueil" && ecranAccueil) { ecranAccueil.classList.remove("cacher"); ecranAccueil.classList.add("actif"); }
+      if (nom === "mission" && ecranMission) { ecranMission.classList.remove("cacher"); ecranMission.classList.add("actif"); }
+      if (nom === "bilan" && ecranBilan) { ecranBilan.classList.remove("cacher"); ecranBilan.classList.add("actif"); }
     }, "afficherEcran");
   }
 
