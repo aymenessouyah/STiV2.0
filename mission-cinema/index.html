@@ -74,12 +74,10 @@
     z-index: 10;
     transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
-    border-right: 2px solid rgba(139, 0, 0, 0.3);
-    border-left: 2px solid rgba(139, 0, 0, 0.3);
   }
 
-  .rideau-gauche { left: 0; transform: translateX(-100%); border-right: none; }
-  .rideau-droit { right: 0; transform: translateX(100%); border-left: none; }
+  .rideau-gauche { left: 0; transform: translateX(-100%); }
+  .rideau-droit { right: 0; transform: translateX(100%); }
 
   .rideau-gauche.ouvert { transform: translateX(0); }
   .rideau-droit.ouvert { transform: translateX(0); }
@@ -361,6 +359,19 @@
     color: var(--accent-bleu-clair);
     font-weight: 800;
     margin-top: 6px;
+  }
+
+  .q-partie {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--texte-clair);
+    font-weight: 600;
+    margin-top: 2px;
+    background: var(--bg-second);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--bordure);
   }
 
   .q-enonce {
@@ -651,23 +662,27 @@
         <div class="accueil-cadre">
           <div class="logo">STI Version 2.0 <span style="font-size: 1rem; font-weight: 500; color: var(--texte-second);">By A'E</span></div>
           <h1>MISSION CINÉMA</h1>
-          <p class="sous-titre">Répondez aux 45 questions SQL sur le thème du cinéma.</p>
+          <p class="sous-titre">Répondez aux 60 questions SQL sur le thème du cinéma.</p>
 
           <div class="intro-texte">
             <p><strong>Bienvenue, futur expert SQL.</strong></p>
             <p>Le schéma de la base « cinema » s'affiche en permanence en haut de l'écran.</p>
-            <p>Pour chaque question :</p>
-            <ul style="margin-left: 20px; margin-top: 8px; color: var(--texte-second);">
-              <li>Lisez l'énoncé</li>
-              <li>Écrivez votre réponse SQL dans le textarea</li>
-              <li>Cliquez sur <strong>Valider</strong> pour vérifier</li>
-              <li>Découvrez la bonne réponse et l'explication</li>
+            <p>Les questions sont réparties sur 7 parties :</p>
+            <ul style="margin-left: 20px; margin-top: 8px; color: var(--texte-second); line-height: 1.8;">
+              <li><strong>Partie 1 :</strong> LDD (Définition) — Questions 1 à 5</li>
+              <li><strong>Partie 2 :</strong> LMD (Manipulation) — Questions 6 à 10</li>
+              <li><strong>Partie 3 :</strong> Requêtes de sélection simples — Questions 11 à 25</li>
+              <li><strong>Partie 4 :</strong> Requêtes de sélection avancées — Questions 26 à 39</li>
+              <li><strong>Partie 5 :</strong> ALTER TABLE, DEFAULT, clés étrangères en cascade — Questions 40 à 45</li>
+              <li><strong>Partie 6 :</strong> Prévoir le résultat — Questions 46 à 55</li>
+              <li><strong>Partie 7 :</strong> Prévoir l'erreur (contraintes) — Questions 56 à 60</li>
             </ul>
+            <p>Pour chaque question : écrivez votre réponse SQL dans le textarea, cliquez sur <strong>Valider</strong>, découvrez la bonne réponse et l'explication.</p>
             <p><strong>Aucune exécution SQL n'est effectuée dans le navigateur.</strong> La comparaison est pédagogique uniquement.</p>
           </div>
 
           <button id="btn-start" class="btn-principal">COMMENCER LA MISSION ▶</button>
-          <p class="note">45 questions • Q1 à Q45 • Progression sauvegardée automatiquement.</p>
+          <p class="note">60 questions • Q1 à Q60 • Progression sauvegardée automatiquement.</p>
         </div>
       </section>
 
@@ -764,6 +779,7 @@
               <div>
                 <div class="q-numero" id="q-numero">Q1</div>
                 <div class="q-type" id="q-type">LDD — Création de tables</div>
+                <div class="q-partie" id="q-partie">Partie 1 : LDD</div>
               </div>
             </div>
             <div class="q-enonce" id="q-enonce"></div>
@@ -796,63 +812,92 @@
 
 <script>
 /* ============================================================================
-   MISSION CINÉMA — Contrôleur unique
-   Schéma permanent + 45 questions SQL avec textarea + voix masculine
+   MISSION CINÉMA — STI Version 2.0
+   Contrôleur unique : 60 questions sur 7 parties
+   Schéma permanent + textarea SQL + voix masculine
+   Aucune exécution SQL dans le navigateur
    ============================================================================ */
 
 const QUESTIONS = [
-  { id: 1, type: 'ldd', enonce: "Créer les tables REALISATEUR, FILM, ACTEUR, JOUER et PROJECTION avec leurs clés primaires et étrangères.\nduree doit être > 0, annee ≥ 1900 et cachet ≥ 0.", ref: `CREATE TABLE realisateur (\n  idReal INT PRIMARY KEY,\n  nom VARCHAR(30) NOT NULL,\n  prenom VARCHAR(30),\n  nationalite VARCHAR(30)\n);\nCREATE TABLE acteur (\n  idActeur INT PRIMARY KEY,\n  nom VARCHAR(30) NOT NULL,\n  prenom VARCHAR(30),\n  dateNaiss DATE,\n  nationalite VARCHAR(30)\n);\nCREATE TABLE film (\n  idFilm INT AUTO_INCREMENT PRIMARY KEY,\n  titre VARCHAR(50) NOT NULL,\n  genre VARCHAR(30),\n  annee INT CHECK (annee >= 1900),\n  duree INT CHECK (duree > 0),\n  budget BIGINT,\n  idReal INT,\n  FOREIGN KEY (idReal) REFERENCES realisateur(idReal)\n);\nCREATE TABLE jouer (\n  idFilm INT,\n  idActeur INT,\n  role VARCHAR(40),\n  cachet DECIMAL(10,2) CHECK (cachet >= 0),\n  PRIMARY KEY (idFilm, idActeur),\n  FOREIGN KEY (idFilm) REFERENCES film(idFilm),\n  FOREIGN KEY (idActeur) REFERENCES acteur(idActeur)\n);\nCREATE TABLE projection (\n  idProj INT PRIMARY KEY,\n  idFilm INT,\n  salle VARCHAR(20),\n  dateProj DATE,\n  nbSpectateurs INT,\n  FOREIGN KEY (idFilm) REFERENCES film(idFilm)\n);`, explication: "LDD : création des 5 tables avec clés primaires, étrangères et contraintes CHECK." },
-  { id: 2, type: 'ldd', enonce: "Ajouter à ACTEUR une colonne email (VARCHAR 50).", ref: "ALTER TABLE acteur ADD email VARCHAR(50);", explication: "LMD : ajout d'une colonne avec ALTER TABLE ADD." },
-  { id: 3, type: 'ldd', enonce: "Modifier le type de titre en VARCHAR(100) et rendre la colonne genre NOT NULL.", ref: "ALTER TABLE film MODIFY titre VARCHAR(100);\nALTER TABLE film MODIFY genre VARCHAR(30) NOT NULL;", explication: "Modification de type et de contrainte NOT NULL sur deux colonnes." },
-  { id: 4, type: 'ldd', enonce: "Supprimer la colonne email d'ACTEUR.", ref: "ALTER TABLE acteur DROP COLUMN email;", explication: "Suppression de colonne avec DROP COLUMN." },
-  { id: 5, type: 'ldd', enonce: "Supprimer la table PROJECTION, puis la recréer avec sa clé étrangère vers FILM.", ref: "DROP TABLE projection;\nCREATE TABLE projection (\n  idProj INT PRIMARY KEY,\n  idFilm INT,\n  salle VARCHAR(20),\n  dateProj DATE,\n  nbSpectateurs INT,\n  FOREIGN KEY (idFilm) REFERENCES film(idFilm)\n);", explication: "DROP puis CREATE pour recréer la table." },
-  { id: 6, type: 'lmd', enonce: "Insérer 3 réalisateurs, 6 films, 6 acteurs et au moins 10 lignes dans JOUER (+ 9 projections). Le cachet est exprimé en milliers de dollars.", ref: "INSERT INTO realisateur VALUES (1,'Nolan','Christopher','Britannique'), (2,'Scorsese','Martin','Américaine'), (3,'Hazanavicius','Michel','Française');\nINSERT INTO film VALUES (1,'Inception','Science-fiction',2010,140,160000000,1), (2,'Interstellar','Science-fiction',2014,169,165000000,1), (3,'The Dark Knight','Action',2008,152,185000000,1), (4,'Les Infiltrés','Action',2006,151,90000000,2), (5,'Shutter Island','Thriller',2010,138,80000000,2), (6,'OSS 117','Comédie',2006,99,14000000,3);\nINSERT INTO acteur VALUES (1,'DiCaprio','Leonardo','1974-11-11','Américaine'), (2,'Bale','Christian','1974-11-11','Britannique'), (3,'Ledger','Heath','1979-04-04','Australienne'), (4,'Dujardin','Jean','1972-06-19','Française'), (5,'McConaughey','Matthew','1969-11-04','Américaine'), (6,'Ruffalo','Mark','1967-11-22','Américaine');", explication: "INSERT multiple dans realisateur, film, acteur (données d'exemple du PDF)." },
-  { id: 7, type: 'lmd', enonce: "Insérer un nouveau film en ne renseignant que titre, genre et idReal ('Tenet', 'Action', 1).", ref: "INSERT INTO film (titre, genre, idReal) VALUES ('Tenet', 'Action', 1);", explication: "INSERT partiel : seules trois colonnes sont renseignées." },
-  { id: 8, type: 'lmd', enonce: "Mettre à jour la durée du film « Inception » à 148 minutes.", ref: "UPDATE film SET duree = 148 WHERE titre = 'Inception';", explication: "UPDATE avec condition WHERE sur le titre." },
-  { id: 9, type: 'lmd', enonce: "Augmenter de 10 % le cachet de tous les rôles dont le cachet est inférieur à 5000.", ref: "UPDATE jouer SET cachet = cachet * 1.10 WHERE cachet < 5000;", explication: "UPDATE avec calcul arithmétique et condition WHERE." },
-  { id: 10, type: 'lmd', enonce: "Augmenter de 20 % les cachets des acteurs jouant dans les films du genre « Action » réalisés par « Nolan ».", ref: "UPDATE jouer j, film f, realisateur r\nSET j.cachet = j.cachet * 1.20\nWHERE j.idFilm = f.idFilm\n  AND f.idReal = r.idReal\n  AND f.genre = 'Action'\n  AND r.nom = 'Nolan';", explication: "UPDATE multi-tables avec jointure implicite et conditions multiples." },
-  { id: 11, type: 'select', enonce: "Afficher tous les films sortis après l'année 2000.", ref: "SELECT * FROM film WHERE annee > 2000;", explication: "SELECT simple avec filtre sur l'année." },
-  { id: 12, type: 'select', enonce: "Afficher le titre et le genre des films de science-fiction.", ref: "SELECT titre, genre FROM film WHERE genre = 'Science-fiction';", explication: "SELECT colonnes spécifiques avec filtre d'égalité." },
-  { id: 13, type: 'select', enonce: "Afficher les films dont le budget dépasse 100 000 000 $, triés par budget décroissant.", ref: "SELECT titre, budget FROM film WHERE budget > 100000000 ORDER BY budget DESC;", explication: "SELECT avec filtre numérique et tri décroissant." },
-  { id: 14, type: 'select', enonce: "Afficher le nombre de films par genre.", ref: "SELECT genre, COUNT(*) AS nb FROM film GROUP BY genre;", explication: "GROUP BY avec fonction d'agrégation COUNT." },
-  { id: 15, type: 'select', enonce: "Afficher les films dont la durée est comprise entre 100 et 150 minutes.", ref: "SELECT titre, duree FROM film WHERE duree BETWEEN 100 AND 150;", explication: "Opérateur BETWEEN pour intervalle." },
-  { id: 16, type: 'select', enonce: "Afficher le titre des films et le nom de leur réalisateur (jointure FILM + REALISATEUR).", ref: "SELECT f.titre, r.nom FROM film f, realisateur r WHERE f.idReal = r.idReal;", explication: "Jointure implicite entre deux tables." },
-  { id: 17, type: 'select', enonce: "Afficher les acteurs nés en novembre (MONTH = 11).", ref: "SELECT nom, prenom FROM acteur WHERE MONTH(dateNaiss) = 11;", explication: "Fonction MONTH sur une colonne DATE." },
-  { id: 18, type: 'select', enonce: "Afficher les films dont la durée est NULL ou supérieure à 140 minutes.", ref: "SELECT titre, duree FROM film WHERE duree IS NULL OR duree > 140;", explication: "Test IS NULL combiné à une comparaison." },
-  { id: 19, type: 'select', enonce: "Afficher les réalisateurs qui ont réalisé au moins 2 films.", ref: "SELECT r.nom, COUNT(*) AS nb FROM realisateur r, film f WHERE r.idReal = f.idReal GROUP BY r.idReal, r.nom HAVING COUNT(*) >= 2;", explication: "GROUP BY avec HAVING sur fonction d'agrégation." },
-  { id: 20, type: 'select', enonce: "Afficher le cachet total payé pour le film « Inception » (somme des cachets des rôles).", ref: "SELECT SUM(j.cachet) AS total FROM jouer j, film f WHERE j.idFilm = f.idFilm AND f.titre = 'Inception';", explication: "SUM sur jointure avec condition de titre." },
-  { id: 21, type: 'select', enonce: "Afficher le jour de la semaine de chaque projection (DAYNAME).", ref: "SELECT f.titre, p.dateProj, DAYNAME(p.dateProj) AS jour FROM film f, projection p WHERE f.idFilm = p.idFilm ORDER BY p.dateProj;", explication: "Fonction DAYNAME sur une date." },
-  { id: 22, type: 'select', enonce: "Afficher les films projetés dans les 30 derniers jours (par rapport au 01/11/2026).", ref: "SELECT f.titre, p.dateProj FROM film f, projection p WHERE f.idFilm = p.idFilm AND p.dateProj >= CURDATE() - INTERVAL 30 DAY AND p.dateProj <= CURDATE();", explication: "Utilisation de CURDATE() et INTERVAL." },
-  { id: 23, type: 'select', enonce: "Afficher le nombre de spectateurs maximum par salle.", ref: "SELECT salle, MAX(nbSpectateurs) AS maxSpect FROM projection GROUP BY salle;", explication: "MAX avec GROUP BY." },
-  { id: 24, type: 'select', enonce: "Afficher les films dont la durée n'est pas égale à 148 minutes.", ref: "SELECT titre FROM film WHERE duree <> 148;", explication: "Opérateur <> (différent). Note: NULL <> 148 est UNKNOWN." },
-  { id: 25, type: 'select', enonce: "Compter le nombre total de films et le nombre de durées non nulles.", ref: "SELECT COUNT(*) AS nbFilms, COUNT(duree) AS nbDurees FROM film;", explication: "COUNT(*) compte toutes les lignes, COUNT(colonne) ignore les NULL." },
-  { id: 26, type: 'select', enonce: "Calculer la durée moyenne des films (AVG).", ref: "SELECT AVG(duree) AS moyenne FROM film;", explication: "AVG ignore les valeurs NULL." },
-  { id: 27, type: 'select', enonce: "Afficher les films dont le titre contient le mot « The » (LIKE).", ref: "SELECT titre FROM film WHERE titre LIKE '%The%';", explication: "Opérateur LIKE avec jokers %." },
-  { id: 28, type: 'select', enonce: "Afficher les acteurs dont le nom commence par 'D'.", ref: "SELECT nom FROM acteur WHERE nom LIKE 'D%';", explication: "LIKE avec joker en fin de chaîne." },
-  { id: 29, type: 'select', enonce: "Afficher les films classés par durée croissante, puis par titre alphabétique.", ref: "SELECT titre, duree FROM film ORDER BY duree ASC, titre ASC;", explication: "Tri multi-colonnes." },
-  { id: 30, type: 'select', enonce: "Afficher les 3 films les plus récents (LIMIT).", ref: "SELECT titre, annee FROM film ORDER BY annee DESC LIMIT 3;", explication: "LIMIT pour restreindre le nombre de résultats." },
-  { id: 31, type: 'select', enonce: "Afficher les projections avec plus de 100 spectateurs.", ref: "SELECT * FROM projection WHERE nbSpectateurs > 100;", explication: "Filtre numérique simple." },
-  { id: 32, type: 'select', enonce: "Afficher le nombre de projections par film (jointure FILM + PROJECTION).", ref: "SELECT f.titre, COUNT(p.idProj) AS nb FROM film f, projection p WHERE f.idFilm = p.idFilm GROUP BY f.idFilm, f.titre;", explication: "COUNT sur jointure avec GROUP BY." },
-  { id: 33, type: 'select', enonce: "Afficher les acteurs qui ont joué dans au moins un film d'action.", ref: "SELECT DISTINCT a.nom FROM acteur a, jouer j, film f WHERE a.idActeur = j.idActeur AND j.idFilm = f.idFilm AND f.genre = 'Action';", explication: "DISTINCT pour éliminer les doublons sur jointure triple." },
-  { id: 34, type: 'select', enonce: "Afficher les films sans réalisateur (idReal IS NULL).", ref: "SELECT titre FROM film WHERE idReal IS NULL;", explication: "Test IS NULL sur clé étrangère." },
-  { id: 35, type: 'select', enonce: "Afficher le cachet moyen par genre de film.", ref: "SELECT f.genre, AVG(j.cachet) AS moy FROM jouer j, film f WHERE j.idFilm = f.idFilm GROUP BY f.genre;", explication: "AVG groupé par genre via jointure." },
-  { id: 36, type: 'select', enonce: "Afficher les films dont le titre fait plus de 10 caractères (LENGTH).", ref: "SELECT titre FROM film WHERE LENGTH(titre) > 10;", explication: "Fonction LENGTH sur une chaîne." },
-  { id: 37, type: 'select', enonce: "Afficher les réalisateurs américains.", ref: "SELECT nom, prenom FROM realisateur WHERE nationalite = 'Américaine';", explication: "Filtre d'égalité sur chaîne." },
-  { id: 38, type: 'select', enonce: "Afficher les films dont le budget est compris entre 50 000 000 et 150 000 000 $.", ref: "SELECT titre, budget FROM film WHERE budget BETWEEN 50000000 AND 150000000;", explication: "BETWEEN sur montant." },
-  { id: 39, type: 'select', enonce: "Compter le nombre de rôles dans JOUER dont le cachet dépasse 10 000 $.", ref: "SELECT COUNT(*) AS nb FROM jouer WHERE cachet > 10000;", explication: "COUNT avec condition sur cachet." },
-  { id: 40, type: 'ldd', enonce: "Ajouter à FILM une colonne paysOrigine (VARCHAR(30)) obligatoire, avec la valeur par défaut « Inconnue ».", ref: "ALTER TABLE film ADD paysOrigine VARCHAR(30) NOT NULL DEFAULT 'Inconnue';", explication: "ADD COLUMN avec NOT NULL et DEFAULT." },
-  { id: 41, type: 'ldd', enonce: "Modifier la valeur par défaut de paysOrigine par « Tunisie ».", ref: "ALTER TABLE film ALTER paysOrigine SET DEFAULT 'Tunisie';", explication: "ALTER ... SET DEFAULT pour changer la valeur par défaut." },
-  { id: 42, type: 'ldd', enonce: "Rendre nationalite obligatoire dans ACTEUR (d'abord corriger les NULL, puis ALTER TABLE).", ref: "UPDATE acteur SET nationalite = 'Non precisee' WHERE nationalite IS NULL;\nALTER TABLE acteur MODIFY nationalite VARCHAR(30) NOT NULL;", explication: "Il faut d'abord remplacer les NULL avant de rendre NOT NULL." },
-  { id: 43, type: 'ldd', enonce: "Créer une table projection_test qui référence FILM avec ON UPDATE CASCADE et ON DELETE CASCADE.", ref: "CREATE TABLE projection_test (\n  idProj INT PRIMARY KEY,\n  idFilm INT,\n  salle VARCHAR(20),\n  FOREIGN KEY (idFilm) REFERENCES film(idFilm)\n    ON UPDATE CASCADE\n    ON DELETE CASCADE\n);", explication: "Clé étrangère avec propagation en cascade." },
-  { id: 44, type: 'ldd', enonce: "Supprimer le film dont l'identifiant est 70 (après cascade).", ref: "DELETE FROM film WHERE idFilm = 70;", explication: "DELETE avec condition sur clé primaire." },
-  { id: 45, type: 'select', enonce: "Après les opérations précédentes, afficher les projections restantes de projection_test avec le titre du film.", ref: "SELECT p.idProj, p.idFilm, f.titre FROM projection_test p, film f WHERE p.idFilm = f.idFilm ORDER BY p.idProj;", explication: "Jointure finale après les cascades UPDATE/DELETE." }
+  /* ===== PARTIE 1 : LDD (QUESTIONS 1-5) ===== */
+  { id: 1, type: 'ldd', partie: 'Partie 1 : LDD', enonce: "Créer les tables REALISATEUR, FILM, ACTEUR, JOUER et PROJECTION avec leurs clés primaires et étrangères.\nduree doit être > 0, annee ≥ 1900 et cachet ≥ 0.", ref: `CREATE TABLE realisateur (\n  idReal INT PRIMARY KEY,\n  nom VARCHAR(30) NOT NULL,\n  prenom VARCHAR(30),\n  nationalite VARCHAR(30)\n);\nCREATE TABLE acteur (\n  idActeur INT PRIMARY KEY,\n  nom VARCHAR(30) NOT NULL,\n  prenom VARCHAR(30),\n  dateNaiss DATE,\n  nationalite VARCHAR(30)\n);\nCREATE TABLE film (\n  idFilm INT AUTO_INCREMENT PRIMARY KEY,\n  titre VARCHAR(50) NOT NULL,\n  genre VARCHAR(30),\n  annee INT CHECK (annee >= 1900),\n  duree INT CHECK (duree > 0),\n  budget BIGINT,\n  idReal INT,\n  FOREIGN KEY (idReal) REFERENCES realisateur(idReal)\n);\nCREATE TABLE jouer (\n  idFilm INT,\n  idActeur INT,\n  role VARCHAR(40),\n  cachet DECIMAL(10,2) CHECK (cachet >= 0),\n  PRIMARY KEY (idFilm, idActeur),\n  FOREIGN KEY (idFilm) REFERENCES film(idFilm),\n  FOREIGN KEY (idActeur) REFERENCES acteur(idActeur)\n);\nCREATE TABLE projection (\n  idProj INT PRIMARY KEY,\n  idFilm INT,\n  salle VARCHAR(20),\n  dateProj DATE,\n  nbSpectateurs INT,\n  FOREIGN KEY (idFilm) REFERENCES film(idFilm)\n);`, explication: "LDD : création des 5 tables avec clés primaires, étrangères et contraintes CHECK." },
+  { id: 2, type: 'ldd', partie: 'Partie 1 : LDD', enonce: "Ajouter à ACTEUR une colonne email (VARCHAR 50).", ref: "ALTER TABLE acteur ADD email VARCHAR(50);", explication: "Ajout d'une colonne avec ALTER TABLE ADD." },
+  { id: 3, type: 'ldd', partie: 'Partie 1 : LDD', enonce: "Modifier le type de titre en VARCHAR(100) et rendre la colonne genre NOT NULL.", ref: "ALTER TABLE film MODIFY titre VARCHAR(100);\nALTER TABLE film MODIFY genre VARCHAR(30) NOT NULL;", explication: "Modification de type et de contrainte NOT NULL sur deux colonnes." },
+  { id: 4, type: 'ldd', partie: 'Partie 1 : LDD', enonce: "Supprimer la colonne email d'ACTEUR.", ref: "ALTER TABLE acteur DROP COLUMN email;", explication: "Suppression de colonne avec DROP COLUMN." },
+  { id: 5, type: 'ldd', partie: 'Partie 1 : LDD', enonce: "Supprimer la table PROJECTION, puis la recréer avec sa clé étrangère vers FILM.", ref: "DROP TABLE projection;\nCREATE TABLE projection (\n  idProj INT PRIMARY KEY,\n  idFilm INT,\n  salle VARCHAR(20),\n  dateProj DATE,\n  nbSpectateurs INT,\n  FOREIGN KEY (idFilm) REFERENCES film(idFilm)\n);", explication: "DROP puis CREATE pour recréer la table." },
+
+  /* ===== PARTIE 2 : LMD (QUESTIONS 6-10) ===== */
+  { id: 6, type: 'lmd', partie: 'Partie 2 : LMD', enonce: "Insérer 3 réalisateurs, 6 films, 6 acteurs et au moins 10 lignes dans JOUER (+ 9 projections). Le cachet est exprimé en milliers de dollars.", ref: "INSERT INTO realisateur VALUES (1,'Nolan','Christopher','Britannique'), (2,'Scorsese','Martin','Américaine'), (3,'Hazanavicius','Michel','Française');\nINSERT INTO film VALUES (1,'Inception','Science-fiction',2010,140,160000000,1), (2,'Interstellar','Science-fiction',2014,169,165000000,1), (3,'The Dark Knight','Action',2008,152,185000000,1), (4,'Les Infiltrés','Action',2006,151,90000000,2), (5,'Shutter Island','Thriller',2010,138,80000000,2), (6,'OSS 117','Comédie',2006,99,14000000,3);\nINSERT INTO acteur VALUES (1,'DiCaprio','Leonardo','1974-11-11','Américaine'), (2,'Bale','Christian','1974-11-11','Britannique'), (3,'Ledger','Heath','1979-04-04','Australienne'), (4,'Dujardin','Jean','1972-06-19','Française'), (5,'McConaughey','Matthew','1969-11-04','Américaine'), (6,'Ruffalo','Mark','1967-11-22','Américaine');", explication: "INSERT multiple dans realisateur, film, acteur (données d'exemple du PDF)." },
+  { id: 7, type: 'lmd', partie: 'Partie 2 : LMD', enonce: "Insérer un nouveau film en ne renseignant que titre, genre et idReal ('Tenet', 'Action', 1).", ref: "INSERT INTO film (titre, genre, idReal) VALUES ('Tenet', 'Action', 1);", explication: "INSERT partiel : seules trois colonnes sont renseignées." },
+  { id: 8, type: 'lmd', partie: 'Partie 2 : LMD', enonce: "Mettre à jour la durée du film « Inception » à 148 minutes.", ref: "UPDATE film SET duree = 148 WHERE titre = 'Inception';", explication: "UPDATE avec condition WHERE sur le titre." },
+  { id: 9, type: 'lmd', partie: 'Partie 2 : LMD', enonce: "Augmenter de 10 % le cachet de tous les rôles dont le cachet est inférieur à 5000.", ref: "UPDATE jouer SET cachet = cachet * 1.10 WHERE cachet < 5000;", explication: "UPDATE avec calcul arithmétique et condition WHERE." },
+  { id: 10, type: 'lmd', partie: 'Partie 2 : LMD', enonce: "Augmenter de 20 % les cachets des acteurs jouant dans les films du genre « Action » réalisés par « Nolan ».", ref: "UPDATE jouer j, film f, realisateur r\nSET j.cachet = j.cachet * 1.20\nWHERE j.idFilm = f.idFilm\n  AND f.idReal = r.idReal\n  AND f.genre = 'Action'\n  AND r.nom = 'Nolan';", explication: "UPDATE multi-tables avec jointure implicite et conditions multiples." },
+
+  /* ===== PARTIE 3 : SELECT SIMPLES (QUESTIONS 11-25) ===== */
+  { id: 11, type: 'select', partie: 'Partie 3 : SELECT simples', enonce: "Afficher tous les films sortis après l'année 2000.", ref: "SELECT * FROM film WHERE annee > 2000;", explication: "SELECT simple avec filtre sur l'année." },
+  { id: 12, type: 'select', partie: 'Partie 3 : SELECT simples', enonce: "Afficher le titre et le genre des films de science-fiction.", ref: "SELECT titre, genre FROM film WHERE genre = 'Science-fiction';", explication: "SELECT colonnes spécifiques avec filtre d'égalité." },
+  { id: 13, type: 'select', partie: 'Partie 3 : SELECT simples', enonce: "Afficher les films dont le budget dépasse 100 000 000 $, triés par budget décroissant.", ref: "SELECT titre, budget FROM film WHERE budget > 100000000 ORDER BY budget DESC;", explication: "SELECT avec filtre numérique et tri décroissant." },
+  { id: 14, type: 'select', partie: 'Partie 3 : SELECT simples', enonce: "Afficher le nombre de films par genre.", ref: "SELECT genre, COUNT(*) AS nb FROM film GROUP BY genre;", explication: "GROUP BY avec fonction d'agrégation COUNT." },
+  { id: 15, type: 'select', partie: 'Partie 3 : SELECT simples', enonce: "Afficher les films dont la durée est comprise entre 100 et 150 minutes.", ref: "SELECT titre, duree FROM film WHERE duree BETWEEN 100 AND 150;", explication: "Opérateur BETWEEN pour intervalle." },
+  { id: 16, type: 'select', partie: 'Partie 3 : SELECT simples', enonce: "Afficher le titre des films et le nom de leur réalisateur (jointure FILM + REALISATEUR).", ref: "SELECT f.titre, r.nom FROM film f, realisateur r WHERE f.idReal = r.idReal;", explication: "Jointure implicite entre deux tables." },
+  { id: 17, type: 'select', partie: 'Partie 3 : SELECT simples', enonce: "Afficher les acteurs nés en novembre (MONTH = 11).", ref: "SELECT nom, prenom FROM acteur WHERE MONTH(dateNaiss) = 11;", explication: "Fonction MONTH sur une colonne DATE." },
+  { id: 18, type: 'select', partie: 'Partie 3 : SELECT simples', enonce: "Afficher les films dont la durée est NULL ou supérieure à 140 minutes.", ref: "SELECT titre, duree FROM film WHERE duree IS NULL OR duree > 140;", explication: "Test IS NULL combiné à une comparaison." },
+  { id: 19, type: 'select', partie: 'Partie 3 : SELECT simples', enonce: "Afficher les réalisateurs qui ont réalisé au moins 2 films.", ref: "SELECT r.nom, COUNT(*) AS nb FROM realisateur r, film f WHERE r.idReal = f.idReal GROUP BY r.idReal, r.nom HAVING COUNT(*) >= 2;", explication: "GROUP BY avec HAVING sur fonction d'agrégation." },
+  { id: 20, type: 'select', partie: 'Partie 3 : SELECT simples', enonce: "Afficher le cachet total payé pour le film « Inception » (somme des cachets des rôles).", ref: "SELECT SUM(j.cachet) AS total FROM jouer j, film f WHERE j.idFilm = f.idFilm AND f.titre = 'Inception';", explication: "SUM sur jointure avec condition de titre." },
+  { id: 21, type: 'select', partie: 'Partie 3 : SELECT simples', enonce: "Afficher le jour de la semaine de chaque projection (DAYNAME).", ref: "SELECT f.titre, p.dateProj, DAYNAME(p.dateProj) AS jour FROM film f, projection p WHERE f.idFilm = p.idFilm ORDER BY p.dateProj;", explication: "Fonction DAYNAME sur une date." },
+  { id: 22, type: 'select', partie: 'Partie 3 : SELECT simples', enonce: "Afficher les films projetés dans les 30 derniers jours (par rapport au 01/11/2026).", ref: "SELECT f.titre, p.dateProj FROM film f, projection p WHERE f.idFilm = p.idFilm AND p.dateProj >= CURDATE() - INTERVAL 30 DAY AND p.dateProj <= CURDATE();", explication: "Utilisation de CURDATE() et INTERVAL." },
+  { id: 23, type: 'select', partie: 'Partie 3 : SELECT simples', enonce: "Afficher le nombre de spectateurs maximum par salle.", ref: "SELECT salle, MAX(nbSpectateurs) AS maxSpect FROM projection GROUP BY salle;", explication: "MAX avec GROUP BY." },
+  { id: 24, type: 'select', partie: 'Partie 3 : SELECT simples', enonce: "Afficher les films dont la durée n'est pas égale à 148 minutes.", ref: "SELECT titre FROM film WHERE duree <> 148;", explication: "Opérateur <> (différent). Note: NULL <> 148 est UNKNOWN." },
+  { id: 25, type: 'select', partie: 'Partie 3 : SELECT simples', enonce: "Compter le nombre total de films et le nombre de durées non nulles.", ref: "SELECT COUNT(*) AS nbFilms, COUNT(duree) AS nbDurees FROM film;", explication: "COUNT(*) compte toutes les lignes, COUNT(colonne) ignore les NULL." },
+
+  /* ===== PARTIE 4 : SELECT AVANCÉES (QUESTIONS 26-39) ===== */
+  { id: 26, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Calculer la durée moyenne des films (AVG).", ref: "SELECT AVG(duree) AS moyenne FROM film;", explication: "AVG ignore les valeurs NULL." },
+  { id: 27, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher les films dont le titre contient le mot « The » (LIKE).", ref: "SELECT titre FROM film WHERE titre LIKE '%The%';", explication: "Opérateur LIKE avec jokers %." },
+  { id: 28, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher les acteurs dont le nom commence par 'D'.", ref: "SELECT nom FROM acteur WHERE nom LIKE 'D%';", explication: "LIKE avec joker en fin de chaîne." },
+  { id: 29, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher les films classés par durée croissante, puis par titre alphabétique.", ref: "SELECT titre, duree FROM film ORDER BY duree ASC, titre ASC;", explication: "Tri multi-colonnes." },
+  { id: 30, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher les 3 films les plus récents (LIMIT).", ref: "SELECT titre, annee FROM film ORDER BY annee DESC LIMIT 3;", explication: "LIMIT pour restreindre le nombre de résultats." },
+  { id: 31, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher les projections avec plus de 100 spectateurs.", ref: "SELECT * FROM projection WHERE nbSpectateurs > 100;", explication: "Filtre numérique simple." },
+  { id: 32, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher le nombre de projections par film (jointure FILM + PROJECTION).", ref: "SELECT f.titre, COUNT(p.idProj) AS nb FROM film f, projection p WHERE f.idFilm = p.idFilm GROUP BY f.idFilm, f.titre;", explication: "COUNT sur jointure avec GROUP BY." },
+  { id: 33, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher les acteurs qui ont joué dans au moins un film d'action.", ref: "SELECT DISTINCT a.nom FROM acteur a, jouer j, film f WHERE a.idActeur = j.idActeur AND j.idFilm = f.idFilm AND f.genre = 'Action';", explication: "DISTINCT pour éliminer les doublons sur jointure triple." },
+  { id: 34, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher les films sans réalisateur (idReal IS NULL).", ref: "SELECT titre FROM film WHERE idReal IS NULL;", explication: "Test IS NULL sur clé étrangère." },
+  { id: 35, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher le cachet moyen par genre de film.", ref: "SELECT f.genre, AVG(j.cachet) AS moy FROM jouer j, film f WHERE j.idFilm = f.idFilm GROUP BY f.genre;", explication: "AVG groupé par genre via jointure." },
+  { id: 36, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher les films dont le titre fait plus de 10 caractères (LENGTH).", ref: "SELECT titre FROM film WHERE LENGTH(titre) > 10;", explication: "Fonction LENGTH sur une chaîne." },
+  { id: 37, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher les réalisateurs américains.", ref: "SELECT nom, prenom FROM realisateur WHERE nationalite = 'Américaine';", explication: "Filtre d'égalité sur chaîne." },
+  { id: 38, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher les films dont le budget est compris entre 50 000 000 et 150 000 000 $.", ref: "SELECT titre, budget FROM film WHERE budget BETWEEN 50000000 AND 150000000;", explication: "BETWEEN sur montant." },
+  { id: 39, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Compter le nombre de rôles dans JOUER dont le cachet dépasse 10 000 $.", ref: "SELECT COUNT(*) AS nb FROM jouer WHERE cachet > 10000;", explication: "COUNT avec condition sur cachet." },
+
+  /* ===== PARTIE 5 : ALTER TABLE, DEFAULT, CASCADE (QUESTIONS 40-45) ===== */
+  { id: 40, type: 'ldd', partie: 'Partie 5 : DEFAULT et clés étrangères', enonce: "Ajouter à FILM une colonne paysOrigine (VARCHAR(30)) obligatoire, avec la valeur par défaut « Inconnue ».", ref: "ALTER TABLE film ADD paysOrigine VARCHAR(30) NOT NULL DEFAULT 'Inconnue';", explication: "ADD COLUMN avec NOT NULL et DEFAULT." },
+  { id: 41, type: 'ldd', partie: 'Partie 5 : DEFAULT et clés étrangères', enonce: "Modifier la valeur par défaut de paysOrigine par « Tunisie ».", ref: "ALTER TABLE film ALTER paysOrigine SET DEFAULT 'Tunisie';", explication: "ALTER ... SET DEFAULT pour changer la valeur par défaut." },
+  { id: 42, type: 'ldd', partie: 'Partie 5 : DEFAULT et clés étrangères', enonce: "Rendre nationalite obligatoire dans ACTEUR (d'abord corriger les NULL, puis ALTER TABLE).", ref: "UPDATE acteur SET nationalite = 'Non precisee' WHERE nationalite IS NULL;\nALTER TABLE acteur MODIFY nationalite VARCHAR(30) NOT NULL;", explication: "Il faut d'abord remplacer les NULL avant de rendre NOT NULL." },
+  { id: 43, type: 'ldd', partie: 'Partie 5 : DEFAULT et clés étrangères', enonce: "Créer une table projection_test qui référence FILM avec ON UPDATE CASCADE et ON DELETE CASCADE.", ref: "CREATE TABLE projection_test (\n  idProj INT PRIMARY KEY,\n  idFilm INT,\n  salle VARCHAR(20),\n  FOREIGN KEY (idFilm) REFERENCES film(idFilm)\n    ON UPDATE CASCADE\n    ON DELETE CASCADE\n);", explication: "Clé étrangère avec propagation en cascade." },
+  { id: 44, type: 'ldd', partie: 'Partie 5 : DEFAULT et clés étrangères', enonce: "Supprimer le film dont l'identifiant est 70 (après cascade).", ref: "DELETE FROM film WHERE idFilm = 70;", explication: "DELETE avec condition sur clé primaire." },
+  { id: 45, type: 'select', partie: 'Partie 5 : DEFAULT et clés étrangères', enonce: "Après les opérations précédentes, afficher les projections restantes de projection_test avec le titre du film.", ref: "SELECT p.idProj, p.idFilm, f.titre FROM projection_test p, film f WHERE p.idFilm = f.idFilm ORDER BY p.idProj;", explication: "Jointure finale après les cascades UPDATE/DELETE." },
+
+  /* ===== PARTIE 6 : PRÉVOIR LE RÉSULTAT (QUESTIONS 46-55) ===== */
+  { id: 46, type: 'resultat', partie: 'Partie 6 : Prévoir le résultat', enonce: "Compter le nombre de rôles dont le cachet dépasse 10 000 $.", ref: "SELECT COUNT(*) AS nb FROM jouer WHERE cachet > 10000;\n\nRésultat attendu : 3 (Dom Cobb 20000, Cooper 15000, Bruce Wayne 14400).", explication: "3 rôles ont un cachet > 10000 : Dom Cobb (20000), Cooper (15000), Bruce Wayne (14400)." },
+  { id: 47, type: 'resultat', partie: 'Partie 6 : Prévoir le résultat', enonce: "Compter le nombre total de films et le nombre de durées non nulles.", ref: "SELECT COUNT(*) AS nbFilms, COUNT(duree) AS nbDurees FROM film;\n\nRésultat attendu : 7 films, 6 durées (le film 'Film test' n'a pas de durée).", explication: "COUNT(*) compte toutes les lignes, COUNT(colonne) ignore les NULL." },
+  { id: 48, type: 'resultat', partie: 'Partie 6 : Prévoir le résultat', enonce: "Calculer la durée moyenne des films (AVG).", ref: "SELECT AVG(duree) AS moyenne FROM film;\n\nRésultat attendu : 142.8333.", explication: "AVG ignore les valeurs NULL (857 / 6)." },
+  { id: 49, type: 'resultat', partie: 'Partie 6 : Prévoir le résultat', enonce: "Afficher les films dont la durée n'est pas égale à 148 minutes.", ref: "SELECT titre FROM film WHERE duree <> 148;\n\nRésultat attendu : Interstellar, The Dark Knight, Les Infiltrés, Shutter Island, OSS 117. « Film test » n'apparaît pas car NULL <> 148 est UNKNOWN.", explication: "NULL <> 148 n'est ni vrai ni faux (UNKNOWN)." },
+  { id: 50, type: 'resultat', partie: 'Partie 6 : Prévoir le résultat', enonce: "Afficher le nombre de films par acteur (jointure ACTEUR + JOUER).", ref: "SELECT a.nom, COUNT(*) AS nbFilms FROM acteur a, jouer j WHERE a.idActeur = j.idActeur GROUP BY a.idActeur, a.nom;\n\nRésultat attendu : DiCaprio 1, Bale 2, Ledger 2, Dujardin 2, McConaughey 1. Cotillard et Hathaway sont absentes.", explication: "Les acteurs sans ligne dans jouer sont éliminés par la jointure." },
+  { id: 51, type: 'resultat', partie: 'Partie 6 : Prévoir le résultat', enonce: "Afficher les films avec plus de 150 spectateurs au total.", ref: "SELECT f.titre, SUM(p.nbSpectateurs) AS total FROM film f, projection p WHERE f.idFilm = p.idFilm GROUP BY f.idFilm, f.titre HAVING SUM(p.nbSpectateurs) > 150;\n\nRésultat attendu : Inception 205, Interstellar 260.", explication: "HAVING filtre sur le résultat de l'agrégation." },
+  { id: 52, type: 'resultat', partie: 'Partie 6 : Prévoir le résultat', enonce: "Statistiques par salle.", ref: "SELECT salle, COUNT(*) AS nbProj, MAX(nbSpectateurs) AS maxSpect FROM projection GROUP BY salle;\n\nRésultat attendu : Salle 1 (4, 150), Salle 2 (2, 120), Salle 3 (1, 70).", explication: "COUNT et MAX groupés par salle." },
+  { id: 53, type: 'resultat', partie: 'Partie 6 : Prévoir le résultat', enonce: "Auto-jointure : afficher les acteurs et leur parrain (idParrain).", ref: "SELECT a.nom AS acteur, p.nom AS parrain FROM acteur a, acteur p WHERE a.idParrain = p.idActeur AND p.idParrain IS NULL;", explication: "Auto-jointure avec condition supplémentaire." },
+  { id: 54, type: 'resultat', partie: 'Partie 6 : Prévoir le résultat', enonce: "Afficher les acteurs nés en novembre.", ref: "SELECT nom, dateNaiss FROM acteur WHERE MONTH(dateNaiss) = 11;\n\nRésultat attendu : DiCaprio, Bale, McConaughey, Hathaway.", explication: "Fonction MONTH sur dateNaiss." },
+  { id: 55, type: 'resultat', partie: 'Partie 6 : Prévoir le résultat', enonce: "Somme des cachets pour le film « Inception ».", ref: "SELECT SUM(j.cachet) AS total FROM jouer j, film f WHERE j.idFilm = f.idFilm AND f.titre = 'Inception';\n\nRésultat attendu : 29350.00.", explication: "20000 + 4950 + 4400." },
+
+  /* ===== PARTIE 7 : PRÉVOIR L'ERREUR (QUESTIONS 56-60) ===== */
+  { id: 56, type: 'erreur', partie: 'Partie 7 : Prévoir l'erreur', enonce: "INSERT INTO jouer VALUES (1, 1, 'Figurant', 100); — Cette insertion réussit-elle ou échoue-t-elle ?", ref: "Échec : la clé primaire (idFilm, idActeur) = (1, 1) existe déjà (« Duplicate entry »).", explication: "Clé primaire composite violée : l'entrée (1,1) existe déjà." },
+  { id: 57, type: 'erreur', partie: 'Partie 7 : Prévoir l'erreur', enonce: "INSERT INTO film (titre, genre, annee) VALUES ('Metropolis', 'Drame', 1850); — Cette insertion réussit-elle ou échoue-t-elle ?", ref: "Échec : la contrainte CHECK (annee >= 1900) est violée (1850 < 1900).", explication: "Contrainte CHECK sur annee violée." },
+  { id: 58, type: 'erreur', partie: 'Partie 7 : Prévoir l'erreur', enonce: "INSERT INTO projection VALUES (10, 99, 'Salle 1', '2026-11-20', 50); — Cette insertion réussit-elle ou échoue-t-elle ?", ref: "Échec : le film 99 n'existe pas, la clé étrangère idFilm est violée.", explication: "Clé étrangère vers film violée (idFilm=99 inexistant)." },
+  { id: 59, type: 'erreur', partie: 'Partie 7 : Prévoir l'erreur', enonce: "DELETE FROM realisateur WHERE idReal = 3; — Cette suppression réussit-elle ou échoue-t-elle ?", ref: "Échec : le film « OSS 117 » référence ce réalisateur et la clé étrangère n'a pas de ON DELETE CASCADE.", explication: "Clé étrangère sans cascade : suppression bloquée." },
+  { id: 60, type: 'erreur', partie: 'Partie 7 : Prévoir l'erreur', enonce: "DELETE FROM film WHERE idFilm = 8; — Cette suppression réussit-elle ou échoue-t-elle ?", ref: "Réussit : le film 8 n'est référencé par aucune autre table, donc aucune contrainte n'est violée.", explication: "Aucune clé étrangère ne référence le film 8." }
 ];
 
 let currentIndex = 0;
 let score = 0;
 let answered = false;
 let synth = window.speechSynthesis;
-const VOIX_MASCULINE = 'voice-00';
 
 // Éléments DOM
 const ecranAccueil = document.getElementById('ecran-accueil');
@@ -864,6 +909,7 @@ const btnSuivant = document.getElementById('btn-suivant');
 const btnRecommencer = document.getElementById('btn-recommencer');
 const qNumero = document.getElementById('q-numero');
 const qType = document.getElementById('q-type');
+const qPartie = document.getElementById('q-partie');
 const qEnonce = document.getElementById('q-enonce');
 const qReponse = document.getElementById('q-reponse');
 const resultat = document.getElementById('resultat');
@@ -897,7 +943,6 @@ function parler(texte) {
   utterance.lang = 'fr-FR';
   utterance.rate = 0.9;
   utterance.pitch = 1;
-  // Tenter d'utiliser la voix masculine enregistrée
   const voices = synth.getVoices();
   const voixMasc = voices.find(v => v.name.includes('voice-00') || v.lang === 'fr-FR');
   if (voixMasc) utterance.voice = voixMasc;
@@ -951,6 +996,7 @@ function afficherQuestion() {
   const q = QUESTIONS[currentIndex];
   qNumero.textContent = `Q${q.id}`;
   qType.textContent = q.type.toUpperCase();
+  qPartie.textContent = q.partie;
   qEnonce.textContent = q.enonce;
   qReponse.value = '';
   qReponse.disabled = false;
@@ -1030,7 +1076,7 @@ function recommencer() {
 // Écouteurs
 btnStart.addEventListener('click', () => {
   afficherEcran('mission');
-  parler("Bienvenue dans la mission cinéma. Je vais vous poser quarante-cinq questions SQL. Écrivez votre réponse dans le texte et cliquez sur Valider.");
+  parler("Bienvenue dans la mission cinéma. Je vais vous poser soixante questions SQL réparties sur sept parties. Écrivez votre réponse dans le texte et cliquez sur Valider.");
   setTimeout(() => afficherQuestion(), 2500);
 });
 
