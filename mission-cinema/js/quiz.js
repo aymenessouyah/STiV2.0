@@ -79,24 +79,125 @@ function toggleAudio() {
   // ----------------------------- normalisation SQL -----------------------------
   function normaliserSQL(sql) {
     if (sql == null) return "";
-    return String(sql)
+    var s = String(sql)
       .toLowerCase()
       .replace(/;/g, " ")
       .replace(/--[^\n]*/g, " ")
       .replace(/\/\*[\s\S]*?\*\//g, " ")
       .replace(/[\s\u00A0]+/g, " ")
-      .replace(/\(/g, " ( ")
-      .replace(/\)/g, " ) ")
-      .replace(/,\s*/g, ", ")
-      .replace(/\s+/g, " ")
       .trim();
+
+    // Standardiser les mots-clés JOIN
+    s = s.replace(/\binner\s+join\b/g, " join ");
+    s = s.replace(/\bleft\s+outer\s+join\b/g, " left join ");
+    s = s.replace(/\bright\s+outer\s+join\b/g, " right join ");
+    s = s.replace(/\bfull\s+outer\s+join\b/g, " full join ");
+    s = s.replace(/\bnatural\s+join\b/g, " join ");
+    s = s.replace(/\bcross\s+join\b/g, " join ");
+
+    // Supprimer les préfixes de table/alias avant les colonnes (t.nom → nom)
+    s = s.replace(/\b([a-z_][a-z0-9_]*)\.([a-z_][a-z0-9_]*)\b/g, "$2");
+
+    // Supprimer les alias de table dans FROM/JOIN (table AS alias → table, table alias → table)
+    s = s.replace(/\bfrom\s+([a-z_][a-z0-9_]*)\s+as\s+([a-z_][a-z0-9_]*)/gi, "from $1");
+    s = s.replace(/\bjoin\s+([a-z_][a-z0-9_]*)\s+as\s+([a-z_][a-z0-9_]*)/gi, "join $1");
+    s = s.replace(/\bfrom\s+([a-z_][a-z0-9_]*)\s+([a-z_][a-z0-9_])(?=\s|$|,|join|where|on|left|right|inner)/gi, "from $1");
+    s = s.replace(/\bjoin\s+([a-z_][a-z0-9_]*)\s+([a-z_][a-z0-9_])(?=\s|$|,|join|where|on|left|right|inner)/gi, "join $1");
+
+    // Normaliser les opérateurs de comparaison
+    s = s.replace(/\s*=\s*/g, " = ");
+    s = s.replace(/\s*<>\s*/g, " <> ");
+    s = s.replace(/\s*!=\s*/g, " <> ");
+    s = s.replace(/\s*>\s*/g, " > ");
+    s = s.replace(/\s*<\s*/g, " < ");
+    s = s.replace(/\s*>=\s*/g, " >= ");
+    s = s.replace(/\s*<=\s*/g, " <= ");
+    s = s.replace(/\s+like\s+/g, " like ");
+    s = s.replace(/\s+in\s+/g, " in ");
+    s = s.replace(/\s+between\s+/g, " between ");
+    s = s.replace(/\s+is\s+null\s+/g, " is null ");
+    s = s.replace(/\s+is\s+not\s+null\s+/g, " is not null ");
+
+    // Espaces finals
+    s = s.replace(/\(\s+/g, "(");
+    s = s.replace(/\s+\)/g, ")");
+    s = s.replace(/\s+/g, " ").trim();
+
+    return s;
+  }
+
+  // Extrait les colonnes d'une clause SELECT (gère les parenthèses imbriquées)
+  function extraireColonnesSelect(champ) {
+    var cols = [];
+    var depth = 0;
+    var courant = "";
+    for (var i = 0; i < champ.length; i++) {
+      var ch = champ[i];
+      if (ch === "(") { depth++; courant += ch; }
+      else if (ch === ")") { depth--; courant += ch; }
+      else if (ch === "," && depth === 0) {
+        cols.push(courant.trim());
+        courant = "";
+      } else {
+        courant += ch;
+      }
+    }
+    if (courant.trim()) cols.push(courant.trim());
+    return cols;
+  }
+
+  // Reordonne les colonnes d'une clause SELECT par ordre alphabétique
+  function reordonnerColonnesSelect(s) {
+    var m = s.match(/^select\s+(distinct\s+)?(.*)\s+from\b/);
+    if (!m) return s;
+    var distinct = m[1] || "";
+    var colonnes = extraireColonnesSelect(m[2]);
+    colonnes.sort();
+    return "select " + distinct + colonnes.join(", ") + " from" + s.slice(m.index + m[0].indexOf("from"));
+  }
+
+  // Reordonne les conditions d'une clause WHERE séparées par AND
+  function reordonnerConditionsWhere(s) {
+    var m = s.match(/\bwhere\b(.*)$/);
+    if (!m) return s;
+    var wherePart = m[1];
+    // Ne pas splitter à l'intérieur de parenthèses ou de sous-requêtes
+    var conds = [];
+    var depth = 0;
+    var courant = "";
+    for (var i = 0; i < wherePart.length; i++) {
+      var ch = wherePart[i];
+      if (ch === "(") { depth++; courant += ch; }
+      else if (ch === ")") { depth--; courant += ch; }
+      else if (depth === 0 && wherePart.slice(i, i + 3).toLowerCase() === "and") {
+        conds.push(courant.trim());
+        courant = "";
+        i += 2;
+      } else {
+        courant += ch;
+      }
+    }
+    if (courant.trim()) conds.push(courant.trim());
+    conds.sort();
+    return s.replace(/\bwhere\b.*$/, "where " + conds.join(" and "));
+  }
+
+  // Produit une forme canonique : colonnes SELECT triées, conditions WHERE triées
+  function canonicaliserSQL(sql) {
+    var s = normaliserSQL(sql);
+    // Ne pas reordonner pour CREATE/ALTER/INSERT/UPDATE/DELETE (structure fixe)
+    if (/^select\b/.test(s)) {
+      s = reordonnerColonnesSelect(s);
+      s = reordonnerConditionsWhere(s);
+    }
+    return s;
   }
 
   function sqlMatch(reponse, refs) {
-    var r = normaliserSQL(reponse);
+    var r = canonicaliserSQL(reponse);
     if (r === "") return false;
     for (var i = 0; i < refs.length; i++) {
-      if (r === normaliserSQL(refs[i])) return true;
+      if (r === canonicaliserSQL(refs[i])) return true;
     }
     return false;
   }
