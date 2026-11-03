@@ -142,6 +142,11 @@ p { color: var(--blanc-second); line-height: 1.7; }
 
 /* ===== UTILITAIRES ===== */
 .cacher { display: none !important; }
+
+/* Gestion des écrans — chaque écran est caché par défaut, seul l'écran "actif" s'affiche */
+.ecran { display: none; }
+.ecran.actif { display: block; }
+
 .section-titre {
   font-size: 0.75rem;
   text-transform: uppercase;
@@ -198,7 +203,8 @@ h1 {
 }
 .btn-principal {
   background: linear-gradient(135deg, var(--or), #d97706);
-  color: var(--noir-salle);
+<<<<<<< HEAD
+  color: var(--blanc);
   border: none;
   padding: 18px 40px;
   font-size: 1.15rem;
