@@ -177,13 +177,19 @@ window.AppController = (function () {
 
   function reprendreVideo() {
     tryOp(function () {
+      // 1. Cacher immédiatement le panneau de question
       cacherQuestion();
-      if (video && video.handleResume) video.handleResume();
-      var pending = video.getPendingQuestion ? video.getPendingQuestion() : null;
-      if (pending) {
-        video.triggerQuestion(pending);
-        video.clearPendingQuestion();
+      // 2. S'assurer que la vidéo est visible et au premier plan
+      if (videoEl) {
+        videoEl.style.display = "block";
+        videoEl.style.zIndex = "5";
       }
+      var ph = $id("video-placeholder");
+      if (ph) ph.classList.add("cacher");
+      // 3. Reprendre la lecture après un court délai pour laisser le rendu s'appliquer
+      setTimeout(function () {
+        if (video && video.handleResume) video.handleResume();
+      }, 150);
     }, "reprendreVideo");
   }
 
