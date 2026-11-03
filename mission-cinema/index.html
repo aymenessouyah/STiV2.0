@@ -1030,7 +1030,8 @@ function recommencer() {
 // Écouteurs
 btnStart.addEventListener('click', () => {
   afficherEcran('mission');
-  afficherQuestion();
+  parler("Bienvenue dans la mission cinéma. Je vais vous poser quarante-cinq questions SQL. Écrivez votre réponse dans le texte et cliquez sur Valider.");
+  setTimeout(() => afficherQuestion(), 2500);
 });
 
 btnValider.addEventListener('click', validerReponse);
