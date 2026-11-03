@@ -27,6 +27,7 @@ window.VideoController = (function () {
   var nextQuestionAfterFreeze = null;
   var videoFailed = false;
   var questionPollTimer = null;
+  var resumeGraceUntil = 0; // bloquer le déclenchement des questions juste après une reprise
 
   var onQuestionTrigger = null;
   var onTimeUpdate = null;
@@ -101,6 +102,7 @@ window.VideoController = (function () {
 
   function checkQuestionAtTime(t) {
     if (nextQuestionIndex >= data.questions.length) return;
+    if (Date.now() < resumeGraceUntil) return; // délai de grâce après reprise
     var q = data.questions[nextQuestionIndex];
     if (answeredIds.has(q.id)) return;
 
@@ -165,9 +167,11 @@ window.VideoController = (function () {
   function handleResume() {
     pausedForQuestion = false;
     questionLocked = false;
+    // Délai de grâce : pas de déclenchement de question pendant 1 seconde après reprise
+    resumeGraceUntil = Date.now() + 1000;
     var pending = getPendingQuestion();
     if (pending && pending.time != null) {
-      try { video.currentTime = pending.time; } catch (e) {}
+      try { video.currentTime = Math.max(0, pending.time - 0.5); } catch (e) {}
     }
     video.muted = false;
     return video.play().catch(function (err) {
