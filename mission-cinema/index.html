@@ -6,29 +6,28 @@
   <title>MISSION CINÉMA — STI Version 2.0</title>
   <style>
   /* ============================================================================
-     MISSION CINÉMA — Design "Lumière de Projection"
-     Thème très lumineux, accents or et bleu, typographie épurée
+     MISSION CINÉMA — STI Version 2.0
+     Thème lumineux, schéma graphique permanent, tables remplies, Vrai/Faux oral
      ============================================================================ */
   :root {
-    --bg-principal: #ffffff;
-    --bg-second: #f8fafc;
+    --bg-principal: #fdfaf5;
     --bg-card: #ffffff;
     --accent-or: #d4af37;
     --accent-or-fonce: #b8860b;
     --accent-bleu: #1e3a8a;
     --accent-bleu-clair: #3b82f6;
-    --texte-principal: #0f172a;
-    --texte-second: #475569;
-    --texte-clair: #64748b;
+    --texte-principal: #3d2b1f;
+    --texte-second: #6b5b4b;
+    --texte-clair: #8a7d6e;
     --texte-bouton: #ffffff;
-    --vert: #15803d;
-    --rouge: #b91c1c;
-    --gris-clair: #f1f5f9;
-    --bordure: #e2e8f0;
-    --rayon: 16px;
-    --rayon-sm: 10px;
-    --ombre: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
-    --ombre-hover: 0 12px 24px -4px rgba(0, 0, 0, 0.08);
+    --vert: #2e8b57;
+    --rouge: #b22222;
+    --gris-clair: #f0e9e0;
+    --bordure: #e8ddcf;
+    --rayon: 14px;
+    --rayon-sm: 8px;
+    --ombre: 0 4px 12px rgba(61, 43, 31, 0.08);
+    --ombre-hover: 0 8px 20px rgba(61, 43, 31, 0.12);
     --trans: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
@@ -46,10 +45,10 @@
   }
 
   h1, h2, h3, h4 {
-    font-weight: 800;
+    font-family: 'Playfair Display', 'Georgia', serif;
+    font-weight: 700;
     line-height: 1.2;
     color: var(--texte-principal);
-    letter-spacing: -0.5px;
   }
 
   p { color: var(--texte-second); }
@@ -60,22 +59,21 @@
     min-height: 100vh;
     background: var(--bg-principal);
     background-image:
-      radial-gradient(circle at 20% 25%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
-      radial-gradient(circle at 80% 80%, rgba(30, 58, 138, 0.06) 0%, transparent 50%);
+      radial-gradient(circle at 25% 30%, rgba(212, 175, 55, 0.12) 0%, transparent 55%),
+      radial-gradient(circle at 75% 75%, rgba(30, 58, 138, 0.08) 0%, transparent 55%);
   }
 
-  /* Rideaux de velours — version lumineuse */
+  /* Rideaux de velours */
   .rideau {
     position: absolute;
     top: 0;
     bottom: 0;
     width: 20vw;
     min-width: 90px;
-    background: linear-gradient(180deg, #f1f5f9 0%, #cbd5e1 50%, #f1f5f9 100%);
-    border: 2px solid var(--bordure);
+    background: linear-gradient(180deg, #b22222 0%, #8b0000 55%, #b22222 100%);
     z-index: 10;
     transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: inset 0 0 30px rgba(0,0,0,0.05);
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.35);
   }
 
   .rideau-gauche { left: 0; transform: translateX(-100%); }
@@ -97,21 +95,21 @@
     opacity: 0.6;
   }
 
-  /* Projecteurs — version lumineuse */
+  /* Projecteurs */
   .projecteur {
     position: absolute;
-    top: 30px;
-    width: 70px;
-    height: 90px;
-    background: var(--bg-card);
-    border: 3px solid var(--accent-bleu);
-    border-radius: 14px 14px 0 0;
+    top: 25px;
+    width: 75px;
+    height: 95px;
+    background: #8d6e63;
+    border: 3px solid #5d4037;
+    border-radius: 12px 12px 0 0;
     z-index: 5;
-    box-shadow: var(--ombre);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   }
 
-  .projecteur-gauche { left: 50px; }
-  .projecteur-droit { right: 50px; }
+  .projecteur-gauche { left: 45px; }
+  .projecteur-droit { right: 45px; }
 
   .projecteur::before {
     content: "";
@@ -119,34 +117,34 @@
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 14px;
-    height: 32px;
-    background: #94a3b8;
+    width: 12px;
+    height: 30px;
+    background: #5d4037;
   }
 
   .projecteur::after {
     content: "";
     position: absolute;
-    top: 40px;
+    top: 35px;
     left: 50%;
     transform: translateX(-50%);
-    width: 34px;
-    height: 8px;
-    background: var(--bg-card);
-    border: 2px solid var(--accent-bleu);
+    width: 32px;
+    height: 7px;
+    background: #8d6e63;
+    border: 2px solid #5d4037;
     border-radius: 4px;
   }
 
-  /* Lumière salle — très discrète */
+  /* Lumière salle */
   .lumiere-salle {
     position: absolute;
     inset: 0;
-    background: rgba(30, 58, 138, 0.08);
+    background: rgba(139, 69, 19, 0.20);
     z-index: 1;
     transition: opacity 1.5s ease;
   }
 
-  .lumiere-salle.allumee { opacity: 0.04; }
+  .lumiere-salle.allumee { opacity: 0.12; }
 
   /* ===== UTILITAIRES ===== */
   .cacher { display: none !important; }
@@ -158,20 +156,20 @@
 
   /* ===== ÉCRAN D'ACCUEIL ===== */
   .accueil-cadre {
-    max-width: 760px;
+    max-width: 740px;
     margin: 0 auto;
     padding: 100px 24px;
     text-align: center;
   }
 
   .logo {
-    font-size: 1.6rem;
+    font-size: 1.75rem;
     font-weight: 800;
-    color: var(--accent-bleu);
+    color: var(--accent-or-fonce);
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 60px;
+    margin-bottom: 56px;
     letter-spacing: -0.5px;
   }
 
@@ -181,11 +179,11 @@
     font-size: 3.5rem;
     color: var(--texte-principal);
     margin-bottom: 24px;
-    letter-spacing: -1.5px;
+    letter-spacing: -1px;
   }
 
   .sous-titre {
-    font-size: 1.2rem;
+    font-size: 1.15rem;
     color: var(--texte-second);
     max-width: 560px;
     margin: 0 auto 56px auto;
@@ -210,50 +208,62 @@
     background: linear-gradient(135deg, var(--accent-or), var(--accent-or-fonce));
     color: var(--texte-bouton);
     border: none;
-    padding: 20px 52px;
+    padding: 18px 48px;
     font-size: 1.15rem;
-    font-weight: 800;
+    font-weight: 700;
     border-radius: var(--rayon-sm);
     cursor: pointer;
     transition: var(--trans);
     display: inline-flex;
     align-items: center;
-    gap: 12px;
-    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+    gap: 10px;
+    box-shadow: 0 6px 16px rgba(212, 175, 55, 0.35);
   }
 
   .btn-principal:hover {
     transform: translateY(-3px);
-    box-shadow: 0 14px 28px rgba(212, 175, 55, 0.4);
+    box-shadow: 0 10px 24px rgba(212, 175, 55, 0.45);
   }
 
   .btn-principal:active { transform: translateY(0); }
 
-  .note { margin-top: 40px; font-size: 0.9rem; color: var(--texte-clair); }
+  .note { margin-top: 36px; font-size: 0.9rem; color: var(--texte-second); }
 
   /* ===== ÉCRAN DE MISSION ===== */
-  .mission-body {
-    padding: 36px 24px;
-    max-width: 900px;
+  .mission-layout {
+    display: flex;
+    gap: 24px;
+    padding: 24px;
+    max-width: 1400px;
     margin: 0 auto;
+    height: calc(100vh - 60px);
+    overflow: hidden;
   }
 
-  .panneau.carte-cinema {
+  /* Panneau latéral gauche — Score */
+  .panneau-score {
+    width: 300px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .carte-cinema {
     background: var(--bg-card);
-    padding: 32px 24px;
+    padding: 28px 22px;
     border-radius: var(--rayon);
     box-shadow: var(--ombre);
     border: 1px solid var(--bordure);
-    margin-bottom: 36px;
   }
 
-  .score-cercle { text-align: center; margin-bottom: 24px; }
+  .score-cercle { text-align: center; margin-bottom: 20px; }
 
   .score-anneau { position: relative; }
 
-  .score-svg { transform: rotate(-90deg); width: 150px; height: 150px; }
+  .score-svg { transform: rotate(-90deg); width: 140px; height: 140px; }
 
-  .score-fond { stroke: var(--gris-clair); }
+  .score-fond { stroke: #f0e9e0; }
 
   .score-remplissage {
     stroke: var(--accent-or);
@@ -276,8 +286,8 @@
 
   .score-details {
     display: flex;
-    gap: 28px;
-    margin-top: 18px;
+    gap: 24px;
+    margin-top: 16px;
   }
 
   .score-item {
@@ -303,26 +313,26 @@
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.14em;
-    color: var(--accent-bleu);
+    color: var(--accent-or-fonce);
     font-weight: 800;
-    margin: 24px 0 14px 0;
+    margin: 24px 0 12px 0;
   }
 
-  #liste-questions { list-style: none; }
+  #liste-etapes { list-style: none; }
 
-  .q-item {
-    padding: 11px 15px;
+  .etape-item {
+    padding: 10px 14px;
     border-radius: var(--rayon-sm);
-    margin-bottom: 9px;
+    margin-bottom: 8px;
     font-size: 0.875rem;
-    background: var(--bg-second);
-    border: 1px solid var(--bordure);
+    background: #faf7f0;
+    border: 1px solid #f0e9e0;
   }
 
-  .q-item.traitee { border-left: 3px solid var(--vert); background: #f0fdf4; }
-  .q-item.incorrecte { border-left: 3px solid var(--rouge); background: #fef2f2; }
+  .etape-item.traitee { border-left: 3px solid var(--vert); background: #f0f7f2; }
+  .etape-item.incorrecte { border-left: 3px solid var(--rouge); background: #fef2f2; }
 
-  .q-badge {
+  .etape-badge {
     display: inline-block;
     width: 20px;
     height: 20px;
@@ -336,12 +346,154 @@
     margin-right: 8px;
   }
 
-  /* ===== BULLE DE QUESTION ===== */
+  /* Zone centrale — Schéma + Contenu */
+  .zone-centrale {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+  }
+
+  /* Schéma graphique permanent */
+  .schema-graphique {
+    background: var(--bg-card);
+    padding: 24px;
+    border-radius: var(--rayon);
+    box-shadow: var(--ombre);
+    border: 1px solid var(--bordure);
+  }
+
+  .schema-titre {
+    font-size: 1rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--accent-or-fonce);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .schema-conteneur {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    position: relative;
+  }
+
+  .table-box {
+    background: #faf7f0;
+    border: 2px solid var(--accent-or-fonce);
+    border-radius: var(--rayon-sm);
+    padding: 14px;
+    min-width: 200px;
+    position: relative;
+  }
+
+  .table-nom {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--accent-or-fonce);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--accent-or);
+  }
+
+  .table-colonnes {
+    font-size: 0.8rem;
+    color: var(--texte-second);
+    line-height: 1.5;
+  }
+
+  .table-colonnes span {
+    display: block;
+    margin-bottom: 3px;
+  }
+
+  .pk { color: var(--accent-bleu); font-weight: 700; }
+  .fk { color: #8b0000; font-weight: 700; }
+
+  /* Lignes de relation SVG */
+  .svg-relations {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  /* Contenu dynamique (question ou tables) */
+  .zone-dynamique {
+    flex: 1;
+    min-height: 300px;
+  }
+
+  /* Tables remplies */
+  .tables-remplies {
+    background: var(--bg-card);
+    padding: 24px;
+    border-radius: var(--rayon);
+    box-shadow: var(--ombre);
+    border: 1px solid var(--bordure);
+  }
+
+  .tables-titre {
+    font-size: 1rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--accent-bleu);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .tables-grille {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+
+  .table-donnees {
+    background: #faf7f0;
+    border-radius: var(--rayon-sm);
+    border: 1px solid var(--bordure);
+    overflow: hidden;
+  }
+
+  .table-donnees-nom {
+    background: var(--accent-or-fonce);
+    color: #fff;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .table-donnees-corps {
+    padding: 10px;
+    font-size: 0.75rem;
+    color: var(--texte-second);
+  }
+
+  .table-donnees-ligne {
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+
+  .table-donnees-ligne:last-child { margin-bottom: 0; }
+
+  /* Bulle de question */
   .panneau-question {
     position: fixed;
     inset: 0;
-    background: rgba(255, 255, 255, 0.98);
-    z-index: 100;
+    background: rgba(253, 250, 245, 0.98);
+    z-index: 200;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -362,15 +514,15 @@
   }
 
   .q-card {
-    background: var(--bg-second);
+    background: #faf7f0;
     padding: 36px;
     border-radius: var(--rayon-sm);
-    border: 1px solid var(--bordure);
+    border: 1px solid #f0e9e0;
     margin-bottom: 32px;
   }
 
   .q-enonce {
-    font-size: 1.35rem;
+    font-size: 1.4rem;
     font-weight: 700;
     color: var(--texte-principal);
     margin-bottom: 36px;
@@ -409,21 +561,20 @@
   .btn-vrai {
     background: var(--vert);
     color: #fff;
-    box-shadow: 0 4px 12px rgba(21, 128, 61, 0.3);
+    box-shadow: 0 4px 12px rgba(46, 139, 87, 0.3);
   }
 
-  .btn-vrai:hover { background: #166534; transform: translateY(-2px); }
+  .btn-vrai:hover { background: #246b4a; transform: translateY(-2px); }
 
   .btn-faux {
     background: var(--rouge);
     color: #fff;
-    box-shadow: 0 4px 12px rgba(185, 28, 28, 0.3);
+    box-shadow: 0 4px 12px rgba(178, 34, 34, 0.3);
   }
 
   .btn-faux:hover { background: #991b1b; transform: translateY(-2px); }
 
   .btn-reponse:active { transform: translateY(0); }
-
   .btn-reponse:disabled { opacity: 0.6; cursor: not-allowed; }
 
   /* Résultat après réponse */
@@ -502,18 +653,16 @@
   }
 
   /* ===== RESPONSIVE ===== */
-  @media (max-width: 768px) {
-    .accueil-cadre { padding: 80px 16px; }
-    .accueil-cadre h1 { font-size: 2.5rem; }
-    .mission-body { padding: 24px 16px; }
-    #zone-interaction { padding: 32px 22px; }
-    .q-enonce { font-size: 1.15rem; }
-    .btn-reponse { max-width: 160px; padding: 16px 18px; font-size: 1rem; }
+  @media (max-width: 900px) {
+    .mission-layout { flex-direction: column; height: auto; overflow: visible; padding: 16px; }
+    .panneau-score { width: 100%; }
+    .zone-centrale { overflow-y: visible; }
   }
 
   @media (max-width: 480px) {
     .accueil-cadre h1 { font-size: 2rem; }
     .bilan-wrap h1 { font-size: 2.25rem; }
+    .schema-conteneur { flex-direction: column; align-items: center; }
   }
   </style>
 </head>
@@ -531,70 +680,150 @@
         <div class="accueil-cadre">
           <div class="logo">STI Version 2.0 <span style="font-size: 1rem; font-weight: 500; color: var(--texte-second);">By A'E</span></div>
           <h1>MISSION CINÉMA</h1>
-          <p class="sous-titre">Devenez expert SQL à travers 45 défis sur le thème du cinéma.</p>
+          <p class="sous-titre">Devenez expert SQL à travers des questions Vrai / Faux sur le thème du cinéma.</p>
 
           <div class="intro-texte">
             <p><strong>Bienvenue, futur expert SQL.</strong></p>
             <p>Votre mission : répondre à des questions <strong>Vrai / Faux</strong> sur la base de données « cinema ».</p>
+            <p>Le schéma de la base s'affiche en permanence en haut de l'écran.</p>
+            <p>À partir de l'étape 6, les tables remplies s'affichent pour vous aider à répondre.</p>
             <p>Pour chaque question :</p>
             <ul style="margin-left: 20px; margin-top: 8px; color: var(--texte-second);">
               <li>Lisez l'énoncé attentivement</li>
               <li>Répondez <strong>VRAI</strong> ou <strong>FAUX</strong> à l'oral</li>
               <li>Découvrez la bonne réponse avec une explication</li>
             </ul>
-            <p><strong>Aucune exécution SQL n'est requise.</strong> Cette mission teste votre compréhension des concepts de base de données.</p>
+            <p><strong>Aucune exécution SQL n'est requise.</strong></p>
           </div>
 
           <button id="btn-start" class="btn-principal">COMMENCER LA MISSION ▶</button>
-          <p class="note">45 questions • Progression sauvegardée automatiquement.</p>
+          <p class="note">18 étapes • Progression sauvegardée automatiquement.</p>
         </div>
       </section>
 
       <!-- ÉCRAN DE MISSION -->
       <section id="ecran-mission" class="ecran cacher">
-        <div class="mission-body">
-          <div class="panneau carte-cinema">
-            <div class="score-cercle">
-              <div class="score-anneau">
-                <svg class="score-svg">
-                  <circle class="score-fond" cx="75" cy="75" r="65" stroke="#f1f5f9" stroke-width="10" fill="none"/>
-                  <circle id="score-cercle-progress" class="score-remplissage" cx="75" cy="75" r="65" stroke="#d4af37" stroke-width="10" fill="none" stroke-dasharray="408" stroke-dashoffset="408"/>
-                </svg>
-                <div class="score-centre">
-                  <span id="score-pct" class="score-pourcentage">0</span>%
+        <div class="mission-layout">
+          <!-- Panneau latéral — Score -->
+          <aside class="panneau-score">
+            <div class="carte-cinema">
+              <div class="score-cercle">
+                <div class="score-anneau">
+                  <svg class="score-svg">
+                    <circle class="score-fond" cx="70" cy="70" r="60" stroke="#f0e9e0" stroke-width="10" fill="none"/>
+                    <circle id="score-cercle-progress" class="score-remplissage" cx="70" cy="70" r="60" stroke="#d4af37" stroke-width="10" fill="none" stroke-dasharray="377" stroke-dashoffset="377"/>
+                  </svg>
+                  <div class="score-centre">
+                    <span id="score-pct" class="score-pourcentage">0</span>%
+                  </div>
+                </div>
+                <div class="score-details">
+                  <div class="score-item"><span class="score-label">Score</span><span id="score-points" class="score-valeur">0</span> <span class="score-unite">PTS</span></div>
+                  <div class="score-item"><span class="score-label">Niveau</span><span id="score-niveau" class="score-valeur">1</span></div>
                 </div>
               </div>
-              <div class="score-details">
-                <div class="score-item"><span class="score-label">Score</span><span id="score-points" class="score-valeur">0</span> <span class="score-unite">PTS</span></div>
-                <div class="score-item"><span class="score-label">Niveau</span><span id="score-niveau" class="score-valeur">1</span></div>
+              <div class="section-titre">Progression</div>
+              <ul id="liste-etapes"></ul>
+            </div>
+          </aside>
+
+          <!-- Zone centrale -->
+          <div class="zone-centrale">
+            <!-- Schéma graphique permanent -->
+            <div class="schema-graphique">
+              <div class="schema-titre">Schéma de la base « cinema »</div>
+              <div class="schema-conteneur">
+                <svg class="svg-relations" id="svg-relations"></svg>
+
+                <div class="table-box" id="table-realisateur">
+                  <div class="table-nom">REALISATEUR</div>
+                  <div class="table-colonnes">
+                    <span><span class="pk">idReal</span> INT PK</span>
+                    <span>nom VARCHAR(30)</span>
+                    <span>prenom VARCHAR(30)</span>
+                    <span>nationalite VARCHAR(30)</span>
+                  </div>
+                </div>
+
+                <div class="table-box" id="table-film">
+                  <div class="table-nom">FILM</div>
+                  <div class="table-colonnes">
+                    <span><span class="pk">idFilm</span> INT PK</span>
+                    <span>titre VARCHAR(50)</span>
+                    <span>genre VARCHAR(30)</span>
+                    <span>annee INT</span>
+                    <span>duree INT</span>
+                    <span>budget BIGINT</span>
+                    <span><span class="fk">idReal</span> INT FK</span>
+                  </div>
+                </div>
+
+                <div class="table-box" id="table-acteur">
+                  <div class="table-nom">ACTEUR</div>
+                  <div class="table-colonnes">
+                    <span><span class="pk">idActeur</span> INT PK</span>
+                    <span>nom VARCHAR(30)</span>
+                    <span>prenom VARCHAR(30)</span>
+                    <span>dateNaiss DATE</span>
+                    <span>nationalite VARCHAR(30)</span>
+                  </div>
+                </div>
+
+                <div class="table-box" id="table-jouer">
+                  <div class="table-nom">JOUER</div>
+                  <div class="table-colonnes">
+                    <span><span class="fk">idFilm</span> INT FK</span>
+                    <span><span class="fk">idActeur</span> INT FK</span>
+                    <span>role VARCHAR(40)</span>
+                    <span>cachet DECIMAL(10,2)</span>
+                  </div>
+                </div>
+
+                <div class="table-box" id="table-projection">
+                  <div class="table-nom">PROJECTION</div>
+                  <div class="table-colonnes">
+                    <span><span class="pk">idProj</span> INT PK</span>
+                    <span><span class="fk">idFilm</span> INT FK</span>
+                    <span>salle VARCHAR(20)</span>
+                    <span>dateProj DATE</span>
+                    <span>nbSpectateurs INT</span>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="section-titre">Progression</div>
-            <ul id="liste-questions"></ul>
-          </div>
 
-          <!-- Bulle de question -->
-          <div id="panneau-question" class="panneau-question cacher">
-            <div id="zone-interaction">
-              <div class="q-card">
-                <div class="q-meta">
-                  <span class="q-num">Question <span id="q-numero">1</span></span>
-                  <span class="q-type">Vrai / Faux</span>
+            <!-- Zone dynamique : question OU tables remplies -->
+            <div class="zone-dynamique" id="zone-dynamique">
+              <!-- Bulle de question -->
+              <div id="panneau-question" class="panneau-question cacher">
+                <div id="zone-interaction">
+                  <div class="q-card">
+                    <div class="q-meta">
+                      <span class="q-num">Étape <span id="etape-numero">1</span></span>
+                      <span class="q-type" id="etape-type">Vrai / Faux</span>
+                    </div>
+                    <div class="q-enonce" id="etape-enonce"></div>
+                  </div>
+
+                  <div id="reponses-vf" style="display: flex; gap: 16px; justify-content: center; margin-bottom: 32px;">
+                    <button id="btn-vrai" class="btn-reponse btn-vrai">✓ VRAI</button>
+                    <button id="btn-faux" class="btn-reponse btn-faux">✗ FAUX</button>
+                  </div>
+
+                  <div id="resultat" class="resultat">
+                    <h3 id="resultat-titre"></h3>
+                    <p id="resultat-message"></p>
+                  </div>
+
+                  <button id="btn-suivant" class="btn-suivant cacher">ÉTAPE SUIVANTE ▶</button>
                 </div>
-                <div class="q-enonce" id="q-enonce"></div>
               </div>
 
-              <div style="display: flex; gap: 16px; justify-content: center; margin-bottom: 32px;">
-                <button id="btn-vrai" class="btn-reponse btn-vrai">✓ VRAI</button>
-                <button id="btn-faux" class="btn-reponse btn-faux">✗ FAUX</button>
+              <!-- Tables remplies (étape 6 et 7) -->
+              <div id="tables-remplies" class="tables-remplies cacher">
+                <div class="tables-titre" id="tables-titre">Tables remplies — Données d'exemple</div>
+                <div class="tables-grille" id="tables-grille"></div>
               </div>
-
-              <div id="resultat" class="resultat">
-                <h3 id="resultat-titre"></h3>
-                <p id="resultat-message"></p>
-              </div>
-
-              <button id="btn-suivant" class="btn-suivant cacher">QUESTION SUIVANTE ▶</button>
             </div>
           </div>
         </div>
@@ -614,29 +843,106 @@
 
 <script>
 /* ============================================================================
-   MISSION CINÉMA — Contrôleur unique (plus de vidéo, questions Vrai/Faux)
+   MISSION CINÉMA — Contrôleur unique
+   Étapes : Questions Vrai/Faux + Affichage tables (étapes 6 et 7)
    ============================================================================ */
 
-const QUESTIONS = [
-  { id: 1, enonce: "La table REALISATEUR possède les colonnes idReal, nom, prenom et nationalite.", reponse: true, explication: "VRAI. Le schéma de la base cinema définit REALISATEUR (idReal, nom, prenom, nationalite)." },
-  { id: 2, enonce: "La table FILM possède une clé étrangère idReal qui référence REALISATEUR(idReal).", reponse: true, explication: "VRAI. FILM définit FOREIGN KEY (idReal) REFERENCES realisateur(idReal)." },
-  { id: 3, enonce: "La colonne email a été ajoutée à ACTEUR, puis supprimée ultérieurement.", reponse: true, explication: "VRAI. Question 2 ajoute email, question 4 la supprime avec DROP COLUMN." },
-  { id: 4, enonce: "La table PROJECTION a été supprimée puis recréée à l'identique.", reponse: true, explication: "VRAI. Question 5 : DROP TABLE projection, puis CREATE TABLE projection." },
-  { id: 5, enonce: "Le film 'Tenet' a été inséré en renseignant uniquement titre, genre et idReal.", reponse: true, explication: "VRAI. Question 7 : INSERT INTO film (titre, genre, idReal) VALUES ('Tenet', 'Action', 1)." },
-  { id: 6, enonce: "La durée du film 'Inception' a été mise à jour à 148 minutes.", reponse: true, explication: "VRAI. Question 8 : UPDATE film SET duree = 148 WHERE titre = 'Inception'." },
-  { id: 7, enonce: "Le cachet des rôles dont le cachet est inférieur à 5000 a été augmenté de 10%.", reponse: true, explication: "VRAI. Question 9 : UPDATE jouer SET cachet = cachet * 1.10 WHERE cachet < 5000." },
-  { id: 8, enonce: "COUNT(colonne) compte les valeurs NULL comme les autres valeurs.", reponse: false, explication: "FAUX. Question 47 : COUNT(colonne) ignore les NULL. Seuls les COUNT(*) comptent les NULL." },
-  { id: 9, enonce: "AVG(duree) calcule la moyenne en ignorant les valeurs NULL de la colonne duree.", reponse: true, explication: "VRAI. Question 48 : AVG(duree) = 142.8333 car le NULL n'entre ni dans la somme ni dans le décompte." },
-  { id: 10, enonce: "La clause WHERE duree <> 148 affiche tous les films sauf 'Inception', y compris ceux avec durée NULL.", reponse: false, explication: "FAUX. Question 49 : NULL <> 148 n'est ni vrai ni faux (UNKNOWN), donc 'Film test' n'apparaît pas." },
-  { id: 11, enonce: "Une jointure INNER élimine les acteurs qui n'ont aucune ligne dans la table JOUER.", reponse: true, explication: "VRAI. Question 50 : Cotillard et Hathaway sont absentes car elles n'ont pas de ligne dans jouer." },
-  { id: 12, enonce: "ON DELETE CASCADE supprime automatiquement les lignes enfants liées à une ligne parent supprimée.", reponse: true, explication: "VRAI. Question 44 : ON DELETE CASCADE supprime les projections enfants quand le film parent est supprimé." },
-  { id: 13, enonce: "ON UPDATE CASCADE propage automatiquement la modification d'une clé parent vers les clés étrangères enfants.", reponse: true, explication: "VRAI. Question 43 : modifier idFilm de 7 à 70 met à jour automatiquement projection_test." },
-  { id: 14, enonce: "Un INSERT dans JOUER avec une clé primaire (idFilm, idActeur) existante réussit sans erreur.", reponse: false, explication: "FAUX. Question 56 : Échec avec « Duplicate entry » car la clé primaire existe déjà." },
-  { id: 15, enonce: "Un INSERT dans FILM avec annee = 1850 respecte la contrainte CHECK (annee >= 1900).", reponse: false, explication: "FAUX. Question 57 : Échec car la contrainte CHECK (annee >= 1900) est violée." },
-  { id: 16, enonce: "DELETE FROM realisateur WHERE idReal = 3 réussit car aucun film ne référence ce réalisateur.", reponse: false, explication: "FAUX. Question 59 : Échec car le film 'OSS 117' référence ce réalisateur (clé étrangère sans cascade)." },
-  { id: 17, enonce: "Lorsqu'on ajoute une colonne avec DEFAULT à une table déjà remplie, les lignes existantes reçoivent cette valeur par défaut.", reponse: true, explication: "VRAI. Question 40 : après ADD paysOrigine DEFAULT 'Inconnue', tous les films existants ont 'Inconnue'." },
-  { id: 18, enonce: "Modifier la valeur DEFAULT d'une colonne remplace automatiquement les valeurs déjà enregistrées dans les lignes existantes.", reponse: false, explication: "FAUX. Question 41 : changer DEFAULT ne remplace pas les valeurs déjà enregistrées, seulement les futures insertions." }
+const ETAPES = [
+  // ---- ÉTAPES 1-5 : Questions Vrai/Faux ----
+  { type: 'vf', id: 1, enonce: "La table REALISATEUR possède les colonnes idReal, nom, prenom et nationalite.", reponse: true, explication: "VRAI. Le schéma de la base cinema définit REALISATEUR (idReal, nom, prenom, nationalite)." },
+  { type: 'vf', id: 2, enonce: "La table FILM possède une clé étrangère idReal qui référence REALISATEUR(idReal).", reponse: true, explication: "VRAI. FILM définit FOREIGN KEY (idReal) REFERENCES realisateur(idReal)." },
+  { type: 'vf', id: 3, enonce: "La colonne email a été ajoutée à ACTEUR, puis supprimée ultérieurement.", reponse: true, explication: "VRAI. Question 2 ajoute email, question 4 la supprime avec DROP COLUMN." },
+  { type: 'vf', id: 4, enonce: "La table PROJECTION a été supprimée puis recréée à l'identique.", reponse: true, explication: "VRAI. Question 5 : DROP TABLE projection, puis CREATE TABLE projection." },
+  { type: 'vf', id: 5, enonce: "Le film 'Tenet' a été inséré en renseignant uniquement titre, genre et idReal.", reponse: true, explication: "VRAI. Question 7 : INSERT INTO film (titre, genre, idReal) VALUES ('Tenet', 'Action', 1)." },
+
+  // ---- ÉTAPE 6 : Affichage des tables remplies (INSERT Q6 du PDF) ----
+  { type: 'tables', id: 6, titre: "Tables remplies — Après les INSERT (Question 6)", tableau: 'q6' },
+
+  // ---- ÉTAPE 7 : Affichage après insertion de Tenet (Q7 du PDF) ----
+  { type: 'tables', id: 7, titre: "Tables remplies — Après insertion de 'Tenet' (Question 7)", tableau: 'q7' },
+
+  // ---- ÉTAPES 8+ : Questions Vrai/Faux (questions 8-60 du PDF) ----
+  { type: 'vf', id: 8, enonce: "COUNT(colonne) compte les valeurs NULL comme les autres valeurs.", reponse: false, explication: "FAUX. Question 47 : COUNT(colonne) ignore les NULL. Seuls les COUNT(*) comptent les NULL." },
+  { type: 'vf', id: 9, enonce: "AVG(duree) calcule la moyenne en ignorant les valeurs NULL de la colonne duree.", reponse: true, explication: "VRAI. Question 48 : AVG(duree) = 142.8333 car le NULL n'entre ni dans la somme ni dans le décompte." },
+  { type: 'vf', id: 10, enonce: "La clause WHERE duree <> 148 affiche tous les films sauf 'Inception', y compris ceux avec durée NULL.", reponse: false, explication: "FAUX. Question 49 : NULL <> 148 n'est ni vrai ni faux (UNKNOWN), donc 'Film test' n'apparaît pas." },
+  { type: 'vf', id: 11, enonce: "Une jointure INNER élimine les acteurs qui n'ont aucune ligne dans la table JOUER.", reponse: true, explication: "VRAI. Question 50 : Cotillard et Hathaway sont absentes car elles n'ont pas de ligne dans jouer." },
+  { type: 'vf', id: 12, enonce: "ON DELETE CASCADE supprime automatiquement les lignes enfants liées à une ligne parent supprimée.", reponse: true, explication: "VRAI. Question 44 : ON DELETE CASCADE supprime les projections enfants quand le film parent est supprimé." },
+  { type: 'vf', id: 13, enonce: "ON UPDATE CASCADE propage automatiquement la modification d'une clé parent vers les clés étrangères enfants.", reponse: true, explication: "VRAI. Question 43 : modifier idFilm de 7 à 70 met à jour automatiquement projection_test." },
+  { type: 'vf', id: 14, enonce: "Un INSERT dans JOUER avec une clé primaire (idFilm, idActeur) existante réussit sans erreur.", reponse: false, explication: "FAUX. Question 56 : Échec avec « Duplicate entry » car la clé primaire existe déjà." },
+  { type: 'vf', id: 15, enonce: "Un INSERT dans FILM avec annee = 1850 respecte la contrainte CHECK (annee >= 1900).", reponse: false, explication: "FAUX. Question 57 : Échec car la contrainte CHECK (annee >= 1900) est violée." },
+  { type: 'vf', id: 16, enonce: "DELETE FROM realisateur WHERE idReal = 3 réussit car aucun film ne référence ce réalisateur.", reponse: false, explication: "FAUX. Question 59 : Échec car le film 'OSS 117' référence ce réalisateur (clé étrangère sans cascade)." },
+  { type: 'vf', id: 17, enonce: "Lorsqu'on ajoute une colonne avec DEFAULT à une table déjà remplie, les lignes existantes reçoivent cette valeur par défaut.", reponse: true, explication: "VRAI. Question 40 : après ADD paysOrigine DEFAULT 'Inconnue', tous les films existants ont 'Inconnue'." },
+  { type: 'vf', id: 18, enonce: "Modifier la valeur DEFAULT d'une colonne remplace automatiquement les valeurs déjà enregistrées dans les lignes existantes.", reponse: false, explication: "FAUX. Question 41 : changer DEFAULT ne remplace pas les valeurs déjà enregistrées, seulement les futures insertions." }
 ];
+
+// Données des tables (Q6 et Q7 du PDF)
+const TABLES_DONNEES = {
+  q6: {
+    REALISATEUR: [
+      [1, 'Nolan', 'Christopher', 'Britannique'],
+      [2, 'Scorsese', 'Martin', 'Américaine'],
+      [3, 'Hazanavicius', 'Michel', 'Française']
+    ],
+    FILM: [
+      [1, 'Inception', 'Science-fiction', 2010, 140, 160000000, 1],
+      [2, 'Interstellar', 'Science-fiction', 2014, 169, 165000000, 1],
+      [3, 'The Dark Knight', 'Action', 2008, 152, 185000000, 1],
+      [4, 'Les Infiltrés', 'Action', 2006, 151, 90000000, 2],
+      [5, 'Shutter Island', 'Thriller', 2010, 138, 80000000, 2],
+      [6, 'OSS 117', 'Comédie', 2006, 99, 14000000, 3]
+    ],
+    ACTEUR: [
+      [1, 'DiCaprio', 'Leonardo', '1974-11-11', 'Américaine'],
+      [2, 'Bale', 'Christian', '1974-11-11', 'Britannique'],
+      [3, 'Ledger', 'Heath', '1979-04-04', 'Australienne'],
+      [4, 'Dujardin', 'Jean', '1972-06-19', 'Française'],
+      [5, 'McConaughey', 'Matthew', '1969-11-04', 'Américaine'],
+      [6, 'Ruffalo', 'Mark', '1967-11-22', 'Américaine']
+    ],
+    JOUER: [
+      [1, 1, 'Dom Cobb', 20000],
+      [1, 4, 'Eames', 4000],
+      [1, 3, 'Arthur', 4500],
+      [2, 5, 'Cooper', 15000],
+      [3, 2, 'Bruce Wayne', 12000],
+      [3, 3, 'Joker', 3000],
+      [4, 1, 'Billy Costigan', 25000],
+      [5, 1, 'Teddy Daniels', 30000],
+      [5, 6, 'Chuck Aule', 2500],
+      [6, 4, 'Hubert Bonisseur', 1500],
+      [6, 2, 'Agent Moreau', 900]
+    ],
+    PROJECTION: [
+      [1, 1, 'Salle 1', '2026-09-20', 85],
+      [2, 1, 'Salle 2', '2026-10-03', 120],
+      [3, 2, 'Salle 1', '2026-10-10', 150],
+      [4, 3, 'Salle 3', '2026-10-17', 8],
+      [5, 3, 'Salle 1', '2026-10-24', 95],
+      [6, 5, 'Salle 2', '2026-10-31', 60],
+      [7, 6, 'Salle 3', '2026-11-15', 70],
+      [8, 2, 'Salle 1', '2026-12-05', 110],
+      [9, 4, 'Salle 2', '2026-10-05', 5]
+    ]
+  },
+  q7: null // Sera cloné de q6 avec Tenet ajouté
+};
+
+// Préparer q7 = q6 + Tenet (idFilm = 7)
+TABLES_DONNEES.q7 = {
+  REALISATEUR: [...TABLES_DONNEES.q6.REALISATEUR],
+  FILM: [...TABLES_DONNEES.q6.FILM, [7, 'Tenet', 'Action', null, null, null, 1]],
+  ACTEUR: [...TABLES_DONNEES.q6.ACTEUR],
+  JOUER: [...TABLES_DONNEES.q6.JOUER],
+  PROJECTION: [...TABLES_DONNEES.q6.PROJECTION]
+};
+
+const COLONNES_TABLES = {
+  REALISATEUR: ['idReal', 'nom', 'prenom', 'nationalite'],
+  FILM: ['idFilm', 'titre', 'genre', 'annee', 'duree', 'budget', 'idReal'],
+  ACTEUR: ['idActeur', 'nom', 'prenom', 'dateNaiss', 'nationalite'],
+  JOUER: ['idFilm', 'idActeur', 'role', 'cachet'],
+  PROJECTION: ['idProj', 'idFilm', 'salle', 'dateProj', 'nbSpectateurs']
+};
 
 let currentIndex = 0;
 let score = 0;
@@ -648,10 +954,13 @@ const ecranAccueil = document.getElementById('ecran-accueil');
 const ecranMission = document.getElementById('ecran-mission');
 const ecranBilan = document.getElementById('ecran-bilan');
 const btnStart = document.getElementById('btn-start');
+const zoneDynamique = document.getElementById('zone-dynamique');
 const panneauQuestion = document.getElementById('panneau-question');
+const tablesRemplies = document.getElementById('tables-remplies');
 const zoneInteraction = document.getElementById('zone-interaction');
-const qNumero = document.getElementById('q-numero');
-const qEnonce = document.getElementById('q-enonce');
+const etapeNumero = document.getElementById('etape-numero');
+const etapeType = document.getElementById('etape-type');
+const etapeEnonce = document.getElementById('etape-enonce');
 const btnVrai = document.getElementById('btn-vrai');
 const btnFaux = document.getElementById('btn-faux');
 const btnSuivant = document.getElementById('btn-suivant');
@@ -662,10 +971,12 @@ const spanPct = document.getElementById('score-pct');
 const spanPoints = document.getElementById('score-points');
 const spanNiveau = document.getElementById('score-niveau');
 const cercleProgress = document.getElementById('score-cercle-progress');
-const listeQuestions = document.getElementById('liste-questions');
+const listeEtapes = document.getElementById('liste-etapes');
 const bilanScore = document.getElementById('bilan-score');
 const bilanMessage = document.getElementById('bilan-message');
 const btnRecommencer = document.getElementById('btn-recommencer');
+const tablesTitre = document.getElementById('tables-titre');
+const tablesGrille = document.getElementById('tables-grille');
 
 function afficherEcran(nom) {
   ecranAccueil.classList.remove('actif');
@@ -690,31 +1001,73 @@ function parler(texte) {
 }
 
 function rafraichirInterface() {
-  const pct = Math.round((score / QUESTIONS.length) * 100);
+  const pct = Math.round((score / 18) * 100);
   spanPct.textContent = pct;
   spanPoints.textContent = score;
   spanNiveau.textContent = Math.floor(score / 3) + 1;
-  const offset = 408 * (1 - pct / 100);
+  const offset = 377 * (1 - pct / 100);
   cercleProgress.style.strokeDashoffset = offset;
 
-  listeQuestions.innerHTML = '';
-  QUESTIONS.forEach((q, i) => {
+  listeEtapes.innerHTML = '';
+  ETAPES.forEach((e, i) => {
     const li = document.createElement('li');
-    li.className = 'q-item' + (i < currentIndex ? (q.reponseReponse === q.reponse ? ' traitee' : ' incorrecte') : '');
-    li.innerHTML = `<span class="q-badge">${i < currentIndex ? (q.reponseReponse === q.reponse ? '✓' : '✗') : '?'}</span> Q${q.id}`;
-    listeQuestions.appendChild(li);
+    const termine = i < currentIndex;
+    const reponse = e.reponseReponse;
+    const correct = e.reponse && reponse !== undefined ? reponse === e.reponse : null;
+    li.className = 'etape-item' + (termine ? (correct ? ' traitee' : ' incorrecte') : '');
+    li.innerHTML = `<span class="etape-badge">${termine ? (correct ? '✓' : '✗') : '?'}</span> Étape ${e.id}`;
+    listeEtapes.appendChild(li);
   });
 }
 
-function afficherQuestion() {
-  if (currentIndex >= QUESTIONS.length) {
+function afficherEtape() {
+  if (currentIndex >= ETAPES.length) {
     afficherBilan();
     return;
   }
 
-  const q = QUESTIONS[currentIndex];
-  qNumero.textContent = q.id;
-  qEnonce.textContent = q.enonce;
+  const e = ETAPES[currentIndex];
+  etapeNumero.textContent = e.id;
+
+  // Cacher tout d'abord
+  panneauQuestion.classList.add('cacher');
+  tablesRemplies.classList.add('cacher');
+  btnSuivant.classList.add('cacher');
+
+  if (e.type === 'tables') {
+    // ---- ÉTAPE TABLES REMPLIES ----
+    etapeType.textContent = 'Tables remplies';
+    etapeEnonce.textContent = '';
+    tablesTitre.textContent = e.titre;
+    tablesGrille.innerHTML = '';
+
+    const donnees = TABLES_DONNEES[e.tableau];
+    Object.entries(donnees).forEach(([nomTable, lignes]) => {
+      const colonnes = COLONNES_TABLES[nomTable];
+      const div = document.createElement('div');
+      div.className = 'table-donnees';
+      div.innerHTML = `<div class="table-donnees-nom">${nomTable}</div>`;
+      lignes.forEach(ligne => {
+        let html = '';
+        colonnes.forEach((col, idx) => {
+          const val = ligne[idx] === null ? 'NULL' : ligne[idx];
+          html += `<span style="color: var(--accent-bleu); font-weight: 700;">${col}</span>: <span>${val}</span>  `;
+        });
+        div.innerHTML += `<div class="table-donnees-ligne">${html}</div>`;
+      });
+      tablesGrille.appendChild(div);
+    });
+
+    tablesRemplies.classList.remove('cacher');
+    btnSuivant.classList.remove('cacher');
+    answered = true; // pas de réponse nécessaire
+    rafraichirInterface();
+    return;
+  }
+
+  // ---- ÉTAPE VRAI/FAUX ----
+  etapeType.textContent = 'Vrai / Faux';
+  etapeEnonce.textContent = e.enonce;
   btnVrai.disabled = false;
   btnFaux.disabled = false;
   btnVrai.style.display = 'inline-flex';
@@ -731,51 +1084,45 @@ function repondre(reponseUtilisateur) {
   if (answered) return;
   answered = true;
 
-  const q = QUESTIONS[currentIndex];
-  const estCorrect = reponseUtilisateur === q.reponse;
+  const e = ETAPES[currentIndex];
+  const estCorrect = reponseUtilisateur === e.reponse;
 
   // Voix orale : dire "Vrai" ou "Faux"
   parler(reponseUtilisateur ? 'Vrai' : 'Faux');
 
-  // Mettre à jour les boutons
   btnVrai.disabled = true;
   btnFaux.disabled = true;
 
   if (estCorrect) {
-    btnVrai.classList.add('btn-vrai'); // déjà vert
-    btnFaux.classList.add('btn-faux'); // déjà rouge
     score++;
     resultat.className = 'resultat vrai';
     resultatTitre.textContent = '✓ Bonne réponse !';
-    q.reponseReponse = reponseUtilisateur;
+    e.reponseReponse = reponseUtilisateur;
   } else {
-    btnVrai.classList.add('btn-vrai');
-    btnFaux.classList.add('btn-faux');
-    q.reponseReponse = reponseUtilisateur;
     resultat.className = 'resultat faux';
     resultatTitre.textContent = '✗ Mauvaise réponse';
+    e.reponseReponse = reponseUtilisateur;
   }
 
-  // Attendre que la voix finisse de parler, puis afficher l'explication
   const intervalle = setInterval(() => {
     if (synth.speaking) return;
     clearInterval(intervalle);
-    resultatMessage.textContent = q.explication;
+    resultatMessage.textContent = e.explication;
     resultat.style.display = 'block';
     btnSuivant.classList.remove('cacher');
     rafraichirInterface();
   }, 100);
 }
 
-function questionSuivante() {
+function etapeSuivante() {
   currentIndex++;
-  afficherQuestion();
+  afficherEtape();
 }
 
 function afficherBilan() {
   afficherEcran('bilan');
-  const pct = Math.round((score / QUESTIONS.length) * 100);
-  bilanScore.textContent = `${score} / ${QUESTIONS.length}`;
+  const pct = Math.round((score / 18) * 100);
+  bilanScore.textContent = `${score} / 18`;
   if (pct >= 80) {
     bilanMessage.textContent = `Excellent ! Vous maîtrisez les concepts SQL du cinéma (${pct}% de réussite).`;
   } else if (pct >= 60) {
@@ -783,13 +1130,13 @@ function afficherBilan() {
   } else {
     bilanMessage.textContent = `Il faut réviser les fondamentaux SQL (${pct}% de réussite).`;
   }
-  parler(`Séance terminée. Votre score est de ${score} sur ${QUESTIONS.length}.`);
+  parler(`Séance terminée. Votre score est de ${score} sur 18.`);
 }
 
 function recommencer() {
   currentIndex = 0;
   score = 0;
-  QUESTIONS.forEach(q => delete q.reponseReponse);
+  ETAPES.forEach(e => delete e.reponseReponse);
   rafraichirInterface();
   afficherEcran('accueil');
 }
@@ -797,12 +1144,12 @@ function recommencer() {
 // Écouteurs
 btnStart.addEventListener('click', () => {
   afficherEcran('mission');
-  afficherQuestion();
+  afficherEtape();
 });
 
 btnVrai.addEventListener('click', () => repondre(true));
 btnFaux.addEventListener('click', () => repondre(false));
-btnSuivant.addEventListener('click', questionSuivante);
+btnSuivant.addEventListener('click', etapeSuivante);
 btnRecommencer.addEventListener('click', recommencer);
 
 // Initialisation
