@@ -140,6 +140,12 @@ p { color: var(--blanc-second); line-height: 1.7; }
 }
 .lumiere-salle.allumee { opacity: 0.3; }
 
+/* Contenu de l'application — au-dessus des rideaux et projecteurs */
+#app {
+  position: relative;
+  z-index: 20;
+}
+
 /* ===== UTILITAIRES ===== */
 .cacher { display: none !important; }
 
@@ -210,6 +216,7 @@ h1 {
   font-weight: 800;
   border-radius: var(--rayon-sm);
   cursor: pointer;
+  touch-action: manipulation;
   transition: var(--trans);
   display: inline-flex;
   align-items: center;
