@@ -122,7 +122,6 @@ window.AppController = (function () {
           if (video && video.forcePlay) {
             video.forcePlay().catch(function (err) {
               console.warn("forcePlay échoué, tentative directe :", err);
-              // Fallback direct sur l'élément vidéo
               if (videoEl) {
                 videoEl.muted = true;
                 videoEl.play().catch(function (err2) {
