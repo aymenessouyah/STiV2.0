@@ -118,9 +118,33 @@ window.AppController = (function () {
       if (btnPlayVideo) btnPlayVideo.classList.add("cacher");
       ouvrirRideaux();
       setTimeout(function () {
-        if (video && video.forcePlay) {
-          video.forcePlay().catch(function () {});
-        }
+        var tente = function () {
+          if (video && video.forcePlay) {
+            video.forcePlay().catch(function (err) {
+              console.warn("forcePlay échoué, tentative directe :", err);
+              if (videoEl) {
+                videoEl.muted = true;
+                videoEl.play().catch(function (err2) {
+                  console.error("Lecture vidéo impossible :", err2);
+                  var ph = $id("video-placeholder");
+                  if (ph) { ph.classList.remove("cacher"); }
+                  if (videoEl) videoEl.style.display = "none";
+                  if (btnPlayVideo) btnPlayVideo.classList.remove("cacher");
+                });
+              }
+            });
+          } else if (videoEl) {
+            videoEl.muted = true;
+            videoEl.play().catch(function (err) {
+              console.error("Lecture vidéo impossible :", err);
+              var ph = $id("video-placeholder");
+              if (ph) { ph.classList.remove("cacher"); }
+              if (videoEl) videoEl.style.display = "none";
+              if (btnPlayVideo) btnPlayVideo.classList.remove("cacher");
+            });
+          }
+        };
+        tente();
       }, 300);
     }, "jouerVideo");
   }
