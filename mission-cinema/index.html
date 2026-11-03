@@ -1008,6 +1008,11 @@ function afficherQuestion() {
 
   rafraichirInterface();
   qReponse.focus();
+
+  // Le narrateur lit l'énoncé de la question
+  setTimeout(() => {
+    parler(q.enonce);
+  }, 500);
 }
 
 function validerReponse() {
