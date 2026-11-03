@@ -1,12 +1,9 @@
 /* ============================================================================
-   MISSION CINÉMA — Contrôleur vidéo et synchronisation des questions
-   HTML5 VIDEO + currentTime / pause() / play()
-   
-   Flux : la vidéo joue normalement depuis t=0.
-   À chaque début de question Q_i (t_i) : afficher la bulle Q_i, continuer la vidéo.
-   À chaque début de Q_{i+1} (= fin de Q_i) : mettre en pause la vidéo.
-   Q6 et Q7 sont automatiques (correctes par défaut) : pas de bulle, pas de pause.
-   Clic "Poursuivre" : reprendre à t_{i+1}, afficher la bulle de Q_{i+1}.
+   MISSION CINÉMA — Contrôleur vidéo
+   - La vidéo se lance uniquement quand l'utilisateur clique sur Play
+   - À chaque question : la vidéo se met en PAUSE et la bulle s'affiche
+   - La vidéo reprend uniquement quand l'utilisateur clique sur "Poursuivre"
+   - Aucune exécution de SQL élève dans le navigateur
    ============================================================================ */
 
 window.VideoController = (function () {
@@ -15,7 +12,6 @@ window.VideoController = (function () {
   var data = window.QUESTIONS_DATA;
   var video = null;
 
-  // État
   var playing = false;
   var loopCount = 0;
   var lastCurrentTime = 0;
@@ -26,13 +22,12 @@ window.VideoController = (function () {
   var answeredIds = new Set();
   var nextQuestionIndex = 0;
   var pauseTime = 0;
-  var pendingQuestion = null;   // question dont la bulle doit s'afficher après "Poursuivre"
-var nextFreezeTime = null;    // instant auquel geler la vidéo (fin de la question courante)
-var nextQuestionAfterFreeze = null;  // question à afficher après le gel ("Poursuivre")
+  var pendingQuestion = null;
+  var nextFreezeTime = null;
+  var nextQuestionAfterFreeze = null;
   var videoFailed = false;
   var questionPollTimer = null;
 
-  // Callbacks
   var onQuestionTrigger = null;
   var onTimeUpdate = null;
   var onEnded = null;
@@ -54,14 +49,13 @@ var nextQuestionAfterFreeze = null;  // question à afficher après le gel ("Pou
     if (!video) return;
 
     video.addEventListener("play", function () {
-        playing = true;
-        startQuestionPoll();
-        if (pausedForQuestion) {
-            video.pause();
-            video.currentTime = pauseTime;
-        }
+      playing = true;
+      startQuestionPoll();
     });
-    video.addEventListener("pause", function () { playing = false; stopQuestionPoll(); });
+    video.addEventListener("pause", function () {
+      playing = false;
+      stopQuestionPoll();
+    });
     video.addEventListener("ended", function () {
       stopQuestionPoll();
       if (onEnded) onEnded();
@@ -71,64 +65,45 @@ var nextQuestionAfterFreeze = null;  // question à afficher après le gel ("Pou
       if (onError) onError(video.error);
     });
 
-    video.addEventListener("loadedmetadata", function () {
-      if (videoFailed) return;
-    });
-
     video.addEventListener("timeupdate", function () {
       if (pausedForQuestion || questionLocked) return;
-
       var ct = video.currentTime;
       if (ct < lastCurrentTime - 1) loopCount++;
       lastCurrentTime = ct;
-
       var missionTime = ct + loopCount * loopDuration;
       if (missionTime > missionDuration) missionTime = missionDuration;
-
       if (onTimeUpdate) onTimeUpdate(missionTime, (missionTime / missionDuration) * 100);
-
       checkQuestionAtTime(missionTime);
     });
+  }
 
-    function checkQuestion() {
+  function startQuestionPoll() {
+    if (questionPollTimer) return;
+    questionPollTimer = setInterval(function () {
       if (!video) return;
+      if (pausedForQuestion || questionLocked) return;
       var ct = video.currentTime;
       if (ct < lastCurrentTime - 1) loopCount++;
       lastCurrentTime = ct;
       var missionTime = ct + loopCount * loopDuration;
       if (missionTime > missionDuration) missionTime = missionDuration;
-
-      if (pausedForQuestion) {
-        video.pause();
-        video.currentTime = pauseTime;
-        if (onTimeUpdate) onTimeUpdate(missionTime, (missionTime / missionDuration) * 100);
-        return;
-      }
-
-      if (questionLocked) return;
-
       if (onTimeUpdate) onTimeUpdate(missionTime, (missionTime / missionDuration) * 100);
       checkQuestionAtTime(missionTime);
-    }
-    function startQuestionPoll() {
-      if (questionPollTimer) return;
-      questionPollTimer = setInterval(checkQuestion, 100);
-    }
-    function stopQuestionPoll() {
-      if (questionPollTimer) {
-        clearInterval(questionPollTimer);
-        questionPollTimer = null;
-      }
+    }, 100);
+  }
+
+  function stopQuestionPoll() {
+    if (questionPollTimer) {
+      clearInterval(questionPollTimer);
+      questionPollTimer = null;
     }
   }
 
-  // Déclenche la question si son temps est atteint
   function checkQuestionAtTime(t) {
     if (nextQuestionIndex >= data.questions.length) return;
     var q = data.questions[nextQuestionIndex];
     if (answeredIds.has(q.id)) return;
 
-    // Gel de la vidéo à l'heure programmée (fin de la question courante)
     if (nextFreezeTime != null && t >= nextFreezeTime) {
       pausedForQuestion = true;
       questionLocked = true;
@@ -136,7 +111,6 @@ var nextQuestionAfterFreeze = null;  // question à afficher après le gel ("Pou
       pendingQuestion = nextQuestionAfterFreeze || q;
       video.pause();
       try { video.currentTime = pauseTime; } catch (e) {}
-      video.pause();
       nextFreezeTime = null;
       nextQuestionAfterFreeze = null;
       return;
@@ -144,7 +118,6 @@ var nextQuestionAfterFreeze = null;  // question à afficher après le gel ("Pou
 
     if (q.time > t + 0.5) return;
 
-    // Déclencher la bulle de la question courante, la vidéo continue
     triggerQuestion(q);
   }
 
@@ -153,29 +126,42 @@ var nextQuestionAfterFreeze = null;  // question à afficher après le gel ("Pou
     nextQuestionIndex++;
     pausedForQuestion = false;
     questionLocked = false;
-    // Q6 et Q7 affichent une bulle mais la vidéo continue (pas de gel)
+
     if (q.num === 6 || q.num === 7) {
       nextFreezeTime = null;
       nextQuestionAfterFreeze = null;
-    }
-    // Programmer le gel à la fin de cette question (stopTime si défini,
-    // sinon une seconde avant la question suivante)
-    else if (q.stopTime) {
+    } else if (q.stopTime) {
       nextFreezeTime = q.stopTime;
     } else if (nextQuestionIndex < data.questions.length) {
       nextFreezeTime = data.questions[nextQuestionIndex].time - 1.0;
     } else {
       nextFreezeTime = null;
     }
+
     if (nextQuestionIndex < data.questions.length) {
       nextQuestionAfterFreeze = data.questions[nextQuestionIndex];
     } else {
       nextQuestionAfterFreeze = null;
     }
+
     if (onQuestionTrigger) onQuestionTrigger(q);
   }
 
-  // Reprend la lecture à l'heure de la question en attente, puis affiche sa bulle
+  function forcePlay() {
+    if (videoFailed) return Promise.reject(new Error("vidéo indisponible"));
+    if (!video) return Promise.reject(new Error("vidéo non initialisée"));
+    pausedForQuestion = false;
+    video.muted = false;
+    return video.play().catch(function (err) {
+      console.warn("Lecture bloquée avec son :", err);
+      video.muted = true;
+      return video.play().catch(function (err2) {
+        console.warn("Lecture bloquée en muet :", err2);
+        throw err2;
+      });
+    });
+  }
+
   function handleResume() {
     pausedForQuestion = false;
     questionLocked = false;
@@ -185,24 +171,10 @@ var nextQuestionAfterFreeze = null;  // question à afficher après le gel ("Pou
     }
     video.muted = false;
     return video.play().catch(function (err) {
-      console.warn("Reprise lecture bloquée avec son :", err);
+      console.warn("Reprise bloquée avec son :", err);
       video.muted = true;
       return video.play().catch(function (err2) {
-        console.warn("Reprise lecture bloquée même en muet :", err2);
-        throw err2;
-      });
-    });
-  }
-
-  function play() {
-    if (!video) return Promise.reject(new Error("vidéo non initialisée"));
-    pausedForQuestion = false;
-    video.muted = false;
-    return video.play().catch(function (err) {
-      console.warn("Lecture vidéo bloquée avec son :", err);
-      video.muted = true;
-      return video.play().catch(function (err2) {
-        console.warn("Lecture vidéo bloquée même en muet :", err2);
+        console.warn("Reprise bloquée en muet :", err2);
         throw err2;
       });
     });
@@ -216,54 +188,23 @@ var nextQuestionAfterFreeze = null;  // question à afficher après le gel ("Pou
 
   function resume() {
     pausedForQuestion = false;
-    video.muted = false;
     return video.play().catch(function (err) {
-      console.warn("Reprise lecture bloquée avec son :", err);
+      console.warn("Resume bloqué :", err);
       video.muted = true;
-      return video.play().catch(function (err2) {
-        console.warn("Reprise lecture bloquée même en muet :", err2);
-        throw err2;
-      });
+      return video.play();
     });
   }
 
   function seekToSeconds(seconds) {
     if (!video) return;
-    var target = seconds;
-    if (target < 0) target = 0;
+    var target = seconds < 0 ? 0 : seconds;
     if (target > missionDuration) target = missionDuration;
-
-    if (nextQuestionIndex < data.questions.length) {
-      var nextQ = data.questions[nextQuestionIndex];
-      if (!answeredIds.has(nextQ.id) && target > nextQ.time - 0.5) {
-        target = nextQ.time - 0.5;
-        if (target < 0) target = 0;
-      }
-    }
-
     try { video.currentTime = target; } catch (e) {}
   }
 
   function setSpeed(rate) {
     if (video) video.playbackRate = parseFloat(rate) || 1;
   }
-
-  function forcePlay() {
-    if (videoFailed) return Promise.reject(new Error("vidéo indisponible"));
-    if (!video) return Promise.reject(new Error("vidéo non initialisée"));
-    pausedForQuestion = false;
-    video.muted = false;
-    return video.play().catch(function (err) {
-      console.warn("Lecture vidéo bloquée avec son :", err);
-      video.muted = true;
-      return video.play().catch(function (err2) {
-        console.warn("Lecture vidéo bloquée même en muet :", err2);
-        throw err2;
-      });
-    });
-  }
-
-  function isFailed() { return videoFailed; }
 
   function toggleFullscreen() {
     if (!video) return;
@@ -281,32 +222,6 @@ var nextQuestionAfterFreeze = null;  // question à afficher après le gel ("Pou
     return (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
   }
 
-  function allQuestionsSorted() {
-    return data.questions.slice().sort(function (a, b) { return a.time - b.time; });
-  }
-
-  function nextQuestionAt(t) {
-    if (nextQuestionIndex >= data.questions.length) return null;
-    var q = data.questions[nextQuestionIndex];
-    if (!answeredIds.has(q.id) && q.time <= t + 0.5) {
-      return q;
-    }
-    return null;
-  }
-
-  function nextUnansweredTime() {
-    if (nextQuestionIndex < data.questions.length) {
-      var q = data.questions[nextQuestionIndex];
-      if (!answeredIds.has(q.id)) return q.time;
-    }
-    for (var i = 0; i < data.questions.length; i++) {
-      if (!answeredIds.has(data.questions[i].id)) {
-        return data.questions[i].time;
-      }
-    }
-    return null;
-  }
-
   function questionAnswered(q) {
     questionLocked = false;
     pausedForQuestion = false;
@@ -321,32 +236,27 @@ var nextQuestionAfterFreeze = null;  // question à afficher après le gel ("Pou
       nextQuestionIndex++;
     }
   }
-
   function currentMissionTime() {
     if (!video) return 0;
     var ct = video.currentTime;
     var mt = ct + loopCount * loopDuration;
     return Math.min(mt, missionDuration);
   }
-
   function getDuration() { return missionDuration; }
   function isPlaying() { return playing && !pausedForQuestion; }
+  function getPendingQuestion() { return pendingQuestion; }
+  function clearPendingQuestion() { pendingQuestion = null; }
 
   return {
     init: init,
-    play: play,
     forcePlay: forcePlay,
+    handleResume: handleResume,
     pause: pause,
     resume: resume,
     seekToSeconds: seekToSeconds,
     setSpeed: setSpeed,
     toggleFullscreen: toggleFullscreen,
     formatTime: formatTime,
-    isFailed: isFailed,
-    allQuestions: allQuestionsSorted,
-    nextQuestionAt: nextQuestionAt,
-    nextUnansweredTime: nextUnansweredTime,
-    triggerQuestion: triggerQuestion,
     questionAnswered: questionAnswered,
     isLocked: isLocked,
     isPausedForQuestion: isPausedForQuestion,
@@ -355,8 +265,7 @@ var nextQuestionAfterFreeze = null;  // question à afficher après le gel ("Pou
     currentMissionTime: currentMissionTime,
     getDuration: getDuration,
     isPlaying: isPlaying,
-    handleResume: handleResume,
-    getPendingQuestion: function () { return pendingQuestion; },
-    clearPendingQuestion: function () { pendingQuestion = null; }
+    getPendingQuestion: getPendingQuestion,
+    clearPendingQuestion: clearPendingQuestion
   };
 })();
