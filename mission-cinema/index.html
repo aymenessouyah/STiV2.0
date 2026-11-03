@@ -3,100 +3,125 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#f59e0b">
+  <meta name="theme-color" content="#8b0000">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>Mission Cinéma – STI Version 2.0</title>
+  <title>MISSION CINÉMA – STI Version 2.0</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=3.0">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=4.0">
 </head>
 <body>
-<div class="bg-grad"></div>
+  <div class="cinema-salle">
+    <!-- Rideau gauche -->
+    <div class="rideau rideau-gauche"></div>
+    <!-- Rideau droit -->
+    <div class="rideau rideau-droit"></div>
+    <!-- Projecteur gauche -->
+    <div class="projecteur projecteur-gauche"></div>
+    <!-- Projecteur droit -->
+    <div class="projecteur projecteur-droit"></div>
+    <!-- Lumières salle -->
+    <div class="lumiere-salle"></div>
 
-<div id="app">
+    <div id="app">
 
-  <!-- ================= ÉCRAN D'ACCUEIL ================= -->
-  <section id="ecran-accueil" class="ecran actif">
-    <div class="accueil-cadre carte-claire">
-      <div class="logo">
-        <img src="assets/images/sti-logo.png" alt="Logo STI" class="sti-logo">
-        STI Version 2.0 <em>By A'E</em>
-      </div>
-      <h1>MISSION CINÉMA</h1>
-      <p class="sous-titre">Devenez responsable de la base de données d'une société de production cinématographique.</p>
-      <button id="btn-start" class="btn btn-principal">Démarrer la mission ▶</button>
-      <p class="note">Progression sauvegardée automatiquement.</p>
-    </div>
-  </section>
-
-  <!-- ================= ÉCRAN DE MISSION ================= -->
-  <section id="ecran-mission" class="ecran cacher">
-    <div class="mission-body">
-      <!-- Panneau latéral -->
-      <aside class="panneau carte-claire">
-        <div class="logo"><img src="assets/images/sti-logo.png" alt="Logo STI" class="sti-logo">STI Version 2.0</div>
-        <div class="score-cercle">
-          <div class="score-anneau">
-            <svg class="score-svg" width="140" height="140">
-              <circle class="score-fond" cx="70" cy="70" r="58" stroke="#1e293b" stroke-width="10" fill="none"/>
-              <circle class="score-remplissage" id="score-cercle-progress" cx="70" cy="70" r="58" stroke="#f59e0b" stroke-width="10" fill="none" stroke-dasharray="364" stroke-dashoffset="364"/>
-            </svg>
-            <div class="score-centre"><span id="score-pct" class="score-pourcentage">0</span>%</div>
+      <!-- ================= ÉCRAN D'ACCUEIL ================= -->
+      <section id="ecran-accueil" class="ecran actif">
+        <div class="accueil-cadre carte-cinema">
+          <div class="logo">
+            <img src="assets/images/sti-logo.png" alt="Logo STI" class="sti-logo">
+            STI Version 2.0 <em>By A'E</em>
           </div>
-          <div class="score-details">
-            <div class="score-item"><span class="score-label">Score</span><span id="score-points" class="score-valeur">0</span> <span class="score-unite">PTS</span></div>
-            <div class="score-item"><span class="score-label">Niveau</span><span id="score-niveau" class="score-valeur">1</span></div>
-          </div>
+          <h1>MISSION CINÉMA</h1>
+          <p class="sous-titre">Devenez responsable de la base de données d'une société de production cinématographique.</p>
+          <button id="btn-start" class="btn btn-principal">DÉMARRER LA SÉANCE ▶</button>
+          <p class="note">Progression sauvegardée automatiquement.</p>
         </div>
-        <div class="section-titre">Modules SQL</div>
-        <div id="modules-liste"></div>
-        <div class="section-titre">Questions traitées</div>
-        <ul id="liste-questions"></ul>
-      </aside>
+      </section>
 
-      <!-- Zone principale -->
-      <div class="principal">
-        <header class="mission-header">
-          <div class="titre-mission">MISSION CINÉMA<span>Base de données « cinema »</span></div>
-          <div class="eleve-badge"><img src="assets/images/sti-badge.png" alt="Badge élève" class="badge-img"><span class="badge-niveau" id="badge-niveau">Niv. 1</span></div>
-        </header>
+      <!-- ================= ÉCRAN DE MISSION ================= -->
+      <section id="ecran-mission" class="ecran cacher">
+        <div class="mission-body">
+          <!-- Panneau latéral -->
+          <aside class="panneau carte-cinema">
+            <div class="logo">
+              <img src="assets/images/sti-logo.png" alt="Logo STI" class="sti-logo">
+              STI Version 2.0
+            </div>
+            <div class="score-cercle">
+              <div class="score-anneau">
+                <svg class="score-svg" width="160" height="160">
+                  <circle class="score-fond" cx="80" cy="80" r="68" stroke="#1a1a2e" stroke-width="12" fill="none"/>
+                  <circle class="score-remplissage" id="score-cercle-progress" cx="80" cy="80" r="68" stroke="#f59e0b" stroke-width="12" fill="none" stroke-dasharray="427" stroke-dashoffset="427"/>
+                </svg>
+                <div class="score-centre">
+                  <span id="score-pct" class="score-pourcentage">0</span>%
+                </div>
+              </div>
+              <div class="score-details">
+                <div class="score-item"><span class="score-label">Score</span><span id="score-points" class="score-valeur">0</span> <span class="score-unite">PTS</span></div>
+                <div class="score-item"><span class="score-label">Niveau</span><span id="score-niveau" class="score-valeur">1</span></div>
+              </div>
+            </div>
+            <div class="section-titre">Programme de Séance</div>
+            <div id="modules-liste"></div>
+            <div class="section-titre">Questions Traités</div>
+            <ul id="liste-questions"></ul>
+          </aside>
 
-        <div id="chapitre-actuel" class="chap-banniere">Préparation de la mission…</div>
+          <!-- Zone principale -->
+          <div class="principal">
+            <header class="mission-header">
+              <div class="titre-mission">
+                MISSION CINÉMA
+                <span>Base de données « cinema »</span>
+              </div>
+              <div class="eleve-badge">
+                <img src="assets/images/sti-badge.png" alt="Badge élève" class="badge-img">
+                <span class="badge-niveau" id="badge-niveau">Niv. 1</span>
+              </div>
+            </header>
 
-        <div class="schema-bd carte-claire">
-          <div class="section-titre">Base de données « cinema » — Schéma relationnel</div>
-          <img src="assets/images/schema-bd.jpg" alt="Schéma relationnel" class="schema-image">
-        </div>
+            <div id="chapitre-actuel" class="chap-banniere">Préparation de la séance…</div>
 
-        <div class="mission-principale">
-          <div class="video-wrap">
-            <video id="video" src="assets/video/TD_SQL_Cinema_questions.mp4" playsinline preload="metadata"
-                   poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='360' viewBox='0 0 640 360'%3E%3Crect fill='%230f172a' width='640' height='360'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='24' fill='%2394a3b8' text-anchor='middle' dominant-baseline='middle'%3EMISSION CINÉMA%3C/text%3E%3C/svg%3E"></video>
-            <button id="btn-play-video" class="btn-play-video">▶</button>
-            <div id="video-placeholder" class="video-placeholder cacher">
-              <div class="placeholder-icone">🎬</div>
-              <div class="placeholder-titre">Mission Cinéma</div>
+            <div class="schema-bd carte-cinema">
+              <div class="section-titre">Base de données « cinema » — Schéma relationnel</div>
+              <img src="assets/images/schema-bd.jpg" alt="Schéma relationnel" class="schema-image">
+            </div>
+
+            <div class="mission-principale">
+              <div class="video-wrap">
+                <div class="ecran-cinema">
+                  <video id="video" src="assets/video/TD_SQL_Cinema_questions.mp4" playsinline preload="metadata"
+                         poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='360' viewBox='0 0 640 360'%3E%3Crect fill='%230a0a0c' width='640' height='360'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='24' fill='%2394a3b8' text-anchor='middle' dominant-baseline='middle'%3EMISSION CINÉMA%3C/text%3E%3C/svg%3E"></video>
+                  <button id="btn-play-video" class="btn-play-video">▶</button>
+                  <div id="video-placeholder" class="video-placeholder cacher">
+                    <div class="placeholder-icone">🎬</div>
+                    <div class="placeholder-titre">MISSION CINÉMA</div>
+                    <div class="placeholder-sous">Cliquez sur le clapet pour lancer la séance</div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="panneau-question" class="panneau-question cacher">
+                <div id="zone-interaction"></div>
+              </div>
             </div>
           </div>
-
-          <div id="panneau-question" class="panneau-question cacher">
-            <div id="zone-interaction"></div>
-          </div>
         </div>
-      </div>
-    </div>
-  </section>
+      </section>
 
-  <!-- ================= ÉCRAN DE BILAN ================= -->
-  <section id="ecran-bilan" class="ecran cacher">
-    <div class="bilan-wrap carte-claire">
-      <h1>Bilan de la mission</h1>
-      <div id="contenu-bilan"></div>
-    </div>
-  </section>
+      <!-- ================= ÉCRAN DE BILAN ================= -->
+      <section id="ecran-bilan" class="ecran cacher">
+        <div class="bilan-wrap carte-cinema">
+          <h1>BILAN DE LA SÉANCE</h1>
+          <div id="contenu-bilan"></div>
+        </div>
+      </section>
 
-</div>
+    </div>
+  </div>
 
 <script src="js/questions.js"></script>
 <script src="js/video.js"></script>

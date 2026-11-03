@@ -1,8 +1,9 @@
 /* ============================================================================
-   MISSION CINÉMA — Contrôleur principal
+   MISSION CINÉMA — Contrôleur principal (Style Cinéma)
    - Pas d'autoplay : la vidéo se lance uniquement par le bouton Play
    - À chaque question : la vidéo se gèle, la bulle s'affiche
    - "Poursuivre" reprend la vidéo exactement là où elle s'était arrêtée
+   - Rideaux de velours et projecteurs s'activent au démarrage
    - Aucune exécution de SQL élève dans le navigateur
    ============================================================================ */
 
@@ -13,6 +14,7 @@ window.AppController = (function () {
   var video = window.VideoController;
   var quiz = window.QuizController;
 
+  // Éléments DOM
   var ecranAccueil = document.getElementById("ecran-accueil");
   var ecranMission = document.getElementById("ecran-mission");
   var ecranBilan = document.getElementById("ecran-bilan");
@@ -21,6 +23,12 @@ window.AppController = (function () {
 
   var btnStart = document.getElementById("btn-start");
   var btnPlayVideo = document.getElementById("btn-play-video");
+
+  var rideauGauche = document.querySelector(".rideau-gauche");
+  var rideauDroit = document.querySelector(".rideau-droit");
+  var lumiereSalle = document.querySelector(".lumiere-salle");
+  var projecteurGauche = document.querySelector(".projecteur-gauche");
+  var projecteurDroit = document.querySelector(".projecteur-droit");
 
   var spanProgression = document.getElementById("progression-pct");
   var spanScore = document.getElementById("score");
@@ -43,6 +51,20 @@ window.AppController = (function () {
   var revisionQuestions = [];
   var revisionIndex = 0;
 
+  // État rideaux
+  var rideauxOuverts = false;
+
+  function ouvrirRideaux() {
+    if (!rideauxOuverts) {
+      rideauxOuverts = true;
+      rideauGauche.classList.add("ouvert");
+      rideauDroit.classList.add("ouvert");
+      lumiereSalle.classList.add("allumee");
+      projecteurGauche.classList.add("allume");
+      projecteurDroit.classList.add("allume");
+    }
+  }
+
   function afficherPlaceholder(montrer) {
     if (!videoEl) return;
     if (montrer) {
@@ -59,14 +81,20 @@ window.AppController = (function () {
 
     btnStart.addEventListener("click", function () {
       quiz.setNom("Abonné");
-      afficherEcran("mission");
-      startMission();
+      ouvrirRideaux();
+      setTimeout(function () {
+        afficherEcran("mission");
+        startMission();
+      }, 600);
     });
 
     if (btnPlayVideo) {
       btnPlayVideo.addEventListener("click", function () {
         btnPlayVideo.classList.add("cacher");
-        video.forcePlay().catch(function () {});
+        ouvrirRideaux();
+        setTimeout(function () {
+          video.forcePlay().catch(function () {});
+        }, 300);
       });
     }
 
@@ -243,8 +271,8 @@ window.AppController = (function () {
     });
 
     var bilanHtml = "";
-    bilanHtml += "<h2>Bilan de la mission</h2>";
-    bilanHtml += "<p>Mission terminée, <b>" + echapperHtml(quiz.getNom() || "élève") + "</b>.</p>";
+    bilanHtml += "<h2>BILAN DE LA SÉANCE</h2>";
+    bilanHtml += "<p>Séance terminée, <b>" + echapperHtml(quiz.getNom() || "élève") + "</b>.</p>";
     bilanHtml += "<div style='font-size: 1.5rem; font-weight: 800; color: var(--blanc); margin: 20px 0;'>" + score + " / " + total + " (" + pct + "% de réussite)</div>";
 
     bilanHtml += "<h3 style='text-align: left;'>Questions à revoir</h3>";
@@ -264,7 +292,7 @@ window.AppController = (function () {
     }
 
     bilanHtml += "<div style='margin-top: 30px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;'>" +
-                 "<button class='btn' onclick='AppController.recommencer()'>Recommencer la mission</button>" +
+                 "<button class='btn' onclick='AppController.recommencer()'>Recommencer la séance</button>" +
                  "<button class='btn secondaire' onclick='location.reload()'>Quitter</button>" +
                  "</div>";
 
