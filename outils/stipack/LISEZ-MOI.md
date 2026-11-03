@@ -1,5 +1,7 @@
 # Paquet d'installation `.stipack` — fabrication et contrôle
 
+> Mode d'emploi court (installer et mettre à jour les postes) : [`README.md`](README.md).
+
 > En une phrase : **le paquet se fabrique de deux façons, et dans les deux cas
 > il part de la dernière mise à jour** — depuis le tableau de bord de l'admin
 > (bouton « 🧱 Nouveau stipack », sans poste de développement), ou depuis une
@@ -30,9 +32,14 @@ Dans « 🪟 Application Windows v316 — guide et assistance », le bloc
 5. affiche la progression, garde un lien pour retélécharger le paquet, et mémorise
    la dernière fabrication (nom, taille, date, poste).
 
-Rien n'est envoyé sur le réseau en écriture : la fabrication est locale. Un fichier
-illisible **interrompt** la fabrication — un paquet troué n'est jamais proposé — et
-le journal nomme le fichier fautif.
+Rien n'est envoyé sur le réseau en écriture : la fabrication est locale.
+
+**Cadence et reprises (v617).** Un hébergement gratuit limite le débit : les fichiers
+sont demandés trois à la fois, un départ toutes les 120 ms, et chaque fichier est
+réessayé jusqu'à cinq fois (pauses de 0,4 / 1,2 / 3 / 6 s, annoncées au journal). Un
+**404** est en revanche définitif : le fichier n'existe pas, insister ne servirait à
+rien. Après épuisement des reprises, la fabrication s'arrête — **un paquet troué n'est
+jamais proposé** — et le journal nomme le fichier fautif avec le nombre de tentatives.
 
 ---
 
@@ -207,6 +214,17 @@ du script : la collecte des fichiers, les empreintes, l'écriture ZIP et le
 contrôle final restent inchangés.
 
 ## Ce qui est exclu, et pourquoi
+
+`tests/`, `outils/`, `.github/`, `.vscode/`, `node_modules/`, `.gitignore`,
+`.gitattributes` et les `.patch` sont écartés des deux fabriques : ils ne servent à
+rien sur un poste et l'hébergement ne les sert pas toujours (les `.mjs` de tests y
+répondent **503**). Cette règle est la même dans `construire-stipack.mjs` et dans
+`assets/js/admin-stipack.js`, pour que les deux produisent le **même paquet** au même
+commit. `--tout` rétablit l'ancien comportement.
+
+Sans cette règle, la fabrication depuis le tableau de bord s'arrêtait au premier
+fichier de test rencontré, après quelques mégaoctets — le défaut corrigé en v617.
+
 
 Le paquet suit `.gitignore` : ni `.git/`, ni `node_modules/`, ni les rendus
 intermédiaires des outils vidéo. Le volume `leger` écarte en plus les fichiers
