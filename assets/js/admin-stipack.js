@@ -16,8 +16,32 @@
   'use strict';
 
   var CLE_DERNIER = 'sti-stipack-dernier';
-  var CONCURRENCE = 4;          /* fichiers récupérés en parallèle */
   var SEUIL_DEFAUT_MO = 2;
+
+  /* Réglages du téléchargement. Un hébergement gratuit limite le débit : mieux
+     vaut avancer à cadence tenue et réessayer que tout arrêter au premier 503. */
+  var REGLAGES = {
+    concurrence: 3,                                  /* fichiers en parallèle */
+    ecartMin: 120,                                   /* ms entre deux départs */
+    tentatives: 5,                                   /* reprises par fichier */
+    attentes: [400, 1200, 3000, 6000]                /* pause avant chaque reprise */
+  };
+
+  /* Tout ce que le dépôt contient ne fait pas partie de l’installation : les tests
+     et l’outillage de fabrication ne sont ni utiles sur un poste, ni toujours
+     servis par l’hébergement (les .mjs de tests y répondent 503). Les empaqueter
+     faisait échouer la fabrication en cours de route. */
+  var HORS_INSTALLATION = ['tests/', 'outils/', '.github/', '.vscode/', 'node_modules/'];
+  var HORS_INSTALLATION_RACINE = ['.gitignore', '.gitattributes'];
+
+  function estDuSite(chemin) {
+    if (!chemin) return false;
+    if (HORS_INSTALLATION_RACINE.indexOf(chemin) > -1) return false;
+    for (var i = 0; i < HORS_INSTALLATION.length; i++) {
+      if (chemin.indexOf(HORS_INSTALLATION[i]) === 0) return false;
+    }
+    return !/\.patch$/i.test(chemin);
+  }
 
   var el = {};
   var etat = { enCours: false, annulation: null, dernierBlob: null, dernierNom: null, dernierUrl: null };
@@ -120,14 +144,17 @@
     if (!reponse.ok) throw new Error('dépôt illisible (HTTP ' + reponse.status + ')');
     var arbre = await reponse.json();
     if (arbre.truncated) throw new Error('arbre du dépôt tronqué par l’API');
-    var fichiers = (arbre.tree || [])
+    var tout = (arbre.tree || [])
       .filter(function (e) { return e.type === 'blob' && e.path && !/^\.git\//.test(e.path); })
-      .map(function (e) { return { chemin: e.path, octets: e.size || 0, empreinte: e.sha || null }; })
+      .map(function (e) { return { chemin: e.path, octets: e.size || 0, empreinte: e.sha || null }; });
+    var fichiers = tout
+      .filter(function (f) { return estDuSite(f.chemin); })
       .sort(function (a, b) { return a.chemin < b.chemin ? -1 : a.chemin > b.chemin ? 1 : 0; });
     if (!fichiers.length) throw new Error('arbre du dépôt vide');
     return {
       source: 'depot',
       fichiers: fichiers,
+      ecartes: tout.length - fichiers.length,
       version: null,
       date: null,
       commit: arbre.sha || null,
@@ -167,32 +194,72 @@
     }
   }
 
-  /** Récupère les fichiers dans l’ordre, avec quelques lectures en avance. */
-  function sourceFichiers(fichiers, signal) {
-    var avance = new Map();
+  /* Une requête, avec reprises. GitHub Pages répond parfois 503 quand on lui
+     demande beaucoup de fichiers d’affilée : on réessaie en espaçant, au lieu
+     d’abandonner toute la fabrication sur un incident passager. */
+  async function recupererUn(chemin, signal, journalReprise) {
+    var derniere = null;
+    for (var essai = 0; essai < REGLAGES.tentatives; essai++) {
+      if (signal && signal.aborted) throw new Error('Fabrication annulée.');
+      if (essai > 0) {
+        var attente = REGLAGES.attentes[Math.min(essai - 1, REGLAGES.attentes.length - 1)];
+        attente += Math.round(Math.random() * 300);
+        journalReprise(chemin, essai, attente, derniere ? derniere.message : '');
+        await new Promise(function (r) { setTimeout(r, attente); });
+      }
+      try {
+        var reponse = await fetch(chemin, { signal: signal, cache: 'default' });
+        if (reponse.ok) return await reponse.arrayBuffer();
+        // 404 : le fichier n’existe pas, inutile d’insister.
+        if (reponse.status === 404 || reponse.status === 403) {
+          throw Object.assign(
+            new Error(chemin + ' : HTTP ' + reponse.status + ' (fichier absent du site)'),
+            { definitive: true }
+          );
+        }
+        derniere = new Error('HTTP ' + reponse.status);
+      } catch (erreur) {
+        if (erreur && (erreur.name === 'AbortError')) throw erreur;
+        if (erreur && erreur.definitive) throw erreur;
+        derniere = erreur;
+      }
+    }
+    throw new Error(chemin + ' : ' + (derniere && derniere.message ? derniere.message : 'illisible') +
+      ' (après ' + REGLAGES.tentatives + ' tentatives)');
+  }
 
-    function charger(index) {
-      if (index >= fichiers.length) return;
-      var chemin = fichiers[index].chemin;
+  /** Récupère les fichiers dans l’ordre, avec quelques lectures en avance, à cadence tenue. */
+  function sourceFichiers(fichiers, signal, journalReprise) {
+    var avance = new Map();
+    var index = new Map();
+    var prochainDepart = 0;
+
+    fichiers.forEach(function (f, i) { index.set(f.chemin, i); });
+
+    function charger(i) {
+      if (i >= fichiers.length) return;
+      var chemin = fichiers[i].chemin;
       if (avance.has(chemin)) return;
-      var promesse = fetch(chemin, { signal: signal, cache: 'default' }).then(function (reponse) {
-        if (!reponse.ok) throw new Error('HTTP ' + reponse.status);
-        return reponse.arrayBuffer();
-      });
+      var promesse = (async function () {
+        // Cadence : un départ toutes les REGLAGES.ecartMin au moins.
+        var maintenant = Date.now();
+        var attente = Math.max(0, prochainDepart - maintenant);
+        prochainDepart = Math.max(maintenant, prochainDepart) + REGLAGES.ecartMin;
+        if (attente) await new Promise(function (r) { setTimeout(r, attente); });
+        return recupererUn(chemin, signal, journalReprise);
+      })();
       promesse.catch(function () { /* l’erreur est traitée au tour de son fichier */ });
       avance.set(chemin, promesse);
     }
 
-    for (var i = 0; i < Math.min(CONCURRENCE, fichiers.length); i++) charger(i);
+    for (var i = 0; i < Math.min(REGLAGES.concurrence, fichiers.length); i++) charger(i);
 
     return async function recuperer(chemin) {
-      var index = fichiers.findIndex(function (f) { return f.chemin === chemin; });
-      for (var k = index; k < Math.min(index + CONCURRENCE, fichiers.length); k++) charger(k);
+      var position = index.has(chemin) ? index.get(chemin) : 0;
+      for (var k = position; k < Math.min(position + REGLAGES.concurrence, fichiers.length); k++) charger(k);
       var promesse = avance.get(chemin);
       try {
         return await promesse;
-      } catch (erreur) {
-        throw new Error(chemin + ' : ' + (erreur && erreur.message ? erreur.message : 'illisible'));
       } finally {
         avance.delete(chemin);
       }
@@ -271,11 +338,26 @@
         'Dernière mise à jour : ' + liste.length + ' fichiers, ' + tailleLisible(totalOctets) +
         ' — ' + sourced.jugement.motif + '.'
       );
+      if (sourced.ecartes) {
+        journal(
+          sourced.ecartes + ' fichier(s) du dépôt écartés : tests et outillage ne font pas partie de l’installation.',
+          ''
+        );
+      }
       if (!sourced.jugement.frais) {
         throw new Error(sourced.jugement.motif);
       }
 
-      var recuperer = sourceFichiers(liste, controleur ? controleur.signal : undefined);
+      var recuperer = sourceFichiers(
+        liste,
+        controleur ? controleur.signal : undefined,
+        function (chemin, essai, attente, motif) {
+          journal(
+            'Reprise ' + essai + '/' + (REGLAGES.tentatives - 1) + ' dans ' + Math.round(attente / 100) / 10 + ' s : ' +
+            chemin + (motif ? ' (' + motif + ')' : '')
+          );
+        }
+      );
 
       ecritureEnCours = ecriture;
       if (!ecriture) {
@@ -437,7 +519,7 @@
     });
   }
 
-  window.STIStipackAdmin = { init: init, fabriquer: fabriquer };
+  window.STIStipackAdmin = { init: init, fabriquer: fabriquer, reglages: REGLAGES };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();

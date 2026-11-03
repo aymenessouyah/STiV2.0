@@ -309,7 +309,7 @@ function elementFactice(id) {
   };
 }
 
-function laboratoire(site) {
+function laboratoire(site, instrumenter) {
   const elements = new Map();
   const articles = [];
   const telechargements = [];
@@ -350,7 +350,8 @@ function laboratoire(site) {
     AbortController
   };
 
-  const fetch = async (chemin) => {
+  const appels = [];
+  const baseFetch = async (chemin) => {
     const propre = String(chemin).split('?')[0];
     const donnees = site.get(propre);
     if (!donnees) {
@@ -370,12 +371,14 @@ function laboratoire(site) {
     };
   };
 
+  const fetch = instrumenter ? instrumenter(baseFetch, appels) : baseFetch;
+
   new Function('window', 'globalThis', MOTEUR)(fenetre, fenetre);
   new Function('window', 'document', 'fetch', 'URL', 'localStorage', 'AbortController', 'setTimeout', PANNEAU)(
     fenetre, document, fetch, fenetre.URL, fenetre.localStorage, AbortController, setTimeout
   );
 
-  return { fenetre, elements, articles, telechargements, stockage };
+  return { fenetre, elements, articles, telechargements, stockage, appels };
 }
 
 const SHA_DERNIER_COMMIT = 'fedcba9876543210fedcba9876543210fedcba98';
@@ -384,8 +387,18 @@ function arbreGithub(chemins) {
   return Buffer.from(JSON.stringify({
     sha: SHA_DERNIER_COMMIT,
     truncated: false,
-    tree: chemins.map((p) => ({ path: p, type: 'blob', size: FICHIERS.get(p).length, sha: 'blob-' + p }))
+    tree: chemins.map((p) => ({
+      path: p, type: 'blob', size: FICHIERS.has(p) ? FICHIERS.get(p).length : 10, sha: 'blob-' + p
+    }))
   }));
+}
+
+/* Reprises raccourcies : on éprouve la logique, pas l'attente réelle (10 s). */
+function accelerer(labo) {
+  const r = labo.fenetre.STIStipackAdmin.reglages;
+  r.attentes = [5, 10, 15, 20];
+  r.ecartMin = 0;
+  return labo;
 }
 
 async function attendre(elements, condition) {
@@ -500,7 +513,123 @@ test('v616 : un fichier manquant laisse un message clair et aucun paquet', async
   await attendre(labo.elements, () => labo.articles.some((a) => a.className === 'stipack-erreur'));
 
   assert.ok(labo.articles.some((a) => a.className === 'stipack-erreur'), 'l’échec est signalé');
-  assert.ok(labo.articles.some((a) => /disparu\.html/.test(a.textContent)), 'le fichier fautif est nommé');
+  assert.ok(labo.articles.some((a) => /disparu\.html/.test(a.textContent)),
+    'le fichier fautif est nommé : ' + labo.articles.map((a) => a.textContent).join(' | '));
   assert.equal(labo.telechargements.length, 0, 'aucun paquet incomplet n’est proposé');
   assert.equal(labo.elements.get('stipack-btn-telecharger').hidden, true);
+});
+
+/* ── 3. résistance à l'hébergement (503) et aux fichiers hors installation ── */
+
+/** Laboratoire dont on peut compter les requêtes et faire échouer les premières. */
+function laboratoireInstrumente(site, options = {}) {
+  return laboratoire(site, (baseFetch, appels) => async (chemin) => {
+    const propre = String(chemin).split('?')[0];
+    appels.push(propre);
+    const echecs = (options.echecs && options.echecs[propre]) || 0;
+    const dejaVus = appels.filter((v) => v === propre).length;
+    if (dejaVus <= echecs) {
+      const statut = options.statut || 503;
+      return {
+        ok: false, status: statut,
+        arrayBuffer: async () => { throw new Error(String(statut)); },
+        text: async () => '', json: async () => { throw new Error(String(statut)); }
+      };
+    }
+    return baseFetch(chemin);
+  });
+}
+
+test('v616 : les tests et l’outillage du dépôt ne sont pas empaquetés', async () => {
+  const site = new Map();
+  site.set('sw.js', Buffer.from('var VERSION_PUBLIEE = "v616";\n'));
+  const chemins = [
+    'admin.html',
+    'assets/js/stipack.js',
+    'cours/css3.html',
+    'tests/browser-mobile-nav.spec.mjs',   // c'est ce fichier qui répondait 503
+    'tests/stipack-media.test.mjs',
+    'outils/stipack/preparer-disque.mjs',
+    '.github/workflows/ci.yml',
+    '.gitignore',
+    'STI-Smart-Book.patch'
+  ];
+  const arbre = Buffer.from(JSON.stringify({
+    sha: SHA_DERNIER_COMMIT,
+    truncated: false,
+    tree: chemins.map((p) => ({ path: p, type: 'blob', size: 10, sha: 'x' }))
+  }));
+  for (const p of chemins) site.set(p, Buffer.from('contenu de ' + p));
+  site.set('https://api.github.com/repos/aymenessouyah/STiV2.0/git/trees/main', arbre);
+
+  const labo = laboratoire(site);
+  labo.elements.get('stipack-btn-creer').ecouteurs.click();
+  await attendre(labo.elements, () => labo.articles.some((a) => a.className === 'stipack-ok' || a.className === 'stipack-erreur'));
+
+  assert.ok(!labo.articles.some((a) => a.className === 'stipack-erreur'),
+    'aucune erreur : ' + labo.articles.filter((a) => a.className === 'stipack-erreur').map((a) => a.textContent).join(' | '));
+  assert.match(labo.articles.map((a) => a.textContent).join('\n'), /6 fichier\(s\) du dépôt écartés/);
+
+  const octets = Buffer.from(await labo.telechargements[0].blob.arrayBuffer());
+  const noms = lireArchive(octets).map((e) => e.nom).filter((n) => n.startsWith('plateforme/')).sort();
+  assert.deepEqual(noms, ['plateforme/admin.html', 'plateforme/assets/js/stipack.js', 'plateforme/cours/css3.html']);
+});
+
+test('v616 : un 503 passager est repris, la fabrication va au bout', async () => {
+  const site = new Map();
+  site.set('sw.js', Buffer.from('var VERSION_PUBLIEE = "v616";\n'));
+  const chemins = ['index.html', 'assets/petit.txt'];
+  site.set('https://api.github.com/repos/aymenessouyah/STiV2.0/git/trees/main', arbreGithub(chemins));
+  for (const p of chemins) site.set(p, FICHIERS.get(p));
+
+  const labo = accelerer(laboratoireInstrumente(site, { echecs: { 'assets/petit.txt': 2 } }));
+  labo.elements.get('stipack-btn-creer').ecouteurs.click();
+  await attendre(labo.elements, () => labo.articles.some((a) => a.className === 'stipack-ok' || a.className === 'stipack-erreur'));
+
+  assert.ok(!labo.articles.some((a) => a.className === 'stipack-erreur'),
+    'aucune erreur malgré les 503 : ' + labo.articles.map((a) => a.textContent).join(' | '));
+  assert.ok(labo.articles.some((a) => /Reprise 1\//.test(a.textContent)), 'les reprises sont annoncées');
+  assert.equal(labo.appels.filter((c) => c === 'assets/petit.txt').length, 3, 'deux échecs puis la réussite');
+  assert.equal(labo.telechargements.length, 1, 'le paquet est tout de même produit');
+});
+
+test('v616 : un fichier durablement indisponible arrête la fabrication, avec le nombre de tentatives', async () => {
+  const site = new Map();
+  site.set('sw.js', Buffer.from('var VERSION_PUBLIEE = "v616";\n'));
+  const chemins = ['index.html', 'assets/petit.txt'];
+  site.set('https://api.github.com/repos/aymenessouyah/STiV2.0/git/trees/main', arbreGithub(chemins));
+  for (const p of chemins) site.set(p, FICHIERS.get(p));
+
+  const labo = accelerer(laboratoireInstrumente(site, { echecs: { 'assets/petit.txt': 99 } }));
+  labo.elements.get('stipack-btn-creer').ecouteurs.click();
+  await attendre(labo.elements, () => labo.articles.some((a) => a.className === 'stipack-erreur'));
+
+  const messages = labo.articles.map((a) => a.textContent).join('\n');
+  assert.match(messages, /après 5 tentatives/, 'le nombre de tentatives est annoncé');
+  assert.equal(labo.appels.filter((c) => c === 'assets/petit.txt').length, 5, 'cinq tentatives, pas une de plus');
+  assert.equal(labo.telechargements.length, 0, 'aucun paquet troué');
+});
+
+test('v616 : un 404 n’est pas réessayé', async () => {
+  const site = new Map();
+  site.set('sw.js', Buffer.from('var VERSION_PUBLIEE = "v616";\n'));
+  site.set('https://api.github.com/repos/aymenessouyah/STiV2.0/git/trees/main',
+    arbreGithub(['index.html', 'assets/absent.txt']));
+  site.set('index.html', FICHIERS.get('index.html'));
+
+  const labo = accelerer(laboratoireInstrumente(site, { statut: 404 }));
+  labo.elements.get('stipack-btn-creer').ecouteurs.click();
+  await attendre(labo.elements, () => labo.articles.some((a) => a.className === 'stipack-erreur'));
+
+  assert.equal(labo.appels.filter((c) => c === 'assets/absent.txt').length, 1, 'un 404 est définitif');
+  assert.match(labo.articles.map((a) => a.textContent).join('\n'), /HTTP 404/);
+});
+
+test('v616 : les deux fabriques écartent les mêmes fichiers', () => {
+  const script = lire('outils/stipack/construire-stipack.mjs');
+  for (const prefixe of ['tests/', 'outils/', '.github/']) {
+    assert.ok(script.includes(`'${prefixe}'`), 'exclusion en ligne de commande : ' + prefixe);
+    assert.ok(PANNEAU.includes(`'${prefixe}'`), 'exclusion dans le panneau : ' + prefixe);
+  }
+  assert.match(script, /--tout|toutGarder/, 'l’ancien comportement reste accessible');
 });

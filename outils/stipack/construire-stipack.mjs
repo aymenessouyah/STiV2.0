@@ -48,6 +48,21 @@ const NOM_PAR_DEFAUT = 'STI-Labo3-Plateforme.stipack';
    de secours (`outils/secours/construire-secours.mjs`). */
 const SEUIL_MO = 2;
 
+/* Ce que le dépôt contient ne fait pas tous partie de l’installation : ni les tests,
+   ni l’outillage de fabrication, ni les fichiers de service du dépôt. Les empaqueter
+   alourdissait le paquet et faisait échouer la fabrication depuis le tableau de bord
+   (l’hébergement répond 503 sur les .mjs de tests). La même règle vaut dans
+   assets/js/admin-stipack.js — les deux fabriques doivent produire le même paquet.
+   `--tout` rétablit l’ancien comportement. */
+const HORS_INSTALLATION = ['tests/', 'outils/', '.github/', '.vscode/', 'node_modules/'];
+const HORS_INSTALLATION_RACINE = new Set(['.gitignore', '.gitattributes']);
+
+function estDuSite(chemin) {
+  if (HORS_INSTALLATION_RACINE.has(chemin)) return false;
+  if (HORS_INSTALLATION.some((prefixe) => chemin.startsWith(prefixe))) return false;
+  return !/\.patch$/i.test(chemin);
+}
+
 /* Extensions déjà compressées : on les stocke telles quelles, le deflate
    n'y gagne rien et ralentirait nettement la fabrication. */
 const DEJA_COMPRIME = new Set([
@@ -252,6 +267,7 @@ function construire() {
     } catch { return 'inconnue'; }
   })();
 
+  const toutGarder = drapeaux('--tout');
   const exclus = [];
   const choisis = [];
   for (const relatif of fichiersSuivis()) {
@@ -259,6 +275,10 @@ function construire() {
     let stat;
     try { stat = fs.statSync(absolu); } catch { exclus.push({ chemin: relatif, motif: 'absent du disque' }); continue; }
     if (!stat.isFile()) continue;
+    if (!toutGarder && !estDuSite(relatif)) {
+      exclus.push({ chemin: relatif, motif: 'hors installation (tests, outillage ou fichier de dépôt)' });
+      continue;
+    }
     if (volume === 'leger' && stat.size > seuil) {
       exclus.push({ chemin: relatif, motif: `plus de ${tailleLisible(seuil)}` });
       continue;
