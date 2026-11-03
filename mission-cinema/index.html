@@ -3,89 +3,598 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MISSION CINÉMA – STI Version 2.0</title>
-<link rel="stylesheet" href="css/style.css?v=11.0">
+  <title>MISSION CINÉMA — STI Version 2.0</title>
+  <style>
+  /* ============================================================================
+     MISSION CINÉMA — Design "Lumière de Projection"
+     Thème très lumineux, accents or et bleu, typographie épurée
+     ============================================================================ */
+  :root {
+    --bg-principal: #ffffff;
+    --bg-second: #f8fafc;
+    --bg-card: #ffffff;
+    --accent-or: #d4af37;
+    --accent-or-fonce: #b8860b;
+    --accent-bleu: #1e3a8a;
+    --accent-bleu-clair: #3b82f6;
+    --texte-principal: #0f172a;
+    --texte-second: #475569;
+    --texte-clair: #64748b;
+    --texte-bouton: #ffffff;
+    --vert: #15803d;
+    --rouge: #b91c1c;
+    --gris-clair: #f1f5f9;
+    --bordure: #e2e8f0;
+    --rayon: 16px;
+    --rayon-sm: 10px;
+    --ombre: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    --ombre-hover: 0 12px 24px -4px rgba(0, 0, 0, 0.08);
+    --trans: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-principal);
+    color: var(--texte-principal);
+    min-height: 100vh;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4 {
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--texte-principal);
+    letter-spacing: -0.5px;
+  }
+
+  p { color: var(--texte-second); }
+
+  /* ===== SALLE DE CINÉMA ===== */
+  .cinema-salle {
+    position: relative;
+    min-height: 100vh;
+    background: var(--bg-principal);
+    background-image:
+      radial-gradient(circle at 20% 25%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(30, 58, 138, 0.06) 0%, transparent 50%);
+  }
+
+  /* Rideaux de velours — version lumineuse */
+  .rideau {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 20vw;
+    min-width: 90px;
+    background: linear-gradient(180deg, #f1f5f9 0%, #cbd5e1 50%, #f1f5f9 100%);
+    border: 2px solid var(--bordure);
+    z-index: 10;
+    transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.05);
+  }
+
+  .rideau-gauche { left: 0; transform: translateX(-100%); }
+  .rideau-droit { right: 0; transform: translateX(100%); }
+
+  .rideau-gauche.ouvert { transform: translateX(0); }
+  .rideau-droit.ouvert { transform: translateX(0); }
+
+  .rideau::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    height: 8px;
+    background: var(--accent-or);
+    border-radius: 4px;
+    opacity: 0.6;
+  }
+
+  /* Projecteurs — version lumineuse */
+  .projecteur {
+    position: absolute;
+    top: 30px;
+    width: 70px;
+    height: 90px;
+    background: var(--bg-card);
+    border: 3px solid var(--accent-bleu);
+    border-radius: 14px 14px 0 0;
+    z-index: 5;
+    box-shadow: var(--ombre);
+  }
+
+  .projecteur-gauche { left: 50px; }
+  .projecteur-droit { right: 50px; }
+
+  .projecteur::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 14px;
+    height: 32px;
+    background: #94a3b8;
+  }
+
+  .projecteur::after {
+    content: "";
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 34px;
+    height: 8px;
+    background: var(--bg-card);
+    border: 2px solid var(--accent-bleu);
+    border-radius: 4px;
+  }
+
+  /* Lumière salle — très discrète */
+  .lumiere-salle {
+    position: absolute;
+    inset: 0;
+    background: rgba(30, 58, 138, 0.08);
+    z-index: 1;
+    transition: opacity 1.5s ease;
+  }
+
+  .lumiere-salle.allumee { opacity: 0.04; }
+
+  /* ===== UTILITAIRES ===== */
+  .cacher { display: none !important; }
+
+  .ecran { display: none; }
+  .ecran.actif { display: block; }
+
+  #app { position: relative; z-index: 20; }
+
+  /* ===== ÉCRAN D'ACCUEIL ===== */
+  .accueil-cadre {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 100px 24px;
+    text-align: center;
+  }
+
+  .logo {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--accent-bleu);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 60px;
+    letter-spacing: -0.5px;
+  }
+
+  .sti-logo { width: 36px; height: 36px; }
+
+  .accueil-cadre h1 {
+    font-size: 3.5rem;
+    color: var(--texte-principal);
+    margin-bottom: 24px;
+    letter-spacing: -1.5px;
+  }
+
+  .sous-titre {
+    font-size: 1.2rem;
+    color: var(--texte-second);
+    max-width: 560px;
+    margin: 0 auto 56px auto;
+    line-height: 1.7;
+  }
+
+  .intro-texte {
+    background: var(--bg-card);
+    padding: 32px;
+    border-radius: var(--rayon);
+    box-shadow: var(--ombre);
+    border: 1px solid var(--bordure);
+    margin-bottom: 40px;
+    text-align: left;
+    line-height: 1.8;
+  }
+
+  .intro-texte p { margin-bottom: 16px; }
+  .intro-texte p:last-child { margin-bottom: 0; }
+
+  .btn-principal {
+    background: linear-gradient(135deg, var(--accent-or), var(--accent-or-fonce));
+    color: var(--texte-bouton);
+    border: none;
+    padding: 20px 52px;
+    font-size: 1.15rem;
+    font-weight: 800;
+    border-radius: var(--rayon-sm);
+    cursor: pointer;
+    transition: var(--trans);
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+  }
+
+  .btn-principal:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 28px rgba(212, 175, 55, 0.4);
+  }
+
+  .btn-principal:active { transform: translateY(0); }
+
+  .note { margin-top: 40px; font-size: 0.9rem; color: var(--texte-clair); }
+
+  /* ===== ÉCRAN DE MISSION ===== */
+  .mission-body {
+    padding: 36px 24px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .panneau.carte-cinema {
+    background: var(--bg-card);
+    padding: 32px 24px;
+    border-radius: var(--rayon);
+    box-shadow: var(--ombre);
+    border: 1px solid var(--bordure);
+    margin-bottom: 36px;
+  }
+
+  .score-cercle { text-align: center; margin-bottom: 24px; }
+
+  .score-anneau { position: relative; }
+
+  .score-svg { transform: rotate(-90deg); width: 150px; height: 150px; }
+
+  .score-fond { stroke: var(--gris-clair); }
+
+  .score-remplissage {
+    stroke: var(--accent-or);
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s ease;
+  }
+
+  .score-centre {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .score-pourcentage {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--accent-or-fonce);
+  }
+
+  .score-details {
+    display: flex;
+    gap: 28px;
+    margin-top: 18px;
+  }
+
+  .score-item {
+    text-align: center;
+    flex: 1;
+  }
+
+  .score-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--texte-clair);
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 700;
+  }
+
+  .score-valeur { font-size: 1.35rem; font-weight: 800; color: var(--texte-principal); }
+
+  .score-unite { font-size: 0.75rem; color: var(--texte-clair); }
+
+  .section-titre {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--accent-bleu);
+    font-weight: 800;
+    margin: 24px 0 14px 0;
+  }
+
+  #liste-questions { list-style: none; }
+
+  .q-item {
+    padding: 11px 15px;
+    border-radius: var(--rayon-sm);
+    margin-bottom: 9px;
+    font-size: 0.875rem;
+    background: var(--bg-second);
+    border: 1px solid var(--bordure);
+  }
+
+  .q-item.traitee { border-left: 3px solid var(--vert); background: #f0fdf4; }
+  .q-item.incorrecte { border-left: 3px solid var(--rouge); background: #fef2f2; }
+
+  .q-badge {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--texte-principal);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-align: center;
+    line-height: 20px;
+    margin-right: 8px;
+  }
+
+  /* ===== BULLE DE QUESTION ===== */
+  .panneau-question {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.98);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 36px;
+  }
+
+  .panneau-question.cacher { display: none !important; }
+
+  #zone-interaction {
+    background: var(--bg-card);
+    padding: 52px 44px;
+    border-radius: var(--rayon);
+    box-shadow: var(--ombre-hover);
+    max-width: 660px;
+    width: 100%;
+    border: 1px solid var(--bordure);
+    text-align: center;
+  }
+
+  .q-card {
+    background: var(--bg-second);
+    padding: 36px;
+    border-radius: var(--rayon-sm);
+    border: 1px solid var(--bordure);
+    margin-bottom: 32px;
+  }
+
+  .q-enonce {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--texte-principal);
+    margin-bottom: 36px;
+    line-height: 1.5;
+  }
+
+  .q-meta {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    margin-bottom: 32px;
+    font-size: 0.9rem;
+    color: var(--texte-clair);
+  }
+
+  .q-num { font-weight: 800; color: var(--accent-or-fonce); }
+
+  /* Boutons Vrai / Faux */
+  .btn-reponse {
+    flex: 1;
+    max-width: 200px;
+    padding: 20px 24px;
+    border: none;
+    border-radius: var(--rayon-sm);
+    font-size: 1.15rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: var(--trans);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 8px;
+  }
+
+  .btn-vrai {
+    background: var(--vert);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(21, 128, 61, 0.3);
+  }
+
+  .btn-vrai:hover { background: #166534; transform: translateY(-2px); }
+
+  .btn-faux {
+    background: var(--rouge);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(185, 28, 28, 0.3);
+  }
+
+  .btn-faux:hover { background: #991b1b; transform: translateY(-2px); }
+
+  .btn-reponse:active { transform: translateY(0); }
+
+  .btn-reponse:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  /* Résultat après réponse */
+  .resultat {
+    margin-top: 32px;
+    padding: 24px;
+    border-radius: var(--rayon-sm);
+    display: none;
+  }
+
+  .resultat.vrai {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+  }
+
+  .resultat.faux {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+  }
+
+  .resultat h3 {
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+  }
+
+  .resultat p {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .btn-suivant {
+    margin-top: 32px;
+    background: linear-gradient(135deg, var(--accent-or), var(--accent-or-fonce));
+    color: #fff;
+    border: none;
+    padding: 16px 40px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: var(--rayon-sm);
+    cursor: pointer;
+    transition: var(--trans);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-suivant:hover { transform: translateY(-2px); }
+
+  /* ===== ÉCRAN DE BILAN ===== */
+  .bilan-wrap {
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 100px 24px;
+    text-align: center;
+  }
+
+  .bilan-wrap h1 {
+    font-size: 3rem;
+    color: var(--texte-principal);
+    margin-bottom: 28px;
+  }
+
+  .bilan-score {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--accent-or-fonce);
+    margin-bottom: 24px;
+  }
+
+  .bilan-message {
+    font-size: 1.2rem;
+    color: var(--texte-second);
+    margin-bottom: 40px;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .accueil-cadre { padding: 80px 16px; }
+    .accueil-cadre h1 { font-size: 2.5rem; }
+    .mission-body { padding: 24px 16px; }
+    #zone-interaction { padding: 32px 22px; }
+    .q-enonce { font-size: 1.15rem; }
+    .btn-reponse { max-width: 160px; padding: 16px 18px; font-size: 1rem; }
+  }
+
+  @media (max-width: 480px) {
+    .accueil-cadre h1 { font-size: 2rem; }
+    .bilan-wrap h1 { font-size: 2.25rem; }
+  }
+  </style>
 </head>
 <body>
-  <div id="salle" class="cinema-salle">
-    <div id="rideau-gauche" class="rideau rideau-gauche"></div>
-    <div id="rideau-droit" class="rideau rideau-droit"></div>
-    <div id="projecteur-gauche" class="projecteur projecteur-gauche"></div>
-    <div id="projecteur-droit" class="projecteur projecteur-droit"></div>
-    <div id="lumiere-salle" class="lumiere-salle"></div>
+  <div class="cinema-salle">
+    <div class="rideau rideau-gauche"></div>
+    <div class="rideau rideau-droit"></div>
+    <div class="projecteur projecteur-gauche"></div>
+    <div class="projecteur projecteur-droit"></div>
+    <div class="lumiere-salle"></div>
 
     <div id="app">
-
       <!-- ÉCRAN D'ACCUEIL -->
       <section id="ecran-accueil" class="ecran actif">
-        <div id="cadre-accueil" class="accueil-cadre">
-          <div id="logo" class="logo">STI Version 2.0 <em>By A'E</em></div>
+        <div class="accueil-cadre">
+          <div class="logo">STI Version 2.0 <span style="font-size: 1rem; font-weight: 500; color: var(--texte-second);">By A'E</span></div>
           <h1>MISSION CINÉMA</h1>
-          <p class="sous-titre">Devenez responsable de la base de données d'une société de production cinématographique.</p>
-          <button id="btn-start" class="btn-principal">DÉMARRER LA SÉANCE ▶</button>
-          <p class="note">Progression sauvegardée automatiquement.</p>
+          <p class="sous-titre">Devenez expert SQL à travers 45 défis sur le thème du cinéma.</p>
+
+          <div class="intro-texte">
+            <p><strong>Bienvenue, futur expert SQL.</strong></p>
+            <p>Votre mission : répondre à des questions <strong>Vrai / Faux</strong> sur la base de données « cinema ».</p>
+            <p>Pour chaque question :</p>
+            <ul style="margin-left: 20px; margin-top: 8px; color: var(--texte-second);">
+              <li>Lisez l'énoncé attentivement</li>
+              <li>Répondez <strong>VRAI</strong> ou <strong>FAUX</strong> à l'oral</li>
+              <li>Découvrez la bonne réponse avec une explication</li>
+            </ul>
+            <p><strong>Aucune exécution SQL n'est requise.</strong> Cette mission teste votre compréhension des concepts de base de données.</p>
+          </div>
+
+          <button id="btn-start" class="btn-principal">COMMENCER LA MISSION ▶</button>
+          <p class="note">45 questions • Progression sauvegardée automatiquement.</p>
         </div>
       </section>
 
       <!-- ÉCRAN DE MISSION -->
       <section id="ecran-mission" class="ecran cacher">
-        <div id="mission-body" class="mission-body">
-          <!-- Panneau latéral -->
-          <aside id="panneau" class="panneau carte-cinema">
-            <div id="logo-mission" class="logo">STI Version 2.0</div>
-            <div id="score-cercle" class="score-cercle">
-              <div id="score-anneau" class="score-anneau">
-                <svg width="160" height="160" class="score-svg">
-                  <circle class="score-fond" cx="80" cy="80" r="68" stroke="#1a1a2e" stroke-width="12" fill="none"/>
-                  <circle id="score-cercle-progress" class="score-remplissage" cx="80" cy="80" r="68" stroke="#f59e0b" stroke-width="12" fill="none" stroke-dasharray="427" stroke-dashoffset="427"/>
+        <div class="mission-body">
+          <div class="panneau carte-cinema">
+            <div class="score-cercle">
+              <div class="score-anneau">
+                <svg class="score-svg">
+                  <circle class="score-fond" cx="75" cy="75" r="65" stroke="#f1f5f9" stroke-width="10" fill="none"/>
+                  <circle id="score-cercle-progress" class="score-remplissage" cx="75" cy="75" r="65" stroke="#d4af37" stroke-width="10" fill="none" stroke-dasharray="408" stroke-dashoffset="408"/>
                 </svg>
-                <div id="score-centre" class="score-centre">
+                <div class="score-centre">
                   <span id="score-pct" class="score-pourcentage">0</span>%
                 </div>
               </div>
-              <div id="score-details" class="score-details">
+              <div class="score-details">
                 <div class="score-item"><span class="score-label">Score</span><span id="score-points" class="score-valeur">0</span> <span class="score-unite">PTS</span></div>
                 <div class="score-item"><span class="score-label">Niveau</span><span id="score-niveau" class="score-valeur">1</span></div>
               </div>
             </div>
-            <div id="titre-programme" class="section-titre">Programme de Séance</div>
-            <div id="modules-liste"></div>
-            <div id="titre-questions" class="section-titre">Questions Traités</div>
+            <div class="section-titre">Progression</div>
             <ul id="liste-questions"></ul>
-          </aside>
+          </div>
 
-          <!-- Zone principale -->
-          <div id="principal" class="principal">
-            <header id="mission-header" class="mission-header">
-              <div id="titre-mission" class="titre-mission">
-                MISSION CINÉMA
-                <span>Base de données « cinema »</span>
-              </div>
-              <div id="eleve-badge" class="eleve-badge">
-                <img src="assets/images/sti-badge.png" alt="Badge élève" id="badge-img" class="badge-img">
-                <span id="badge-niveau" class="badge-niveau">Niv. 1</span>
-              </div>
-            </header>
-
-            <div id="chapitre-actuel" class="chap-banniere">Préparation de la séance…</div>
-
-            <div id="mission-principale" class="mission-principale">
-              <div id="video-wrap" class="video-wrap">
-                <div id="ecran-cinema" class="ecran-cinema">
-                  <video id="video" src="assets/video/TD_SQL_Cinema_questions.mp4" playsinline preload="metadata"
-                         poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='360' viewBox='0 0 640 360'%3E%3Crect fill='%230a0a0c' width='640' height='360'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='24' fill='%2394a3b8' text-anchor='middle' dominant-baseline='middle'%3EMISSION CINÉMA%3C/text%3E%3C/svg%3E"></video>
-                  <button id="btn-play-video" class="btn-play-video">▶</button>
-                  <div id="video-placeholder" class="video-placeholder cacher">
-                    <div id="placeholder-icone" class="placeholder-icone">🎬</div>
-                    <div id="placeholder-titre" class="placeholder-titre">MISSION CINÉMA</div>
-                    <div id="placeholder-sous" class="placeholder-sous">Cliquez sur le clapet pour lancer la séance</div>
-                  </div>
+          <!-- Bulle de question -->
+          <div id="panneau-question" class="panneau-question cacher">
+            <div id="zone-interaction">
+              <div class="q-card">
+                <div class="q-meta">
+                  <span class="q-num">Question <span id="q-numero">1</span></span>
+                  <span class="q-type">Vrai / Faux</span>
                 </div>
+                <div class="q-enonce" id="q-enonce"></div>
               </div>
 
-              <div id="panneau-question" class="panneau-question cacher">
-                <div id="zone-interaction"></div>
+              <div style="display: flex; gap: 16px; justify-content: center; margin-bottom: 32px;">
+                <button id="btn-vrai" class="btn-reponse btn-vrai">✓ VRAI</button>
+                <button id="btn-faux" class="btn-reponse btn-faux">✗ FAUX</button>
               </div>
+
+              <div id="resultat" class="resultat">
+                <h3 id="resultat-titre"></h3>
+                <p id="resultat-message"></p>
+              </div>
+
+              <button id="btn-suivant" class="btn-suivant cacher">QUESTION SUIVANTE ▶</button>
             </div>
           </div>
         </div>
@@ -93,18 +602,211 @@
 
       <!-- ÉCRAN DE BILAN -->
       <section id="ecran-bilan" class="ecran cacher">
-        <div id="bilan-wrap" class="bilan-wrap carte-cinema">
+        <div class="bilan-wrap">
           <h1>BILAN DE LA SÉANCE</h1>
-          <div id="contenu-bilan"></div>
+          <div class="bilan-score" id="bilan-score">0 / 0</div>
+          <div class="bilan-message" id="bilan-message"></div>
+          <button id="btn-recommencer" class="btn-principal">RECOMMENCER</button>
         </div>
       </section>
-
     </div>
   </div>
 
-<script src="js/questions.js?v=12.0"></script>
-<script src="js/video.js?v=12.0"></script>
-<script src="js/quiz.js?v=12.0"></script>
-<script src="js/main.js?v=12.0"></script>
+<script>
+/* ============================================================================
+   MISSION CINÉMA — Contrôleur unique (plus de vidéo, questions Vrai/Faux)
+   ============================================================================ */
+
+const QUESTIONS = [
+  { id: 1, enonce: "La table REALISATEUR possède les colonnes idReal, nom, prenom et nationalite.", reponse: true, explication: "VRAI. Le schéma de la base cinema définit REALISATEUR (idReal, nom, prenom, nationalite)." },
+  { id: 2, enonce: "La table FILM possède une clé étrangère idReal qui référence REALISATEUR(idReal).", reponse: true, explication: "VRAI. FILM définit FOREIGN KEY (idReal) REFERENCES realisateur(idReal)." },
+  { id: 3, enonce: "La colonne email a été ajoutée à ACTEUR, puis supprimée ultérieurement.", reponse: true, explication: "VRAI. Question 2 ajoute email, question 4 la supprime avec DROP COLUMN." },
+  { id: 4, enonce: "La table PROJECTION a été supprimée puis recréée à l'identique.", reponse: true, explication: "VRAI. Question 5 : DROP TABLE projection, puis CREATE TABLE projection." },
+  { id: 5, enonce: "Le film 'Tenet' a été inséré en renseignant uniquement titre, genre et idReal.", reponse: true, explication: "VRAI. Question 7 : INSERT INTO film (titre, genre, idReal) VALUES ('Tenet', 'Action', 1)." },
+  { id: 6, enonce: "La durée du film 'Inception' a été mise à jour à 148 minutes.", reponse: true, explication: "VRAI. Question 8 : UPDATE film SET duree = 148 WHERE titre = 'Inception'." },
+  { id: 7, enonce: "Le cachet des rôles dont le cachet est inférieur à 5000 a été augmenté de 10%.", reponse: true, explication: "VRAI. Question 9 : UPDATE jouer SET cachet = cachet * 1.10 WHERE cachet < 5000." },
+  { id: 8, enonce: "COUNT(colonne) compte les valeurs NULL comme les autres valeurs.", reponse: false, explication: "FAUX. Question 47 : COUNT(colonne) ignore les NULL. Seuls les COUNT(*) comptent les NULL." },
+  { id: 9, enonce: "AVG(duree) calcule la moyenne en ignorant les valeurs NULL de la colonne duree.", reponse: true, explication: "VRAI. Question 48 : AVG(duree) = 142.8333 car le NULL n'entre ni dans la somme ni dans le décompte." },
+  { id: 10, enonce: "La clause WHERE duree <> 148 affiche tous les films sauf 'Inception', y compris ceux avec durée NULL.", reponse: false, explication: "FAUX. Question 49 : NULL <> 148 n'est ni vrai ni faux (UNKNOWN), donc 'Film test' n'apparaît pas." },
+  { id: 11, enonce: "Une jointure INNER élimine les acteurs qui n'ont aucune ligne dans la table JOUER.", reponse: true, explication: "VRAI. Question 50 : Cotillard et Hathaway sont absentes car elles n'ont pas de ligne dans jouer." },
+  { id: 12, enonce: "ON DELETE CASCADE supprime automatiquement les lignes enfants liées à une ligne parent supprimée.", reponse: true, explication: "VRAI. Question 44 : ON DELETE CASCADE supprime les projections enfants quand le film parent est supprimé." },
+  { id: 13, enonce: "ON UPDATE CASCADE propage automatiquement la modification d'une clé parent vers les clés étrangères enfants.", reponse: true, explication: "VRAI. Question 43 : modifier idFilm de 7 à 70 met à jour automatiquement projection_test." },
+  { id: 14, enonce: "Un INSERT dans JOUER avec une clé primaire (idFilm, idActeur) existante réussit sans erreur.", reponse: false, explication: "FAUX. Question 56 : Échec avec « Duplicate entry » car la clé primaire existe déjà." },
+  { id: 15, enonce: "Un INSERT dans FILM avec annee = 1850 respecte la contrainte CHECK (annee >= 1900).", reponse: false, explication: "FAUX. Question 57 : Échec car la contrainte CHECK (annee >= 1900) est violée." },
+  { id: 16, enonce: "DELETE FROM realisateur WHERE idReal = 3 réussit car aucun film ne référence ce réalisateur.", reponse: false, explication: "FAUX. Question 59 : Échec car le film 'OSS 117' référence ce réalisateur (clé étrangère sans cascade)." },
+  { id: 17, enonce: "Lorsqu'on ajoute une colonne avec DEFAULT à une table déjà remplie, les lignes existantes reçoivent cette valeur par défaut.", reponse: true, explication: "VRAI. Question 40 : après ADD paysOrigine DEFAULT 'Inconnue', tous les films existants ont 'Inconnue'." },
+  { id: 18, enonce: "Modifier la valeur DEFAULT d'une colonne remplace automatiquement les valeurs déjà enregistrées dans les lignes existantes.", reponse: false, explication: "FAUX. Question 41 : changer DEFAULT ne remplace pas les valeurs déjà enregistrées, seulement les futures insertions." }
+];
+
+let currentIndex = 0;
+let score = 0;
+let answered = false;
+let synth = window.speechSynthesis;
+
+// Éléments DOM
+const ecranAccueil = document.getElementById('ecran-accueil');
+const ecranMission = document.getElementById('ecran-mission');
+const ecranBilan = document.getElementById('ecran-bilan');
+const btnStart = document.getElementById('btn-start');
+const panneauQuestion = document.getElementById('panneau-question');
+const zoneInteraction = document.getElementById('zone-interaction');
+const qNumero = document.getElementById('q-numero');
+const qEnonce = document.getElementById('q-enonce');
+const btnVrai = document.getElementById('btn-vrai');
+const btnFaux = document.getElementById('btn-faux');
+const btnSuivant = document.getElementById('btn-suivant');
+const resultat = document.getElementById('resultat');
+const resultatTitre = document.getElementById('resultat-titre');
+const resultatMessage = document.getElementById('resultat-message');
+const spanPct = document.getElementById('score-pct');
+const spanPoints = document.getElementById('score-points');
+const spanNiveau = document.getElementById('score-niveau');
+const cercleProgress = document.getElementById('score-cercle-progress');
+const listeQuestions = document.getElementById('liste-questions');
+const bilanScore = document.getElementById('bilan-score');
+const bilanMessage = document.getElementById('bilan-message');
+const btnRecommencer = document.getElementById('btn-recommencer');
+
+function afficherEcran(nom) {
+  ecranAccueil.classList.remove('actif');
+  ecranMission.classList.remove('actif');
+  ecranBilan.classList.remove('actif');
+  ecranAccueil.classList.add('cacher');
+  ecranMission.classList.add('cacher');
+  ecranBilan.classList.add('cacher');
+  if (nom === 'accueil') { ecranAccueil.classList.remove('cacher'); ecranAccueil.classList.add('actif'); }
+  if (nom === 'mission') { ecranMission.classList.remove('cacher'); ecranMission.classList.add('actif'); }
+  if (nom === 'bilan') { ecranBilan.classList.remove('cacher'); ecranBilan.classList.add('actif'); }
+}
+
+function parler(texte) {
+  if (!synth) return;
+  synth.cancel();
+  const utterance = new SpeechSynthesisUtterance(texte);
+  utterance.lang = 'fr-FR';
+  utterance.rate = 0.95;
+  utterance.pitch = 1;
+  synth.speak(utterance);
+}
+
+function rafraichirInterface() {
+  const pct = Math.round((score / QUESTIONS.length) * 100);
+  spanPct.textContent = pct;
+  spanPoints.textContent = score;
+  spanNiveau.textContent = Math.floor(score / 3) + 1;
+  const offset = 408 * (1 - pct / 100);
+  cercleProgress.style.strokeDashoffset = offset;
+
+  listeQuestions.innerHTML = '';
+  QUESTIONS.forEach((q, i) => {
+    const li = document.createElement('li');
+    li.className = 'q-item' + (i < currentIndex ? (q.reponseReponse === q.reponse ? ' traitee' : ' incorrecte') : '');
+    li.innerHTML = `<span class="q-badge">${i < currentIndex ? (q.reponseReponse === q.reponse ? '✓' : '✗') : '?'}</span> Q${q.id}`;
+    listeQuestions.appendChild(li);
+  });
+}
+
+function afficherQuestion() {
+  if (currentIndex >= QUESTIONS.length) {
+    afficherBilan();
+    return;
+  }
+
+  const q = QUESTIONS[currentIndex];
+  qNumero.textContent = q.id;
+  qEnonce.textContent = q.enonce;
+  btnVrai.disabled = false;
+  btnFaux.disabled = false;
+  btnVrai.style.display = 'inline-flex';
+  btnFaux.style.display = 'inline-flex';
+  btnSuivant.classList.add('cacher');
+  resultat.style.display = 'none';
+  answered = false;
+
+  panneauQuestion.classList.remove('cacher');
+  rafraichirInterface();
+}
+
+function repondre(reponseUtilisateur) {
+  if (answered) return;
+  answered = true;
+
+  const q = QUESTIONS[currentIndex];
+  const estCorrect = reponseUtilisateur === q.reponse;
+
+  // Voix orale : dire "Vrai" ou "Faux"
+  parler(reponseUtilisateur ? 'Vrai' : 'Faux');
+
+  // Mettre à jour les boutons
+  btnVrai.disabled = true;
+  btnFaux.disabled = true;
+
+  if (estCorrect) {
+    btnVrai.classList.add('btn-vrai'); // déjà vert
+    btnFaux.classList.add('btn-faux'); // déjà rouge
+    score++;
+    resultat.className = 'resultat vrai';
+    resultatTitre.textContent = '✓ Bonne réponse !';
+    q.reponseReponse = reponseUtilisateur;
+  } else {
+    btnVrai.classList.add('btn-vrai');
+    btnFaux.classList.add('btn-faux');
+    q.reponseReponse = reponseUtilisateur;
+    resultat.className = 'resultat faux';
+    resultatTitre.textContent = '✗ Mauvaise réponse';
+  }
+
+  // Attendre que la voix finisse de parler, puis afficher l'explication
+  const intervalle = setInterval(() => {
+    if (synth.speaking) return;
+    clearInterval(intervalle);
+    resultatMessage.textContent = q.explication;
+    resultat.style.display = 'block';
+    btnSuivant.classList.remove('cacher');
+    rafraichirInterface();
+  }, 100);
+}
+
+function questionSuivante() {
+  currentIndex++;
+  afficherQuestion();
+}
+
+function afficherBilan() {
+  afficherEcran('bilan');
+  const pct = Math.round((score / QUESTIONS.length) * 100);
+  bilanScore.textContent = `${score} / ${QUESTIONS.length}`;
+  if (pct >= 80) {
+    bilanMessage.textContent = `Excellent ! Vous maîtrisez les concepts SQL du cinéma (${pct}% de réussite).`;
+  } else if (pct >= 60) {
+    bilanMessage.textContent = `Bonne base ! Quelques révisions s'imposent (${pct}% de réussite).`;
+  } else {
+    bilanMessage.textContent = `Il faut réviser les fondamentaux SQL (${pct}% de réussite).`;
+  }
+  parler(`Séance terminée. Votre score est de ${score} sur ${QUESTIONS.length}.`);
+}
+
+function recommencer() {
+  currentIndex = 0;
+  score = 0;
+  QUESTIONS.forEach(q => delete q.reponseReponse);
+  rafraichirInterface();
+  afficherEcran('accueil');
+}
+
+// Écouteurs
+btnStart.addEventListener('click', () => {
+  afficherEcran('mission');
+  afficherQuestion();
+});
+
+btnVrai.addEventListener('click', () => repondre(true));
+btnFaux.addEventListener('click', () => repondre(false));
+btnSuivant.addEventListener('click', questionSuivante);
+btnRecommencer.addEventListener('click', recommencer);
+
+// Initialisation
+rafraichirInterface();
+</script>
 </body>
 </html>
