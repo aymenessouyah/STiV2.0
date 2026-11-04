@@ -565,13 +565,13 @@
       codeApercu: "SELECT ... WHERE ...;"
     },
     {
-      /* v617 : nouveau montage narré du TP6, basé sur le corrigé actualisé à 70 questions. */
+      /* v618 : correction détaillée TP6, narration pas à pas des 70 questions. */
       id: "sql-tp6-mission-cinema",
       matiere: "sql", nomMatiere: "SQL", badgeClasse: "badge-sql", couleur: "#34d399", reserve4si: true,
-      titre: "TP6 : Mission cinéma — correction & rappels",
-      dureeTexte: "04:02",
-      srcPrincipal: "mission-cinema/assets/video/TD_SQL_Cinema_corrige_v2.mp4",
-      srcSecours: "mission-cinema/assets/video/TD_SQL_Cinema_corrige_v2.mp4",
+      titre: "Je fais tout le SQL — TP6 Mission cinéma",
+      dureeTexte: "12:49",
+      srcPrincipal: "mission-cinema/assets/video/TD_SQL_Cinema_corrige_v3.mp4",
+      srcSecours: "mission-cinema/assets/video/TD_SQL_Cinema_corrige_v3.mp4",
       urlCours: "mission-cinema/correction-video.html",
       codeApercu: "SELECT … FROM film WHERE …;"
     },
@@ -1091,7 +1091,7 @@
     attacherSuiviElementVideo(vidHero, meta);
 
     if (btnOverlay) {
-      btnOverlay.setAttribute("aria-label", "CAPSULE VIDÉO EXPLICATIVE " + meta.titre + " : lancer la vidéo");
+      btnOverlay.setAttribute("aria-label", (meta.id === "sql-tp6-mission-cinema" ? "JE FAIS TOUT LE SQL " : "CAPSULE VIDÉO EXPLICATIVE ") + meta.titre + " : lancer la vidéo");
       btnOverlay.addEventListener("click", function () {
         ouvrirModaleVideo(meta.id, 0);
       });
@@ -1194,7 +1194,8 @@
     grille.dataset.signatureVideos = signature;
     grille.innerHTML = liste.map(function (v) {
       var dejaVue = vues.indexOf(v.id) !== -1;
-      var poster = creerPosterSvgDataUri(v.titre, v.nomMatiere, v.couleur, v.codeApercu);
+      var poster = v.id === "sql-tp6-mission-cinema" ? "mission-cinema/assets/images/je-fais-tout-sql-poster.jpg" : creerPosterSvgDataUri(v.titre, v.nomMatiere, v.couleur, v.codeApercu);
+      var libelleBadgeCapsule = v.id === "sql-tp6-mission-cinema" ? "Je fais tout le SQL" : "Capsule";
       return (
         '<article class="video-card' + (v.reserve4si ? " sti-4si-only" : "") +
           (estCapsuleVideo(v) ? " video-card--capsule" : "") +
@@ -1207,7 +1208,7 @@
              survol v550 sur cette même carte. Le texte est réel, pas un
              `content` CSS : il se met à l'échelle et se traduit ; il reste
              décoratif (aria-hidden), le titre de la carte dit déjà tout. */
-          (estCapsuleVideo(v) ? '<span class="video-card__capsule sti-etiquette-capsule" aria-hidden="true">Capsule</span>' : "") +
+          (estCapsuleVideo(v) ? '<span class="video-card__capsule sti-etiquette-capsule" aria-hidden="true">' + echapperHtml(libelleBadgeCapsule) + '</span>' : "") +
           '<button type="button" class="video-card__thumb" data-play-video="' + echapperHtml(v.id) + '" aria-label="▶ ' + (dejaVue ? '✓ Vue ' : '') + echapperHtml(v.dureeTexte) + ' — Lire la vidéo ' + echapperHtml(v.titre) + '">' +
             '<img src="' + echapperHtml(poster) + '" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" />' +
             '<span class="video-card__play"><span class="video-play-btn" aria-hidden="true">▶</span></span>' +
@@ -2095,7 +2096,7 @@
     }).join("");
 
     var vidsHtml = videosMatiere.map(function (v) {
-      var poster = creerPosterSvgDataUri(v.titre, v.nomMatiere, v.couleur, v.codeApercu);
+      var poster = v.id === "sql-tp6-mission-cinema" ? "mission-cinema/assets/images/je-fais-tout-sql-poster.jpg" : creerPosterSvgDataUri(v.titre, v.nomMatiere, v.couleur, v.codeApercu);
       return (
         '<article class="card">' +
           '<h3 style="margin-bottom:10px">🎬 ' + echapperHtml(v.titre) + " (" + echapperHtml(v.dureeTexte) + ")</h3>" +

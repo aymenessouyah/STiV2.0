@@ -276,7 +276,7 @@ test('v616 : le guide Windows du tableau de bord porte le bouton « Nouveau stip
 test('v616 : la fonctionnalité ne touche ni le service worker ni le manifeste hors ligne', () => {
   assert.doesNotMatch(SW, /stipack/i, 'sw.js reste intact : aucune révision, aucune entrée de préchargement');
   assert.doesNotMatch(MANIFESTE_HORS_LIGNE, /stipack\.js|admin-stipack/i, 'le manifeste hors ligne reste intact');
-  assert.match(SW, /var VERSION_PUBLIEE = "v617";/, 'publication du montage TP6 distincte du StiPack');
+  assert.match(SW, /var VERSION_PUBLIEE = "v618";/, 'publication du montage TP6 distincte du StiPack');
   assert.equal(JSON.parse(MANIFESTE_HORS_LIGNE).totalFiles, JSON.parse(MANIFESTE_HORS_LIGNE).files.length);
 });
 

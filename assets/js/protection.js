@@ -1623,7 +1623,7 @@
         source = source.split("?")[0].split("#")[0];
         var fichier = source.split("/").pop().toLowerCase().replace(/\.(mp4|webm|ogg|m3u8)$/i, "");
         if (!fichier) return "";
-        if (fichier === "td_sql_cinema_corrige" || fichier === "td_sql_cinema_corrige_v2") return "sql-tp6-mission-cinema";
+        if (fichier === "td_sql_cinema_corrige" || fichier === "td_sql_cinema_corrige_v2" || fichier === "td_sql_cinema_corrige_v3") return "sql-tp6-mission-cinema";
         var i;
         for (i = 0; i < SLUGS_VIDEO_STI.length; i++) {
           if (fichier === SLUGS_VIDEO_STI[i] || fichier.indexOf(SLUGS_VIDEO_STI[i] + "-") === 0) return SLUGS_VIDEO_STI[i];
@@ -1775,6 +1775,7 @@
           "sql-cours-v7": "sql-cours",
           "td_sql_cinema_corrige": "sql-tp6-mission-cinema",
           "td_sql_cinema_corrige_v2": "sql-tp6-mission-cinema",
+          "td_sql_cinema_corrige_v3": "sql-tp6-mission-cinema",
           "css3-cours-v9-sync": "css3-cours",
           "css3-cours-v9-sync-mobile-720p": "css3-cours",
           "sql-construire-requete-guide-texte": "sql-guide-requete",
@@ -2664,6 +2665,7 @@
         var estJsValidation = (sSlug === "validation-nom-prenom-js" || sSlug.indexOf("validation-nom-prenom-js") !== -1);
         /* v526 : correction vidéo du TP Train, Série 6 JavaScript. */
         var estTpTrain = (sSlug === "tp-train-serie6" || sSlug.indexOf("tp-train-serie6") !== -1);
+        var estMissionCinema = (sSlug === "sql-tp6-mission-cinema" || sSlug.indexOf("TD_SQL_Cinema_corrige") !== -1 || sSlug.indexOf("td_sql_cinema_corrige") !== -1);
         /* v527 : capsule « Les 37 Défis » — Tableau, Aléas & Captchas, Média. */
         var estDefis37 = (sSlug === "defis37-tableau-aleas-media" || sSlug.indexOf("defis37") !== -1);
         /* Capsule « Les boucles » : Pour, Répéter…jusqu'à, Tant que. */
@@ -2700,7 +2702,7 @@
         var estCssDeco = (!estJsValidation && !estTpTrain && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && (sSlug === "css-animee" || sSlug.indexOf("css-animee") !== -1 || (!sSlug && estPageCssDeco)));
         var estCssPos = (!estJsValidation && !estTpTrain && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && (sSlug === "css-positionnement" || sSlug.indexOf("css-positionnement") !== -1 || (!sSlug && estPageCssPos)));
         var estGuichet = (!estJsValidation && !estTpTrain && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && (sSlug === "php-guichet" || sSlug.indexOf("php-guichet") !== -1 || sSlug === "guichet" || (!sSlug && estPageGuichet)));
-        if (!estTpEvenements && !estTpFormulaire && !estTpDisplay && !estTpTransitions && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && !estGuichet && !estCssDisplay && !estPhpSynthese && !estJsValidation && !estTpTrain && !estDefis37 && !estBouclePour && !estConsoleVariables && !estPhpVariables && !estFonctionsChaine && !estDateJs && !estPhpChaines) {
+        if (!estTpEvenements && !estTpFormulaire && !estTpDisplay && !estTpTransitions && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && !estGuichet && !estCssDisplay && !estPhpSynthese && !estJsValidation && !estTpTrain && !estDefis37 && !estBouclePour && !estConsoleVariables && !estPhpVariables && !estFonctionsChaine && !estDateJs && !estPhpChaines && !estMissionCinema) {
           /* v577 : la vidéo du cours STI n'est pas dans la liste des capsules. */
           if (!estCoursSti) {
             return;
@@ -2736,6 +2738,7 @@
           }
         } catch (e) {}
         var slugCible = estPhpChaines ? "php-chaines" : estDateJs ? "date-js" : estFonctionsChaine ? "fonctions-chaine" : estBouclePour ? "boucle-pour" : estConsoleVariables ? "console-variables" : estPhpVariables ? "php-variables" : estDefis37 ? "defis37-tableau-aleas-media" : estTpTrain ? "tp-train-serie6" : estTpEvenements ? "tp-evenements-liens" : estTpFormulaire ? "tp-formulaire-tableau-autre" : estTpDisplay ? "tp-display-float-position" : estTpTransitions ? "tp-transitions-animations" : estJsValidation ? "validation-nom-prenom-js" : estCssDisplay ? "css3-display" : estPhpSynthese ? "php-synthese" : estSqlInit ? "sql-initiation" : (estExploreFloat ? "explore-tunisie-float" : (estExploreFlex ? "explore-tunisie-flex" : (estSqlSerie6 ? "sql-serie6" : (estSqlSerie5 ? "sql-serie5" : (estSqlSerie4 ? "sql-serie4" : (estSqlSerie3 ? "sql-serie3" : (estSqlSerie2 ? "sql-serie2" : (estSqlSerie1 ? "sql-serie1" : (estHtml5 ? "html5-cours" : (estCss3 ? "css3-cours" : (estJs ? "javascript-cours" : (estPhpC ? "php-cours" : (estSql ? "sql-cours" : (estCssDeco ? "css-animee" : (estCssPos ? "css-positionnement" : "php-guichet")))))))))))))));
+        if (estMissionCinema) slugCible = "sql-tp6-mission-cinema";
         /* v577 : la vidéo du cours STI a son propre jeu de chapitres. */
         if (estCoursSti) slugCible = "cours-sti";
         try {
@@ -2749,6 +2752,7 @@
           }
         } catch (e) {}
         var url = estPhpChaines ? prefixeAssetsSTI() + "videos/PhpChaines-v566.mp4" : estDateJs ? prefixeAssetsSTI() + "videos/DateJS-v565.mp4" : estFonctionsChaine ? prefixeAssetsSTI() + "videos/FonctionsChaine-v564.mp4" : estBouclePour ? prefixeAssetsSTI() + "videos/BouclePour-v547.mp4" : estConsoleVariables ? prefixeAssetsSTI() + "videos/ConsoleVariables-v548.mp4" : estPhpVariables ? prefixeAssetsSTI() + "videos/PhpVariables-v549.mp4" : estDefis37 ? prefixeAssetsSTI() + "videos/defis37-tableau-aleas-media.mp4" : estTpTrain ? prefixeAssetsSTI() + "videos/tp-train-serie6.mp4" : estTpEvenements ? prefixeAssetsSTI() + "videos/tp-evenements-liens-v2.mp4" : estTpFormulaire ? prefixeAssetsSTI() + "videos/tp-formulaire-tableau-autre.mp4" : estTpDisplay ? prefixeAssetsSTI() + "videos/tp-display-float-position.mp4" : estTpTransitions ? prefixeAssetsSTI() + "videos/tp-transitions-animations.mp4" : estJsValidation ? prefixeAssetsSTI() + "videos/validation-nom-prenom-js.mp4" : estCssDisplay ? prefixeAssetsSTI() + "videos/displayanim.mp4" : estPhpSynthese ? prefixeAssetsSTI() + "videos/php-synthese.mp4" : estSqlInit ? resoudreUrlVideoSqlInit() : (estExploreFloat ? resoudreUrlVideoExploreFloat() : (estExploreFlex ? resoudreUrlVideoExploreFlex() : (estSqlSerie6 ? resoudreUrlVideoSqlSerie6() : (estSqlSerie5 ? resoudreUrlVideoSqlSerie5() : (estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estSqlSerie3 ? resoudreUrlVideoSqlSerie3() : (estSqlSerie2 ? resoudreUrlVideoSqlSerie2() : (estSqlSerie1 ? resoudreUrlVideoSqlSerie1() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet())))))))))))))));
+        if (estMissionCinema) url = prefixeAssetsSTI().replace(/assets\/?$/, "") + "mission-cinema/assets/video/TD_SQL_Cinema_corrige_v3.mp4";
         if (estCoursSti) url = prefixeAssetsSTI() + "videos/CoursSystemesInternet-v578.mp4";
         var css3Qualite = "auto";
         if (estCss3) {
@@ -2759,7 +2763,7 @@
           else if (window.matchMedia && window.matchMedia("(max-width: 820px)").matches) css3Qualite = "720";
           url = (css3Qualite === "480" || css3Qualite === "720") ? resoudreUrlVideoCss3Mobile() : resoudreUrlVideoCss3();
         }
-        var titre = titreOpt || (estBouclePour ? "🎥 Les boucles — Pour, Répéter…jusqu'à, Tant que" : estConsoleVariables ? "🎥 La console, les variables et les types" : estPhpVariables ? "🎥 PHP — Les variables, la portée et les types" : estDefis37 ? "🎥 Les 37 Défis — Tableau, Aléas & Captchas, Média" : estTpTrain ? "🎥 TP Train — correction détaillée (Série 6 JavaScript)" : estTpEvenements ? "🎥 TP — Événements, liens et arrière-plans (HTML5 & CSS3)" : estTpFormulaire ? "🎥 TP — Formulaire, tableau et autres balises (HTML5 & CSS3)" : estTpDisplay ? "🎥 TP — display, float et position (HTML5 & CSS3)" : estTpTransitions ? "🎥 TP — transitions et animations (CSS3)" : estJsValidation ? "🎥 JavaScript — Validation du champ Nom & Prénom (pas à pas)" : estCssDisplay ? "🎥 CSS3 — Display : la démo animée" : estPhpSynthese ? "🎥 PHP — Synthèse : gestion des élèves" : estSqlInit ? VIDEO_SQL_INIT_INFO.title : (estExploreFloat ? VIDEO_EXPLORE_FLOAT_INFO.title : (estExploreFlex ? VIDEO_EXPLORE_FLEX_INFO.title : (estSqlSerie6 ? VIDEO_SQL_SERIE6_INFO.title : (estSqlSerie5 ? VIDEO_SQL_SERIE5_INFO.title : (estSqlSerie4 ? VIDEO_SQL_SERIE4_INFO.title : (estSqlSerie3 ? VIDEO_SQL_SERIE3_INFO.title : (estSqlSerie2 ? VIDEO_SQL_SERIE2_INFO.title : (estSqlSerie1 ? VIDEO_SQL_SERIE1_INFO.title : (estHtml5 ? VIDEO_HTML5_INFO.title : (estCss3 ? VIDEO_CSS3_INFO.title : (estJs ? VIDEO_JS_INFO.title : (estPhpC ? VIDEO_PHP_COURS_INFO.title : (estSql ? VIDEO_SQL_INFO.title : (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title))))))))))))))));
+        var titre = titreOpt || (estMissionCinema ? "Je fais tout le SQL · TP6 Mission cinéma, correction détaillée" : estBouclePour ? "🎥 Les boucles — Pour, Répéter…jusqu'à, Tant que" : estConsoleVariables ? "🎥 La console, les variables et les types" : estPhpVariables ? "🎥 PHP — Les variables, la portée et les types" : estDefis37 ? "🎥 Les 37 Défis — Tableau, Aléas & Captchas, Média" : estTpTrain ? "🎥 TP Train — correction détaillée (Série 6 JavaScript)" : estTpEvenements ? "🎥 TP — Événements, liens et arrière-plans (HTML5 & CSS3)" : estTpFormulaire ? "🎥 TP — Formulaire, tableau et autres balises (HTML5 & CSS3)" : estTpDisplay ? "🎥 TP — display, float et position (HTML5 & CSS3)" : estTpTransitions ? "🎥 TP — transitions et animations (CSS3)" : estJsValidation ? "🎥 JavaScript — Validation du champ Nom & Prénom (pas à pas)" : estCssDisplay ? "🎥 CSS3 — Display : la démo animée" : estPhpSynthese ? "🎥 PHP — Synthèse : gestion des élèves" : estSqlInit ? VIDEO_SQL_INIT_INFO.title : (estExploreFloat ? VIDEO_EXPLORE_FLOAT_INFO.title : (estExploreFlex ? VIDEO_EXPLORE_FLEX_INFO.title : (estSqlSerie6 ? VIDEO_SQL_SERIE6_INFO.title : (estSqlSerie5 ? VIDEO_SQL_SERIE5_INFO.title : (estSqlSerie4 ? VIDEO_SQL_SERIE4_INFO.title : (estSqlSerie3 ? VIDEO_SQL_SERIE3_INFO.title : (estSqlSerie2 ? VIDEO_SQL_SERIE2_INFO.title : (estSqlSerie1 ? VIDEO_SQL_SERIE1_INFO.title : (estHtml5 ? VIDEO_HTML5_INFO.title : (estCss3 ? VIDEO_CSS3_INFO.title : (estJs ? VIDEO_JS_INFO.title : (estPhpC ? VIDEO_PHP_COURS_INFO.title : (estSql ? VIDEO_SQL_INFO.title : (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title))))))))))))))));
         if (estCoursSti) titre = titreOpt || "🎥 Cours — Systèmes, technologies et Internet (3ᵉ SI)";
 
         var overlay = document.getElementById("sti-video-modal-overlay");
@@ -3141,6 +3145,34 @@
               });
             })(pillBtns[pb]);
           }
+        }
+
+        /* TP6 SQL : reprendre la palette exacte du TP5 (blanc, bleu marine/bleu, orange et jaune). */
+        var carteLecture = document.getElementById("sti-video-modal-card");
+        var titreLecture = document.getElementById("sti-video-modal-title");
+        var videoLecture = document.getElementById("sti-video-modal-player");
+        if (carteLecture) {
+          carteLecture.style.background = estMissionCinema ? "#ffffff" : "#0d1526";
+          carteLecture.style.color = estMissionCinema ? "#1a202c" : "#f9f1e3";
+          carteLecture.style.border = estMissionCinema ? "2px solid #1a365d" : "2px solid #f4511e";
+          carteLecture.style.borderRadius = estMissionCinema ? "10px" : "16px";
+        }
+        if (overlay) overlay.style.background = estMissionCinema ? "rgba(26,54,93,.55)" : "rgba(10,15,28,.88)";
+        if (titreLecture) titreLecture.style.color = estMissionCinema ? "#1a365d" : "#f9f1e3";
+        if (videoLecture) videoLecture.style.background = estMissionCinema ? "#111827" : "#0d1526";
+        if (estMissionCinema && overlay) {
+          var boutonsTP5 = overlay.querySelectorAll(".sti-video-pas-a-pas-actions button, .sti-video-pas-a-pas-actions a, #sti-video-modal-chap-pills button");
+          for (var ibTP5 = 0; ibTP5 < boutonsTP5.length; ibTP5++) {
+            boutonsTP5[ibTP5].style.borderColor = "#1d4ed8";
+            boutonsTP5[ibTP5].style.background = "#dbeafe";
+            boutonsTP5[ibTP5].style.color = "#1a365d";
+          }
+          var fermerTP5 = document.getElementById("sti-video-modal-close");
+          if (fermerTP5) { fermerTP5.style.background = "#ea580c"; fermerTP5.style.color = "#ffffff"; fermerTP5.style.borderColor = "#facc15"; }
+          var vitesseTP5 = overlay.querySelector('button[data-mrate="1"]');
+          if (vitesseTP5) { vitesseTP5.style.background = "#ea580c"; vitesseTP5.style.color = "#ffffff"; vitesseTP5.style.borderColor = "#facc15"; }
+          var selectTP5 = document.getElementById("sti-video-modal-chap-sel");
+          if (selectTP5) { selectTP5.style.background = "#dbeafe"; selectTP5.style.color = "#1a365d"; selectTP5.style.borderColor = "#1d4ed8"; }
         }
 
         var tEl = document.getElementById("sti-video-modal-title");

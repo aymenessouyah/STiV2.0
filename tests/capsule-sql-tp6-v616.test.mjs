@@ -20,15 +20,15 @@ test('TP6 devient une vraie capsule vidéo de la vitrine SQL', () => {
   const app = lire('assets/js/app.js');
   const catalogue = evalArray(app, 'var CATALOGUE_VIDEOS = [');
   const video = catalogue.find((v) => v.id === 'sql-tp6-mission-cinema');
-  assert.ok(video, 'capsule SQL TP6 présente dans le catalogue principal');
+  assert.ok(video, 'vidéo SQL TP6 présente dans le catalogue principal');
   assert.equal(video.matiere, 'sql');
   assert.equal(video.reserve4si, true);
-  assert.equal(video.dureeTexte, '04:02');
-  assert.equal(video.srcPrincipal, 'mission-cinema/assets/video/TD_SQL_Cinema_corrige_v2.mp4');
+  assert.equal(video.dureeTexte, '12:49');
+  assert.equal(video.srcPrincipal, 'mission-cinema/assets/video/TD_SQL_Cinema_corrige_v3.mp4');
   assert.equal(video.urlCours, 'mission-cinema/correction-video.html');
   assert.ok(existsSync(resolve(root, video.srcPrincipal)));
   const capsules = vm.runInNewContext('(' + app.split('var CAPSULES_VIDEO = ')[1].split(';')[0] + ')');
-  assert.equal(capsules[video.id], true, 'étiquette et liseré Capsule activés');
+  assert.equal(capsules[video.id], true, 'libellé et style de la carte TP6 activés');
   assert.equal(catalogue.length, 28);
 });
 
@@ -41,7 +41,7 @@ test('l’accueil et le cours SQL pointent vers la capsule avec son habillage', 
   const sql = lire('cours/sql.html');
   assert.match(sql, /capsules-vedettes\.css\?v=587/);
   assert.match(sql, /matiere-video-card sti-capsule-vedette/);
-  assert.match(sql, /<span class="sti-etiquette-capsule"[^>]*>Capsule<\/span>/);
+  assert.match(sql, /<span class="sti-etiquette-capsule"[^>]*>Je fais tout le SQL<\/span>/);
   assert.match(sql, /href="\.\.\/exercices\/sql\/TP6-Mission-cinema-enonce\.html"[^>]*>Énoncé ↗<\/a>/);
   assert.match(sql, /href="\.\.\/mission-cinema\/correction-video\.html"[^>]*>Corrigé ↗<\/a>/);
 });
@@ -49,8 +49,12 @@ test('l’accueil et le cours SQL pointent vers la capsule avec son habillage', 
 test('la capsule contient la correction vidéo, le PDF et sept rappels de cours', () => {
   const page = lire('mission-cinema/correction-video.html');
   const enonce = lire('exercices/sql/TP6-Mission-cinema-enonce.html');
-  assert.match(page, /TD_SQL_Cinema_corrige_v2\.mp4/);
+  assert.match(page, /TD_SQL_Cinema_corrige_v3\.mp4/);
   assert.match(page, /70 questions du corrigé actualisé/);
+  assert.match(page, /Je fais tout le SQL/);
+  assert.match(page, /#1a365d/);
+  assert.match(page, /Ouvrir directement la vidéo/);
+  assert.match(lire('assets/js/protection.js'), /estMissionCinema/);
   assert.match(lire('mission-cinema/README.md'), /70 questions réparties en sept parties/);
   assert.match(lire('mission-cinema/README.md'), /pas la réutilisation de l’ancien MP4/);
   assert.match(page, /Corrige_TD_SQL_Cinema\.pdf/);
@@ -70,14 +74,15 @@ test('le suivi vidéo et le tableau de bord connaissent le nouvel identifiant', 
   assert.equal(vues.length, 34);
 });
 
-test('publication v617 et paquet hors ligne incluent les nouvelles pages et le MP4', () => {
+test('publication v618 et paquet hors ligne incluent les nouvelles pages et le MP4', () => {
   const sw = lire('sw.js');
-  assert.match(sw, /var VERSION_PUBLIEE = "v617"/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v618"/);
   for (const path of [
     'exercices/sql/TP6-Mission-cinema-enonce.html',
     'mission-cinema/correction-video.html',
     'mission-cinema/Corrige_TD_SQL_Cinema.pdf',
-    'mission-cinema/assets/video/TD_SQL_Cinema_corrige_v2.mp4'
+    'mission-cinema/assets/images/je-fais-tout-sql-poster.jpg',
+    'mission-cinema/assets/video/TD_SQL_Cinema_corrige_v3.mp4'
   ]) {
     assert.ok(sw.includes(`"./${path}"`), `${path} dans la liste hors ligne`);
   }
@@ -86,7 +91,8 @@ test('publication v617 et paquet hors ligne incluent les nouvelles pages et le M
     'exercices/sql/TP6-Mission-cinema-enonce.html',
     'mission-cinema/correction-video.html',
     'mission-cinema/Corrige_TD_SQL_Cinema.pdf',
-    'mission-cinema/assets/video/TD_SQL_Cinema_corrige_v2.mp4'
+    'mission-cinema/assets/images/je-fais-tout-sql-poster.jpg',
+    'mission-cinema/assets/video/TD_SQL_Cinema_corrige_v3.mp4'
   ]) {
     const entry = manifest.files.find((f) => f.path === path);
     assert.ok(entry, `${path} dans le manifeste hors ligne`);
