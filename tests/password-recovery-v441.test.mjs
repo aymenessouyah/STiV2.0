@@ -1559,7 +1559,7 @@ test('v457 (Lot D — audit final Quiz) : couverture des pages du site, cache-bu
   assert.match(read('outils/couverture/generer-couverture.py'), /EXCLUS = \("tests\/",\)/);
   assert.equal(couvJson.gen, 'v583');
   assert.equal(couvJson.n, couvJson.pages.length);
-  assert.equal(couvJson.n, 151, 'toutes les pages HTML hors tests/ doivent être couvertes');
+  assert.equal(couvJson.n, 154, 'toutes les pages HTML hors tests/ doivent être couvertes');
   assert.ok(couvJson.pages.includes('quiz/pp.html'), 'quiz/pp.html est une page réelle : elle est couverte');
   assert.ok(roueCouvJs.includes('"quiz/pp.html"'));
   assert.ok(couvJson.pages.includes('cours/PHP-recap.html'), 'la casse réelle est conservée');
@@ -2645,13 +2645,13 @@ test('v461 (comportemental VM) : ABED Ala (4eme SI2) remonte 1/8 vidéo (73%) de
 
   const bilAla = ctxAdmin.window.__stiBilanProgressionMediaUser(abedAla);
   assert.equal(bilAla.ok4, true);
-  assert.equal(bilAla.totVid, 27, 'Un élève de 4eme SI2 a 27 vidéos au socle (les capsules de la vitrine)');
+  assert.equal(bilAla.totVid, 28, 'Un élève de 4eme SI2 a 28 vidéos au socle (les capsules de la vitrine)');
   assert.equal(bilAla.totAud, 5, 'Un élève de 4eme SI2 a 5 audios de base (incluant Audio PHP)');
   assert.equal(bilAla.nbVidVues, 1, 'Le compteur vidéo d’ABED Ala doit afficher 1 vidéo consultée (et non 0)');
   assert.equal(bilAla.nbVidEnCours, 1);
   assert.equal(bilAla.nbVidDone, 0);
-  assert.equal(bilAla.resumeCourtVid, '1/27 ⏳');
-  assert.equal(bilAla.resumeEnteteVid, '1/27 · 1 ⏳ en cours');
+  assert.equal(bilAla.resumeCourtVid, '1/28 ⏳');
+  assert.equal(bilAla.resumeEnteteVid, '1/28 · 1 ⏳ en cours');
   assert.ok(Array.from(bilAla.catVideos, (v) => v.key).includes('video:cours-sti'),
     'Le cours « Systèmes, technologies et Internet » compte dans le socle de tous');
   assert.ok(Array.from(bilAla.listV).includes('Cours PHP (⏳ 73%)'));
@@ -4252,7 +4252,7 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
   assert.match(cinq[0].t, /^v499 — Accueil :/);
 });
 
-test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 151/151 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {
+test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 154/154 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {
   const adminJs = read('assets/js/admin.js');
   const admCouvJs = read('assets/js/admin-couverture.js');
   const admRevJs = read('assets/js/admin-revision.js');
@@ -4301,13 +4301,13 @@ test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, pari
   assert.match(admRevJs, /function lireToutPagine\(fabriquerRequete, plafond\)/);
   assert.match(graphJs, /s\.from\("sti_quiz_parties"\)[\s\S]*?\.range\(deQ,\s*deQ\s*\+\s*999\)/);
 
-  // 2) Parité exacte 151/151 entre assets/pages-couverture.json et le repli hors-ligne de roue-couverture.js
+  // 2) Parité exacte 154/154 entre assets/pages-couverture.json et le repli hors-ligne de roue-couverture.js
   const secM = roueCouvJs.match(/var PAGES = \[([\s\S]*?)\];/);
   assert.ok(secM, 'PAGES présent dans roue-couverture.js');
   const secoursPages = Array.from(vm.runInNewContext('[' + secM[1] + ']')).map((p) => String(p).toLowerCase()).sort();
   const manifestPages = [...couvJson.pages].map((p) => String(p).toLowerCase()).sort();
-  assert.equal(secoursPages.length, 151);
-  assert.deepEqual(secoursPages, manifestPages, 'Le repli hors-ligne de roue-couverture.js doit correspondre exactement aux 151 pages de pages-couverture.json');
+  assert.equal(secoursPages.length, 154);
+  assert.deepEqual(secoursPages, manifestPages, 'Le repli hors-ligne de roue-couverture.js doit correspondre exactement aux 154 pages de pages-couverture.json');
 
   // 3) Annexe HTML5 : cible #annexe-html5 présente + correction de la coquille "aricle" -> "article" + piste barre analytique.js
   assert.match(annexeHtml5, /<main id="annexe-html5">/);
@@ -5038,7 +5038,7 @@ test('v470 (comportemental VM) : isolation multi-élèves quiz, tirage neuf conn
   assert.equal(Object.keys(uploadedFiles[0].json.tables).length, 18);
 });
 
-test('v471 (structure) : 151/151 chemins Git exacts dans roue-revision.js (zéro 404 casse Linux), reprendre.js multi-matières, 43 contrôles sante.js & sw.js sti-atelier-v331', () => {
+test('v471 (structure) : 154/154 chemins Git exacts dans roue-revision.js (zéro 404 casse Linux), reprendre.js multi-matières, 43 contrôles sante.js & sw.js sti-atelier-v331', () => {
   const roueRevJs = read('assets/js/roue-revision.js');
   const reprendreJs = read('assets/js/reprendre.js');
   const rouePlanJs = read('assets/js/roue-plan.js');
@@ -5064,13 +5064,13 @@ test('v471 (structure) : 151/151 chemins Git exacts dans roue-revision.js (zéro
     execFileSync(process.execPath, ['--check', join(root, rel)], { stdio: 'pipe' });
   }
 
-  // 1) Vérification exacte de casse sur disque / Git pour les 151 pages de pages-couverture.json
+  // 1) Vérification exacte de casse sur disque / Git pour les 154 pages de pages-couverture.json
   const gitTracked = new Set(
     execFileSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8' })
       .split('\0')
       .filter(Boolean)
   );
-  assert.equal(couvPages.length, 151);
+  assert.equal(couvPages.length, 154);
   const mMap = roueRevJs.match(/var CHEMINS_REELS = (\{[\s\S]*?\});/);
   assert.ok(mMap, 'CHEMINS_REELS doit être défini dans roue-revision.js');
   const cheminsReels = JSON.parse(mMap[1]);
@@ -6534,7 +6534,7 @@ test('v477 (structure) : élimination complète de la rétention v475 (VERSION_A
   assert.match(adminJs, /VERSION_AFFICHEE/);
   assert.match(accesJs, /VERSION_AFFICHEE/);
 
-  assert.match(readmeMd, /\*\*Version (?:active|du code)\*\*\s*:\s*\*\*v[45]\d\d\*\*\s*\(`sti-atelier-v3\d\d`/);
+  assert.match(readmeMd, /\*\*Version (?:active|du code)\*\*\s*:\s*\*\*v6\d\d\*\*\s*\(`sti-atelier-v3\d\d`/);
   assert.match(readmeMd, /\|\s*v477\s*\|/);
   assert.ok(nouvJson.some((e) => e.version === 'v477'), 'v477 doit figurer dans nouveautes.json');
   assert.match(offlineManifest.version, /^v[45]\d\d-sti-atelier-v3\d\d$/);

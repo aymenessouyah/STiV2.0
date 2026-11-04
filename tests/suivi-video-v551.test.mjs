@@ -114,6 +114,7 @@ test('chaque vidéo du catalogue est reconnue, d’où qu’elle vienne', () => 
     ['/assets/videos/css3-cours-v9-sync.mp4', 'css3-cours'],
     ['/assets/videos/css3-cours-v9-sync.mp4?x=1', 'css3-cours'],
     ['/assets/videos/sql-cours-v7.mp4', 'sql-cours'],
+    ['/mission-cinema/assets/video/TD_SQL_Cinema_corrige_v2.mp4', 'sql-tp6-mission-cinema'],
     ['/assets/videos/tp-display-float-position.mp4', 'tp-display-float-position'],
     ['/assets/videos/html5-cours.mp4', 'html5-cours'],
     ['/assets/video/flower.webm', '']
@@ -123,7 +124,7 @@ test('chaque vidéo du catalogue est reconnue, d’où qu’elle vienne', () => 
   }
   /* toutes les cartes du catalogue : repères écrits à la main, ou découpage automatique */
   const manuelles = clesManuelles();
-  const secours = new Set(['tp-evenements-liens', 'tp-formulaire-tableau-autre', 'tp-display-float-position', 'tp-transitions-animations']);
+  const secours = new Set(['tp-evenements-liens', 'tp-formulaire-tableau-autre', 'tp-display-float-position', 'tp-transitions-animations', 'sql-tp6-mission-cinema']);
   for (const video of catalogue()) {
     assert.ok(manuelles.has(video.id) || secours.has(video.id), `${video.id} doit suivre la lecture`);
   }
@@ -207,7 +208,7 @@ test('le lot v551 est publié', () => {
   const sw = lire('sw.js');
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "cours-sti-v578"/);
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "tp6-montage-v617"/);
   assert.ok(!sw.split('var UPDATE_FILES = [')[1].split('];')[0].includes('BouclePour-v547.mp4'),
     'les capsules restent hors du delta automatique');
 });

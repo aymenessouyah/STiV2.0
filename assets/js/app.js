@@ -158,7 +158,7 @@
       icone: "🗄️",
       badgeClasse: "badge-sql",
       couleur: "#34d399",
-      nbVideos: 4,
+      nbVideos: 5,
       urlCours: "cours/sql.html",
       urlQuiz: "quiz/sql.html",
       urlAudio: "assets/audio/sql-cours.mp3",
@@ -563,6 +563,17 @@
       titre: "SQL Série 5 — Dates et GROUP BY", dureeTexte: "18:09",
       srcPrincipal: "assets/videos/sql-serie5.mp4", urlCours: "cours/sql.html#videos",
       codeApercu: "SELECT ... WHERE ...;"
+    },
+    {
+      /* v617 : nouveau montage narré du TP6, basé sur le corrigé actualisé à 70 questions. */
+      id: "sql-tp6-mission-cinema",
+      matiere: "sql", nomMatiere: "SQL", badgeClasse: "badge-sql", couleur: "#34d399", reserve4si: true,
+      titre: "TP6 : Mission cinéma — correction & rappels",
+      dureeTexte: "04:02",
+      srcPrincipal: "mission-cinema/assets/video/TD_SQL_Cinema_corrige_v2.mp4",
+      srcSecours: "mission-cinema/assets/video/TD_SQL_Cinema_corrige_v2.mp4",
+      urlCours: "mission-cinema/correction-video.html",
+      codeApercu: "SELECT … FROM film WHERE …;"
     },
     {
       id: "php-cours",
@@ -1101,11 +1112,10 @@
     return matieresVideo(v).indexOf(idMat) !== -1;
   }
 
-  /* v550 : les trois capsules (boucles, console, PHP) portent un liseré propre,
-     et chaque carte de la grille reçoit un effet de survol différent. L'indice
-     est tiré de l'identifiant : stable d'un chargement à l'autre, et deux cartes
-     voisines ne retombent pas sur le même effet. */
-  var CAPSULES_VIDEO = { "boucle-pour": true, "console-variables": true, "php-variables": true, "fonctions-chaine": true, "date-js": true, "php-chaines": true };
+  /* v550 : les capsules pédagogiques portent un liseré propre et chaque carte
+     reçoit un effet de survol différent. L'indice est tiré de l'identifiant :
+     stable d'un chargement à l'autre. */
+  var CAPSULES_VIDEO = { "boucle-pour": true, "console-variables": true, "php-variables": true, "fonctions-chaine": true, "date-js": true, "php-chaines": true, "sql-tp6-mission-cinema": true };
   function estCapsuleVideo(v) {
     var cle = String((v && v.id) || "");
     if (CAPSULES_VIDEO[cle]) return true;

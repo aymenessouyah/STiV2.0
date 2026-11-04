@@ -273,11 +273,11 @@ test('la capsule est dans le paquet hors-ligne et versionnée', () => {
   const sw = lire('sw.js');
   assert.ok(sw.includes(`"./assets/videos/FonctionsChaine-v564.mp4"`));
   assert.ok(sw.includes(`"./assets/subtitles/FonctionsChaine-fr-v564.vtt"`));
-  assert.ok(sw.includes('revision: "flamme-regularite-v611"'), 'les pages touchées sont réinvalidées');
+  assert.ok(sw.includes('revision: "tp6-capsule-v616"'), 'les pages touchées sont réinvalidées');
   /* v573 : l'accueil et le livre connecté repartent au lot « 3ème SI 2026 ». */
-  const REV_PAGES = { './index.html': 'cours-sti-v596', './cours/javascript.html': 'cours-sti-v595',
-    './cours/php.html': 'cours-sti-v595', './assets/js/app.js': 'flamme-regularite-v611',
-    './assets/js/admin-vues-videos.js': 'videos-supabase-v613' };
+  const REV_PAGES = { './index.html': 'tp6-capsule-v616', './cours/javascript.html': 'cours-sti-v595',
+    './cours/php.html': 'cours-sti-v595', './assets/js/app.js': 'tp6-montage-v617', './assets/js/protection.js': 'tp6-montage-v617',
+    './assets/js/admin-vues-videos.js': 'tp6-capsule-v616' };
   const attendu = (page) => REV_PAGES[page] || 'cours-sti-v578';
   for (const page of ['./index.html', './cours/javascript.html', './assets/js/app.js',
     './assets/js/protection.js', './assets/js/lecteur-commun.js']) {
@@ -291,7 +291,7 @@ test('les totaux de l’accueil suivent le catalogue', () => {
   const index = lire('index.html');
   const js = liste.filter((v) => (v.matieres || [v.matiere]).includes('javascript')).length;
   /* v579 : le cours STI ouvre la vitrine — 27 cartes. */
-  assert.equal(liste.length, 27);
+  assert.equal(liste.length, 28);
   assert.equal(js, 8);
   assert.ok(index.includes(`data-video-filter="all">Toutes (${liste.length})</button>`));
   assert.ok(index.includes(`<span id="videosTotalNombre">${liste.length}</span>`));

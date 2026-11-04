@@ -68,13 +68,13 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
     'portail.html': '7ea8179bed2a6eac89f6852352c224d83b34d2215cfb6f6acf9d01b657a03ad1',
     /* v587 : badge « Version V2.0 · v587 · 31/10/2026 11:31 » (date de mise à jour). */
-    /* v597 : le guide d'administration annonce 151 pages de couverture (145 + les
+    /* v597 : le guide d'administration annonce 154 pages de couverture (145 + les
        cinq ateliers « Systèmes » + la galerie des projets). */
     /* v614 : admin.html accueille l'onglet et la section « 📘 Guide exercice ».
        v615 : cache-buster admin.js passé en ?v=615-perf ; empreinte réactualisée. */
     /* v616 : le guide Windows gagne le bloc « 🧱 Nouveau stipack » et sa CSP
        autorise l’API du dépôt ; empreinte réactualisée, rien d’autre n’a bougé. */
-    'admin.html': 'f1de03d1147ee15bf791a7018f2190fcabcfab682b21eec3bd24c9cdc627dbd1',
+    'admin.html': 'e96d149d88143f6164336761ef36a0a1d9c04703b833834ff4247343903a0cb9',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };
@@ -126,14 +126,14 @@ function dureeMp4(path) {
   } finally { closeSync(fd); }
 }
 
-test('catalogue : fichiers réels, 27 entrées distinctes, durées MP4 et restrictions', () => {
+test('catalogue : fichiers réels, 28 entrées distinctes, durées MP4 et restrictions', () => {
   const js = lire('assets/js/app.js');
   const texte = js.split('var CATALOGUE_VIDEOS = ')[1].split('\n  ];')[0] + '\n  ]';
   const catalogue = vm.runInNewContext('(' + texte + ')');
-  assert.equal(catalogue.length, 27);
+  assert.equal(catalogue.length, 28);
   assert.equal(new Set(catalogue.map(v => v.id)).size, catalogue.length);
   const comptes = {}; for (const v of catalogue) comptes[v.matiere] = (comptes[v.matiere] || 0) + 1;
-  assert.deepEqual(comptes, { sti:1, html5:4, css3:5, javascript:8, sql:4, php:5 });
+  assert.deepEqual(comptes, { sti:1, html5:4, css3:5, javascript:8, sql:5, php:5 });
   assert.ok(catalogue.some(v => v.id === 'tp-evenements-liens'
     && v.matieres.join() === 'html5,css3'
     && v.srcPrincipal === 'assets/videos/tp-evenements-liens-v2.mp4'
@@ -173,14 +173,14 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
   }
   assert.doesNotMatch(delta, /"\.\/[^"\n]+\.(?:mp4|mp3|pdf|wasm)"/i);
   for (const chemin of ['assets/css/cours.css','assets/js/app.js','assets/js/cours-matieres.js','cours/html5.html','cours/css3.html','cours/javascript.html','cours/sql.html','cours/php.html']) {
-    const revision = chemin === 'assets/js/app.js' ? 'flamme-regularite-v611'
+    const revision = chemin === 'assets/js/app.js' ? 'tp6-montage-v617'
       : chemin === 'assets/css/cours.css' ? 'retrait-fond-cours-v508'
       : chemin === 'cours/css3.html' ? 'tp-transitions-v512'
       : chemin === 'cours/html5.html' ? 'sti-3si-v573'
       : chemin === 'cours/javascript.html' ? 'cours-sti-v595'
       : chemin === 'cours/php.html' ? 'cours-sti-v595'
       /* v563 : cours/sql.html reçoit la convention d'écriture d'un schéma. */
-      : chemin === 'cours/sql.html' ? 'schema-notation-v563'
+      : chemin === 'cours/sql.html' ? 'tp6-capsule-v616'
       : chemin.startsWith('cours/') ? 'retrait-fond-cours-v508' : 'progression-chapitres-v492';
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${revision}"`), `révision de ${chemin}`);
   }
@@ -247,7 +247,7 @@ test('commandes d’administration : scripts et fonctions de la barre PC inchang
      v615 : la section prend ses couleurs dans la palette (lisible en mode ardoise)
      et son bandeau récapitulatif s'affiche ; empreinte réactualisée. */
   /* v596 : TOTAL_PAGES_SITE_ADMIN passe à 150 (repli hors manifeste). */
-  assert.equal(sha('assets/js/admin.js'), '67040ac67d706e7ae8a8c410002b80f9ee1e0aad9a37ae40f2b5f6da3d58c190');
+  assert.equal(sha('assets/js/admin.js'), 'e91043f817767854d8d5daa21e650052504e825e996bfc67187debe1a4898c9c');
   assert.equal(sha('assets/js/rayonsx-surligneur.js'), '1b7fe2067629766ef4043fa3060199b71124d8486e36d92aaac0b45bd861847c');
   const protection = lire('assets/js/protection.js');
   const debut = protection.indexOf('  function estAppareilPC()');
@@ -266,14 +266,14 @@ test('banques et données JSON d’origine conservées ; retour de quiz ajouté 
     /* v583 : pages-couverture.json n'est plus une liste de 124 entrées à casse
        minuscules : 145 pages réelles, casse exacte, n calculé. */
     /* v595 : entrée des quatre ateliers d'exercices « Systèmes » (ajout en tête). */
-    'assets/data/nouveautes.json': '583fb1f447c54aabe02e8145318bc98696e54b52c148ec1f78cf337365177ae1',
+    'assets/data/nouveautes.json': '0f8383aa87ac06c56abe2e1d117938197d8b02e002810db1b5a011152184447c',
     'assets/data/quiz-banque.json': '04a76ac1dd25d0b3817f44e8edd518fd944ea8275f9a450024ecf572800860a5',
     'assets/data/smart-book-2026.json': '2d2b3ddcf1d6b345c82de99eac119ab5be301c1e7ebfdaa577c19b2c88196a68',
     /* v573 : édition 2026 du manuel 3ème SI — 81 pages, la partie « Systèmes,
        technologies et Internet » (p. 5 à 13) précède les 53 fiches. */
     'assets/data/smart-book-3si-2026.json': 'fc31d42ecaa3eaa0e7b9253de98ae1e50261d6d6f4f4bacc33aaf56375f7b0ab',
-        /* v597 : 151 pages réelles (145 + cinq ateliers « Systèmes » + galerie). */
-    'assets/pages-couverture.json': 'bd8ceb9202390bbc702aefbb9b51b159deecc00cfb6d96ddb0cb90433893aa20',
+        /* v597 : 154 pages réelles (145 + cinq ateliers « Systèmes » + galerie). */
+    'assets/pages-couverture.json': 'ad574f4be9cbde512e91973eb384fc2436227d7739a479065a7768a92a832e66',
     'manifest.webmanifest': '9803f124c0bb3736f3749ffcf9f0ffd63930a6a2a23e6cafeccfde0d61892e1f'
   };
   for (const [chemin, empreinte] of Object.entries(json)) {
@@ -428,8 +428,8 @@ test('v513 : les totaux de vidéos de l’accueil suivent le catalogue', () => {
   const index = lire('index.html');
   const compter = (cle) => catalogue.filter((v) => ((v.matieres || [v.matiere]).indexOf(cle) !== -1)).length;
   const total = catalogue.length;
-  /* Une seule source de vérité : 27 entrées aujourd'hui (dont le cours STI) (dont les 37 Défis, la boucle Pour, la console, les chaînes, l'objet Date et PHP). */
-  assert.equal(total, 27);
+  /* Une seule source de vérité : 28 entrées depuis l’ajout de la capsule SQL TP6, dont le cours STI. */
+  assert.equal(total, 28);
   assert.ok(index.includes(`data-video-filter="all">Toutes (${total})</button>`), 'pastille « Toutes »');
   assert.match(index, new RegExp(`id="videosTotalNombre">${total}</span>`));
   /* Les pastilles par matière, les cartes de cours et le pied de page disent la même chose. */

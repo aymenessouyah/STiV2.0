@@ -1581,7 +1581,7 @@
             l’élève fait défiler lui-même, et sans mouvement s’il l’a demandé. */
       var SLUGS_VIDEO_STI = Object.keys(STI_CHAPITRES_MEDIA).concat([
         "tp-evenements-liens", "tp-formulaire-tableau-autre",
-        "tp-display-float-position", "tp-transitions-animations"
+        "tp-display-float-position", "tp-transitions-animations", "sql-tp6-mission-cinema"
       ]);
 
       function mmssSTI(sec) {
@@ -1623,6 +1623,7 @@
         source = source.split("?")[0].split("#")[0];
         var fichier = source.split("/").pop().toLowerCase().replace(/\.(mp4|webm|ogg|m3u8)$/i, "");
         if (!fichier) return "";
+        if (fichier === "td_sql_cinema_corrige" || fichier === "td_sql_cinema_corrige_v2") return "sql-tp6-mission-cinema";
         var i;
         for (i = 0; i < SLUGS_VIDEO_STI.length; i++) {
           if (fichier === SLUGS_VIDEO_STI[i] || fichier.indexOf(SLUGS_VIDEO_STI[i] + "-") === 0) return SLUGS_VIDEO_STI[i];
@@ -1772,6 +1773,8 @@
           "guichet-etapes": "php-guichet",
           "php-guichet-v10": "php-guichet",
           "sql-cours-v7": "sql-cours",
+          "td_sql_cinema_corrige": "sql-tp6-mission-cinema",
+          "td_sql_cinema_corrige_v2": "sql-tp6-mission-cinema",
           "css3-cours-v9-sync": "css3-cours",
           "css3-cours-v9-sync-mobile-720p": "css3-cours",
           "sql-construire-requete-guide-texte": "sql-guide-requete",

@@ -58,10 +58,10 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   }
   assert.equal(revisions.get('./quiz/php.html'), 'plafond-a-v555');
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
-  assert.equal(revisions.get('./assets/js/app.js'), 'flamme-regularite-v611');
-  assert.equal(revisions.get('./index.html'), 'cours-sti-v596');
-  assert.equal(revisions.get('./offline-complete-manifest.json'), 'guide-lisibilite-v615');
-  assert.equal(revisions.get('./README.md'), 'couverture-v583');
+  assert.equal(revisions.get('./assets/js/app.js'), 'tp6-montage-v617');
+  assert.equal(revisions.get('./index.html'), 'tp6-capsule-v616');
+  assert.equal(revisions.get('./offline-complete-manifest.json'), 'tp6-montage-v617');
+  assert.equal(revisions.get('./README.md'), 'tp6-montage-v617');
   /* v585 : le tableau de bord annonce le Smart Book 3ᵉ SI à 81 pages ; le drapeau reste au lot v503. */
   assert.equal(revisions.get('./dashboard.html'), 'flamme-regularite-v611');
   assert.equal(revisions.get('./assets/images/drapeau-tunisie.svg'), 'accueil-lycee-v503');
@@ -69,14 +69,14 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./assets/js/news-perso.js'), 'ruban-vert-v517');
   /* v507 : ruban sans logo et compteurs de vidéos. */
   assert.equal(revisions.get('./assets/css/theme.css'), 'flamme-regularite-v611');
-  assert.equal(revisions.get('./admin.html'), 'guide-lisibilite-v615');
+  assert.equal(revisions.get('./admin.html'), 'tp6-capsule-v616');
   assert.equal(revisions.get('./assets/js/sante.js'), 'tp-transitions-v512');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */
-  assert.equal(revisions.get('./index.html'), 'cours-sti-v596');
-  assert.equal(revisions.get('./assets/js/admin.js'), 'guide-lisibilite-v615');
+  assert.equal(revisions.get('./index.html'), 'tp6-capsule-v616');
+  assert.equal(revisions.get('./assets/js/admin.js'), 'tp6-capsule-v616');
   assert.equal(revisions.get('./assets/css/cours.css'), 'retrait-fond-cours-v508');
   /* v563 : le cours SQL accueille la convention d'écriture d'un schéma. */
-  assert.equal(revisions.get('./cours/sql.html'), 'schema-notation-v563');
+  assert.equal(revisions.get('./cours/sql.html'), 'tp6-capsule-v616');
   /* v549 : la page PHP reçoit la capsule des variables. */
   assert.equal(revisions.get('./cours/php.html'), 'cours-sti-v595');
   /* v523 : le cours JavaScript reçoit les liens du TP Train. */
@@ -87,7 +87,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v526 : le lecteur commun suit la nouvelle capsule ; les sous-titres restent sur leur lot. */
   assert.equal(revisions.get('./assets/js/lecteur-commun.js'), 'cours-sti-v578');
   assert.equal(revisions.get('./assets/subtitles/validation-nom-prenom-js-fr.vtt'), 'video-js-validation-v485');
-  assert.equal(revisions.get('./assets/js/protection.js'), 'cours-sti-v578');
+  assert.equal(revisions.get('./assets/js/protection.js'), 'tp6-montage-v617');
   for (const chemin of ['package.json', 'package-lock.json']) {
     assert.equal(revisions.get('./' + chemin), 'xp-operations-v487', chemin);
   }
