@@ -162,7 +162,7 @@ test('v611 — la carte du tableau de bord est sobre et accessible', () => {
 test('v611 — publication : version, cache-busters et révisions', () => {
   assert.match(sw, /var VERSION_PUBLIEE = "v(?:6(?:1[1-9]|[2-9]\d)|[7-9]\d\d)";/);
   assert.match(sw, /v611-flamme-regularite-20261101/);
-  for (const [url, revision] of [['./assets/js/profil.js', 'flamme-regularite-v611'], ['./assets/js/app.js', 'tp6-detail-v618'], ['./assets/css/theme.css', 'flamme-regularite-v611'], ['./dashboard.html', 'flamme-regularite-v611']]) {
+  for (const [url, revision] of [['./assets/js/profil.js', 'flamme-regularite-v611'], ['./assets/js/app.js', 'tp6-series6-v619'], ['./assets/css/theme.css', 'flamme-regularite-v611'], ['./dashboard.html', 'flamme-regularite-v611']]) {
     assert.ok(sw.includes(`revision: "${revision}"`), 'révision attendue : ' + url);
     assert.ok(sw.split('\n').some((l) => l.includes(`url: "${url}"`) && l.includes(revision)), url);
   }

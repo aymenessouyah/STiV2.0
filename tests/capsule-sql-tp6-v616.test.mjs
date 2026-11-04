@@ -42,14 +42,22 @@ test('l’accueil et le cours SQL pointent vers la capsule avec son habillage', 
   assert.match(sql, /capsules-vedettes\.css\?v=587/);
   assert.match(sql, /matiere-video-card sti-capsule-vedette/);
   assert.match(sql, /<span class="sti-etiquette-capsule"[^>]*>Je fais tout le SQL<\/span>/);
-  assert.match(sql, /href="\.\.\/exercices\/sql\/TP6-Mission-cinema-enonce\.html"[^>]*>Énoncé ↗<\/a>/);
-  assert.match(sql, /href="\.\.\/mission-cinema\/correction-video\.html"[^>]*>Corrigé ↗<\/a>/);
+  assert.match(sql, /<h3>Série 6 · Mission cinéma<\/h3>/);
+  assert.match(sql, /TP6-Mission-cinema-enonce\.html[^>]*>Énoncé A4 ↗<\/a>/);
+  assert.match(sql, /TP6-Mission-cinema-enonce\.html"[^>]*>Ouvrir le TP ↗<\/a>/);
+  assert.match(sql, /data-video-open="sql-tp6-mission-cinema">▶ Vidéo<\/button>/);
+  assert.match(sql, /<summary>Voir le corrigé<\/summary>/);
+  assert.match(sql, /Corrige_TD_SQL_Cinema\.pdf[^>]*>Corrigé PDF ↗<\/a>/);
+  assert.match(sql, /data-exercise="serie6"/);
+  assert.match(sql, /Série 6 faite<\/label>/);
 });
 
 test('la capsule contient la correction vidéo, le PDF et sept rappels de cours', () => {
   const page = lire('mission-cinema/correction-video.html');
   const enonce = lire('exercices/sql/TP6-Mission-cinema-enonce.html');
   assert.match(page, /TD_SQL_Cinema_corrige_v3\.mp4/);
+  const enoncePage = lire('exercices/sql/TP6-Mission-cinema-enonce.html');
+  assert.match(enoncePage, /@media print/);
   assert.match(page, /70 questions du corrigé actualisé/);
   assert.match(page, /Je fais tout le SQL/);
   assert.match(page, /#1a365d/);
@@ -74,11 +82,13 @@ test('le suivi vidéo et le tableau de bord connaissent le nouvel identifiant', 
   assert.equal(vues.length, 34);
 });
 
-test('publication v618 et paquet hors ligne incluent les nouvelles pages et le MP4', () => {
+test('publication v619 et paquet hors ligne incluent les nouvelles pages et le MP4', () => {
   const sw = lire('sw.js');
-  assert.match(sw, /var VERSION_PUBLIEE = "v618"/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v619"/);
+  assert.match(sw, /url: "\.\/cours\/sql\.html", revision: "tp6-series6-v619"/);
   for (const path of [
     'exercices/sql/TP6-Mission-cinema-enonce.html',
+    'cours/sql.html',
     'mission-cinema/correction-video.html',
     'mission-cinema/Corrige_TD_SQL_Cinema.pdf',
     'mission-cinema/assets/images/je-fais-tout-sql-poster.jpg',
@@ -89,6 +99,7 @@ test('publication v618 et paquet hors ligne incluent les nouvelles pages et le M
   const manifest = JSON.parse(lire('offline-complete-manifest.json'));
   for (const path of [
     'exercices/sql/TP6-Mission-cinema-enonce.html',
+    'cours/sql.html',
     'mission-cinema/correction-video.html',
     'mission-cinema/Corrige_TD_SQL_Cinema.pdf',
     'mission-cinema/assets/images/je-fais-tout-sql-poster.jpg',
