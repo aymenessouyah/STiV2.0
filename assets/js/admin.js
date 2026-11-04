@@ -36,7 +36,7 @@
      outils/couverture/generer-couverture.py (toutes les pages HTML du site hors
      tests/, casse réelle, n calculé). TOTAL_PAGES_SITE_ADMIN n'est qu'un repli
      hors-ligne : un test vérifie qu'il reste égal au manifeste. */
-  var TOTAL_PAGES_SITE_ADMIN = 151;
+  var TOTAL_PAGES_SITE_ADMIN = 154;
   function chargerTotalPagesSiteAdmin() {
     return fetch("assets/pages-couverture.json", { cache: "no-cache" }).then(function (r) {
       return r && r.ok ? r.json() : null;
@@ -6191,6 +6191,7 @@
     "video:sql-serie4": "SQL Série 4",
     "video:sql-serie4-2": "SQL Série 4.2 (GestLocation)",
     "video:sql-serie5": "SQL Série 5",
+    "video:sql-tp6-mission-cinema": "TP6 SQL — Mission cinéma",
     "video:sql-serie6": "SQL Série 6",
     "video:sql-guide-requete": "Guide Requête SQL",
     "video:validation-nom-prenom-js": "JS Validation Nom/Prénom",
@@ -6227,7 +6228,7 @@
      aucun travail de l'élève, et elles gonflaient artificiellement le compteur.
      Toute clé qui commence par « drapeau » est donc ignorée, ici comme dans les
      données venues du cloud (MEDIAS_DECORATIFS_ADMIN, v581). */
-  /* v589 : inventaire complet des vidéos du site = les 27 capsules de l'accueil
+  /* v589 : inventaire complet des vidéos du site = les 28 capsules de l'accueil
      (mêmes identifiants que CATALOGUE_VIDEOS de app.js) + les 6 vidéos des pages
      de cours (séries SQL 1 à 3 et 6, Explore Tunisie Flex/Float) déjà recensées
      par admin-vues-videos.js. Ordre imposé : cours STI, HTML5, CSS3, JavaScript,
@@ -6267,7 +6268,8 @@
     { key: "video:php-synthese", label: "Synthèse PHP", niveau: "4si" },
     { key: "video:php-guichet", label: "Guichet PHP/MySQLi", niveau: "4si" },
     { key: "video:sql-serie4", label: "SQL Série 4 (jointures)", niveau: "4si" },
-    { key: "video:sql-serie5", label: "SQL Série 5 (dates)", niveau: "4si" }
+    { key: "video:sql-serie5", label: "SQL Série 5 (dates)", niveau: "4si" },
+    { key: "video:sql-tp6-mission-cinema", label: "TP6 — Mission cinéma (correction)", niveau: "4si" }
   ];
 
   /* v589 : deux anciennes clés désignent la même capsule (renommage passé). On les

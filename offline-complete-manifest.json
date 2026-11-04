@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-02T12:23:38Z",
+  "generatedAt": "2026-11-04T17:34:58Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 775,
-  "totalBytes": 1114163616,
+  "totalFiles": 779,
+  "totalBytes": 1123526983,
   "files": [
     {
       "path": "404.html",
@@ -62,13 +62,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 71912,
-      "gitSha": "f8b8124c0178bda56595696171e903702a311108"
+      "bytes": 72386,
+      "gitSha": "87e845662a4542cd0144bbbfab70547e52937990"
     },
     {
       "path": "admin.html",
       "bytes": 357790,
-      "gitSha": "9900c10f0f8d07a105b7b32945be748d45ab778d"
+      "gitSha": "80478d2d379b870d6888ca86c360e22974855f40"
     },
     {
       "path": "assets/audio/cours-sti-ch1.mp3",
@@ -342,8 +342,8 @@
     },
     {
       "path": "assets/data/nouveautes.json",
-      "bytes": 46061,
-      "gitSha": "eac1d3fa55d8a3c7716283f8ccf52cc899976b64"
+      "bytes": 46721,
+      "gitSha": "7b299ff02a1836509b0162582d7ee830dd3dda9c"
     },
     {
       "path": "assets/data/quiz-banque.json",
@@ -727,23 +727,23 @@
     },
     {
       "path": "assets/js/admin-vues-videos.js",
-      "bytes": 33442,
-      "gitSha": "045099480c7e2d63466c8b6c53967da302cd7dfd"
+      "bytes": 33556,
+      "gitSha": "f9e122229ccb7bf8a6e90f187b1e00fe91749180"
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 820096,
-      "gitSha": "6cb79b60beeb80e5317ed1344fe962c3561a32ef"
+      "bytes": 820270,
+      "gitSha": "db09337720630b9d30c06915a01d6a36621ba96a"
     },
     {
       "path": "assets/js/analytique.js",
       "bytes": 18719,
-      "gitSha": "a6cf7e14f7be6c6653ffdc2b1459bc42847b5417"
+      "gitSha": "eec0c35930c424eba0427f388f3c468e5743adf3"
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 138596,
-      "gitSha": "3c06378e8de2ae485504c75ce0af6b54c9b6bf1b"
+      "bytes": 139142,
+      "gitSha": "3ec094e17df6111c7e98a919f673b0758d9ef2f2"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -897,8 +897,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 252086,
-      "gitSha": "6620cb4e42c626167c15cdc7b4b0a8ca07c0b3d6"
+      "bytes": 252361,
+      "gitSha": "9a5b8cd34b795a52c7918f46f2e1220f82cc939a"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -967,8 +967,8 @@
     },
     {
       "path": "assets/js/roue-couverture.js",
-      "bytes": 13954,
-      "gitSha": "d90964b0949caded5dc2f73db934c1c7e2e4a37e"
+      "bytes": 14075,
+      "gitSha": "edff3c248088b305202b8313b80522c15eea47b0"
     },
     {
       "path": "assets/js/roue-habillage.js",
@@ -1067,8 +1067,8 @@
     },
     {
       "path": "assets/pages-couverture.json",
-      "bytes": 6126,
-      "gitSha": "c0f9e366be5b8683dd349002620115912f0a3508"
+      "bytes": 6243,
+      "gitSha": "40fc16c658aa613d2a3902106bf32354d171da49"
     },
     {
       "path": "assets/streams/css3-v302/css3-1080p.m3u8",
@@ -1462,8 +1462,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 144108,
-      "gitSha": "0443cd11a2e01a63fe12fb199b185ee1959acc1c"
+      "bytes": 145451,
+      "gitSha": "81d3465b6d44e919d589f761b319903850e47d73"
     },
     {
       "path": "cours/systemes-technologies-internet.html",
@@ -3137,8 +3137,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 101360,
-      "gitSha": "b89514b132d561fac0fbf2e21daf034b67774cb8"
+      "bytes": 102106,
+      "gitSha": "28f7d06b9f533cf09b2573a89ca9b9bbf14face3"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3164,6 +3164,11 @@
       "path": "exercices/sql/Série 4.2 - GestLocation - énoncé.pdf",
       "bytes": 55415,
       "gitSha": "4a3dc6090d045b7a52dd72aa834d96ffac51696c"
+    },
+    {
+      "path": "exercices/sql/TP6-Mission-cinema-enonce.html",
+      "bytes": 16711,
+      "gitSha": "31af674be611563007547fa1c14078cba1d4bcfb"
     },
     {
       "path": "exercices/sql/Tp-BD-Jointure-sous-requetes-Group-By.html",
@@ -3267,8 +3272,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 65715,
-      "gitSha": "a1360650856446fd6f1b8281bcf25670e6811341"
+      "bytes": 65714,
+      "gitSha": "d0c2ca910826cf211dc04f033688c55955e6d403"
     },
     {
       "path": "livre-smart.html",
@@ -3294,6 +3299,21 @@
       "path": "migration-photos-bucket.html",
       "bytes": 11350,
       "gitSha": "f5489adb4ecfb458c247b9a23a448cc8b1ad5b65"
+    },
+    {
+      "path": "mission-cinema/Corrige_TD_SQL_Cinema.pdf",
+      "bytes": 660351,
+      "gitSha": "2fb9ffd384d13e28f5d8a9aef5818675666f411b"
+    },
+    {
+      "path": "mission-cinema/assets/video/TD_SQL_Cinema_corrige_v2.mp4",
+      "bytes": 8665221,
+      "gitSha": "6beb4b7654deccca6739cae0020ad6737ccc74ec"
+    },
+    {
+      "path": "mission-cinema/correction-video.html",
+      "bytes": 16186,
+      "gitSha": "f7c4244132465ddc5b9562d449ba7f20b16aba1d"
     },
     {
       "path": "nouveautes.html",
@@ -3877,8 +3897,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 105026,
-      "gitSha": "d598fb0c796d960d8ffecfa4455c3a25ed785c99"
+      "bytes": 105355,
+      "gitSha": "afebfbc728360d07c89752d31e18b1a1deb72815"
     }
   ]
 }
