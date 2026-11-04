@@ -117,7 +117,7 @@ test('CSS3 : fichiers révisés disponibles pour le hors-ligne', () => {
   for (const path of ['cours/css3.html', 'assets/css/cours-css3.css', 'assets/js/cours-css3.js', 'assets/js/profil.js', 'assets/js/app.js']) {
     const revision = path === 'assets/css/cours-css3.css' ? 'videos-pas-a-pas-css3-20261027' :
       path === 'cours/css3.html' ? 'tp-transitions-v512' :
-      path === 'assets/js/app.js' ? 'tp6-montage-v617' :
+      path === 'assets/js/app.js' ? 'tp6-series6-v619' :
       path === 'assets/css/cours.css' ? 'tp-evenements-v500' :
       path === 'assets/js/cours-css3.js' ? 'tp-transitions-v512' :
       path === 'assets/js/profil.js' ? 'flamme-regularite-v611' : 'suivi-contextes-v491';

@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-04T17:34:58Z",
+  "generatedAt": "2026-11-04T18:56:14Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 779,
-  "totalBytes": 1123526983,
+  "totalFiles": 780,
+  "totalBytes": 1144789111,
   "files": [
     {
       "path": "404.html",
@@ -742,8 +742,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 139142,
-      "gitSha": "3ec094e17df6111c7e98a919f673b0758d9ef2f2"
+      "bytes": 139522,
+      "gitSha": "8e09f881d96c1d882a56fc179b69bef0f9ddaa01"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -897,8 +897,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 252361,
-      "gitSha": "9a5b8cd34b795a52c7918f46f2e1220f82cc939a"
+      "bytes": 255118,
+      "gitSha": "aeab07ff4f0bac87468600d5354350be352256b7"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -1462,8 +1462,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 145451,
-      "gitSha": "81d3465b6d44e919d589f761b319903850e47d73"
+      "bytes": 146084,
+      "gitSha": "828dfd04bd501e1a30aaa81fc92fb63fd635e899"
     },
     {
       "path": "cours/systemes-technologies-internet.html",
@@ -3306,14 +3306,19 @@
       "gitSha": "2fb9ffd384d13e28f5d8a9aef5818675666f411b"
     },
     {
-      "path": "mission-cinema/assets/video/TD_SQL_Cinema_corrige_v2.mp4",
-      "bytes": 8665221,
-      "gitSha": "6beb4b7654deccca6739cae0020ad6737ccc74ec"
+      "path": "mission-cinema/assets/images/je-fais-tout-sql-poster.jpg",
+      "bytes": 72397,
+      "gitSha": "bd5cc1ffc194a7b434bd325d6ca020d09398b153"
+    },
+    {
+      "path": "mission-cinema/assets/video/TD_SQL_Cinema_corrige_v3.mp4",
+      "bytes": 29850406,
+      "gitSha": "b1b280cf594fb5a4596e21a3c7e8f31f3af21825"
     },
     {
       "path": "mission-cinema/correction-video.html",
-      "bytes": 16186,
-      "gitSha": "f7c4244132465ddc5b9562d449ba7f20b16aba1d"
+      "bytes": 16848,
+      "gitSha": "39d18ae1c4496d4049d7a2756676dd9e8e2ff5ed"
     },
     {
       "path": "nouveautes.html",
@@ -3897,8 +3902,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 105355,
-      "gitSha": "afebfbc728360d07c89752d31e18b1a1deb72815"
+      "bytes": 105469,
+      "gitSha": "44cf251ae992bdea5d78c9edffff977e7a494450"
     }
   ]
 }
