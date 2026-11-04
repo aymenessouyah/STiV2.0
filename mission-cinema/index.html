@@ -7,27 +7,27 @@
   <style>
   /* ============================================================================
      MISSION CINÉMA — STI Version 2.0
-     Thème sombre modernisé, schéma permanent, colonnes sur une ligne
+     Plateforme d'apprentissage SQL moderne, conviviale et professionnelle
+     Thème cinéma sombre, design inspiré des applications éducatives actuelles
      ============================================================================ */
   :root {
-    --bg-principal: #0b0d17;
+    --bg-principal: #0a0b14;
     --bg-card: #161925;
     --bg-second: #1e2130;
     --accent-or: #f59e0b;
     --accent-or-fonce: #d97706;
     --accent-bleu: #3b82f6;
     --accent-bleu-clair: #60a5fa;
+    --accent-vert: #10b981;
+    --accent-rouge: #ef4444;
     --texte-principal: #f3f4f6;
     --texte-second: #9ca3af;
     --texte-clair: #6b7280;
     --texte-bouton: #ffffff;
-    --vert: #10b981;
-    --rouge: #ef4444;
     --bordure: #374151;
     --rayon: 16px;
     --rayon-sm: 10px;
-    --ombre: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-    --ombre-hover: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+    --ombre: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
     --trans: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
@@ -53,7 +53,7 @@
 
   p { color: var(--texte-second); }
 
-  /* ===== SALLE DE CINÉMA (SOMBRE) ===== */
+  /* ===== SALLE DE CINÉMA ===== */
   .cinema-salle {
     position: relative;
     min-height: 100vh;
@@ -136,7 +136,7 @@
     border-radius: 4px;
   }
 
-  /* Lumière salle — très sombre */
+  /* Lumière salle */
   .lumiere-salle {
     position: absolute;
     inset: 0;
@@ -155,9 +155,9 @@
 
   #app { position: relative; z-index: 20; }
 
-  /* ===== ÉCRAN D'ACCUEIL ===== */
+  /* ===== ÉCRAN D'ACCUEIL — DASHBOARD ===== */
   .accueil-cadre {
-    max-width: 760px;
+    max-width: 900px;
     margin: 0 auto;
     padding: 100px 24px;
     text-align: center;
@@ -170,7 +170,7 @@
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 56px;
+    margin-bottom: 48px;
     letter-spacing: -0.5px;
     text-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
   }
@@ -180,7 +180,7 @@
   .accueil-cadre h1 {
     font-size: 3.5rem;
     color: var(--texte-principal);
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     letter-spacing: -1px;
     text-shadow: 0 2px 10px rgba(0,0,0,0.5);
   }
@@ -188,8 +188,8 @@
   .sous-titre {
     font-size: 1.2rem;
     color: var(--texte-second);
-    max-width: 560px;
-    margin: 0 auto 56px auto;
+    max-width: 600px;
+    margin: 0 auto 48px auto;
     line-height: 1.7;
   }
 
@@ -199,13 +199,36 @@
     border-radius: var(--rayon);
     box-shadow: var(--ombre);
     border: 1px solid var(--bordure);
-    margin-bottom: 40px;
+    margin-bottom: 48px;
     text-align: left;
     line-height: 1.8;
   }
 
   .intro-texte p { margin-bottom: 16px; }
   .intro-texte p:last-child { margin-bottom: 0; }
+
+  .badge-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--bg-second);
+    border: 1px solid var(--bordure);
+    border-radius: 50px;
+    font-size: 0.85rem;
+    color: var(--texte-second);
+  }
+
+  .badge.or { color: var(--accent-or); border-color: var(--accent-or); }
+  .badge.bleu { color: var(--accent-bleu-clair); border-color: var(--accent-bleu); }
 
   .btn-principal {
     background: linear-gradient(135deg, var(--accent-or), var(--accent-or-fonce));
@@ -233,6 +256,75 @@
 
   .note { margin-top: 36px; font-size: 0.9rem; color: var(--texte-clair); }
 
+  /* ===== NAVIGATION DES PARTIES ===== */
+  .parties-navigation {
+    max-width: 900px;
+    margin: 0 auto 48px auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .partie-card {
+    background: var(--bg-card);
+    border: 1px solid var(--bordure);
+    border-radius: var(--rayon);
+    padding: 28px 24px;
+    text-align: left;
+    transition: var(--trans);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .partie-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--ombre-hover);
+    border-color: var(--accent-or);
+  }
+
+  .partie-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--accent-or);
+  }
+
+  .partie-titre {
+    font-family: 'Playfair Display', 'Georgia', serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--texte-principal);
+    margin-bottom: 8px;
+  }
+
+  .partie-sous {
+    font-size: 0.85rem;
+    color: var(--texte-clair);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .partie-stats {
+    display: flex;
+    gap: 16px;
+    font-size: 0.8rem;
+    color: var(--texte-second);
+  }
+
+  .stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .stat.or { color: var(--accent-or); }
+  .stat.bleu { color: var(--accent-bleu-clair); }
+
   /* ===== ÉCRAN DE MISSION ===== */
   .mission-layout {
     display: flex;
@@ -244,10 +336,54 @@
     margin: 0;
   }
 
+  /* Barre de progression haute */
+  .progression-haute {
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--bordure);
+    padding: 16px 24px;
+    flex-shrink: 0;
+  }
+
+  .progression-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .progression-titre {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--texte-principal);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .progression-pct {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--accent-or);
+  }
+
+  .barre-progression {
+    height: 8px;
+    background: #1e2130;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .barre-remplissage {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-or), var(--accent-bleu-clair));
+    width: 0%;
+    transition: width 0.5s ease;
+  }
+
   /* Zone haute : schéma graphique permanent */
   .zone-haute {
     background: var(--bg-card);
-    border-bottom: 2px solid var(--bordure);
+    border-bottom: 1px solid var(--bordure);
     padding: 18px 24px;
     overflow-x: auto;
     overflow-y: hidden;
@@ -270,7 +406,7 @@
     justify-content: center;
     gap: 14px;
     position: relative;
-    min-height: 240px;
+    min-height: 220px;
   }
 
   .svg-relations {
@@ -398,7 +534,7 @@
 
   textarea.q-reponse {
     width: 100%;
-    min-height: 120px;
+    min-height: 140px;
     font-family: 'Courier New', monospace;
     font-size: 0.95rem;
     padding: 16px;
@@ -416,6 +552,12 @@
     box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
   }
 
+  .actions-question {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
   .btn-valider {
     background: linear-gradient(135deg, var(--accent-or), var(--accent-or-fonce));
     color: #fff;
@@ -426,7 +568,7 @@
     border-radius: var(--rayon-sm);
     cursor: pointer;
     transition: var(--trans);
-    margin-bottom: 16px;
+    flex: 1;
     box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
   }
 
@@ -450,7 +592,7 @@
     border-radius: var(--rayon-sm);
     cursor: pointer;
     transition: var(--trans);
-    display: none;
+    flex: 1;
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
   }
 
@@ -471,18 +613,21 @@
   }
 
   .resultat.vrai {
-    border-left-color: var(--vert);
+    border-left-color: var(--accent-vert);
     color: var(--texte-principal);
   }
 
   .resultat.faux {
-    border-left-color: var(--rouge);
+    border-left-color: var(--accent-rouge);
     color: var(--texte-principal);
   }
 
   .resultat h3 {
     font-size: 1.4rem;
     margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   .resultat p {
@@ -586,10 +731,17 @@
     font-size: 0.875rem;
     background: var(--bg-second);
     border: 1px solid var(--bordure);
+    cursor: pointer;
+    transition: var(--trans);
   }
 
-  .etape-item.traitee { border-left: 3px solid var(--vert); background: #0f2e22; }
-  .etape-item.incorrecte { border-left: 3px solid var(--rouge); background: #2e1a1a; }
+  .etape-item:hover {
+    background: #252a3b;
+    border-color: var(--accent-or);
+  }
+
+  .etape-item.traitee { border-left: 3px solid var(--accent-vert); background: #0f2e22; }
+  .etape-item.incorrecte { border-left: 3px solid var(--accent-rouge); background: #2e1a1a; }
 
   .etape-badge {
     display: inline-block;
@@ -620,16 +772,72 @@
   }
 
   .bilan-score {
-    font-size: 3.5rem;
+    font-size: 4rem;
     font-weight: 800;
     color: var(--accent-or);
-    margin-bottom: 24px;
+    margin-bottom: 8px;
+    display: inline-block;
+  }
+
+  .bilan-sous {
+    font-size: 1.2rem;
+    color: var(--texte-second);
+    margin-bottom: 40px;
+  }
+
+  .bilan-stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 48px;
+    text-align: center;
+  }
+
+  .stat-item {
+    background: var(--bg-card);
+    padding: 20px;
+    border-radius: var(--rayon-sm);
+    border: 1px solid var(--bordure);
+    min-width: 120px;
+  }
+
+  .stat-valeur {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--texte-principal);
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--texte-clair);
+    margin-top: 4px;
   }
 
   .bilan-message {
     font-size: 1.2rem;
     color: var(--texte-second);
     margin-bottom: 40px;
+  }
+
+  .btn-recommencer {
+    background: linear-gradient(135deg, var(--accent-or), var(--accent-or-fonce));
+    color: #fff;
+    border: none;
+    padding: 18px 48px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: var(--rayon-sm);
+    cursor: pointer;
+    transition: var(--trans);
+    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+  }
+
+  .btn-recommencer:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 32px rgba(245, 158, 11, 0.45);
   }
 
   /* ===== RESPONSIVE ===== */
@@ -639,12 +847,16 @@
     .zone-basse { padding: 16px; }
     .carte-question { padding: 24px; }
     .rideau { min-width: 60px; }
+    .accueil-cadre { padding: 80px 16px; }
+    .accueil-cadre h1 { font-size: 2.5rem; }
   }
 
   @media (max-width: 480px) {
     .accueil-cadre h1 { font-size: 2rem; }
     .bilan-wrap h1 { font-size: 2.25rem; }
+    .bilan-score { font-size: 3rem; }
     .schema-conteneur { flex-direction: column; align-items: center; }
+    .parties-navigation { grid-template-columns: 1fr; }
   }
   </style>
 </head>
@@ -657,32 +869,96 @@
     <div class="lumiere-salle"></div>
 
     <div id="app">
-      <!-- ÉCRAN D'ACCUEIL -->
+      <!-- ÉCRAN D'ACCUEIL — DASHBOARD -->
       <section id="ecran-accueil" class="ecran actif">
         <div class="accueil-cadre">
           <div class="logo">STI Version 2.0 <span style="font-size: 1rem; font-weight: 500; color: var(--texte-second);">By A'E</span></div>
           <h1>MISSION CINÉMA</h1>
-          <p class="sous-titre">Répondez aux 60 questions SQL sur le thème du cinéma.</p>
+          <p class="sous-titre">Maîtrisez le SQL à travers 60 défis sur le thème du cinéma.</p>
 
           <div class="intro-texte">
             <p><strong>Bienvenue, futur expert SQL.</strong></p>
-            <p>Le schéma de la base « cinema » s'affiche en permanence en haut de l'écran.</p>
-            <p>Les questions sont réparties sur 7 parties :</p>
+            <p>Le schéma de la base « cinema » s'affiche en permanence en haut de l'écran pour vous guider.</p>
+            <p>Les 60 questions sont réparties sur <strong>7 parties thématiques</strong> :</p>
             <ul style="margin-left: 20px; margin-top: 8px; color: var(--texte-second); line-height: 1.8;">
-              <li><strong>Partie 1 :</strong> LDD (Définition) — Questions 1 à 5</li>
-              <li><strong>Partie 2 :</strong> LMD (Manipulation) — Questions 6 à 10</li>
-              <li><strong>Partie 3 :</strong> Requêtes de sélection simples — Questions 11 à 25</li>
-              <li><strong>Partie 4 :</strong> Requêtes de sélection avancées — Questions 26 à 39</li>
-              <li><strong>Partie 5 :</strong> ALTER TABLE, DEFAULT, clés étrangères en cascade — Questions 40 à 45</li>
-              <li><strong>Partie 6 :</strong> Prévoir le résultat — Questions 46 à 55</li>
-              <li><strong>Partie 7 :</strong> Prévoir l'erreur (contraintes) — Questions 56 à 60</li>
+              <li><strong>Partie 1 :</strong> LDD — Définition de structure (Q1-5)</li>
+              <li><strong>Partie 2 :</strong> LMD — Manipulation de données (Q6-10)</li>
+              <li><strong>Partie 3 :</strong> SELECT simples (Q11-25)</li>
+              <li><strong>Partie 4 :</strong> SELECT avancées (Q26-39)</li>
+              <li><strong>Partie 5 :</strong> DEFAULT, clés étrangères en cascade (Q40-45)</li>
+              <li><strong>Partie 6 :</strong> Prévoir le résultat (Q46-55)</li>
+              <li><strong>Partie 7 :</strong> Prévoir l'erreur (Q56-60)</li>
             </ul>
-            <p>Pour chaque question : écrivez votre réponse SQL dans le textarea, cliquez sur <strong>Valider</strong>, découvrez la bonne réponse et l'explication.</p>
             <p><strong>Aucune exécution SQL n'est effectuée dans le navigateur.</strong> La comparaison est pédagogique uniquement.</p>
           </div>
 
+          <div class="badge-row">
+            <span class="badge or">🎬 Thème Cinéma</span>
+            <span class="badge bleu">📊 60 défis SQL</span>
+          </div>
+
           <button id="btn-start" class="btn-principal">COMMENCER LA MISSION ▶</button>
-          <p class="note">60 questions • Q1 à Q60 • Progression sauvegardée automatiquement.</p>
+          <p class="note">Progression sauvegardée automatiquement • Niveaux et badges à débloquer.</p>
+        </div>
+
+        <!-- Navigation rapide par partie -->
+        <div class="parties-navigation">
+          <div class="partie-card" onclick="allerPartie(1)">
+            <div class="partie-titre">Partie 1 : LDD</div>
+            <div class="partie-sous">Définition de structure</div>
+            <div class="partie-stats">
+              <span class="stat or">Q1-5</span>
+              <span class="stat bleu">5 défis</span>
+            </div>
+          </div>
+          <div class="partie-card" onclick="allerPartie(2)">
+            <div class="partie-titre">Partie 2 : LMD</div>
+            <div class="partie-sous">Manipulation de données</div>
+            <div class="partie-stats">
+              <span class="stat or">Q6-10</span>
+              <span class="stat bleu">5 défis</span>
+            </div>
+          </div>
+          <div class="partie-card" onclick="allerPartie(3)">
+            <div class="partie-titre">Partie 3 : SELECT</div>
+            <div class="partie-sous">Requêtes simples</div>
+            <div class="partie-stats">
+              <span class="stat or">Q11-25</span>
+              <span class="stat bleu">15 défis</span>
+            </div>
+          </div>
+          <div class="partie-card" onclick="allerPartie(4)">
+            <div class="partie-titre">Partie 4 : SELECT avancé</div>
+            <div class="partie-sous">Agrégations et filtres</div>
+            <div class="partie-stats">
+              <span class="stat or">Q26-39</span>
+              <span class="stat bleu">14 défis</span>
+            </div>
+          </div>
+          <div class="partie-card" onclick="allerPartie(5)">
+            <div class="partie-titre">Partie 5 : DEFAULT &amp; CASCADE</div>
+            <div class="partie-sous">Contraintes avancées</div>
+            <div class="partie-stats">
+              <span class="stat or">Q40-45</span>
+              <span class="stat bleu">6 défis</span>
+            </div>
+          </div>
+          <div class="partie-card" onclick="allerPartie(6)">
+            <div class="partie-titre">Partie 6 : Résultat</div>
+            <div class="partie-sous">Prédire le résultat</div>
+            <div class="partie-stats">
+              <span class="stat or">Q46-55</span>
+              <span class="stat bleu">10 défis</span>
+            </div>
+          </div>
+          <div class="partie-card" onclick="allerPartie(7)">
+            <div class="partie-titre">Partie 7 : Erreurs</div>
+            <div class="partie-sous">Contraintes et clés</div>
+            <div class="partie-stats">
+              <span class="stat or">Q56-60</span>
+              <span class="stat bleu">5 défis</span>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -708,6 +984,19 @@
           <div class="section-titre">Progression</div>
           <ul id="liste-etapes"></ul>
         </aside>
+
+        <!-- Barre de progression haute -->
+        <div class="progression-haute">
+          <div class="progression-info">
+            <div class="progression-titre">
+              <span id="progression-texte">Partie 1 : LDD</span>
+            </div>
+            <div class="progression-pct" id="progression-pct">0%</div>
+          </div>
+          <div class="barre-progression">
+            <div class="barre-remplissage" id="barre-remplissage"></div>
+          </div>
+        </div>
 
         <!-- Zone haute : schéma graphique permanent -->
         <div class="zone-haute">
@@ -786,8 +1075,10 @@
 
             <textarea id="q-reponse" class="q-reponse" placeholder="Écrivez votre réponse SQL ici..."></textarea>
 
-            <button id="btn-valider" class="btn-valider">VALIDER LA RÉPONSE</button>
-            <button id="btn-suivant" class="btn-suivant">QUESTION SUIVANTE ▶</button>
+            <div class="actions-question">
+              <button id="btn-valider" class="btn-valider">VALIDER LA RÉPONSE</button>
+              <button id="btn-suivant" class="btn-suivant">QUESTION SUIVANTE ▶</button>
+            </div>
 
             <div id="resultat" class="resultat">
               <h3 id="resultat-titre"></h3>
@@ -801,10 +1092,21 @@
       <!-- ÉCRAN DE BILAN -->
       <section id="ecran-bilan" class="ecran cacher">
         <div class="bilan-wrap">
-          <h1>BILAN DE LA SÉANCE</h1>
-          <div class="bilan-score" id="bilan-score">0 / 0</div>
+          <h1>MISSION TERMINÉE</h1>
+          <div class="bilan-score" id="bilan-score">0</div>
+          <div class="bilan-sous" id="bilan-sous">/ 60 défis réussis</div>
+          <div class="bilan-stats">
+            <div class="stat-item">
+              <span class="stat-valeur" id="stat-pct">0%</span>
+              <span class="stat-label">Réussite</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-valeur" id="stat-niveau">1</span>
+              <span class="stat-label">Niveau</span>
+            </div>
+          </div>
           <div class="bilan-message" id="bilan-message"></div>
-          <button id="btn-recommencer" class="btn-principal">RECOMMENCER</button>
+          <button id="btn-recommencer" class="btn-recommencer">RECOMMENCER LA MISSION</button>
         </div>
       </section>
     </div>
@@ -813,8 +1115,8 @@
 <script>
 /* ============================================================================
    MISSION CINÉMA — STI Version 2.0
-   Contrôleur unique : 60 questions sur 7 parties
-   Schéma permanent + textarea SQL + voix masculine
+   Plateforme d'apprentissage SQL moderne
+   60 questions sur 7 parties • Schéma permanent • Voix masculine
    Aucune exécution SQL dans le navigateur
    ============================================================================ */
 
@@ -851,47 +1153,47 @@ const QUESTIONS = [
   { id: 25, type: 'select', partie: 'Partie 3 : SELECT simples', enonce: "Compter le nombre total de films et le nombre de durées non nulles.", ref: "SELECT COUNT(*) AS nbFilms, COUNT(duree) AS nbDurees FROM film;", explication: "COUNT(*) compte toutes les lignes, COUNT(colonne) ignore les NULL." },
 
   /* ===== PARTIE 4 : SELECT AVANCÉES (QUESTIONS 26-39) ===== */
-  { id: 26, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Calculer la durée moyenne des films (AVG).", ref: "SELECT AVG(duree) AS moyenne FROM film;", explication: "AVG ignore les valeurs NULL." },
-  { id: 27, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher les films dont le titre contient le mot « The » (LIKE).", ref: "SELECT titre FROM film WHERE titre LIKE '%The%';", explication: "Opérateur LIKE avec jokers %." },
-  { id: 28, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher les acteurs dont le nom commence par 'D'.", ref: "SELECT nom FROM acteur WHERE nom LIKE 'D%';", explication: "LIKE avec joker en fin de chaîne." },
-  { id: 29, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher les films classés par durée croissante, puis par titre alphabétique.", ref: "SELECT titre, duree FROM film ORDER BY duree ASC, titre ASC;", explication: "Tri multi-colonnes." },
-  { id: 30, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher les 3 films les plus récents (LIMIT).", ref: "SELECT titre, annee FROM film ORDER BY annee DESC LIMIT 3;", explication: "LIMIT pour restreindre le nombre de résultats." },
-  { id: 31, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher les projections avec plus de 100 spectateurs.", ref: "SELECT * FROM projection WHERE nbSpectateurs > 100;", explication: "Filtre numérique simple." },
-  { id: 32, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher le nombre de projections par film (jointure FILM + PROJECTION).", ref: "SELECT f.titre, COUNT(p.idProj) AS nb FROM film f, projection p WHERE f.idFilm = p.idFilm GROUP BY f.idFilm, f.titre;", explication: "COUNT sur jointure avec GROUP BY." },
-  { id: 33, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher les acteurs qui ont joué dans au moins un film d'action.", ref: "SELECT DISTINCT a.nom FROM acteur a, jouer j, film f WHERE a.idActeur = j.idActeur AND j.idFilm = f.idFilm AND f.genre = 'Action';", explication: "DISTINCT pour éliminer les doublons sur jointure triple." },
-  { id: 34, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher les films sans réalisateur (idReal IS NULL).", ref: "SELECT titre FROM film WHERE idReal IS NULL;", explication: "Test IS NULL sur clé étrangère." },
-  { id: 35, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher le cachet moyen par genre de film.", ref: "SELECT f.genre, AVG(j.cachet) AS moy FROM jouer j, film f WHERE j.idFilm = f.idFilm GROUP BY f.genre;", explication: "AVG groupé par genre via jointure." },
-  { id: 36, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher les films dont le titre fait plus de 10 caractères (LENGTH).", ref: "SELECT titre FROM film WHERE LENGTH(titre) > 10;", explication: "Fonction LENGTH sur une chaîne." },
-  { id: 37, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher les réalisateurs américains.", ref: "SELECT nom, prenom FROM realisateur WHERE nationalite = 'Américaine';", explication: "Filtre d'égalité sur chaîne." },
-  { id: 38, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Afficher les films dont le budget est compris entre 50 000 000 et 150 000 000 $.", ref: "SELECT titre, budget FROM film WHERE budget BETWEEN 50000000 AND 150000000;", explication: "BETWEEN sur montant." },
-  { id: 39, type: 'select', partie: 'Partie 4 : SELECT avancées', enonce: "Compter le nombre de rôles dans JOUER dont le cachet dépasse 10 000 $.", ref: "SELECT COUNT(*) AS nb FROM jouer WHERE cachet > 10000;", explication: "COUNT avec condition sur cachet." },
+  { id: 26, type: 'select', partie: 'Partie 4 : SELECT avancé', enonce: "Calculer la durée moyenne des films (AVG).", ref: "SELECT AVG(duree) AS moyenne FROM film;", explication: "AVG ignore les valeurs NULL." },
+  { id: 27, type: 'select', partie: 'Partie 4 : SELECT avancé', enonce: "Afficher les films dont le titre contient le mot « The » (LIKE).", ref: "SELECT titre FROM film WHERE titre LIKE '%The%';", explication: "Opérateur LIKE avec jokers %." },
+  { id: 28, type: 'select', partie: 'Partie 4 : SELECT avancé', enonce: "Afficher les acteurs dont le nom commence par 'D'.", ref: "SELECT nom FROM acteur WHERE nom LIKE 'D%';", explication: "LIKE avec joker en fin de chaîne." },
+  { id: 29, type: 'select', partie: 'Partie 4 : SELECT avancé', enonce: "Afficher les films classés par durée croissante, puis par titre alphabétique.", ref: "SELECT titre, duree FROM film ORDER BY duree ASC, titre ASC;", explication: "Tri multi-colonnes." },
+  { id: 30, type: 'select', partie: 'Partie 4 : SELECT avancé', enonce: "Afficher les 3 films les plus récents (LIMIT).", ref: "SELECT titre, annee FROM film ORDER BY annee DESC LIMIT 3;", explication: "LIMIT pour restreindre le nombre de résultats." },
+  { id: 31, type: 'select', partie: 'Partie 4 : SELECT avancé', enonce: "Afficher les projections avec plus de 100 spectateurs.", ref: "SELECT * FROM projection WHERE nbSpectateurs > 100;", explication: "Filtre numérique simple." },
+  { id: 32, type: 'select', partie: 'Partie 4 : SELECT avancé', enonce: "Afficher le nombre de projections par film (jointure FILM + PROJECTION).", ref: "SELECT f.titre, COUNT(p.idProj) AS nb FROM film f, projection p WHERE f.idFilm = p.idFilm GROUP BY f.idFilm, f.titre;", explication: "COUNT sur jointure avec GROUP BY." },
+  { id: 33, type: 'select', partie: 'Partie 4 : SELECT avancé', enonce: "Afficher les acteurs qui ont joué dans au moins un film d'action.", ref: "SELECT DISTINCT a.nom FROM acteur a, jouer j, film f WHERE a.idActeur = j.idActeur AND j.idFilm = f.idFilm AND f.genre = 'Action';", explication: "DISTINCT pour éliminer les doublons sur jointure triple." },
+  { id: 34, type: 'select', partie: 'Partie 4 : SELECT avancé', enonce: "Afficher les films sans réalisateur (idReal IS NULL).", ref: "SELECT titre FROM film WHERE idReal IS NULL;", explication: "Test IS NULL sur clé étrangère." },
+  { id: 35, type: 'select', partie: 'Partie 4 : SELECT avancé', enonce: "Afficher le cachet moyen par genre de film.", ref: "SELECT f.genre, AVG(j.cachet) AS moy FROM jouer j, film f WHERE j.idFilm = f.idFilm GROUP BY f.genre;", explication: "AVG groupé par genre via jointure." },
+  { id: 36, type: 'select', partie: 'Partie 4 : SELECT avancé', enonce: "Afficher les films dont le titre fait plus de 10 caractères (LENGTH).", ref: "SELECT titre FROM film WHERE LENGTH(titre) > 10;", explication: "Fonction LENGTH sur une chaîne." },
+  { id: 37, type: 'select', partie: 'Partie 4 : SELECT avancé', enonce: "Afficher les réalisateurs américains.", ref: "SELECT nom, prenom FROM realisateur WHERE nationalite = 'Américaine';", explication: "Filtre d'égalité sur chaîne." },
+  { id: 38, type: 'select', partie: 'Partie 4 : SELECT avancé', enonce: "Afficher les films dont le budget est compris entre 50 000 000 et 150 000 000 $.", ref: "SELECT titre, budget FROM film WHERE budget BETWEEN 50000000 AND 150000000;", explication: "BETWEEN sur montant." },
+  { id: 39, type: 'select', partie: 'Partie 4 : SELECT avancé', enonce: "Compter le nombre de rôles dans JOUER dont le cachet dépasse 10 000 $.", ref: "SELECT COUNT(*) AS nb FROM jouer WHERE cachet > 10000;", explication: "COUNT avec condition sur cachet." },
 
   /* ===== PARTIE 5 : ALTER TABLE, DEFAULT, CASCADE (QUESTIONS 40-45) ===== */
-  { id: 40, type: 'ldd', partie: 'Partie 5 : DEFAULT et clés étrangères', enonce: "Ajouter à FILM une colonne paysOrigine (VARCHAR(30)) obligatoire, avec la valeur par défaut « Inconnue ».", ref: "ALTER TABLE film ADD paysOrigine VARCHAR(30) NOT NULL DEFAULT 'Inconnue';", explication: "ADD COLUMN avec NOT NULL et DEFAULT." },
-  { id: 41, type: 'ldd', partie: 'Partie 5 : DEFAULT et clés étrangères', enonce: "Modifier la valeur par défaut de paysOrigine par « Tunisie ».", ref: "ALTER TABLE film ALTER paysOrigine SET DEFAULT 'Tunisie';", explication: "ALTER ... SET DEFAULT pour changer la valeur par défaut." },
-  { id: 42, type: 'ldd', partie: 'Partie 5 : DEFAULT et clés étrangères', enonce: "Rendre nationalite obligatoire dans ACTEUR (d'abord corriger les NULL, puis ALTER TABLE).", ref: "UPDATE acteur SET nationalite = 'Non precisee' WHERE nationalite IS NULL;\nALTER TABLE acteur MODIFY nationalite VARCHAR(30) NOT NULL;", explication: "Il faut d'abord remplacer les NULL avant de rendre NOT NULL." },
-  { id: 43, type: 'ldd', partie: 'Partie 5 : DEFAULT et clés étrangères', enonce: "Créer une table projection_test qui référence FILM avec ON UPDATE CASCADE et ON DELETE CASCADE.", ref: "CREATE TABLE projection_test (\n  idProj INT PRIMARY KEY,\n  idFilm INT,\n  salle VARCHAR(20),\n  FOREIGN KEY (idFilm) REFERENCES film(idFilm)\n    ON UPDATE CASCADE\n    ON DELETE CASCADE\n);", explication: "Clé étrangère avec propagation en cascade." },
-  { id: 44, type: 'ldd', partie: 'Partie 5 : DEFAULT et clés étrangères', enonce: "Supprimer le film dont l'identifiant est 70 (après cascade).", ref: "DELETE FROM film WHERE idFilm = 70;", explication: "DELETE avec condition sur clé primaire." },
-  { id: 45, type: 'select', partie: 'Partie 5 : DEFAULT et clés étrangères', enonce: "Après les opérations précédentes, afficher les projections restantes de projection_test avec le titre du film.", ref: "SELECT p.idProj, p.idFilm, f.titre FROM projection_test p, film f WHERE p.idFilm = f.idFilm ORDER BY p.idProj;", explication: "Jointure finale après les cascades UPDATE/DELETE." },
+  { id: 40, type: 'ldd', partie: 'Partie 5 : DEFAULT &amp; CASCADE', enonce: "Ajouter à FILM une colonne paysOrigine (VARCHAR(30)) obligatoire, avec la valeur par défaut « Inconnue ».", ref: "ALTER TABLE film ADD paysOrigine VARCHAR(30) NOT NULL DEFAULT 'Inconnue';", explication: "ADD COLUMN avec NOT NULL et DEFAULT." },
+  { id: 41, type: 'ldd', partie: 'Partie 5 : DEFAULT &amp; CASCADE', enonce: "Modifier la valeur par défaut de paysOrigine par « Tunisie ».", ref: "ALTER TABLE film ALTER paysOrigine SET DEFAULT 'Tunisie';", explication: "ALTER ... SET DEFAULT pour changer la valeur par défaut." },
+  { id: 42, type: 'ldd', partie: 'Partie 5 : DEFAULT &amp; CASCADE', enonce: "Rendre nationalite obligatoire dans ACTEUR (d'abord corriger les NULL, puis ALTER TABLE).", ref: "UPDATE acteur SET nationalite = 'Non precisee' WHERE nationalite IS NULL;\nALTER TABLE acteur MODIFY nationalite VARCHAR(30) NOT NULL;", explication: "Il faut d'abord remplacer les NULL avant de rendre NOT NULL." },
+  { id: 43, type: 'ldd', partie: 'Partie 5 : DEFAULT &amp; CASCADE', enonce: "Créer une table projection_test qui référence FILM avec ON UPDATE CASCADE et ON DELETE CASCADE.", ref: "CREATE TABLE projection_test (\n  idProj INT PRIMARY KEY,\n  idFilm INT,\n  salle VARCHAR(20),\n  FOREIGN KEY (idFilm) REFERENCES film(idFilm)\n    ON UPDATE CASCADE\n    ON DELETE CASCADE\n);", explication: "Clé étrangère avec propagation en cascade." },
+  { id: 44, type: 'ldd', partie: 'Partie 5 : DEFAULT &amp; CASCADE', enonce: "Supprimer le film dont l'identifiant est 70 (après cascade).", ref: "DELETE FROM film WHERE idFilm = 70;", explication: "DELETE avec condition sur clé primaire." },
+  { id: 45, type: 'select', partie: 'Partie 5 : DEFAULT &amp; CASCADE', enonce: "Après les opérations précédentes, afficher les projections restantes de projection_test avec le titre du film.", ref: "SELECT p.idProj, p.idFilm, f.titre FROM projection_test p, film f WHERE p.idFilm = f.idFilm ORDER BY p.idProj;", explication: "Jointure finale après les cascades UPDATE/DELETE." },
 
   /* ===== PARTIE 6 : PRÉVOIR LE RÉSULTAT (QUESTIONS 46-55) ===== */
-  { id: 46, type: 'resultat', partie: 'Partie 6 : Prévoir le résultat', enonce: "Compter le nombre de rôles dont le cachet dépasse 10 000 $.", ref: "SELECT COUNT(*) AS nb FROM jouer WHERE cachet > 10000;\n\nRésultat attendu : 3 (Dom Cobb 20000, Cooper 15000, Bruce Wayne 14400).", explication: "3 rôles ont un cachet > 10000 : Dom Cobb (20000), Cooper (15000), Bruce Wayne (14400)." },
-  { id: 47, type: 'resultat', partie: 'Partie 6 : Prévoir le résultat', enonce: "Compter le nombre total de films et le nombre de durées non nulles.", ref: "SELECT COUNT(*) AS nbFilms, COUNT(duree) AS nbDurees FROM film;\n\nRésultat attendu : 7 films, 6 durées (le film 'Film test' n'a pas de durée).", explication: "COUNT(*) compte toutes les lignes, COUNT(colonne) ignore les NULL." },
-  { id: 48, type: 'resultat', partie: 'Partie 6 : Prévoir le résultat', enonce: "Calculer la durée moyenne des films (AVG).", ref: "SELECT AVG(duree) AS moyenne FROM film;\n\nRésultat attendu : 142.8333.", explication: "AVG ignore les valeurs NULL (857 / 6)." },
-  { id: 49, type: 'resultat', partie: 'Partie 6 : Prévoir le résultat', enonce: "Afficher les films dont la durée n'est pas égale à 148 minutes.", ref: "SELECT titre FROM film WHERE duree <> 148;\n\nRésultat attendu : Interstellar, The Dark Knight, Les Infiltrés, Shutter Island, OSS 117. « Film test » n'apparaît pas car NULL <> 148 est UNKNOWN.", explication: "NULL <> 148 n'est ni vrai ni faux (UNKNOWN)." },
-  { id: 50, type: 'resultat', partie: 'Partie 6 : Prévoir le résultat', enonce: "Afficher le nombre de films par acteur (jointure ACTEUR + JOUER).", ref: "SELECT a.nom, COUNT(*) AS nbFilms FROM acteur a, jouer j WHERE a.idActeur = j.idActeur GROUP BY a.idActeur, a.nom;\n\nRésultat attendu : DiCaprio 1, Bale 2, Ledger 2, Dujardin 2, McConaughey 1. Cotillard et Hathaway sont absentes.", explication: "Les acteurs sans ligne dans jouer sont éliminés par la jointure." },
-  { id: 51, type: 'resultat', partie: 'Partie 6 : Prévoir le résultat', enonce: "Afficher les films avec plus de 150 spectateurs au total.", ref: "SELECT f.titre, SUM(p.nbSpectateurs) AS total FROM film f, projection p WHERE f.idFilm = p.idFilm GROUP BY f.idFilm, f.titre HAVING SUM(p.nbSpectateurs) > 150;\n\nRésultat attendu : Inception 205, Interstellar 260.", explication: "HAVING filtre sur le résultat de l'agrégation." },
-  { id: 52, type: 'resultat', partie: 'Partie 6 : Prévoir le résultat', enonce: "Statistiques par salle.", ref: "SELECT salle, COUNT(*) AS nbProj, MAX(nbSpectateurs) AS maxSpect FROM projection GROUP BY salle;\n\nRésultat attendu : Salle 1 (4, 150), Salle 2 (2, 120), Salle 3 (1, 70).", explication: "COUNT et MAX groupés par salle." },
-  { id: 53, type: 'resultat', partie: 'Partie 6 : Prévoir le résultat', enonce: "Auto-jointure : afficher les acteurs et leur parrain (idParrain).", ref: "SELECT a.nom AS acteur, p.nom AS parrain FROM acteur a, acteur p WHERE a.idParrain = p.idActeur AND p.idParrain IS NULL;", explication: "Auto-jointure avec condition supplémentaire." },
-  { id: 54, type: 'resultat', partie: 'Partie 6 : Prévoir le résultat', enonce: "Afficher les acteurs nés en novembre.", ref: "SELECT nom, dateNaiss FROM acteur WHERE MONTH(dateNaiss) = 11;\n\nRésultat attendu : DiCaprio, Bale, McConaughey, Hathaway.", explication: "Fonction MONTH sur dateNaiss." },
-  { id: 55, type: 'resultat', partie: 'Partie 6 : Prévoir le résultat', enonce: "Somme des cachets pour le film « Inception ».", ref: "SELECT SUM(j.cachet) AS total FROM jouer j, film f WHERE j.idFilm = f.idFilm AND f.titre = 'Inception';\n\nRésultat attendu : 29350.00.", explication: "20000 + 4950 + 4400." },
+  { id: 46, type: 'resultat', partie: 'Partie 6 : Résultat', enonce: "Compter le nombre de rôles dont le cachet dépasse 10 000 $.", ref: "SELECT COUNT(*) AS nb FROM jouer WHERE cachet > 10000;\n\nRésultat attendu : 3 (Dom Cobb 20000, Cooper 15000, Bruce Wayne 14400).", explication: "3 rôles ont un cachet > 10000 : Dom Cobb (20000), Cooper (15000), Bruce Wayne (14400)." },
+  { id: 47, type: 'resultat', partie: 'Partie 6 : Résultat', enonce: "Compter le nombre total de films et le nombre de durées non nulles.", ref: "SELECT COUNT(*) AS nbFilms, COUNT(duree) AS nbDurees FROM film;\n\nRésultat attendu : 7 films, 6 durées (le film 'Film test' n'a pas de durée).", explication: "COUNT(*) compte toutes les lignes, COUNT(colonne) ignore les NULL." },
+  { id: 48, type: 'resultat', partie: 'Partie 6 : Résultat', enonce: "Calculer la durée moyenne des films (AVG).", ref: "SELECT AVG(duree) AS moyenne FROM film;\n\nRésultat attendu : 142.8333.", explication: "AVG ignore les valeurs NULL (857 / 6)." },
+  { id: 49, type: 'resultat', partie: 'Partie 6 : Résultat', enonce: "Afficher les films dont la durée n'est pas égale à 148 minutes.", ref: "SELECT titre FROM film WHERE duree <> 148;\n\nRésultat attendu : Interstellar, The Dark Knight, Les Infiltrés, Shutter Island, OSS 117. « Film test » n'apparaît pas car NULL <> 148 est UNKNOWN.", explication: "NULL <> 148 n'est ni vrai ni faux (UNKNOWN)." },
+  { id: 50, type: 'resultat', partie: 'Partie 6 : Résultat', enonce: "Afficher le nombre de films par acteur (jointure ACTEUR + JOUER).", ref: "SELECT a.nom, COUNT(*) AS nbFilms FROM acteur a, jouer j WHERE a.idActeur = j.idActeur GROUP BY a.idActeur, a.nom;\n\nRésultat attendu : DiCaprio 1, Bale 2, Ledger 2, Dujardin 2, McConaughey 1. Cotillard et Hathaway sont absentes.", explication: "Les acteurs sans ligne dans jouer sont éliminés par la jointure." },
+  { id: 51, type: 'resultat', partie: 'Partie 6 : Résultat', enonce: "Afficher les films avec plus de 150 spectateurs au total.", ref: "SELECT f.titre, SUM(p.nbSpectateurs) AS total FROM film f, projection p WHERE f.idFilm = p.idFilm GROUP BY f.idFilm, f.titre HAVING SUM(p.nbSpectateurs) > 150;\n\nRésultat attendu : Inception 205, Interstellar 260.", explication: "HAVING filtre sur le résultat de l'agrégation." },
+  { id: 52, type: 'resultat', partie: 'Partie 6 : Résultat', enonce: "Statistiques par salle.", ref: "SELECT salle, COUNT(*) AS nbProj, MAX(nbSpectateurs) AS maxSpect FROM projection GROUP BY salle;\n\nRésultat attendu : Salle 1 (4, 150), Salle 2 (2, 120), Salle 3 (1, 70).", explication: "COUNT et MAX groupés par salle." },
+  { id: 53, type: 'resultat', partie: 'Partie 6 : Résultat', enonce: "Auto-jointure : afficher les acteurs et leur parrain (idParrain).", ref: "SELECT a.nom AS acteur, p.nom AS parrain FROM acteur a, acteur p WHERE a.idParrain = p.idActeur AND p.idParrain IS NULL;", explication: "Auto-jointure avec condition supplémentaire." },
+  { id: 54, type: 'resultat', partie: 'Partie 6 : Résultat', enonce: "Afficher les acteurs nés en novembre.", ref: "SELECT nom, dateNaiss FROM acteur WHERE MONTH(dateNaiss) = 11;\n\nRésultat attendu : DiCaprio, Bale, McConaughey, Hathaway.", explication: "Fonction MONTH sur dateNaiss." },
+  { id: 55, type: 'resultat', partie: 'Partie 6 : Résultat', enonce: "Somme des cachets pour le film « Inception ».", ref: "SELECT SUM(j.cachet) AS total FROM jouer j, film f WHERE j.idFilm = f.idFilm AND f.titre = 'Inception';\n\nRésultat attendu : 29350.00.", explication: "20000 + 4950 + 4400." },
 
   /* ===== PARTIE 7 : PRÉVOIR L'ERREUR (QUESTIONS 56-60) ===== */
-  { id: 56, type: 'erreur', partie: 'Partie 7 : Prévoir l'erreur', enonce: "INSERT INTO jouer VALUES (1, 1, 'Figurant', 100); — Cette insertion réussit-elle ou échoue-t-elle ?", ref: "Échec : la clé primaire (idFilm, idActeur) = (1, 1) existe déjà (« Duplicate entry »).", explication: "Clé primaire composite violée : l'entrée (1,1) existe déjà." },
-  { id: 57, type: 'erreur', partie: 'Partie 7 : Prévoir l'erreur', enonce: "INSERT INTO film (titre, genre, annee) VALUES ('Metropolis', 'Drame', 1850); — Cette insertion réussit-elle ou échoue-t-elle ?", ref: "Échec : la contrainte CHECK (annee >= 1900) est violée (1850 < 1900).", explication: "Contrainte CHECK sur annee violée." },
-  { id: 58, type: 'erreur', partie: 'Partie 7 : Prévoir l'erreur', enonce: "INSERT INTO projection VALUES (10, 99, 'Salle 1', '2026-11-20', 50); — Cette insertion réussit-elle ou échoue-t-elle ?", ref: "Échec : le film 99 n'existe pas, la clé étrangère idFilm est violée.", explication: "Clé étrangère vers film violée (idFilm=99 inexistant)." },
-  { id: 59, type: 'erreur', partie: 'Partie 7 : Prévoir l'erreur', enonce: "DELETE FROM realisateur WHERE idReal = 3; — Cette suppression réussit-elle ou échoue-t-elle ?", ref: "Échec : le film « OSS 117 » référence ce réalisateur et la clé étrangère n'a pas de ON DELETE CASCADE.", explication: "Clé étrangère sans cascade : suppression bloquée." },
-  { id: 60, type: 'erreur', partie: 'Partie 7 : Prévoir l'erreur', enonce: "DELETE FROM film WHERE idFilm = 8; — Cette suppression réussit-elle ou échoue-t-elle ?", ref: "Réussit : le film 8 n'est référencé par aucune autre table, donc aucune contrainte n'est violée.", explication: "Aucune clé étrangère ne référence le film 8." }
+  { id: 56, type: 'erreur', partie: 'Partie 7 : Erreurs', enonce: "INSERT INTO jouer VALUES (1, 1, 'Figurant', 100); — Cette insertion réussit-elle ou échoue-t-elle ?", ref: "Échec : la clé primaire (idFilm, idActeur) = (1, 1) existe déjà (« Duplicate entry »).", explication: "Clé primaire composite violée : l'entrée (1,1) existe déjà." },
+  { id: 57, type: 'erreur', partie: 'Partie 7 : Erreurs', enonce: "INSERT INTO film (titre, genre, annee) VALUES ('Metropolis', 'Drame', 1850); — Cette insertion réussit-elle ou échoue-t-elle ?", ref: "Échec : la contrainte CHECK (annee >= 1900) est violée (1850 < 1900).", explication: "Contrainte CHECK sur annee violée." },
+  { id: 58, type: 'erreur', partie: 'Partie 7 : Erreurs', enonce: "INSERT INTO projection VALUES (10, 99, 'Salle 1', '2026-11-20', 50); — Cette insertion réussit-elle ou échoue-t-elle ?", ref: "Échec : le film 99 n'existe pas, la clé étrangère idFilm est violée.", explication: "Clé étrangère vers film violée (idFilm=99 inexistant)." },
+  { id: 59, type: 'erreur', partie: 'Partie 7 : Erreurs', enonce: "DELETE FROM realisateur WHERE idReal = 3; — Cette suppression réussit-elle ou échoue-t-elle ?", ref: "Échec : le film « OSS 117 » référence ce réalisateur et la clé étrangère n'a pas de ON DELETE CASCADE.", explication: "Clé étrangère sans cascade : suppression bloquée." },
+  { id: 60, type: 'erreur', partie: 'Partie 7 : Erreurs', enonce: "DELETE FROM film WHERE idFilm = 8; — Cette suppression réussit-elle ou échoue-t-elle ?", ref: "Réussit : le film 8 n'est référencé par aucune autre table, donc aucune contrainte n'est violée.", explication: "Aucune clé étrangère ne référence le film 8." }
 ];
 
 let currentIndex = 0;
@@ -922,7 +1224,13 @@ const spanNiveau = document.getElementById('score-niveau');
 const cercleProgress = document.getElementById('score-cercle-progress');
 const listeEtapes = document.getElementById('liste-etapes');
 const bilanScore = document.getElementById('bilan-score');
+const bilanSous = document.getElementById('bilan-sous');
 const bilanMessage = document.getElementById('bilan-message');
+const statPct = document.getElementById('stat-pct');
+const statNiveau = document.getElementById('stat-niveau');
+const progressionTexte = document.getElementById('progression-texte');
+const progressionPct = document.getElementById('progression-pct');
+const barreRemplissage = document.getElementById('barre-remplissage');
 
 function afficherEcran(nom) {
   ecranAccueil.classList.remove('actif');
@@ -969,12 +1277,17 @@ function reponsesEquivalentes(r1, r2) {
 }
 
 function rafraichirInterface() {
-  const pct = Math.round((score / QUESTIONS.length) * 100);
+  const total = QUESTIONS.length;
+  const pct = Math.round((score / total) * 100);
   spanPct.textContent = pct;
   spanPoints.textContent = score;
-  spanNiveau.textContent = Math.floor(score / 3) + 1;
+  spanNiveau.textContent = Math.floor(score / 6) + 1;
   const offset = 345 * (1 - pct / 100);
   cercleProgress.style.strokeDashoffset = offset;
+
+  // Barre de progression haute
+  progressionPct.textContent = pct + '%';
+  barreRemplissage.style.width = pct + '%';
 
   listeEtapes.innerHTML = '';
   QUESTIONS.forEach((q, i) => {
@@ -985,6 +1298,17 @@ function rafraichirInterface() {
     li.innerHTML = `<span class="etape-badge">${termine ? (correct ? '✓' : '✗') : '?'}</span> Q${q.id}`;
     listeEtapes.appendChild(li);
   });
+}
+
+function allerPartie(numero) {
+  // Aller à la première question de la partie demandée
+  const indexDebut = QUESTIONS.findIndex(q => q.partie.includes('Partie ' + numero + ' :'));
+  if (indexDebut !== -1) {
+    currentIndex = indexDebut;
+    score = QUESTIONS.slice(0, indexDebut).filter(q => q.reponseUtilisateur === q.reponse).length;
+    afficherEcran('mission');
+    afficherQuestion();
+  }
 }
 
 function afficherQuestion() {
@@ -1058,8 +1382,12 @@ function questionSuivante() {
 
 function afficherBilan() {
   afficherEcran('bilan');
-  const pct = Math.round((score / QUESTIONS.length) * 100);
-  bilanScore.textContent = `${score} / ${QUESTIONS.length}`;
+  const total = QUESTIONS.length;
+  const pct = Math.round((score / total) * 100);
+  bilanScore.textContent = score;
+  bilanSous.textContent = `/ ${total} défis réussis`;
+  statPct.textContent = pct + '%';
+  statNiveau.textContent = Math.floor(score / 6) + 1;
   if (pct >= 80) {
     bilanMessage.textContent = `Excellent ! Vous maîtrisez les concepts SQL du cinéma (${pct}% de réussite).`;
   } else if (pct >= 60) {
@@ -1067,7 +1395,7 @@ function afficherBilan() {
   } else {
     bilanMessage.textContent = `Il faut réviser les fondamentaux SQL (${pct}% de réussite).`;
   }
-  parler(`Séance terminée. Votre score est de ${score} sur ${QUESTIONS.length}.`);
+  parler(`Séance terminée. Votre score est de ${score} sur ${total}.`);
 }
 
 function recommencer() {
