@@ -247,7 +247,7 @@ test('commandes d’administration : scripts et fonctions de la barre PC inchang
      v615 : la section prend ses couleurs dans la palette (lisible en mode ardoise)
      et son bandeau récapitulatif s'affiche ; empreinte réactualisée. */
   /* v596 : TOTAL_PAGES_SITE_ADMIN passe à 150 (repli hors manifeste). */
-  assert.equal(sha('assets/js/admin.js'), 'e91043f817767854d8d5daa21e650052504e825e996bfc67187debe1a4898c9c');
+  assert.equal(sha('assets/js/admin.js'), 'b8f5b7b3599e29eac6679703ebb44bdd02ccc3bb132fc26ef54813ad4a808ce2');
   assert.equal(sha('assets/js/rayonsx-surligneur.js'), '1b7fe2067629766ef4043fa3060199b71124d8486e36d92aaac0b45bd861847c');
   const protection = lire('assets/js/protection.js');
   const debut = protection.indexOf('  function estAppareilPC()');

@@ -117,7 +117,7 @@ test('v583 : le repli hors-ligne de la roue reflète le manifeste et le Service 
      les autres fichiers du décompte restent au lot v583. */
   const revisionsAttendues = {
     './assets/pages-couverture.json': 'tp6-capsule-v616',
-    './assets/js/admin.js': 'tp6-capsule-v616',
+    './assets/js/admin.js': 'guide-exercice-liste-v621',
     './assets/js/analytique.js': 'tp6-capsule-v616',
     './assets/js/admin-couverture.js': 'couverture-v583',
     './assets/js/roue-couverture.js': 'tp6-capsule-v616',
