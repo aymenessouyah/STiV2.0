@@ -60,7 +60,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
   assert.equal(revisions.get('./assets/js/app.js'), 'tp6-series6-v619');
   assert.equal(revisions.get('./index.html'), 'tp6-capsule-v616');
-  assert.equal(revisions.get('./offline-complete-manifest.json'), 'guide-visuel-sql-v620');
+  assert.equal(revisions.get('./offline-complete-manifest.json'), 'guide-exercice-v622');
   assert.equal(revisions.get('./README.md'), 'tp6-detail-v618');
   /* v585 : le tableau de bord annonce le Smart Book 3ᵉ SI à 81 pages ; le drapeau reste au lot v503. */
   assert.equal(revisions.get('./dashboard.html'), 'flamme-regularite-v611');
