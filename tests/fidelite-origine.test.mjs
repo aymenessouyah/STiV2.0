@@ -180,7 +180,7 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
       : chemin === 'cours/javascript.html' ? 'cours-sti-v595'
       : chemin === 'cours/php.html' ? 'cours-sti-v595'
       /* v563 : cours/sql.html reçoit la convention d'écriture d'un schéma. */
-      : chemin === 'cours/sql.html' ? 'tp6-series6-v619'
+      : chemin === 'cours/sql.html' ? 'guide-visuel-sql-v620'
       : chemin.startsWith('cours/') ? 'retrait-fond-cours-v508' : 'progression-chapitres-v492';
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${revision}"`), `révision de ${chemin}`);
   }
