@@ -474,7 +474,7 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
   assert.ok(delta.includes('url: "./assets/js/admin-vues-videos.js", revision: "tp6-capsule-v616"'),
     'le coin des vues suit la v613 (inchangé en v614)');
   assert.match(delta, /url: "\.\/assets\/js\/sync-progressions\.js", revision: "pastille-sync-v534"/);
-  assert.match(delta, /url: "\.\/offline-complete-manifest\.json", revision: "tp6-series6-v619"/);
+  assert.match(delta, /url: "\.\/offline-complete-manifest\.json", revision: "guide-visuel-sql-v620"/);
   /* Budget du delta préservé : le module entre dans la liste, une annexe figée en sort. */
   const urls = [...delta.matchAll(/url:\s*"([^"]+)"/g)].map((m) => m[1]);
   assert.equal(new Set(urls).size, urls.length, 'aucun doublon');

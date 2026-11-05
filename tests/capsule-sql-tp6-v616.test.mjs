@@ -82,15 +82,20 @@ test('le suivi vidéo et le tableau de bord connaissent le nouvel identifiant', 
   assert.equal(vues.length, 34);
 });
 
-test('publication v619 et paquet hors ligne incluent les nouvelles pages et le MP4', () => {
+test('publication v620 et paquet hors ligne incluent le guide visuel SQL', () => {
   const sw = lire('sw.js');
-  assert.match(sw, /var VERSION_PUBLIEE = "v619"/);
-  assert.match(sw, /url: "\.\/cours\/sql\.html", revision: "tp6-series6-v619"/);
+  const sql = lire('cours/sql.html');
+  assert.match(sql, /class=\"source-btn\" href=\"\.\.\/mission-cinema\/Corrige_TD_SQL_Cinema_guide_visuel\.pdf\"[^>]*>👁 Voir le guide visuel/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v620"/);
+  assert.match(sw, /url: "\.\/cours\/sql\.html", revision: "guide-visuel-sql-v620"/);
+  const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
+  assert.ok(!delta.includes('./mission-cinema/Corrige_TD_SQL_Cinema_guide_visuel.pdf'), 'le PDF ne rejoint pas le delta automatique');
   for (const path of [
     'exercices/sql/TP6-Mission-cinema-enonce.html',
     'cours/sql.html',
     'mission-cinema/correction-video.html',
     'mission-cinema/Corrige_TD_SQL_Cinema.pdf',
+    'mission-cinema/Corrige_TD_SQL_Cinema_guide_visuel.pdf',
     'mission-cinema/assets/images/je-fais-tout-sql-poster.jpg',
     'mission-cinema/assets/video/TD_SQL_Cinema_corrige_v3.mp4'
   ]) {
@@ -102,6 +107,7 @@ test('publication v619 et paquet hors ligne incluent les nouvelles pages et le M
     'cours/sql.html',
     'mission-cinema/correction-video.html',
     'mission-cinema/Corrige_TD_SQL_Cinema.pdf',
+    'mission-cinema/Corrige_TD_SQL_Cinema_guide_visuel.pdf',
     'mission-cinema/assets/images/je-fais-tout-sql-poster.jpg',
     'mission-cinema/assets/video/TD_SQL_Cinema_corrige_v3.mp4'
   ]) {

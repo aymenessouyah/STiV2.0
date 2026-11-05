@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-04T18:56:14Z",
+  "generatedAt": "2026-11-05T08:39:59Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 780,
-  "totalBytes": 1144789111,
+  "totalFiles": 781,
+  "totalBytes": 1145454012,
   "files": [
     {
       "path": "404.html",
@@ -1462,8 +1462,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 146084,
-      "gitSha": "828dfd04bd501e1a30aaa81fc92fb63fd635e899"
+      "bytes": 146234,
+      "gitSha": "9505420cdd836dd9c5a9e85037f449875fcac368"
     },
     {
       "path": "cours/systemes-technologies-internet.html",
@@ -3306,6 +3306,11 @@
       "gitSha": "2fb9ffd384d13e28f5d8a9aef5818675666f411b"
     },
     {
+      "path": "mission-cinema/Corrige_TD_SQL_Cinema_guide_visuel.pdf",
+      "bytes": 664680,
+      "gitSha": "58f388a8097c6afa4bec5dc6d91976c58b58845b"
+    },
+    {
       "path": "mission-cinema/assets/images/je-fais-tout-sql-poster.jpg",
       "bytes": 72397,
       "gitSha": "bd5cc1ffc194a7b434bd325d6ca020d09398b153"
@@ -3902,8 +3907,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 105469,
-      "gitSha": "44cf251ae992bdea5d78c9edffff977e7a494450"
+      "bytes": 105540,
+      "gitSha": "224bedb0d17371b484b397cab186f735488f834d"
     }
   ]
 }
