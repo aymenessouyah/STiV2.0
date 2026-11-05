@@ -5034,6 +5034,12 @@
       });
     });
 
+    function monterGuideExerciceSiDisponible() {
+      if (typeof window.__stiMonterGuideExercice === "function") {
+        try { window.__stiMonterGuideExercice(); } catch (eMonte) {}
+      }
+    }
+
     function afficherSectionCible(secId, defiler) {
       var toutes = ["bloc-sec-graphiques", "bloc-sec-abonnes", "bloc-sec-quiz", "bloc-sec-guide-exercice", "bloc-sec-messages", "bloc-sec-connexions", "bloc-sec-dbsupbase", "bloc-sec-aide"];
       document.querySelectorAll(".btn-sec-tab[data-sec-cible]").forEach(function (b) {
@@ -5069,9 +5075,10 @@
         var vis = (secId === "open-all" || secId === "all") || grpMap[gid].indexOf(secId) !== -1;
         gEl.style.display = vis ? "" : "none";
       });
-      /* v614 : le Guide exercice se monte à sa première ouverture (il lit la base). */
-      if (secId === "bloc-sec-guide-exercice" && typeof window.__stiMonterGuideExercice === "function") {
-        try { window.__stiMonterGuideExercice(); } catch (eMonte) {}
+      /* v623 : monter le Guide exercice quel que soit le chemin d'ouverture
+         (onglet dédié ou « Tout déplier »). */
+      if (secId === "bloc-sec-guide-exercice" || secId === "open-all") {
+        monterGuideExerciceSiDisponible();
       }
       try {
         window.dispatchEvent(new CustomEvent("sti:section-admin-ouverte", { detail: { secId: secId } }));
@@ -5095,6 +5102,8 @@
         if (!secEl) return;
         var repliee = secEl.classList.toggle("sec-repliee");
         btnRep.textContent = repliee ? "▸ Agrandir" : "▾ Réduire";
+        btnRep.setAttribute("aria-expanded", repliee ? "false" : "true");
+        if (!repliee && idSec === "bloc-sec-guide-exercice") monterGuideExerciceSiDisponible();
       });
     });
 

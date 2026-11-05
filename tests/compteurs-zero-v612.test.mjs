@@ -204,7 +204,7 @@ test('v612 — publication : version, cache-busters et révisions', () => {
   assert.match(sw, /v612-compteurs-zero-20261101/);
   assert.match(adminHtml, /assets\/js\/admin\.js\?v=615-perf/);
   assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "guide-exercice-liste-v621" }'));
-  assert.ok(sw.includes('{ url: "./admin.html", revision: "tp6-capsule-v616" }'));
+  assert.ok(sw.includes('{ url: "./admin.html", revision: "guide-exercice-mount-v623" }'));
   /* Les invariants de cache ne bougent pas. */
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);

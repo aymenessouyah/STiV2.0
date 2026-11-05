@@ -238,7 +238,14 @@ test('v614 — le tableau de bord a sa partie « Guide exercice »', () => {
   /* La section est pilotée par les onglets et appartient au groupe Scolarité. */
   assert.match(adminHtml, /var toutes = \[[^\]]*"bloc-sec-guide-exercice"/);
   assert.match(adminHtml, /"grp-scolarite": \["bloc-sec-quiz", "bloc-sec-guide-exercice", "bloc-sec-messages"\]/);
-  assert.match(adminHtml, /if \(secId === "bloc-sec-guide-exercice" && typeof window\.__stiMonterGuideExercice === "function"\)/);
+  assert.match(adminHtml, /if \(secId === "bloc-sec-guide-exercice" \|\| secId === "open-all"\)/);
+  assert.match(adminHtml, /if \(!repliee && idSec === "bloc-sec-guide-exercice"\) monterGuideExerciceSiDisponible\(\);/);
+});
+
+test('v623 — le Guide exercice se monte par l’onglet, Tout déplier ou Agrandir', () => {
+  assert.match(adminHtml, /function monterGuideExerciceSiDisponible\(\)/);
+  assert.match(adminHtml, /secId === "bloc-sec-guide-exercice" \|\| secId === "open-all"/);
+  assert.match(adminHtml, /if \(!repliee && idSec === "bloc-sec-guide-exercice"\) monterGuideExerciceSiDisponible\(\);/);
 });
 
 test('v621 — la liste apparaît sans attendre la lecture Supabase', () => {
@@ -267,11 +274,11 @@ test('v614 — l’administration écrit le réglage là où les élèves le lis
 test('v614 — publication : version, cache-busters, révisions et hors-ligne', () => {
   /* v615 : la publication avance (lisibilité en mode ardoise) ; le module élève,
      inchangé, garde son propre lot. */
-  assert.match(sw, /var VERSION_PUBLIEE = "v622";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v623";/);
   assert.match(sw, /v618-tp6-detail-20261104/);
   assert.match(adminHtml, /assets\/js\/admin\.js\?v=615-perf/);
   assert.ok(sw.includes('{ url: "./assets/js/guide-exercice.js", revision: "guide-exercice-v614" }'));
-  assert.ok(sw.includes('{ url: "./admin.html", revision: "tp6-capsule-v616" }'));
+  assert.ok(sw.includes('{ url: "./admin.html", revision: "guide-exercice-mount-v623" }'));
   assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "guide-exercice-liste-v621" }'));
   assert.ok(sw.includes('"./assets/js/guide-exercice.js"'), 'le module est livré hors ligne');
   assert.ok(sw.includes('"./assets/guide-exercice-catalogue.json"'), 'le catalogue aussi');

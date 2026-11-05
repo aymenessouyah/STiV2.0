@@ -136,13 +136,13 @@ test('v615 — le bandeau récapitulatif est peint avec la palette, pas en crèm
 /* ── 4. publication ─────────────────────────────────────────────────────── */
 
 test('v615 — publication : version, lot, cache-buster et révisions', () => {
-  assert.match(sw, /var VERSION_PUBLIEE = "v622";/);
-  assert.match(sw, /var PUBLIEE_LE = "2026-11-05T10:45:45Z";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v623";/);
+  assert.match(sw, /var PUBLIEE_LE = "2026-11-05T10:52:40Z";/);
   assert.match(sw, /Historique lots : v619-tp6-series6-20261104, v618-tp6-detail-20261104,/);
   assert.match(adminHtml, /assets\/js\/admin\.js\?v=615-perf/);
   assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "guide-exercice-liste-v621" }'));
-  assert.ok(sw.includes('{ url: "./admin.html", revision: "tp6-capsule-v616" }'));
-  assert.ok(sw.includes('{ url: "./offline-complete-manifest.json", revision: "guide-exercice-v622"'));
+  assert.ok(sw.includes('{ url: "./admin.html", revision: "guide-exercice-mount-v623" }'));
+  assert.ok(sw.includes('{ url: "./offline-complete-manifest.json", revision: "guide-exercice-mount-v623"'));
   /* Le module élève ne change pas : il garde son lot. */
   assert.ok(sw.includes('{ url: "./assets/js/guide-exercice.js", revision: "guide-exercice-v614" }'));
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
