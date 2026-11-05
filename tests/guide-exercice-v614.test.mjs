@@ -241,6 +241,18 @@ test('v614 — le tableau de bord a sa partie « Guide exercice »', () => {
   assert.match(adminHtml, /if \(secId === "bloc-sec-guide-exercice" && typeof window\.__stiMonterGuideExercice === "function"\)/);
 });
 
+test('v621 — la liste apparaît sans attendre la lecture Supabase', () => {
+  const debut = admin.indexOf('var GUIDE_ID_CONFIG = "guide_exercice";');
+  const fin = admin.indexOf('function rendAbonnes()', debut);
+  const section = admin.slice(debut, fin);
+  assert.ok(!section.includes('Promise.all([chargerCatalogueGuide(), lireReglageGuide()])'),
+    'un appel Supabase lent ne bloque plus le catalogue local');
+  assert.ok(section.includes('chargerCatalogueGuide().then(function () {'));
+  assert.ok(section.includes('lireReglageGuide().then(function () {'));
+  assert.match(section, /Impossible de charger la liste des exercices/);
+  assert.match(section, /↻ Réessayer/);
+});
+
 test('v614 — l’administration écrit le réglage là où les élèves le lisent', () => {
   assert.match(admin, /var GUIDE_ID_CONFIG = "guide_exercice";/);
   assert.match(admin, /sb\.from\("app_config_public"\)\.select\("value,updated_at"\)\.eq\("id", GUIDE_ID_CONFIG\)/);
@@ -255,12 +267,12 @@ test('v614 — l’administration écrit le réglage là où les élèves le lis
 test('v614 — publication : version, cache-busters, révisions et hors-ligne', () => {
   /* v615 : la publication avance (lisibilité en mode ardoise) ; le module élève,
      inchangé, garde son propre lot. */
-  assert.match(sw, /var VERSION_PUBLIEE = "v620";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v621";/);
   assert.match(sw, /v618-tp6-detail-20261104/);
   assert.match(adminHtml, /assets\/js\/admin\.js\?v=615-perf/);
   assert.ok(sw.includes('{ url: "./assets/js/guide-exercice.js", revision: "guide-exercice-v614" }'));
   assert.ok(sw.includes('{ url: "./admin.html", revision: "tp6-capsule-v616" }'));
-  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "tp6-capsule-v616" }'));
+  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "guide-exercice-liste-v621" }'));
   assert.ok(sw.includes('"./assets/js/guide-exercice.js"'), 'le module est livré hors ligne');
   assert.ok(sw.includes('"./assets/guide-exercice-catalogue.json"'), 'le catalogue aussi');
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
