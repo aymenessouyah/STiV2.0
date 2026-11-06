@@ -129,6 +129,7 @@ function texteProcedure(infos) {
     `Version     : ${infos.version || 'inconnue'}`,
     `Commit      : ${infos.commitCourt || 'inconnu'} (${infos.commit || 'sans commit'})`,
     `Volume      : ${infos.volume}${infos.seuil ? ` (fichiers jusqu’à ${tailleLisible(infos.seuil)})` : ' (tout le site)'}`,
+    `Disposition : ${infos.disposition === 'racine' ? 'fichiers à la racine de l’archive' : 'fichiers sous plateforme/'}`,
     `Fichiers    : ${infos.fichiers}`,
     `Contenu     : ${tailleLisible(infos.octetsDecompresses)} décompressés`,
     `Préparé le  : ${infos.prepareLe}`,
@@ -274,13 +275,14 @@ function construire() {
   const seuilMo = argValeur('--seuil-mo', null);
   const installeur = argValeur('--installeur', null);
   const webview2 = argValeur('--webview2', null);
+  const disposition = (argValeur('--disposition', 'plateforme') || 'plateforme').toLowerCase();
 
   fs.mkdirSync(sortie, { recursive: true });
   process.stdout.write(`\n💾 Média d’installation — ${sortie}\n`);
   process.stdout.write(`   volume ${volume}${seuilMo ? ` · seuil ${seuilMo} Mo` : ''}\n\n`);
 
   /* 1. Le paquet, fabriqué au dernier commit. */
-  const argsFabrique = [FABRIQUE, '--volume', volume, '--sortie', path.join(sortie, NOM_PAQUET)];
+  const argsFabrique = [FABRIQUE, '--volume', volume, '--disposition', disposition, '--sortie', path.join(sortie, NOM_PAQUET)];
   if (seuilMo && volume === 'leger') argsFabrique.push('--seuil-mo', String(seuilMo));
   process.stdout.write('① Fabrication du paquet (dernier commit)…\n');
   const sortieFabrique = execFileSync('node', argsFabrique, { cwd: RACINE, encoding: 'utf8' });
@@ -366,6 +368,7 @@ function construire() {
     commit: manifeste.version.commit,
     commitCourt: manifeste.version.commitCourt,
     volume: manifeste.volume,
+    disposition: manifeste.disposition,
     seuil: manifeste.seuilOctetsParFichier,
     fichiers: manifeste.contenu.fichiers,
     octetsDecompresses: manifeste.contenu.octetsDecompresses,

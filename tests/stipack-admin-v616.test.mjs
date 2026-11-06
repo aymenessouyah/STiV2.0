@@ -633,3 +633,48 @@ test('v616 : les deux fabriques écartent les mêmes fichiers', () => {
   }
   assert.match(script, /--tout|toutGarder/, 'l’ancien comportement reste accessible');
 });
+
+/* ── 4. disposition des fichiers dans l'archive ─────────────────────────── */
+
+test('v616 : la disposition « racine » place les fichiers à la racine de l’archive', async () => {
+  const fragments = [];
+  const resultat = await S.construirePaquet({
+    liste: ['index.html', 'assets/petit.txt'].map((chemin) => ({ chemin, octets: FICHIERS.get(chemin).length })),
+    recuperer: async (chemin) => FICHIERS.get(chemin),
+    ecrire: async (f) => { fragments.push(f); },
+    updateId: 'v616-essai',
+    fabriqueLe: '2026-11-02T10:00:00+01:00',
+    disposition: 'racine'
+  });
+  const octets = Buffer.concat(fragments.map((f) => Buffer.from(f)));
+  const entrees = lireArchive(octets);
+  const noms = entrees.map((e) => e.nom).sort();
+
+  assert.deepEqual(noms, [
+    'LISEZ-MOI.txt', 'assets/petit.txt', 'empreintes.txt', 'index.html', 'stipack.json'
+  ], 'aucun préfixe : les fichiers du site sont à la racine');
+  assert.equal(resultat.disposition, 'racine');
+  assert.equal(resultat.manifeste.disposition, 'racine');
+  assert.equal(resultat.manifeste.contenu.dossier, '');
+  assert.match(
+    entrees.find((e) => e.nom === 'LISEZ-MOI.txt').donnees.toString('utf8'),
+    /\(racine\)/
+  );
+  /* Les empreintes portent les chemins réels, sans préfixe inventé. */
+  const empreintes = entrees.find((e) => e.nom === 'empreintes.txt').donnees.toString('utf8');
+  assert.match(empreintes, /^[0-9a-f]{64}  index\.html$/m);
+});
+
+test('v616 : la disposition reste « plateforme/ » par défaut, et se règle dans le panneau', async () => {
+  const { resultat } = await fabriquer();
+  assert.equal(resultat.disposition, 'plateforme');
+  assert.equal(resultat.manifeste.contenu.dossier, 'plateforme/');
+
+  assert.match(ADMIN, /id="stipack-disposition"/, 'le choix est proposé dans le panneau');
+  assert.match(ADMIN, /<option value="plateforme" selected>/, 'plateforme/ reste le défaut');
+  assert.match(ADMIN, /<option value="racine">/, 'la racine est disponible');
+  assert.match(PANNEAU, /stipack-disposition/, 'le panneau lit le choix');
+  const script = lire('outils/stipack/construire-stipack.mjs');
+  assert.match(script, /--disposition/, 'la ligne de commande accepte le même réglage');
+  assert.match(lire('outils/stipack/preparer-disque.mjs'), /--disposition/, 'le média aussi');
+});

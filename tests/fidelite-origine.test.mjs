@@ -74,7 +74,7 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
        v615 : cache-buster admin.js passé en ?v=615-perf ; empreinte réactualisée. */
     /* v616 : le guide Windows gagne le bloc « 🧱 Nouveau stipack » et sa CSP
        autorise l’API du dépôt ; empreinte réactualisée, rien d’autre n’a bougé. */
-    'admin.html': 'f1de03d1147ee15bf791a7018f2190fcabcfab682b21eec3bd24c9cdc627dbd1',
+    'admin.html': 'a924ad6c55e813b9491df29258bd63729ec5565fb355238d44554b4bde29a4ea',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };
