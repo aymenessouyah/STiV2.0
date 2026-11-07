@@ -86,7 +86,7 @@ test('publication v620 et paquet hors ligne incluent le guide visuel SQL', () =>
   const sw = lire('sw.js');
   const sql = lire('cours/sql.html');
   assert.match(sql, /class=\"source-btn\" href=\"\.\.\/mission-cinema\/Corrige_TD_SQL_Cinema_guide_visuel\.pdf\"[^>]*>👁 Voir le guide visuel/);
-  assert.match(sw, /var VERSION_PUBLIEE = "v624"/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v625"/);
   assert.match(sw, /url: "\.\/cours\/sql\.html", revision: "guide-visuel-sql-v620"/);
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   assert.ok(!delta.includes('./mission-cinema/Corrige_TD_SQL_Cinema_guide_visuel.pdf'), 'le PDF ne rejoint pas le delta automatique');

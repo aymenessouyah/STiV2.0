@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TP CSS3 – Résultat attendu</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f5f7fa;--fg:#1d2733;--card:#fff;--line:#d8dee6;--mut:#5b6675}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10151c;--fg:#e8edf3;--card:#1a212b;--line:#2d3744;--mut:#9aa6b5}}
+:root[data-theme="dark"]{--bg:#10151c;--fg:#e8edf3;--card:#1a212b;--line:#2d3744;--mut:#9aa6b5}
+html{scroll-behavior:smooth;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--fg)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:#2c3e50;z-index:11}
+.entete{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;display:flex;justify-content:space-between;align-items:center;gap:12px;background:#2c3e50;padding:10px 16px}
+.logo{margin:0;color:#fff;font-size:18px;white-space:nowrap}
+.menu{display:flex;gap:14px;overflow-x:auto}
+.menu a{color:#fff;text-decoration:none;font-size:14px;white-space:nowrap;transition:color .3s,transform .3s}
+.menu a:hover{color:#f1c40f;transform:translateY(-3px)}
+.hero{text-align:center;padding:36px 16px 10px}
+.titre{margin:0 0 8px;opacity:0;animation:app 1.5s ease forwards}
+@keyframes app{from{opacity:0;transform:translateY(-40px)}to{opacity:1;transform:translateY(0)}}
+.hero p{color:var(--mut);margin:0}
+main{max-width:760px;margin:0 auto;padding:0 14px 90px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:16px 0}
+.card h2{font-size:18px;margin:0 0 6px}
+.card p{font-size:14px;color:var(--mut);margin:0 0 10px}
+.scroll{overflow-x:auto;padding-bottom:6px}
+.demo{width:600px;max-width:none}
+.rj{margin-top:8px;background:#2c3e50;color:#fff;border:0;border-radius:6px;padding:8px 14px;cursor:pointer;font-size:14px}
+.haut{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));background:#e74c3c;color:#fff;padding:10px 16px;border-radius:6px;text-decoration:none;opacity:0;animation:mon 1s ease 2s forwards}
+@keyframes mon{to{opacity:1}}
+/* 1 */
+.b1{background:#2c3e50;color:#fff;padding:12px 24px;border:0;border-radius:6px;cursor:pointer;transition:all .4s ease-in-out .2s}
+.b1:hover{background:#e74c3c;transform:scale(1.1)}
+/* 2 */
+.lg{border-bottom:2px dashed #bbb;padding:6px 0}
+.ba{position:relative;width:70px;height:30px;line-height:30px;text-align:center;border-radius:15px;background:#3498db;color:#fff;font-size:12px}
+.play .ba{animation:course 4s forwards}
+.play .li{animation-timing-function:linear}.play .ea{animation-timing-function:ease}.play .ei{animation-timing-function:ease-in}.play .eo{animation-timing-function:ease-out}
+@keyframes course{to{left:calc(100% - 70px)}}
+/* 3 */
+.row3{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.bx{background:#3498db;color:#fff;padding:12px;width:150px;font-size:13px}
+.play .nf{animation:dep 2s ease}.play .wf{animation:dep 2s ease forwards}
+@keyframes dep{from{transform:translateX(0);background:#3498db}to{transform:translateX(160px);background:#e74c3c}}
+.msg{background:#2ecc71;color:#fff;padding:14px;width:230px;opacity:0;margin-top:12px}
+.play .msg{animation:app 2s ease forwards}
+.bar{width:300px;height:20px;background:#ccc;margin-top:12px}
+.fill{width:0;height:100%;background:#2ecc71}
+.play .fill{animation:ch 3s linear forwards}
+@keyframes ch{from{width:0}to{width:80%}}
+/* 4 */
+.ca4{width:160px;padding:26px 10px;text-align:center;background:#9b59b6;color:#fff;border-radius:8px;transition:transform .4s;margin:14px 0}
+.ca4:hover{transform:translateY(-15px) rotate(5deg) scale(1.1)}
+.rep{position:relative;width:400px;height:200px;border:2px dashed #999;margin-bottom:12px}
+.sq{position:absolute;top:20px;left:20px;width:50px;height:50px;line-height:50px;text-align:center;color:#fff;transition:transform 1s}
+.sa{background:#e74c3c}.sb{background:#2980b9}
+.rep:hover .sa{transform:translateX(150px) rotate(45deg)}
+.rep:hover .sb{transform:rotate(45deg) translateX(150px)}
+.pd{position:relative;height:90px;background:#eef1f5}
+.dz{position:absolute;top:20px;left:10px;width:50px;height:50px;line-height:50px;text-align:center;font-size:24px;background:#f39c12;color:#fff}
+.play .dz{animation:danse 5s ease-in-out forwards}
+@keyframes danse{0%{transform:translateX(0) rotate(0) scale(1) skewX(0)}33%{transform:translateX(150px) rotate(120deg) scale(1.3) skewX(15deg)}66%{transform:translateX(300px) rotate(240deg) scale(.8) skewX(-15deg)}100%{transform:translateX(450px) rotate(360deg) scale(1) skewX(0)}}
+/* 5 */
+.gal{display:flex;gap:14px;flex-wrap:wrap}
+.ph{width:130px;height:100px;border-radius:8px;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:bold;font-size:13px;color:#fff;text-shadow:0 1px 3px #000;background:conic-gradient(#e74c3c,#f1c40f,#2ecc71,#3498db,#e74c3c);transition:filter .5s}
+.p1{filter:blur(4px)}.p1:hover{filter:blur(0)}
+.p2{filter:grayscale(100%)}.p2:hover{filter:grayscale(0%)}
+.p3{filter:invert(0)}.p3:hover{filter:invert(100%)}
+.p4{filter:grayscale(100%) blur(2px)}.p4:hover{filter:none}
+.gal.play{opacity:0;animation:fl 2s ease forwards}
+@keyframes fl{from{opacity:0;filter:blur(12px)}to{opacity:1;filter:blur(0)}}
+/* 6 */
+.ciel{position:relative;height:150px;background:#87ceeb;overflow:hidden}
+.orb{position:absolute;bottom:20px;left:10px;width:70px;height:70px}
+.sol{width:100%;height:100%;border-radius:50%;background:#f1c40f}
+.play .orb{animation:tr 6s linear forwards}
+.play .sol{animation:gr 6s linear forwards,ro 6s linear forwards,lu 1s ease-in-out infinite alternate}
+@keyframes tr{to{transform:translateX(500px)}}
+@keyframes gr{to{transform:scale(1.5)}}
+@keyframes ro{to{background-color:#e74c3c}}
+@keyframes lu{from{box-shadow:0 0 10px #f1c40f}to{box-shadow:0 0 40px #f39c12}}
+/* 7 */
+.sc{position:relative;height:250px;border:2px solid #333;background:#ecf0f1;overflow:hidden}
+.ce,.cr,.tg{position:absolute;left:10px}
+.ce{top:10px;width:60px;height:60px;border-radius:50%;background:#3498db}
+.cr{top:100px;width:60px;height:60px;background:#e74c3c}
+.tg{top:185px;width:0;height:0;border-left:30px solid transparent;border-right:30px solid transparent;border-bottom:55px solid #f1c40f}
+.play .ce{animation:dr 3s linear forwards}
+.play .cr{animation:ar 2s ease-in-out infinite alternate}
+.play .tg{animation:zz 4s linear forwards}
+@keyframes dr{to{transform:translateX(520px)}}
+@keyframes ar{to{transform:translateX(520px) rotate(180deg)}}
+@keyframes zz{0%{transform:translate(0,0)}33%{transform:translate(170px,-60px)}66%{transform:translate(350px,0)}100%{transform:translate(520px,-60px)}}
+/* 8 */
+.rt{position:relative;height:120px;border-bottom:6px solid #555}
+.sp{position:absolute;bottom:0;left:0;width:100px;height:100px}
+.ro8{width:100px;height:100px;border:6px solid #333;border-radius:50%;background:conic-gradient(#e74c3c 0 25%,#f1c40f 0 50%,#2ecc71 0 75%,#3498db 0)}
+.play .sp{animation:av 4s linear forwards}
+.play .ro8{animation:to8 1s linear infinite}
+@keyframes av{to{transform:translateX(480px)}}
+@keyframes to8{to{transform:rotate(360deg)}}
+/* 9 */
+.cartes{display:flex;gap:12px;flex-wrap:wrap}
+.c2{background:#3498db;color:#fff;padding:30px 20px;width:140px;text-align:center;border-radius:8px;transition:transform .3s,background .3s}
+.c2:hover{transform:scale(1.08);background:#2c3e50}
+</style></head>
+<body data-sti-guide-exercice="exercices/html-css/TP CSS3  Transform, Filtres, Transitions et Animations – 3ème SI/index.html">
+<header class="entete" id="haut">
+ <h1 class="logo">TP CSS3 · 3ème SI</h1>
+ <nav class="menu"><a href="#ex1">1</a><a href="#ex2">2</a><a href="#ex3">3</a><a href="#ex4">4</a><a href="#ex5">5</a><a href="#ex6">6</a><a href="#ex7">7</a><a href="#ex8">8</a><a href="#ex9">9</a></nav>
+</header>
+<section class="hero"><h2 class="titre">Résultat attendu du TP</h2><p>Lycée Rafèha · Enseignant : Aymen Essouyah</p></section>
+<main data-sti-correction>
+<section class="card" id="ex1"><h2>Exercice 1 : Transition</h2><p>Survolez le bouton.</p><button class="b1">Survolez-moi</button></section>
+
+<section class="card" id="ex2"><h2>Exercice 2 : Fonctions de progression</h2><p>Même durée (4 s), vitesses différentes.</p>
+<div class="scroll"><div class="demo play" id="d2" style="width:100%;min-width:420px">
+<div class="lg"><div class="ba li">linear</div></div><div class="lg"><div class="ba ea">ease</div></div><div class="lg"><div class="ba ei">ease-in</div></div><div class="lg"><div class="ba eo">ease-out</div></div></div></div>
+<button class="rj" data-r="d2">↻ Rejouer</button></section>
+
+<section class="card" id="ex3"><h2>Exercice 3 : @keyframes et forwards</h2><p>À gauche sans forwards (la boîte revient), à droite avec forwards (elle reste).</p>
+<div class="scroll"><div class="demo play" id="d3" style="width:560px">
+<div class="row3"><div class="bx nf">sans forwards</div><div class="bx wf" style="margin-left:0">avec forwards</div></div>
+<div class="msg">Bienvenue sur mon site !</div><div class="bar"><div class="fill"></div></div></div></div>
+<button class="rj" data-r="d3">↻ Rejouer</button></section>
+
+<section class="card" id="ex4"><h2>Exercice 4 : Plusieurs transform</h2><p>Survolez la carte, puis le cadre (A et B n’arrivent pas au même endroit).</p>
+<div class="scroll"><div class="demo play" id="d4"><div class="ca4">Survolez-moi</div>
+<div class="rep"><div class="sq sa">A</div><div class="sq sb">B</div></div>
+<div class="pd"><div class="dz">★</div></div></div></div>
+<button class="rj" data-r="d4">↻ Rejouer la danse</button></section>
+
+<section class="card" id="ex5"><h2>Exercice 5 : Filtres</h2><p>Survolez : flou → net, gris → couleur, couleurs normales → inversées. Le 4ᵉ : gris + flou → net au survol. Toute la galerie apparaît en devenant nette.</p>
+<div class="gal play" id="d5" style="width:100%"><div class="ph p1">blur(4px)</div><div class="ph p2">grayscale(100%)</div><div class="ph p3">invert(100%)</div><div class="ph p4">grayscale + blur</div></div>
+<button class="rj" data-r="d5">↻ Rejouer</button></section>
+
+<section class="card" id="ex6"><h2>Exercice 6 : Animations simultanées</h2><p>Le soleil se déplace, grossit, rougit et pulse en même temps.</p>
+<div class="scroll"><div class="demo play" id="d6"><div class="ciel"><div class="orb"><div class="sol"></div></div></div></div></div>
+<button class="rj" data-r="d6">↻ Rejouer</button></section>
+
+<section class="card" id="ex7"><h2>Exercice 7 : Formes en mouvement</h2><p>Le cercle reste à droite, le carré va et vient, le triangle fait un zigzag.</p>
+<div class="scroll"><div class="demo play" id="d7"><div class="sc"><div class="ce"></div><div class="cr"></div><div class="tg"></div></div></div></div>
+<button class="rj" data-r="d7">↻ Rejouer</button></section>
+
+<section class="card" id="ex8"><h2>Exercice 8 : La roue</h2><p>Elle s’arrête au bout de la route mais continue de tourner.</p>
+<div class="scroll"><div class="demo play" id="d8"><div class="rt"><div class="sp"><div class="ro8"></div></div></div></div></div>
+<button class="rj" data-r="d8">↻ Rejouer</button></section>
+
+<section class="card" id="ex9"><h2>Exercice 9 : Projet final</h2><p>Cette page est le résultat : en-tête sticky avec menu flex, titre animé avec forwards, cartes flex au survol, et bouton « Haut » fixed qui apparaît après 2 secondes.</p>
+<div class="cartes"><div class="c2">HTML5</div><div class="c2">CSS3</div><div class="c2">JavaScript</div></div></section>
+</main>
+<a href="#haut" class="haut">↑ Haut</a>
+<script>
+document.querySelectorAll('.play').forEach(function(e){e.classList.add('play')});
+document.querySelectorAll('[data-r]').forEach(function(b){b.addEventListener('click',function(){var t=document.getElementById(b.getAttribute('data-r'));t.classList.remove('play');void t.offsetWidth;t.classList.add('play');});});
+</script>
+<script src="../../../assets/js/guide-exercice.js?v=614" defer></script>
+</body></html>

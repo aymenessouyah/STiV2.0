@@ -26,8 +26,8 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./assets/icons/matieres.svg'), 'matiere-sti-v596');
   /* v529 : reconnexion-profil.js fusionne les compteurs de vues par appareil. */
   assert.equal(revisions.get('./assets/js/reconnexion-profil.js'), 'vues-videos-v531');
-  /* v523 : la page des séries gagne les liens du TP Train (Série 5). */
-  assert.equal(revisions.get('./exercices/series-exercices.html'), 'serie6-exercices-v524');
+  /* v625 : la page des séries référence le nouveau TP CSS3 3ème SI. */
+  assert.equal(revisions.get('./exercices/series-exercices.html'), 'tp-css3-3si-v625');
   assert.equal(revisions.get('./assets/js/cours-html5.js'), 'tp-display-v510');
   assert.equal(revisions.get('./assets/js/cours-css3.js'), 'tp-transitions-v512');
   for (const chemin of ['assets/js/cours-javascript.js', 'assets/js/cours-matieres.js']) {
@@ -82,7 +82,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v523 : le cours JavaScript reçoit les liens du TP Train. */
   assert.equal(revisions.get('./cours/javascript.html'), 'cours-sti-v595');
   assert.equal(revisions.get('./cours/html5.html'), 'sti-3si-v573');
-  assert.equal(revisions.get('./cours/css3.html'), 'tp-transitions-v512');
+  assert.equal(revisions.get('./cours/css3.html'), 'tp-css3-3si-v625');
   assert.equal(revisions.get('./assets/js/cours-onglets-mobile.js'), 'onglets-mobile-v493');
   /* v526 : le lecteur commun suit la nouvelle capsule ; les sous-titres restent sur leur lot. */
   assert.equal(revisions.get('./assets/js/lecteur-commun.js'), 'cours-sti-v578');
