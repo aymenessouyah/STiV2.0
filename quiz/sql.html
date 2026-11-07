@@ -681,6 +681,31 @@
       #playgroundResult {
         color: #e8e8f5;
       }
+      /* ── v624 · mobile : plus de défilement latéral ────────────────────
+         Deux sources mesurées sur un écran de 390 px :
+           1. les pistes `lg:grid-cols-2` laissaient un minimum automatique
+              (min-width:auto) : le panneau « Classement général » occupait
+              382 px dans une colonne de 358 px ;
+           2. le bandeau défilant du hero débordait de 4 px.
+         On autorise les pistes à descendre sous leur contenu, on rogne le
+         bandeau, et on coupe la marge résiduelle du document (aucun élément
+         interactif n'est rogné, le contenu des colonnes reste lisible). */
+      .grid > * {
+        min-width: 0;
+      }
+      .marquee-track,
+      .marquee-content {
+        max-width: 100%;
+        overflow: hidden;
+      }
+      @media (max-width: 640px) {
+        html,
+        body {
+          max-width: 100%;
+          overflow-x: hidden;
+        }
+      }
+      /* fin v624 */
     </style>
     <link rel="manifest" href="../manifest.webmanifest" />
 </head>

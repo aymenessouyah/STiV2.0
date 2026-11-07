@@ -27,7 +27,7 @@
   "use strict";
   if (global.STIGuideExercice && global.STIGuideExercice.version) return;
 
-  var VERSION = "v614";
+  var VERSION = "v615";
   var ID_CONFIG = "guide_exercice";
   var CLE_CACHE = "sti-guide-exercice-v1";
   var DUREE_CACHE_MS = 10 * 60 * 1000;
@@ -86,6 +86,13 @@
   /* Chemin de la page en cours, relatif à la racine du site, sans « ./ ». */
   function cheminCourant() {
     try {
+      /* Une page compagnon (corrigé/vidéo) partage la clé de son énoncé afin
+         qu'une seule ligne du Guide commande toutes les ressources du TP. */
+      var doc = global.document;
+      var corps = doc && doc.body;
+      var partage = corps && typeof corps.getAttribute === "function"
+        ? corps.getAttribute("data-sti-guide-exercice") : "";
+      if (partage) return String(partage).replace(/^\/+/, "");
       var p = String(global.location.pathname || "");
       var i = p.indexOf("/exercices/");
       if (i !== -1) return p.slice(i + 1);

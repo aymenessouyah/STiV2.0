@@ -109,6 +109,15 @@
     background: #fffdf7; border: 2px solid #23201a; border-radius: 14px;
     padding: 12px 16px; box-shadow: 3px 3px 0 rgba(244,81,30,.45);
   }
+  /* v624 : les deux colonnes de la barre gardent un minimum automatique
+     (min-width:auto) ; la liste des sujets, très longue, élargissait la page
+     à 890 px sur un téléphone de 390 px. Elles peuvent désormais rétrécir et
+     la liste se plafonne à la place réelle. */
+  .sujet-bar > * { min-width: 0; }
+  .sujet-bar select { max-width: 100%; }
+  @media (max-width: 640px) {
+    html, body { max-width: 100%; overflow-x: hidden; }
+  }
   .sujet-bar select {
     border: 2px solid #23201a; border-radius: 10px; padding: 7px 12px;
     font-weight: 800; font-size: 13px; background: #fff; color: #23201a;
@@ -204,9 +213,10 @@
     border-radius: 16px; padding: 18px; box-shadow: 6px 6px 0 #0284c7;
   }
   .sim-grid {
-    display: grid; grid-template-columns: 1fr 1.15fr; gap: 14px; margin-top: 12px;
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 14px; margin-top: 12px;
   }
-  @media (max-width: 900px) { .sim-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 900px) { .sim-grid { grid-template-columns: minmax(0, 1fr); } }
+  .sim-grid > * { min-width: 0; }
   .sim-table {
     width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 6px;
   }

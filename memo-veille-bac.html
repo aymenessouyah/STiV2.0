@@ -145,11 +145,15 @@
     .hero-memo p { margin: 0; font-size: 14px; font-weight: 700; }
     .grille-memo {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+      /* v624 : une seule colonne ne peut pas descendre sous 480 px si le
+         minimum de piste reste 480 px — la page défilait latéralement sur
+         téléphone. `min(100%, 480px)` plafonne le minimum à la largeur
+         réellement disponible. */
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 480px), 1fr));
       gap: 16px;
     }
     @media (max-width: 600px) {
-      .grille-memo { grid-template-columns: 1fr; }
+      .grille-memo { grid-template-columns: minmax(0, 1fr); }
     }
     .bloc-memo {
       background: var(--card);

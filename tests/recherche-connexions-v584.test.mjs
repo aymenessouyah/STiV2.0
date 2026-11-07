@@ -194,7 +194,8 @@ test('v584 : le service worker sert la nouvelle version de admin.js', () => {
   const sw = read('sw.js');
   const entree = sw.split('\n').find((l) => l.includes('url: "./assets/js/admin.js"'));
   assert.ok(entree);
-  assert.match(entree, /revision: "tp6-capsule-v616"/);
+  /* v621 : admin.js porte sa propre révision ; admin.html garde la sienne (v623). */
+  assert.match(entree, /revision: "guide-exercice-liste-v621"/);
   /* Le nom de cache et l'identifiant de publication ne bougent pas : pas de
      re-téléchargement massif des 778 entrées du delta. */
   assert.match(sw, /var CACHE = "sti-atelier-v386";/);
