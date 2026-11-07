@@ -234,11 +234,11 @@ test('v615 — les exercices guidés et le corrigé-vidéo TP6 chargent le modul
       else if (nom.endsWith('.html')) pages.push(chemin);
     }
   })(join(racine, 'exercices'));
-  assert.equal(pages.length, 73, 'le TP6 ajoute une page à l’arborescence');
+  assert.equal(pages.length, 75, 'le nouveau TP CSS3 ajoute sa page de ressources et son aperçu');
   const tp6 = resolve(racine, 'exercices/sql/TP6-Mission-cinema-enonce.html');
   assert.ok(pages.includes(tp6), 'l’énoncé TP6 est une page d’exercice distincte');
   const sans = pages.filter((p) => p !== tp6 && !readFileSync(p, 'utf8').includes('guide-exercice.js?v=614'));
-  assert.deepEqual(sans, [], 'les 72 pages du catalogue historique chargent le module');
+  assert.deepEqual(sans, [], 'toutes les autres pages d’exercice chargent le module');
   const correctionPage = lire('mission-cinema/correction-video.html');
   assert.match(correctionPage, /data-sti-guide-exercice="exercices\/sql\/TP6-Mission-cinema-enonce\.html"/);
   assert.match(correctionPage, /<div class="video-frame" data-sti-video><video/);
@@ -248,7 +248,7 @@ test('v615 — les exercices guidés et le corrigé-vidéo TP6 chargent le modul
 
 test('v614 — le catalogue décrit les exercices, sans invention', () => {
   const j = JSON.parse(lire('assets/guide-exercice-catalogue.json'));
-  assert.equal(j.pages.length, 73);
+  assert.equal(j.pages.length, 74);
   const correction = j.pages.filter((p) => p.correction).length;
   const video = j.pages.filter((p) => p.video).length;
   assert.ok(correction >= 60, 'les corrections sont bien repérées (' + correction + ')');
@@ -310,7 +310,7 @@ test('v614 — l’administration écrit le réglage là où les élèves le lis
 test('v614 — publication : version, cache-busters, révisions et hors-ligne', () => {
   /* v615 : la publication avance (lisibilité en mode ardoise) ; le module élève,
      inchangé, garde son propre lot. */
-  assert.match(sw, /var VERSION_PUBLIEE = "v624";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v625";/);
   assert.match(sw, /v618-tp6-detail-20261104/);
   assert.match(adminHtml, /assets\/js\/admin\.js\?v=615-perf/);
   assert.ok(sw.includes('{ url: "./assets/js/guide-exercice.js", revision: "guide-exercice-tp6-v615" }'));

@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-07T14:06:57Z",
+  "generatedAt": "2026-11-07T22:36:23Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 781,
-  "totalBytes": 1145461363,
+  "totalFiles": 785,
+  "totalBytes": 1145967052,
   "files": [
     {
       "path": "404.html",
@@ -477,8 +477,8 @@
     },
     {
       "path": "assets/guide-exercice-catalogue.json",
-      "bytes": 14587,
-      "gitSha": "b2f1aee546d0e663544630d5b167dfeb9af7f2a0"
+      "bytes": 14862,
+      "gitSha": "d7c937b6ee3780aef9223643cfbd494bf36c4c1e"
     },
     {
       "path": "assets/icons/STI_by_AE.ico",
@@ -1412,8 +1412,8 @@
     },
     {
       "path": "cours/css3.html",
-      "bytes": 215551,
-      "gitSha": "19cae4e69d4390b848679a292ea4daaf1254613b"
+      "bytes": 216410,
+      "gitSha": "f18c0891c71687a56c2a3d0256f952980c9430b7"
     },
     {
       "path": "cours/datalist.html",
@@ -2711,6 +2711,26 @@
       "gitSha": "dcf6b6224b6b1b91a3075e252169c955156fb56c"
     },
     {
+      "path": "exercices/html-css/TP CSS3  Transform, Filtres, Transitions et Animations – 3ème SI/corrige-tp-css3-3si.pdf",
+      "bytes": 185915,
+      "gitSha": "3ff2e32716d8a3f3e50b2c03e9a051c2bdab8764"
+    },
+    {
+      "path": "exercices/html-css/TP CSS3  Transform, Filtres, Transitions et Animations – 3ème SI/enonce-tp-css3-3si.pdf",
+      "bytes": 300804,
+      "gitSha": "8b5eedf8ae7b69db9c4bef961ffe2622608ec79d"
+    },
+    {
+      "path": "exercices/html-css/TP CSS3  Transform, Filtres, Transitions et Animations – 3ème SI/index.html",
+      "bytes": 3929,
+      "gitSha": "f736ea3c16a681a726149b9395020a8acad46aa6"
+    },
+    {
+      "path": "exercices/html-css/TP CSS3  Transform, Filtres, Transitions et Animations – 3ème SI/resultat_TP_CSS3_3SI.html",
+      "bytes": 12178,
+      "gitSha": "b4b0f462e97b001605761d80b68db3fe7adcabeb"
+    },
+    {
       "path": "exercices/html-css/TP1-css.pdf",
       "bytes": 148756,
       "gitSha": "80ef39cfeb02c7870cfc1725e971dafbb66c5711"
@@ -3137,8 +3157,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 102129,
-      "gitSha": "67c7533fc328513af7b6addf9f26202e2ff5702b"
+      "bytes": 102904,
+      "gitSha": "b834fc1a166e665cdf3abaec057684503e9873ce"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3907,8 +3927,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 105647,
-      "gitSha": "77b17203af56b8ce0d1e7ba5f9795fea64314377"
+      "bytes": 106601,
+      "gitSha": "0a7ff70e1a16c6a0051b480d326655ae409f586d"
     }
   ]
 }
