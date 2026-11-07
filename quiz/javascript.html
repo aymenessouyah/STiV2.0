@@ -554,6 +554,26 @@
           font-size: 0.95rem;
         }
       }
+      /* v624 — mobile : le bandeau défilant du hero débordait de 30 px
+         (marquee à `translateX(-50%)` dans un conteneur qui gardait son
+         minimum automatique), et la page entière glissait latéralement.
+         On autorise la piste à rétrécir et on rogne ce qui dépasse. */
+      .ticker-wrap {
+        max-width: 100%;
+        overflow: hidden;
+        contain: paint;
+      }
+      .ticker {
+        max-width: none;
+      }
+      @media (max-width: 640px) {
+        html,
+        body {
+          max-width: 100%;
+          overflow-x: hidden;
+        }
+      }
+      /* fin v624 */
     </style>
     <link rel="manifest" href="../manifest.webmanifest" />
 </head>

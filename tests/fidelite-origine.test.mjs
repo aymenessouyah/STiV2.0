@@ -58,12 +58,13 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
      v581 : acces.js borne chaque session à 3 h (temps affiché à l'élève) et
      admin.js plafonne les durées du tableau de bord, filtre les vidéos
      décoratives et normalise les noms de quiz ; empreintes réactualisées. */
+  /* Le catalogue Série 6 distingue maintenant Mission cinéma du récapitulatif ÉTUDIANT. */
   const originaux = {
     'assets/js/config.js': 'decac9848caff43c5cf4338edf90a19fa25a27ebfad37a045f5842bece388858',
     'assets/js/supabase-umd.js': '2eebfe06b1b5309985dc1526e8981ea3a18b71beeef83e7f38e04c303e142d6d',
     /* v595 : l'index de recherche et le fil « dernière lecture » accueillent
        les quatre ateliers d'exercices « Systèmes » ; empreinte réactualisée. */
-    'assets/js/acces.js': '857288884081ac9e17a616adfcac79116cb5acb9473a34e53f6d166f3994588d',
+    'assets/js/acces.js': 'a321b588790ea31abcdf95ba1cbff875d2b93a6fa4a9592ab5460af308384637',
     'assets/js/sync-progressions.js': 'c6e36a6f0ebea5e481cfb1b16afb9c0cfefc595ed4de21a1becff5a096d327b6',
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
     'portail.html': '7ea8179bed2a6eac89f6852352c224d83b34d2215cfb6f6acf9d01b657a03ad1',
@@ -74,7 +75,12 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
        v615 : cache-buster admin.js passé en ?v=615-perf ; empreinte réactualisée. */
     /* v616 : le guide Windows gagne le bloc « 🧱 Nouveau stipack » et sa CSP
        autorise l’API du dépôt ; empreinte réactualisée, rien d’autre n’a bougé. */
-    'admin.html': 'e96d149d88143f6164336761ef36a0a1d9c04703b833834ff4247343903a0cb9',
+    /* v623 : admin.html monte le « Guide exercice » quel que soit le chemin
+       d’ouverture (onglet dédié ou « Tout déplier »), et son cache-buster
+       admin.js reste servi sous la révision guide-exercice-liste-v621.
+       L’empreinte est réactualisée : la page a bien changé, le reste du socle
+       (accès, roue, Cote) est inchangé. */
+    'admin.html': '10c36371f0d067851e92f3705f1e0f56a88324c9e056d3129dc0f3f75380827f',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };
@@ -369,12 +375,28 @@ test('banques et données JSON d’origine conservées ; retour de quiz ajouté 
     'quiz/php.html': ['<script src="../assets/js/xp-plancher.js?v=520"></script>\n'],
     'quiz/tableaux.html': ['<script src="../assets/js/xp-plancher.js?v=520"></script>\n']
   };
+  /* v624 : deux pages de quiz reçoivent un garde-fou de largeur (pistes de
+     grille qui peuvent rétrécir, bandeau défilant rogné, `overflow-x` coupé
+     sur téléphone). Aucune question, réponse, ni moteur n'est touché : le bloc
+     est retiré avant la comparaison avec les empreintes historiques. */
+  const additionsV624 = {
+    'quiz/sql.html': /\n      \/\* ── v624 · mobile : plus de défilement latéral ──[\s\S]*?      \/\* fin v624 \*\/\n/,
+    'quiz/php.html': /\n      @media \(max-width: 1023px\) \{\n        #leaderboard \{ grid-template-columns: minmax\(0, 1fr\); \}\n        #leaderboard > \* \{ min-width: 0; \}\n      \}\n      #cheatsheet, #accWrap, #accWrap \.accordion, #accWrap \.accordion-body \{ min-width: 0; max-width: 100%; \}\n      #accWrap pre \{ max-width: calc\(100% - 1\.5rem\); \}\n/,
+    'quiz/javascript.html': /\n      \/\* v624 — mobile : le bandeau défilant du hero débordait de 30 px[\s\S]*?      \/\* fin v624 \*\/\n/
+  };
   const adaptationsV490 = JSON.parse(lire('tests/fixtures/quiz-transformations-v490.json'));
   /* v555 : le plan des positions (bonne réponse en A ≤ 20 %) est retiré, puis les
      appels sont remis sous leur forme d'origine avant la comparaison historique. */
   const transformationsV555 = JSON.parse(lire('tests/fixtures/quiz-transformations-v555.json'));
   for (const [chemin, empreinte] of Object.entries(quiz)) {
     let courant = lire(chemin);
+    if (additionsV624[chemin]) {
+      const retires = courant.match(new RegExp(additionsV624[chemin].source, 'g')) || [];
+      assert.equal(retires.length, 1, chemin + ' : garde-fou de largeur v624 attendu une fois');
+      /* Le motif commence par le saut de ligne qui précédait le bloc : le
+         remplacement le restitue, sinon la ligne suivante serait collée. */
+      courant = courant.replace(additionsV624[chemin], '\n');
+    }
     for (const [actuel, ancien] of transformationsV555[chemin] || []) {
       assert.equal(courant.split(actuel).length - 1, 1, chemin + ' : transformation v555 attendue');
       courant = courant.replace(actuel, ancien);

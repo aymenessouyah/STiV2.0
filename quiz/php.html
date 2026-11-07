@@ -754,6 +754,12 @@
           grid-template-columns: 1fr !important;
         }
       }
+      @media (max-width: 1023px) {
+        #leaderboard { grid-template-columns: minmax(0, 1fr); }
+        #leaderboard > * { min-width: 0; }
+      }
+      #cheatsheet, #accWrap, #accWrap .accordion, #accWrap .accordion-body { min-width: 0; max-width: 100%; }
+      #accWrap pre { max-width: calc(100% - 1.5rem); }
       /* ===== Ajouts QuizPHP (mode examen, points faibles, retour en haut) ===== */
       body.examen #qScoreBox,
       body.examen #streakBadge,
