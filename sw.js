@@ -120,7 +120,9 @@ var UPDATE_FILES = [
   { url: "./projets/sti0/statistiques.html", revision: "meta-seo-v521" },
   /* La visionneuse, les logos et le complément de démonstration restent locaux. */
   { url: "./assets/css/visionneuse-exercices.css", revision: "fidelite-origine-v481" },
-  { url: "./assets/js/visionneuse-exercices.js", revision: "fidelite-origine-v481" },
+  /* v626 : la visionneuse intercepte aussi les corrigés TP6 de /mission-cinema/
+     (correction-video.html et les PDF) pour les ouvrir dans la même fenêtre que « Ouvrir le TP ». */
+  { url: "./assets/js/visionneuse-exercices.js", revision: "visionneuse-mission-cinema-v626" },
   { url: "./assets/icons/matieres.svg", revision: "matiere-sti-v596" },
   { url: "./projets/carte-bancaire/demo.js", revision: "fidelite-origine-v481" },
   /* Pages SQL/PHP et ressources légères de leur refonte. */
