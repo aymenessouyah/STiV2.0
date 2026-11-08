@@ -229,7 +229,10 @@
     if (a.closest('[hidden],[inert]') || (a.closest('.sti-4si-only') && !document.documentElement.classList.contains('sti-4si-autorise'))) return;
     var url; try { url = new URL(a.href, document.baseURI); } catch (err) { return; }
     if (url.origin !== global.location.origin) return;
-    var ressourceExercice = /\/(?:exercices|projets)\//i.test(url.pathname) || /\/documents\/(?:enonces|complet)\//i.test(url.pathname);
+    /* v626 : les corrigés TP6 (correction-video.html et les PDF) vivent dans
+       /mission-cinema/ ; on les traite comme les ressources des exercices pour
+       que « Ouvrir le TP » et « Voir le corrigé » partagent la même fenêtre. */
+    var ressourceExercice = /\/(?:exercices|projets|mission-cinema)\//i.test(url.pathname) || /\/documents\/(?:enonces|complet)\//i.test(url.pathname);
     var dansExercices = !!a.closest('[data-course-panel="exercices"]');
     var exercice = ressourceExercice && (dansExercices || a.target === '_blank');
     if (dansExercices && /\/assets\/videos\//i.test(url.pathname) && a.target === '_blank') exercice = true;
