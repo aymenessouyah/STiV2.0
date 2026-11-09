@@ -22,11 +22,16 @@ test('panneau : relevés BOM acceptés, doublons, mauvais format et plus de 20 r
   assert.throws(() => api.lirePostes(['{}']));
   assert.throws(() => api.lirePostes(Array.from({length: 21}, (_, i) => releve(i.toString(16).padStart(64, '0')))));
 });
-test('panneau : clé incorrecte refusée, absence de stockage et de réseau dans le module', async () => {
+test('panneau : clé refusée si invalide, rien de stocké, réseau limité à la release', async () => {
   await assert.rejects(api.signer([poste], 'mot de passe'));
-  assert.doesNotMatch(code, /\bfetch\s*\(|localStorage|sessionStorage|XMLHttpRequest/);
+  /* Aucune clé ni empreinte ne doit être conservée par le navigateur. */
+  assert.doesNotMatch(code, /localStorage|sessionStorage|indexedDB|XMLHttpRequest/);
+  /* Le seul appel réseau du module est la lecture de la release publique :
+     il ne transporte ni clé privée ni relevé de poste. */
+  assert.match(code, /https:\/\/api\.github\.com\/repos\//);
+  assert.doesNotMatch(code, /method\s*:\s*['"]POST|body\s*:/);
   const html = readFileSync(new URL('../admin.html', import.meta.url), 'utf8');
   assert.match(html, /id="bloc-labo3-support"/);
-  assert.match(html, /disabled>Téléchargement indisponible — compilation avec votre clé publique requise/);
+  assert.match(html, /id="labo3-installateur-lien" disabled>Téléchargement indisponible</);
   assert.match(html, /assets\/js\/admin-labo3.js/);
 });

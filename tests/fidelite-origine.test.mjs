@@ -80,7 +80,7 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
        admin.js reste servi sous la révision guide-exercice-liste-v621.
        L’empreinte est réactualisée : la page a bien changé, le reste du socle
        (accès, roue, Cote) est inchangé. */
-    'admin.html': 'e73932a3e9ca292cf5b14999036b65bb96c7be3edde0e2f2a9a4f66a10c9571c',
+    'admin.html': 'ae5753204ebf6c20144826eed672b22deb985622669e122f44dcd642ba4449bc',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };

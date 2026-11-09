@@ -82,6 +82,10 @@ Node **et** avec l'installateur Windows : mêmes empreintes, même schéma de si
 Ce n'est ni un mot de passe ni une clé de chiffrement.
 
 Le panneau indique comment obtenir l'exécutable (workflow GitHub Actions ou
-`compiler.ps1`) mais son bouton de téléchargement reste **désactivé** tant qu'aucun
-binaire de production n'est publié. Il ne propose aucun lien vers v316 et ne présente
-pas le support comme prêt à installer.
+`compiler.ps1`) et **interroge la release `labo3-windows`** du dépôt : si elle
+contient `STI-Labo3-Installation.exe` **et** `SHA256SUMS.txt`, le lien de
+téléchargement s'active et le SHA-256 à comparer s'affiche ; sinon il reste
+désactivé avec la raison exacte (release absente, exécutable manquant, empreintes
+absentes, adresse hors du dépôt). Aucune URL n'est codée en dur : elle provient de
+la release vérifiée. Il ne propose aucun lien vers v316 et ne présente pas le
+support comme prêt à installer.

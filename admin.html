@@ -767,6 +767,8 @@
   }
   .btn-outil:hover { transform: translate(-1px, -1px); border-color: #f4511e; color: #f4511e; background: #fffdf7; }
   .btn-outil.vert { background: #e3f6e8; color: #177245; border-color: #177245; box-shadow: 2px 2px 0 #177245; }
+  /* Installateur Labo 3 : état tant qu'aucune release n'est publiée. */
+  .btn-outil-desactive, .btn-outil[disabled] { opacity: .55; cursor: not-allowed; transform: none; border-color: #94a3b8; color: #475569; background: #f1f5f9; }
   .btn-outil.vert:hover { background: #d2eedb; color: #115934; }
 
   /* Bandeau récapitulatif quand une classe est appelée / sélectionnée */
@@ -2584,7 +2586,10 @@
           Utiliser <a href="#bloc-stipack">Nouveau stipack</a> ci-dessous avec « Tout le site ».
           Les empreintes des fichiers sont incluses ; elles ne remplacent pas l’autorisation des postes.</li>
         <li><strong>Compiler et valider l’installateur « STI v2.0 version spéciale Labo 3 ».</strong>
-          <button type="button" class="btn-outil" disabled>Téléchargement indisponible — compilation avec votre clé publique requise</button>
+          <button type="button" class="btn-outil btn-outil-desactive" id="labo3-installateur-lien" disabled>Téléchargement indisponible</button>
+          <button type="button" class="btn-outil" id="labo3-installateur-verifier">Vérifier la release</button>
+          <span id="labo3-installateur-etat" role="status" aria-live="polite">Vérification en cours…</span>
+          Si vous venez de publier la release <code>labo3-windows</code>, le lien ci-dessus s’active tout seul et affiche le SHA-256 à comparer.
           Deux façons d’obtenir l’exécutable, la clé publique étant embarquée dedans :
           <ul>
             <li>GitHub Actions → workflow <strong>Windows Labo3</strong> → <em>Run workflow</em> → coller la clé publique PEM (lignes séparées par <code>\n</code>) → télécharger l’artefact et son <code>SHA256SUMS.txt</code>.</li>
@@ -5201,7 +5206,7 @@
 <script src="assets/js/sante.js?v=471" defer></script>
   <script src="assets/js/stipack.js?v=616" defer></script>
   <script src="assets/js/admin-stipack.js?v=616" defer></script>
-  <script src="assets/js/admin-labo3.js?v=1" defer></script>
+  <script src="assets/js/admin-labo3.js?v=2" defer></script>
 <!-- v606 : bouton du ruban « Services ». Il est placé hors écran tant que le
      ruban ne l'a pas adopté ; ensuite, la feuille de style de l'administration le
      remet dans le flux (position: static !important) avec les autres services. -->
