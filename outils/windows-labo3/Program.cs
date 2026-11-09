@@ -11,18 +11,28 @@ internal static class Program
 {
     internal const string ProductName = "STI v2.0 version spéciale Labo 3";
     [STAThread]
-    private static void Main()
+    private static void Main(string[] args)
     {
+        // Contrôle de publication : empreinte de la clé publique réellement embarquée.
+        if (args.Length == 2 && args[0] == "--afficher-cle")
+        {
+            using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("STILabo3.PublicKey.pem");
+            var empreinte = stream is null ? "ABSENTE" : Convert.ToHexString(SHA256.HashData(stream)).ToLowerInvariant();
+            File.WriteAllText(args[1], empreinte);
+            return;
+        }
         ApplicationConfiguration.Initialize();
-        Application.Run(new PreparationForm());
+        Application.Run(new PreparationForm(args.Contains("--launch")));
     }
 }
 
-// Préversion volontairement sans installation : aucune ancienne application supprimée.
+// Installation par version : aucune ancienne application supprimée.
 internal sealed class PreparationForm : Form
 {
     private readonly Label status = new() { AutoSize = false, Height = 100, Dock = DockStyle.Top };
-    public PreparationForm()
+    private LocalRuntime? runtime;
+    private bool closing;
+    public PreparationForm(bool launch = false)
     {
         Text = Program.ProductName;
         Width = 820; Height = 530; MinimumSize = new Size(720, 480);
@@ -35,15 +45,55 @@ internal sealed class PreparationForm : Form
         using var image = Image.FromStream(logoStream);
         layout.Controls.Add(new PictureBox { Image = new Bitmap(image), Size = new Size(110, 90), SizeMode = PictureBoxSizeMode.Zoom });
         layout.Controls.Add(new Label { Text = Program.ProductName, AutoSize = true, Font = new Font("Segoe UI", 18, FontStyle.Bold) });
-        layout.Controls.Add(new Label { Text = "PRÉVERSION — contrôle d’autorisation uniquement. Pas encore d’installation.", AutoSize = true, ForeColor = Color.Firebrick });
+        layout.Controls.Add(new Label { Text = "VERSION CANDIDATE — validation Windows requise avant diffusion.", AutoSize = true, ForeColor = Color.Firebrick });
         layout.Controls.Add(new Label { Text = "Sans compte du portail, sans mot de passe et sans accès réseau.", AutoSize = true });
         var check = new Button { Text = "Vérifier une autorisation signée pour ce poste", AutoSize = true, Padding = new Padding(8) };
         check.Click += (_, _) => CheckAuthorization();
         layout.Controls.Add(check);
-        layout.Controls.Add(new Button { Text = "Installer — indisponible dans cette préversion", Enabled = false, AutoSize = true });
+        var install = new Button { Text = "Installer depuis le support USB", AutoSize = true, Padding = new Padding(8) };
+        install.Click += async (_, _) =>
+        {
+            if (runtime is not null) { status.Text = "Fermez la plateforme avant une mise à jour."; return; }
+            using var package = new OpenFileDialog { Filter = "Paquet complet (*.stipack)|*.stipack", CheckFileExists = true };
+            if (package.ShowDialog(this) != DialogResult.OK) return;
+            using var authorization = new OpenFileDialog { Filter = "Autorisation signée (*.json)|*.json", CheckFileExists = true };
+            if (authorization.ShowDialog(this) != DialogResult.OK) return;
+            install.Enabled = false;
+            try
+            {
+                var progress = new Progress<string>(text => status.Text = text);
+                var version = await Deployment.InstallAsync(package.FileName, authorization.FileName, progress);
+                status.Text = "Installation validée. Raccourci créé sur le Bureau. Ouverture locale…";
+                await LaunchAsync(version);
+            }
+            catch (Exception e) { status.ForeColor = Color.Firebrick; status.Text = "Installation impossible : " + e.Message + " L’ancienne version est conservée."; }
+            finally { install.Enabled = true; }
+        };
+        layout.Controls.Add(install);
+        var reopen = new Button { Text = "Rouvrir la plateforme locale", AutoSize = true };
+        reopen.Click += (_, _) => runtime?.Open();
+        layout.Controls.Add(reopen);
         status.Width = 720;
-        status.Text = "Aucune modification ne sera apportée au poste. Le moteur d’installation et le lancement local restent à réaliser.";
+        status.Text = "Sélectionnez un paquet complet et une autorisation signée. Aucun mot de passe requis. Les anciennes versions sont conservées.";
         layout.Controls.Add(status); Controls.Add(layout);
+        if (launch) Shown += async (_, _) => await LaunchAsync(AppContext.BaseDirectory);
+        FormClosing += async (_, e) =>
+        {
+            if (runtime is null || closing) return;
+            e.Cancel = true; closing = true;
+            try { await runtime.DisposeAsync(); } finally { runtime = null; Close(); }
+        };
+    }
+    private async Task LaunchAsync(string directory)
+    {
+        try
+        {
+            runtime = await LocalRuntime.StartAsync(directory);
+            runtime.Open();
+            status.ForeColor = Color.DarkGreen;
+            status.Text = "Plateforme ouverte dans le navigateur local. Gardez cette fenêtre ouverte ; sa fermeture arrête le serveur. Aucune synchronisation distante n’est disponible.";
+        }
+        catch (Exception e) { status.ForeColor = Color.Firebrick; status.Text = "Ouverture refusée : " + e.Message; }
     }
     private void CheckAuthorization()
     {

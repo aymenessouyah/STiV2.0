@@ -9,15 +9,14 @@
     <AssemblyName>STI-Labo3-Installation</AssemblyName>
     <Product>STI v2.0 version spéciale Labo 3</Product>
     <Title>STI v2.0 version spéciale Labo 3</Title>
-    <Description>Préversion de préparation Windows — non destinée au déploiement</Description>
+    <Description>Installation hors ligne Labo 3 — version candidate</Description>
     <ApplicationIcon>../../assets/icons/STI_by_AE.ico</ApplicationIcon>
-    <Version>0.1.0</Version>
-    <PublishSingleFile>true</PublishSingleFile>
-    <SelfContained>true</SelfContained>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <Version>0.2.0</Version>
+    <!-- Publication autonome pilotée par compiler.ps1 : RID win-x64, autonome, fichier unique. -->
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <EmbeddedResource Include="../../assets/icons/sti-logo-complet.png" LogicalName="STILabo3.Logo.png" />
     <EmbeddedResource Include="../../assets/icons/STI_by_AE.ico" LogicalName="STILabo3.Icon.ico" />
     <EmbeddedResource Include="$(Labo3PublicKey)" LogicalName="STILabo3.PublicKey.pem" Condition="'$(Labo3PublicKey)' != ''" />

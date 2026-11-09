@@ -1,0 +1,165 @@
+name: Windows Labo3 — validation et publication de contrôle
+on:
+  push:
+    branches: ['main', 'arena/c0c72e60-stiv2-0']
+    paths: ['outils/windows-labo3/**', 'outils/windows-labo3-tests/**', 'outils/stipack/autorisation-labo3.mjs', '.github/workflows/windows-labo3.yml']
+  pull_request:
+    paths: ['outils/windows-labo3/**', 'outils/windows-labo3-tests/**', 'outils/stipack/autorisation-labo3.mjs', '.github/workflows/windows-labo3.yml']
+  workflow_dispatch:
+    inputs:
+      cle_publique:
+        description: 'Clé PUBLIQUE Ed25519 (PEM SPKI), lignes séparées par \n. Jamais la clé privée.'
+        required: true
+        type: string
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Fixture de test jetable (clé et autorisation du runner)
+        shell: pwsh
+        run: |
+          $fixture = Join-Path $env:RUNNER_TEMP 'labo3-fixture'
+          $journal = Join-Path $env:RUNNER_TEMP 'labo3-journal.log'
+          $guid = (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Cryptography').MachineGuid
+          node outils/windows-labo3-tests/preparer-fixture.mjs $fixture $guid *>&1 | Tee-Object -FilePath $journal
+          exit $LASTEXITCODE
+
+      - name: Compilation du projet et de la suite de tests
+        shell: pwsh
+        run: |
+          $fixture = Join-Path $env:RUNNER_TEMP 'labo3-fixture'
+          $journal = Join-Path $env:RUNNER_TEMP 'labo3-journal.log'
+          dotnet build outils/windows-labo3-tests/STILabo3.Tests.csproj -c Release "-p:Labo3PublicKey=$fixture/publique.pem" *>&1 | Tee-Object -FilePath $journal -Append
+          exit $LASTEXITCODE
+
+      - name: Tests réels sous Windows (signature, extraction, serveur local, vidéo)
+        shell: pwsh
+        run: |
+          $fixture = Join-Path $env:RUNNER_TEMP 'labo3-fixture'
+          $journal = Join-Path $env:RUNNER_TEMP 'labo3-journal.log'
+          dotnet run --project outils/windows-labo3-tests/STILabo3.Tests.csproj -c Release --no-build "-p:Labo3PublicKey=$fixture/publique.pem" -- $fixture *>&1 | Tee-Object -FilePath $journal -Append
+          exit $LASTEXITCODE
+
+      - name: Publication autonome et contrôle de la clé embarquée
+        shell: pwsh
+        run: |
+          $fixture = Join-Path $env:RUNNER_TEMP 'labo3-fixture'
+          $journal = Join-Path $env:RUNNER_TEMP 'labo3-journal.log'
+          $sortie = Join-Path $env:RUNNER_TEMP 'labo3-build'
+          try {
+            .\outils\windows-labo3\compiler.ps1 -ClePublique "$fixture/publique.pem" -Sortie $sortie *>&1 | Tee-Object -FilePath $journal -Append
+          } catch {
+            $_ | Out-String | Tee-Object -FilePath $journal -Append
+            exit 1
+          }
+          exit $LASTEXITCODE
+
+      - name: Rapport d’échec publié sur la PR
+        if: failure()
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $journal = Join-Path $env:RUNNER_TEMP 'labo3-journal.log'
+          $texte = if (Test-Path $journal) { Get-Content -Raw $journal } else { 'Aucun journal produit.' }
+          if ($texte.Length -gt 55000) { $texte = '…journal tronqué…' + $texte.Substring($texte.Length - 55000) }
+          $branche = if ($env:GITHUB_HEAD_REF) { $env:GITHUB_HEAD_REF } else { $env:GITHUB_REF_NAME }
+          $numero = gh pr list --repo $env:GITHUB_REPOSITORY --head $branche --state open --json number --jq '.[0].number'
+          if (-not $numero) { Write-Host "Aucune PR ouverte pour $branche ; journal non publié."; exit 0 }
+          $barre = [string]::new([char]96, 3)
+          $corps = '❌ Validation Windows échouée — run ' + $env:GITHUB_RUN_ID + "`n`n" + $barre + "text`n" + $texte + "`n" + $barre
+          $corps | Out-File -FilePath (Join-Path $env:RUNNER_TEMP 'commentaire.md') -Encoding utf8
+          gh pr comment $numero --repo $env:GITHUB_REPOSITORY --body-file (Join-Path $env:RUNNER_TEMP 'commentaire.md')
+
+  # Publication de production : uniquement sur demande manuelle, avec la clé
+  # PUBLIQUE de l'administrateur. La clé privée ne doit jamais être saisie ici.
+  publication:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Reconstruire et vérifier la clé publique fournie
+        shell: pwsh
+        env:
+          LABO3_CLE_PUBLIQUE: ${{ github.event.inputs.cle_publique }}
+        run: |
+          $chemin = Join-Path $env:RUNNER_TEMP 'publique.pem'
+          $empreinte = node outils/windows-labo3/cle-depuis-saisie.mjs $chemin
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $empreinte | Out-File -FilePath (Join-Path $env:RUNNER_TEMP 'cle.sha256') -Encoding ascii
+          Write-Host "Cle publique validee, sha256 : $empreinte"
+
+      - name: Compiler l’installateur avec la clé de production
+        shell: pwsh
+        run: |
+          $cle = Join-Path $env:RUNNER_TEMP 'publique.pem'
+          $sortie = Join-Path $env:RUNNER_TEMP 'publication'
+          .\outils\windows-labo3\compiler.ps1 -ClePublique $cle -Sortie $sortie
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Empreintes et notice de diffusion
+        shell: pwsh
+        run: |
+          $sortie = Join-Path $env:RUNNER_TEMP 'publication'
+          Get-ChildItem -LiteralPath $sortie -Filter *.pdb | Remove-Item -Force
+          $lignes = Get-ChildItem -LiteralPath $sortie -File | ForEach-Object {
+            (Get-FileHash -Algorithm SHA256 $_.FullName).Hash.ToLowerInvariant() + '  ' + $_.Name
+          }
+          $lignes | Out-File -FilePath (Join-Path $sortie 'SHA256SUMS.txt') -Encoding ascii
+          $commit = (git rev-parse HEAD).Trim()
+          $cle = (Get-Content -Raw (Join-Path $env:RUNNER_TEMP 'cle.sha256')).Trim()
+          $cle.Substring(0, 12) | Out-File -FilePath (Join-Path $env:RUNNER_TEMP 'cle.court') -Encoding ascii
+          $date = (Get-Date).ToUniversalTime().ToString('o')
+          $notice = @(
+            'STI v2.0 version spéciale Labo 3',
+            "commit : $commit",
+            "clé publique embarquée (sha256) : $cle",
+            "généré le : $date",
+            '',
+            'Vérifiez que cette empreinte est bien celle de VOTRE clé publique de',
+            'production. Un binaire compilé avec une autre clé refuse toutes vos',
+            'autorisations signées.',
+            '',
+            'Avant diffusion : tester sur un poste autorisé ET sur un poste non autorisé,',
+            'réseau coupé. Ne jamais joindre la clé privée au support USB.'
+          ) -join "`r`n"
+          $notice | Out-File -FilePath (Join-Path $sortie 'LISEZ-MOI.txt') -Encoding utf8
+          Get-Content (Join-Path $sortie 'SHA256SUMS.txt')
+
+      - name: Nommer l’artefact d’après l’empreinte de la clé embarquée
+        id: nom
+        shell: pwsh
+        run: |
+          $court = (Get-Content -Raw (Join-Path $env:RUNNER_TEMP 'cle.court')).Trim()
+          "nom=STI-v2.0-Labo3-cle-$court" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.nom.outputs.nom }}
+          path: ${{ runner.temp }}/publication
+          retention-days: 14
+          if-no-files-found: error
+
+# Le job « windows » n'uploade rien : il embarque une clé de test jetable.
+# Seul le job « publication », déclenché manuellement avec la clé publique de
+# l'administrateur, produit un installateur diffusable.
