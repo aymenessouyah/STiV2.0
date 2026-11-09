@@ -236,7 +236,9 @@
       'Fichiers  : ' + infos.fichiers,
       '',
       'Contenu de l’archive :',
-      '  plateforme/      tous les fichiers du site, à déposer tels quels',
+      infos.disposition === 'racine'
+        ? '  (racine)         tous les fichiers du site, à déposer tels quels'
+        : '  plateforme/      tous les fichiers du site, à déposer tels quels',
       '  stipack.json     manifeste : version, date et empreinte SHA-256 de chaque fichier',
       '  empreintes.txt   mêmes empreintes, contrôlables par « sha256sum -c empreintes.txt »',
       '',
@@ -276,6 +278,11 @@
     var fabriqueLe = options.fabriqueLe || new Date().toISOString();
     var nom = options.nom || NOM_PAR_DEFAUT;
     var volume = options.volume || (seuil ? 'leger' : 'complet');
+    /* Disposition : « plateforme/ » (sous-dossier) ou « racine » (fichiers
+       directement à la racine de l’archive, ce qu’attend le plus souvent un
+       installeur qui dépose le contenu dans son dossier d’installation). */
+    var disposition = options.disposition === 'racine' ? 'racine' : 'plateforme';
+    var prefixe = disposition === 'racine' ? '' : 'plateforme/';
 
     if (typeof recuperer !== 'function') throw new Error('recuperer() est requis');
     if (typeof ecrire !== 'function') throw new Error('ecrire() est requis');
@@ -304,12 +311,12 @@
       var brut = enOctets(await recuperer(chemin));
       octetsDecompresses += brut.length;
       central.push({
-        chemin: 'plateforme/' + chemin,
+        chemin: prefixe + chemin,
         octets: brut.length,
         sha256: await sha256Hex(brut)
       });
       await zip.ajouter({
-        chemin: 'plateforme/' + chemin,
+        chemin: prefixe + chemin,
         donnees: brut,
         compresser: !DEJA_COMPRIME.test(chemin)
       });
@@ -330,9 +337,10 @@
       },
       fabriqueLe: fabriqueLe,
       volume: volume,
+      disposition: disposition,
       seuilOctetsParFichier: seuil || null,
       contenu: {
-        dossier: 'plateforme/',
+        dossier: prefixe,
         fichiers: central.length,
         octetsDecompresses: octetsDecompresses
       },
@@ -356,7 +364,7 @@
         chemin: 'LISEZ-MOI.txt',
         donnees: new TextEncoder().encode(texteNotice({
           nom: nom, updateId: options.updateId, fabriqueLe: fabriqueLe, volume: volume,
-          seuil: seuil, fichiers: central.length, exclus: exclus
+          disposition: disposition, seuil: seuil, fichiers: central.length, exclus: exclus
         })),
         compresser: true
       }
@@ -368,6 +376,7 @@
     return {
       nom: nom,
       volume: volume,
+      disposition: disposition,
       seuil: seuil || null,
       fichiers: central.length,
       exclus: exclus,

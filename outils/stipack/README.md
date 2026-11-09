@@ -59,6 +59,32 @@ imprimer : poste, date, contrôle du média, installation, accueil OK, mot de pa
 
 ---
 
+## Si le paquet est refusé ou si l'application ne démarre pas
+
+Le format exact attendu par `STI-Labo3-Windows.exe` n'est pas documenté. Le seul
+réglage qui change vraiment le comportement de l'installeur est **où ranger les
+fichiers dans l'archive** :
+
+| Disposition | Structure de l'archive | Quand la choisir |
+|---|---|---|
+| `plateforme` (défaut) | `plateforme/index.html`, `plateforme/assets/…` | l'installeur cherche explicitement un sous-dossier |
+| `racine` | `index.html`, `assets/…` à la racine | **cas le plus courant** : l'installeur dépose le contenu de l'archive dans son dossier d'installation et attend `index.html` à côté de l'exécutable |
+
+Symptômes et essai à faire :
+
+- **L'installeur refuse le fichier** ou demande un mot de passe alors que le paquet
+  n'en contient pas → le format du conteneur n'est pas un simple ZIP : il faut un
+  ancien paquet fonctionnel pour le déduire.
+- **L'installation se termine mais l'application affiche une page blanche** ou ne
+  trouve pas l'accueil → disposition probablement en cause : refaire le paquet avec
+  `--disposition racine`, ou choisir « Racine de l'archive » dans le panneau.
+- **Rien ne démarre même avec la racine** → envoyer la liste des fichiers d'un ancien
+  paquet qui fonctionnait (ouvrir le `.stipack` avec 7-Zip).
+
+```bash
+node outils/stipack/preparer-disque.mjs --disposition racine --sortie /media/USB/STI-Labo3-20-postes
+```
+
 ## Ce qui reste à décider
 
 - **Mot de passe initial** : aucun n’est fixé par le paquet ; l’installateur le

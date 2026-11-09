@@ -16,6 +16,7 @@
  *   ├── empreintes.txt                    mêmes empreintes, prêtes pour `sha256sum -c`
  *   ├── LISEZ-MOI.txt                     notice lisible à l'ouverture du ZIP
  *   └── plateforme/…                      tous les fichiers du site
+ *     (ou directement à la racine de l’archive avec --disposition racine)
  *
  * Aucune dépendance : Node.js 18+ suffit.
  *
@@ -252,6 +253,18 @@ function construire() {
   const seuil = Number(argValeur('--seuil-mo', String(SEUIL_MO))) * 1024 * 1024;
   const sortie = path.resolve(RACINE, argValeur('--sortie', path.join(RACINE, NOM_PAR_DEFAUT)));
   const motDePasse = argValeur('--mot-de-passe', null);
+  /* Disposition des fichiers du site dans l’archive :
+       plateforme/  (défaut) tout sous un sous-dossier ;
+       racine       fichiers directement à la racine de l’archive — la convention
+                    la plus courante pour un installeur, qui dépose le contenu de
+                    l’archive dans le dossier d’installation et attend index.html
+                    juste à côté de l’exécutable. */
+  const disposition = (argValeur('--disposition', 'plateforme') || 'plateforme').toLowerCase();
+  if (!['plateforme', 'racine'].includes(disposition)) {
+    throw new Error(`Disposition inconnue « ${disposition} » : attendu « plateforme » ou « racine ».`);
+  }
+  const prefixe = disposition === 'racine' ? '' : 'plateforme/';
+  const dossierAnnonce = disposition === 'racine' ? '' : 'plateforme/';
   /* Date inscrite dans le manifeste. La figer (`--fabrique-le <iso>`) rend la
      fabrication strictement reproductible : deux machines au même commit
      produisent alors le même SHA-256 de paquet. */
@@ -299,9 +312,9 @@ function construire() {
     const donnees = fs.readFileSync(f.absolu);
     totalBrut += donnees.length;
     const empreinte = sha256(donnees);
-    fichiers.push({ chemin: `plateforme/${f.chemin}`, octets: donnees.length, sha256: empreinte });
+    fichiers.push({ chemin: `${prefixe}${f.chemin}`, octets: donnees.length, sha256: empreinte });
     entrees.push({
-      chemin: `plateforme/${f.chemin}`,
+      chemin: `${prefixe}${f.chemin}`,
       donnees,
       deflate: !DEJA_COMPRIME.has(path.extname(f.chemin).toLowerCase())
     });
@@ -319,9 +332,10 @@ function construire() {
     },
     fabriqueLe,
     volume,
+    disposition,
     seuilOctetsParFichier: volume === 'leger' ? seuil : null,
     contenu: {
-      dossier: 'plateforme/',
+      dossier: dossierAnnonce,
       fichiers: fichiers.length,
       octetsDecompresses: totalBrut
     },
@@ -364,7 +378,9 @@ function construire() {
       'Contenu de l’archive :',
       '  stipack.json     manifeste : version, commit et empreinte SHA-256 de chaque fichier',
       '  empreintes.txt   mêmes empreintes, contrôlables par « sha256sum -c empreintes.txt »',
-      '  plateforme/      tous les fichiers du site, à déposer tels quels',
+      disposition === 'racine'
+        ? '  (racine)         tous les fichiers du site, à déposer tels quels'
+        : '  plateforme/      tous les fichiers du site, à déposer tels quels',
       '',
       'Installation : lancer STI-Labo3-Windows.exe, sélectionner ce fichier,',
       'puis saisir le mot de passe initial demandé.',
@@ -451,7 +467,7 @@ function verifier(chemin) {
   }
   const annonces = new Set(manifeste.fichiers.map((f) => f.chemin));
   for (const e of entrees) {
-    if (e.nom.startsWith('plateforme/') && !annonces.has(e.nom)) {
+    if (!['stipack.json', 'empreintes.txt', 'LISEZ-MOI.txt'].includes(e.nom) && !annonces.has(e.nom)) {
       process.stdout.write(`➖ non déclaré dans le manifeste : ${e.nom}\n`);
     }
   }

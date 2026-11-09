@@ -326,6 +326,7 @@
       var sourced = await lireSourceFraiche();
       var liste = sourced.fichiers;
       var volume = el.volume && el.volume.value === 'leger' ? 'leger' : 'complet';
+      var disposition = el.disposition && el.disposition.value === 'racine' ? 'racine' : 'plateforme';
       var seuilMo = el.seuil ? Number(el.seuil.value) || SEUIL_DEFAUT_MO : SEUIL_DEFAUT_MO;
       var seuil = volume === 'leger' ? Math.round(seuilMo * 1024 * 1024) : 0;
       var totalOctets = liste.reduce(function (somme, f) { return somme + (f.octets || 0); }, 0);
@@ -337,6 +338,11 @@
       journal(
         'Dernière mise à jour : ' + liste.length + ' fichiers, ' + tailleLisible(totalOctets) +
         ' — ' + sourced.jugement.motif + '.'
+      );
+      journal(
+        disposition === 'racine'
+          ? 'Disposition : fichiers à la racine de l’archive (attendue par un installeur qui dépose le contenu dans son dossier).'
+          : 'Disposition : fichiers sous plateforme/ dans l’archive.'
       );
       if (sourced.ecartes) {
         journal(
@@ -390,6 +396,7 @@
         ecrire: ecriture.ecrire,
         seuil: seuil,
         volume: volume,
+        disposition: disposition,
         updateId: updateId,
         commit: sourced.commit || null,
         dateVersion: sourced.date || null,
@@ -470,6 +477,7 @@
     el = {
       bloc: $('bloc-stipack'),
       volume: $('stipack-volume'),
+      disposition: $('stipack-disposition'),
       seuil: $('stipack-seuil'),
       seuilWrap: $('stipack-seuil-wrap'),
       creer: $('stipack-btn-creer'),
