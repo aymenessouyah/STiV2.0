@@ -12,7 +12,7 @@
     <Description>Installation hors ligne Labo 3 — version candidate</Description>
     <ApplicationIcon>../../assets/icons/STI_by_AE.ico</ApplicationIcon>
     <Version>0.2.0</Version>
-    <!-- Publication autonome fournie par compiler.ps1 : -r win-x64 --self-contained PublishSingleFile -->
+    <!-- Publication autonome pilotée par compiler.ps1 : RID win-x64, autonome, fichier unique. -->
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
