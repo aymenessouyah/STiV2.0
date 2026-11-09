@@ -65,6 +65,27 @@ try
     Assert((int)response.StatusCode == 206 && (await response.Content.ReadAsByteArrayAsync()).SequenceEqual(new byte[] { 2, 3 }), "Lecture vidéo partielle");
     File.Copy(Path.Combine(fixture, "refus.json"), Path.Combine(version, "autorisation-labo3.json"), true);
     Assert((int)(await client.GetAsync(origin + "/index.html")).StatusCode == 403, "Autorisation recontrôlée au lancement document");
+    // Support USB : détection du paquet et de l'autorisation à côté de l'exécutable.
+    var support = Path.Combine(root, "support");
+    Directory.CreateDirectory(support);
+    Assert(Support.Resolve(support).Paquet is null, "Dossier vide : aucun paquet inventé");
+    Assert(Support.Resolve(support).Autorisation is null, "Dossier vide : aucune autorisation inventée");
+    Assert(Support.Resolve(Path.Combine(root, "absent")).Paquet is null, "Dossier inexistant toléré");
+    var paquetSupport = Archive("");
+    File.Move(paquetSupport, Path.Combine(support, "STI-Labo3-Plateforme.stipack"));
+    File.Copy(Path.Combine(fixture, "autorisation-labo3.json"), Path.Combine(support, "autorisation-labo3.json"));
+    var detecte = Support.Resolve(support);
+    Assert(detecte.Paquet is not null && detecte.Autorisation is not null, "Paquet et autorisation détectés");
+    Assert(Support.Decrire(detecte).Contains("STI-Labo3-Plateforme.stipack"), "Description du support");
+    File.Copy(Path.Combine(support, "STI-Labo3-Plateforme.stipack"), Path.Combine(support, "ancien.stipack"));
+    var ambigu = Support.Resolve(support);
+    Assert(ambigu.Paquet is null && ambigu.Paquets.Length == 2, "Deux paquets : aucun choix automatique");
+    Assert(Support.Decrire(ambigu).Contains("n'en garder qu'un"), "Ambiguïté expliquée");
+    File.Delete(Path.Combine(support, "ancien.stipack"));
+    // Second nom accepté, sans cumuler les deux fichiers d'autorisation.
+    File.Move(Path.Combine(support, "autorisation-labo3.json"), Path.Combine(support, "autorisation.json"));
+    Assert(Support.Resolve(support).Autorisation is not null, "autorisation.json accepté");
+
     Console.WriteLine($"{passed} contrôles Windows réussis.");
 }
 finally { Directory.Delete(root, true); }

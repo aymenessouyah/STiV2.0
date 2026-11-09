@@ -36,6 +36,18 @@ export function verifierAutorisation(enveloppe, empreinte, clePublique) {
     return contenu.postes.includes(empreinte);
   } catch { return false; }
 }
+/** Contrôle de structure sans clé publique : utile avant de copier sur un support.
+ *  Ne prouve pas la signature — seule la clé publique embarquée dans l’exécutable le peut. */
+export function inspecterAutorisation(enveloppe) {
+  if (!enveloppe || enveloppe.algorithme !== 'Ed25519' || typeof enveloppe.donnees !== 'string' || typeof enveloppe.signature !== 'string') {
+    throw new Error('Enveloppe invalide : algorithme Ed25519, donnees et signature attendus.');
+  }
+  let contenu;
+  try { contenu = JSON.parse(Buffer.from(enveloppe.donnees, 'base64').toString('utf8')); }
+  catch { throw new Error('Données de l’autorisation illisibles (base64/JSON).'); }
+  valider(contenu);
+  return { format: contenu.format, laboratoire: contenu.laboratoire, postes: contenu.postes.length };
+}
 function cli(args) {
   const [commande, ...fichiers] = args;
   if (commande === 'cles' && fichiers.length === 2) {

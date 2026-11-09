@@ -1,96 +1,116 @@
-# Installer et mettre à jour les postes — paquet `.stipack`
+# Installer et mettre à jour les 20 postes — version spéciale Labo 3
 
-> En une phrase : **un disque préparé une fois, 20 postes installés ou mis à jour à
-> partir de ce même dossier, sans Internet.**
+> En une phrase : **un support préparé une fois, 20 postes installés à partir de ce
+> même dossier, sans Internet, sans portail et sans mot de passe.**
 
-La référence complète (format du paquet, options, contrôle d'intégrité) est dans
-[`LISEZ-MOI.md`](LISEZ-MOI.md). Cette page est le mode d'emploi court.
+La référence du format de paquet est dans [`LISEZ-MOI.md`](LISEZ-MOI.md) ; le détail
+du chantier Windows dans [`VERSION-SPECIALE-LABO3.md`](VERSION-SPECIALE-LABO3.md)
+et [`../windows-labo3/README.md`](../windows-labo3/README.md).
+
+L'ancien installateur **v316 ne doit plus être utilisé** : il demande un mot de
+passe que le paquet ne contient pas et ne vérifie aucune autorisation de poste.
 
 ---
 
-## 1. Préparer le disque (une seule fois)
+## 1. Obtenir l'installateur (une fois, avec votre clé publique)
+
+L'exécutable n'est pas dans le dépôt : il est **compilé avec la clé publique de
+l'administrateur**, embarquée dans le binaire. Deux chemins :
+
+- **GitHub Actions** → workflow *Windows Labo3 — validation et publication de
+  contrôle* → **Run workflow** → coller la clé publique PEM (lignes séparées par
+  `\n`) → télécharger l'artefact `STI-v2.0-Labo3-cle-<empreinte>`.
+- **Poste Windows avec SDK .NET 8** :
+  `.\outils\windows-labo3\compiler.ps1 -ClePublique C:\Administration\publique.pem -Tester`
+
+Noter le **SHA-256** affiché (ou celui de `SHA256SUMS.txt`) : il sert à contrôler la
+copie sur le support. La clé privée ne quitte jamais votre dossier d'administration.
+
+## 2. Relever les 20 postes et signer l'autorisation
+
+1. Sur chaque poste, exécuter `relever-poste-labo3.ps1` (hors ligne) → un JSON par
+   machine, contenant uniquement son empreinte.
+2. Signer la liste : panneau **💼 Préparer le support spécial Labo3** du tableau de
+   bord (signature locale dans le navigateur), ou
+   `node outils/stipack/autorisation-labo3.mjs signer postes.json privee.pem autorisation-labo3.json`.
+
+20 postes maximum. L'autorisation ne contient **aucun mot de passe**.
+
+## 3. Préparer le support (une seule fois)
 
 ```bash
 node outils/stipack/preparer-disque.mjs \
   --sortie /media/USB/STI-Labo3-20-postes \
-  --installeur ~/Téléchargements/STI-Labo3-Windows-v316.zip
+  --installeur ~/Téléchargements/STI-Labo3-Installation.exe \
+  --empreinte-attendue 9f2c…b7 \
+  --autorisation ~/Administration/autorisation-labo3.json
 ```
 
-Le dossier contient l'installateur, le paquet de la **dernière mise à jour**, la
-procédure détaillée, les empreintes SHA-256 et le contrôle à double-clic.
+Le dossier contient l'installateur, le paquet de la **dernière mise à jour**,
+l'autorisation signée, la procédure détaillée, les empreintes SHA-256 et le contrôle
+à double-clic. Options : `--volume leger --seuil-mo 0.5` (média réduit),
+`--disposition racine`, `--verifier <dossier>` (contrôle d'un média déjà copié).
 
-Options utiles : `--volume leger --seuil-mo 0.5` (média réduit, ~104 Mo au lieu de
-~1,1 Go), `--webview2 <fichier>` (poste sans WebView2), `--verifier <dossier>`
-(contrôle d'un média déjà copié).
+Sans `--empreinte-attendue`, l'outil exige `--accepter-installeur-inconnu` : un
+binaire non contrôlé ne doit pas partir en salle par inadvertance.
 
-## 2. Installer un poste
+## 4. Installer un poste
 
-1. Brancher le disque.
-2. Double-clic sur **`verifier-media.cmd`** → chaque fichier est annoncé `OK` ou `ABÎME`.
-   Ne pas installer si le média est abîmé : le recopier depuis l'original.
-3. Double-clic sur **`STI-Labo3-Windows-v316.exe`** → « Informations complémentaires »
-   puis « Exécuter quand même » si SmartScreen s'affiche.
-4. Ouvrir le raccourci « STI by AE — L’Atelier du Web » et vérifier l’accueil, sans Internet.
+1. Brancher le support.
+2. Double-clic sur **`verifier-media.cmd`** → chaque fichier est annoncé `OK` ou
+   `ABIME`. Ne pas installer depuis un média abîmé.
+3. Double-clic sur **`STI-Labo3-Installation.exe`** (« Informations complémentaires »
+   puis « Exécuter quand même » si SmartScreen s'affiche : le binaire n'est pas signé
+   par une autorité payante).
+4. **Confirmer** : le paquet et l'autorisation placés à côté de l'exécutable sont
+   repris automatiquement. Aucun mot de passe, aucune connexion.
+5. La plateforme s'ouvre dans le navigateur du poste. **Garder la fenêtre de
+   l'application ouverte** pendant la séance : elle héberge le serveur local.
+   Le raccourci « STI v2.0 version spéciale Labo 3 » créé sur le Bureau la relance.
 
-## 3. Mettre à jour un poste déjà installé
+Aucun droit administrateur n'est requis : tout s'installe dans le profil utilisateur.
 
-Le même dossier sert à remettre un poste à jour : l’installateur retire l’ancienne
-version et réinstalle le contenu du `.stipack` qu’il trouve à côté de lui.
+## 5. Mettre à jour un poste déjà installé
 
-1. **Avant** : connecter le poste à Internet, ouvrir l’application et laisser la file
-   locale se vider vers Supabase (scores de quiz, progressions, positions de lecture).
-   *Ne pas effacer les données locales avant cette synchronisation.*
-2. Relancer **`STI-Labo3-Windows-v316.exe`** depuis le disque. Si l’installation
-   s’interrompt, la relancer : la mise à niveau reprend proprement.
-3. Ouvrir l’application une à deux fois : les pages en cache se rafraîchissent en
-   arrière-plan au premier chargement.
-4. **Un poste témoin d’abord** : vérifier l’accueil, un quiz, une vidéo, et qu’aucun
-   résultat n’a disparu côté tableau de bord. Puis traiter les autres.
+Remplacer le `.stipack` du support par un paquet frais (bouton **🧱 Nouveau stipack**
+du tableau de bord, ou `preparer-disque.mjs`) et relancer l'exécutable : une nouvelle
+version est installée à côté des précédentes, puis le raccourci est remplacé. En cas
+d'échec, l'ancienne version reste utilisable.
 
-**Le `.stipack` seul ne met rien à jour** — c’est l’installeur qui le consomme.
-En revanche, l’EXE n’a pas à changer tant que l’application reste en v316 : pour
-livrer un contenu plus récent, il suffit de remplacer le `.stipack` par un paquet
-frais (bouton **🧱 Nouveau stipack** du tableau de bord, ou commande ci-dessus).
+L'exécutable n'a pas à être recompilé pour un contenu plus récent — seulement si la
+clé publique change ou si le code Windows évolue.
 
-## 4. Suivre les 20 machines
+## 6. Suivre les 20 machines
 
 `LISEZ-MOI-20-POSTES.txt`, livré dans le média, contient le tableau de suivi à
-imprimer : poste, date, contrôle du média, installation, accueil OK, mot de passe remis.
+imprimer : poste, date, contrôle du média, autorisé, installé, accueil hors ligne OK.
 
 ---
 
-## Si le paquet est refusé ou si l'application ne démarre pas
+## Dépannage
 
-Le format exact attendu par `STI-Labo3-Windows.exe` n'est pas documenté. Le seul
-réglage qui change vraiment le comportement de l'installeur est **où ranger les
-fichiers dans l'archive** :
+| Symptôme | Cause et réponse |
+|---|---|
+| « Ce poste n'est pas autorisé pour le Labo 3 » | Son empreinte n'est pas dans la liste signée. Refaire un relevé sur ce poste et régénérer l'autorisation — pas réinstaller. |
+| « Cette préversion n'a pas de clé publique de confiance intégrée » | Binaire compilé sans clé. Recompiler avec `-ClePublique`. |
+| Signature invalide / format refusé | Autorisation produite avec une autre clé privée que celle de la clé publique embarquée. |
+| Page blanche après installation | Disposition du paquet : refaire le média avec `--disposition racine`. |
+| L'ouverture échoue sans message utile | Le port local 18763 est peut-être occupé sur ce poste ; fermer l'application qui l'utilise et relancer. |
+| SmartScreen bloque | « Informations complémentaires » → « Exécuter quand même ». |
 
-| Disposition | Structure de l'archive | Quand la choisir |
-|---|---|---|
-| `plateforme` (défaut) | `plateforme/index.html`, `plateforme/assets/…` | l'installeur cherche explicitement un sous-dossier |
-| `racine` | `index.html`, `assets/…` à la racine | **cas le plus courant** : l'installeur dépose le contenu de l'archive dans son dossier d'installation et attend `index.html` à côté de l'exécutable |
+## Ce que le support ne fait pas
 
-Symptômes et essai à faire :
+Hors ligne, les services en ligne restent indisponibles : comptes du portail,
+progressions synchronisées, quiz enregistrés côté serveur. Copier les fichiers ne
+rend pas ces services locaux — ne pas les promettre aux élèves.
 
-- **L'installeur refuse le fichier** ou demande un mot de passe alors que le paquet
-  n'en contient pas → le format du conteneur n'est pas un simple ZIP : il faut un
-  ancien paquet fonctionnel pour le déduire.
-- **L'installation se termine mais l'application affiche une page blanche** ou ne
-  trouve pas l'accueil → disposition probablement en cause : refaire le paquet avec
-  `--disposition racine`, ou choisir « Racine de l'archive » dans le panneau.
-- **Rien ne démarre même avec la racine** → envoyer la liste des fichiers d'un ancien
-  paquet qui fonctionnait (ouvrir le `.stipack` avec 7-Zip).
+Le contrôle des postes repose sur le `MachineGuid` de Windows : il change après une
+réinstallation et se duplique par clonage d'image. Un administrateur local peut
+remplacer le binaire. C'est un contrôle d'usage, pas une protection inviolable.
 
-```bash
-node outils/stipack/preparer-disque.mjs --disposition racine --sortie /media/USB/STI-Labo3-20-postes
-```
+## État
 
-## Ce qui reste à décider
-
-- **Mot de passe initial** : aucun n’est fixé par le paquet ; l’installateur le
-  demande. Pour un mot de passe identique sur les 20 postes, utiliser
-  `--mot-de-passe` lors de la fabrication — seul un vérificateur PBKDF2 est inscrit,
-  jamais le mot de passe.
-- **Format exact attendu par l’installateur** : indéduit. Si un poste refuse le
-  `.stipack`, la structure produite est à ajuster dans `construire()` —
-  [voir `LISEZ-MOI.md`](LISEZ-MOI.md).
+Installateur développé, **validé sous Windows par GitHub Actions** (compilation,
+25 contrôles réels, publication autonome). Reste avant diffusion : compiler avec la
+clé publique de production, tester sur un poste réel du laboratoire, publier une
+release et activer le lien de téléchargement du tableau de bord.
