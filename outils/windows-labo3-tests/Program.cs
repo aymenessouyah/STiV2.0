@@ -5,6 +5,9 @@ using System.Text.Json;
 using STILabo3;
 
 var fixture = Path.GetFullPath(args[0]);
+// Paquets fabriqués par le VRAI générateur du tableau de bord (facultatifs).
+var paquetReel = args.Length > 1 && args[1].Length > 0 ? Path.GetFullPath(args[1]) : null;
+var paquetRacine = args.Length > 2 && args[2].Length > 0 ? Path.GetFullPath(args[2]) : null;
 var root = Path.Combine(Path.GetTempPath(), "sti-tests-" + Guid.NewGuid().ToString("N"));
 Directory.CreateDirectory(root);
 var passed = 0;
@@ -109,6 +112,35 @@ try
     // Second nom accepté, sans cumuler les deux fichiers d'autorisation.
     File.Move(Path.Combine(support, "autorisation-labo3.json"), Path.Combine(support, "autorisation.json"));
     Assert(Support.Resolve(support).Autorisation is not null, "autorisation.json accepté");
+
+    /* Contrat de format contre le générateur réel : si assets/js/stipack.js change
+       de schéma, l'installateur doit cesser de passer ici, pas en salle. */
+    foreach (var reel in new[] { (paquetReel, "plateforme/"), (paquetRacine, "racine") })
+    {
+        if (reel.Item1 is null) continue;
+        var destination = Path.Combine(root, "reel-" + Guid.NewGuid().ToString("N"));
+        await PackageInstaller.ExtractAsync(reel.Item1, destination);
+        Assert(File.Exists(Path.Combine(destination, "index.html")), $"Paquet réel ({reel.Item2}) : accueil extrait");
+        Assert(File.Exists(Path.Combine(destination, "assets", "js", "config.js")), $"Paquet réel ({reel.Item2}) : sous-dossiers extraits");
+        Assert(!File.Exists(Path.Combine(destination, "stipack.json")), $"Paquet réel ({reel.Item2}) : manifeste non copié dans la plateforme");
+        Assert(!File.Exists(Path.Combine(destination, "plateforme")), $"Paquet réel ({reel.Item2}) : préfixe retiré");
+    }
+    if (paquetReel is not null)
+    {
+        var versionReelle = Path.Combine(root, "version-reelle");
+        Directory.CreateDirectory(versionReelle);
+        await PackageInstaller.ExtractAsync(paquetReel, Path.Combine(versionReelle, "plateforme"));
+        File.Copy(Path.Combine(fixture, "autorisation-labo3.json"), Path.Combine(versionReelle, "autorisation-labo3.json"));
+        await using var runtimeReel = await LocalRuntime.StartAsync(versionReelle);
+        // Cookie propre à cette instance : les cookies ne distinguent pas les ports.
+        var pageReelle = await client.GetStringAsync(runtimeReel.LaunchUri);
+        Assert(pageReelle.Contains("<html"), "index.html réel servi");
+        Assert(pageReelle.Contains("__STI_NATIVE_AUTHENTICATED_V316=true"), "index.html réel : session locale injectée");
+        var origineReelle = runtimeReel.LaunchUri.GetLeftPart(UriPartial.Authority);
+        Assert((await client.GetAsync(origineReelle + "/assets/js/config.js")).IsSuccessStatusCode, "asset réel servi");
+        Assert((await client.GetAsync(origineReelle + "/assets/icons/sti-icon-192.png")).IsSuccessStatusCode, "image réelle servie");
+        Assert((int)(await client.GetAsync(origineReelle + "/portail.html")).StatusCode == 403, "portail bloqué sur contenu réel");
+    }
 
     Console.WriteLine($"{passed} contrôles Windows réussis.");
 }

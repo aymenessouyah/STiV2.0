@@ -41,6 +41,15 @@ jobs:
           node outils/windows-labo3-tests/preparer-fixture.mjs $fixture $guid *>&1 | Tee-Object -FilePath $journal
           exit $LASTEXITCODE
 
+      - name: Paquets réels fabriqués par le générateur du tableau de bord
+        shell: pwsh
+        run: |
+          $journal = Join-Path $env:RUNNER_TEMP 'labo3-journal.log'
+          node outils/windows-labo3-tests/paquet-fixture.mjs "$env:RUNNER_TEMP/paquet-plateforme.stipack" plateforme *>&1 | Tee-Object -FilePath $journal -Append
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node outils/windows-labo3-tests/paquet-fixture.mjs "$env:RUNNER_TEMP/paquet-racine.stipack" racine *>&1 | Tee-Object -FilePath $journal -Append
+          exit $LASTEXITCODE
+
       - name: Compilation du projet et de la suite de tests
         shell: pwsh
         run: |
@@ -54,7 +63,9 @@ jobs:
         run: |
           $fixture = Join-Path $env:RUNNER_TEMP 'labo3-fixture'
           $journal = Join-Path $env:RUNNER_TEMP 'labo3-journal.log'
-          dotnet run --project outils/windows-labo3-tests/STILabo3.Tests.csproj -c Release --no-build "-p:Labo3PublicKey=$fixture/publique.pem" -- $fixture *>&1 | Tee-Object -FilePath $journal -Append
+          $reel = Join-Path $env:RUNNER_TEMP 'paquet-plateforme.stipack'
+          $racine = Join-Path $env:RUNNER_TEMP 'paquet-racine.stipack'
+          dotnet run --project outils/windows-labo3-tests/STILabo3.Tests.csproj -c Release --no-build "-p:Labo3PublicKey=$fixture/publique.pem" -- $fixture $reel $racine *>&1 | Tee-Object -FilePath $journal -Append
           exit $LASTEXITCODE
 
       - name: Publication autonome et contrôle de la clé embarquée
