@@ -45,3 +45,19 @@ ne protège pas contre la modification de l'exécutable par un administrateur lo
 - Tester sur Windows : installation neuve, mise à jour, vidéos, PDF, poste refusé,
   paquet corrompu et interruption d'installation. Aucun de ces tests Windows n'a
   encore été exécuté ici.
+
+## Panneau du tableau de bord
+
+La section « Préparer le support spécial Labo3 » regroupe le téléchargement du
+script de relevé, le guide des clés, la signature locale des relevés JSON et
+l'accès au générateur stipack. Sélectionner la clé PKCS#8 produite par l'outil
+`autorisation-labo3.mjs` : le navigateur signe avec Web Crypto Ed25519 en HTTPS.
+La clé n'est ni envoyée ni conservée dans le stockage du navigateur ; le champ
+fichier est vidé après l'opération. Un navigateur ne prenant pas en charge
+Ed25519 affiche une erreur : utiliser alors l'outil Node documenté plus haut.
+
+Le fichier téléchargé est `autorisation-labo3.json`, compatible avec le vérificateur
+Node. Ce n'est ni un mot de passe ni une clé de chiffrement. La clé publique
+correspondante devra être intégrée au futur installateur. L'interface n'atteste
+pas que cet installateur existe : son bouton reste désactivé. Elle ne fournit
+pas de faux lien vers v316 et ne présente pas le support comme prêt à installer.
