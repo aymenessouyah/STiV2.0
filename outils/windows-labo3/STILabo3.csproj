@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>STI-Labo3-Installation</AssemblyName>
+    <Product>STI v2.0 version spéciale Labo 3</Product>
+    <Title>STI v2.0 version spéciale Labo 3</Title>
+    <Description>Préversion de préparation Windows — non destinée au déploiement</Description>
+    <ApplicationIcon>../../assets/icons/STI_by_AE.ico</ApplicationIcon>
+    <Version>0.1.0</Version>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="../../assets/icons/sti-logo-complet.png" LogicalName="STILabo3.Logo.png" />
+    <EmbeddedResource Include="../../assets/icons/STI_by_AE.ico" LogicalName="STILabo3.Icon.ico" />
+    <EmbeddedResource Include="$(Labo3PublicKey)" LogicalName="STILabo3.PublicKey.pem" Condition="'$(Labo3PublicKey)' != ''" />
+    <PackageReference Include="NSec.Cryptography" Version="24.4.0" />
+  </ItemGroup>
+</Project>
