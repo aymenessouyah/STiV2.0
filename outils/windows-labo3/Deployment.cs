@@ -44,7 +44,18 @@ internal static class Deployment
         Directory.CreateDirectory(version);
         try
         {
-            await PackageInstaller.ExtractAsync(package, Path.Combine(version, "plateforme"), progress);
+            var extraction = await PackageInstaller.ExtractAsync(package, Path.Combine(version, "plateforme"), progress);
+            if (extraction.DoublonsIgnores.Count > 0)
+            {
+                // Windows ne peut pas stocker deux fichiers dont le chemin ne diffère
+                // que par la casse : le premier annoncé est installé, les autres sont tracés ici.
+                File.WriteAllLines(Path.Combine(version, "doublons-ignores.txt"),
+                    ["# Fichiers du paquet absents du disque : même chemin à la casse près.",
+                     "# Le premier annoncé dans le manifeste est celui qui a été installé.",
+                     "# Sur Windows, les deux orthographes ouvrent ce fichier conservé.",
+                     .. extraction.DoublonsIgnores]);
+                progress.Report($"{extraction.DoublonsIgnores.Count} doublon(s) de casse ignoré(s) — voir doublons-ignores.txt");
+            }
             File.Copy(authorization, Path.Combine(version, "autorisation-labo3.json"));
             // Empêche un changement de l'autorisation entre le premier contrôle et sa copie.
             Authorization.Check(Path.Combine(version, "autorisation-labo3.json"));

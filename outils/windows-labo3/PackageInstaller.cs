@@ -7,6 +7,8 @@ namespace STILabo3;
 
 internal static class PackageInstaller
 {
+    internal sealed record Extraction(int Fichiers, IReadOnlyList<string> DoublonsIgnores);
+
     // Restriction Windows même lorsque les tests sont exécutés sur un autre OS.
     internal static string SafePath(string root, string relative)
     {
@@ -23,12 +25,12 @@ internal static class PackageInstaller
     }
 
     // Destination nouvelle et privée : jamais d'extraction dans une installation active.
-    internal static async Task ExtractAsync(string package, string destination, IProgress<string>? progress = null)
+    internal static async Task<Extraction> ExtractAsync(string package, string destination, IProgress<string>? progress = null)
     {
         if (Directory.Exists(destination)) throw new IOException("La destination doit être nouvelle.");
         using var archive = ZipFile.OpenRead(package);
         if (archive.Entries.Count > 20000) throw new InvalidDataException("Trop de fichiers.");
-        var entries = new Dictionary<string, ZipArchiveEntry>(StringComparer.OrdinalIgnoreCase);
+        var entries = new Dictionary<string, ZipArchiveEntry>(StringComparer.Ordinal);
         foreach (var entry in archive.Entries)
         {
             SafePath(destination, entry.FullName);
@@ -40,14 +42,21 @@ internal static class PackageInstaller
         using var manifestStream = manifestEntry.Open();
         using var doc = await JsonDocument.ParseAsync(manifestStream);
         var manifest = doc.RootElement;
-        if (manifest.GetProperty("format").GetString() != "STI-STIPACK/1" || manifest.GetProperty("volume").GetString() != "complet")
-            throw new InvalidDataException("Un paquet STI-STIPACK/1 complet est requis.");
+        if (manifest.GetProperty("format").GetString() != "STI-STIPACK/1")
+            throw new InvalidDataException("Format de paquet non pris en charge : STI-STIPACK/1 requis.");
+        var volume = manifest.GetProperty("volume").GetString();
+        if (volume != "complet")
+            throw new InvalidDataException(
+                $"Paquet « {volume} » refusé : la version spéciale Labo 3 installe la plateforme complète. " +
+                "Refaites le paquet avec « Tout le site » dans le tableau de bord, ou --volume complet en ligne de commande.");
         var prefix = manifest.GetProperty("contenu").GetProperty("dossier").GetString();
         if (prefix is not ("" or "plateforme/")) throw new InvalidDataException("Disposition non prise en charge.");
         var files = manifest.GetProperty("fichiers").EnumerateArray().ToArray();
         if (files.Length is < 1 or > 19997) throw new InvalidDataException("Liste de fichiers invalide.");
-        var announced = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var announced = new HashSet<string>(StringComparer.Ordinal);
         var plan = new List<(ZipArchiveEntry Entry, string Relative, string Hash)>();
+        var doublons = new List<string>();
+        var relatifsVus = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         long total = 0;
         foreach (var item in files)
         {
@@ -57,6 +66,13 @@ internal static class PackageInstaller
             var relative = name[prefix.Length..];
             SafePath(destination, relative);
             if (relative is "stipack.json" or "empreintes.txt" or "LISEZ-MOI.txt") throw new InvalidDataException("Collision de métadonnées.");
+            if (!relatifsVus.Add(relative))
+            {
+                // Même chemin à la casse près : un seul peut exister sur Windows.
+                doublons.Add(name);
+                progress?.Report($"Doublon de casse ignoré : {name}");
+                continue;
+            }
             var length = item.GetProperty("octets").GetInt64();
             var hash = item.GetProperty("sha256").GetString()!;
             if (length < 0 || length != entry.Length || !Regex.IsMatch(hash, @"\A[a-f0-9]{64}\z")) throw new InvalidDataException("Taille ou empreinte invalide : " + name);
@@ -64,7 +80,8 @@ internal static class PackageInstaller
             if (total > 16L * 1024 * 1024 * 1024) throw new InvalidDataException("Paquet supérieur à 16 Gio.");
             plan.Add((entry, relative, hash));
         }
-        if (!plan.Any(p => p.Relative == "index.html")) throw new InvalidDataException("Accueil index.html absent.");
+        if (!plan.Any(p => p.Relative.Equals("index.html", StringComparison.OrdinalIgnoreCase)))
+            throw new InvalidDataException("Accueil index.html absent.");
         // Échouer avant d'écrire : un disque saturé laisserait une version inutilisable.
         var racineDisque = Path.GetPathRoot(Path.GetFullPath(destination)) ?? throw new IOException("Destination sans racine de disque.");
         var disponible = new DriveInfo(racineDisque).AvailableFreeSpace;
@@ -91,5 +108,6 @@ internal static class PackageInstaller
             }
         }
         catch { Directory.Delete(destination, true); throw; }
+        return new Extraction(plan.Count, doublons);
     }
 }
