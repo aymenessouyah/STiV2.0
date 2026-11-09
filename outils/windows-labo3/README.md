@@ -56,6 +56,26 @@ c'est une archive ambiguë, pas un doublon de casse. Supprimer toute ambiguïté
 casse dans le dépôt reste possible, mais c'est une modification de la plateforme :
 elle n'est pas faite ici.
 
+## La clé publique à embarquer
+
+Elle provient de la paire Ed25519 de l'administrateur, créée **une seule fois** :
+
+- **tableau de bord** — section « STI v2.0 version spéciale Labo 3 », bouton
+  « Créer la paire de clés Ed25519 » : la clé privée est téléchargée aussitôt (ni
+  stockée par la page, ni envoyée au réseau), la clé publique est affichée avec son
+  SHA-256 et copiée au format exact du champ `cle_publique` du workflow ;
+- **Node** — `node outils/stipack/autorisation-labo3.mjs cles privee.pem publique.pem` ;
+- **OpenSSL** — `openssl genpkey -algorithm ed25519 -out privee.pem` puis
+  `openssl pkey -in privee.pem -pubout -out publique.pem`.
+
+Le panneau n'affiche qu'une clé **publique** au format SPKI (DER de 44 octets,
+préfixe `302A300506032B6570032100`) : c'est le seul encodage que la classe `Authorization`
+(de `Program.cs`) sait lire, et `cle-depuis-saisie.mjs` refuse toute saisie contenant une clé privée.
+
+Le SHA-256 affiché par le panneau est celui du PEM que le workflow écrit, donc les
+12 premiers caractères donnent le nom de l'artefact produit
+(`STI-v2.0-Labo3-cle-…`) : c'est la vérification que la bonne clé a été embarquée.
+
 ## Compilation
 
 Sur un poste Windows avec SDK .NET 8 et accès à nuget.org (NSec.Cryptography 24.4.0) :

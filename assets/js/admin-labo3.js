@@ -105,12 +105,70 @@
     };
   }
 
+  /* ---------------------------------------------------- clés de signature
+
+     La paire Ed25519 est fabriquée dans le navigateur. La clé privée n'est ni
+     stockée par la page, ni envoyée au réseau : elle est proposée immédiatement
+     en téléchargement, à conserver hors du dépôt et du support USB. La clé
+     publique est celle que le workflow « Windows Labo3 » grave dans
+     l'installateur ; l'empreinte affichée ici est exactement celle que le
+     workflow imprime, ce qui permet de reconnaître l'artefact
+     « STI-v2.0-Labo3-cle-<12 premiers caractères> » sans deviner. */
+
+  /* L'installateur n'accepte que ce DER : SPKI Ed25519, 44 octets. Vérifié ici
+     pour qu'une clé inutilisable ne puisse pas être proposée à la compilation. */
+  var PREFIXE_SPKI_ED25519 = '302a300506032b6570032100';
+
+  function hexa(octets) {
+    return Array.from(octets, function (n) { return (n < 16 ? '0' : '') + n.toString(16); }).join('');
+  }
+
+  function pemDepuis(der, etiquette) {
+    var lignes = base64(der).match(/.{1,64}/g) || [];
+    return '-----BEGIN ' + etiquette + '-----\n' + lignes.join('\n') + '\n-----END ' + etiquette + '-----\n';
+  }
+
+  async function genererCles(options) {
+    options = options || {};
+    var crypto = options.crypto || global.crypto;
+    var subtle = crypto && crypto.subtle;
+    if (!subtle || !subtle.generateKey) throw new Error('Navigateur avec Web Crypto requis (HTTPS).');
+    var paire = await subtle.generateKey({ name: 'Ed25519' }, true, ['sign', 'verify']);
+    var spki = new Uint8Array(await subtle.exportKey('spki', paire.publicKey));
+    var pkcs8 = new Uint8Array(await subtle.exportKey('pkcs8', paire.privateKey));
+    if (spki.length !== 44 || hexa(spki).indexOf(PREFIXE_SPKI_ED25519) !== 0) {
+      throw new Error('Clé publique inattendue : l’installateur exige un DER SPKI Ed25519 de 44 octets.');
+    }
+    var publiquePem = pemDepuis(spki, 'PUBLIC KEY');
+    var octetsPem = new TextEncoder().encode(publiquePem);
+    var empreinte = hexa(new Uint8Array(await subtle.digest('SHA-256', octetsPem)));
+    return {
+      publiquePem: publiquePem,
+      priveePem: pemDepuis(pkcs8, 'PRIVATE KEY'),
+      /* Le champ de saisie d'un workflow est une seule ligne : les retours à la
+         ligne y arrivent comme les deux caractères `\n`, que
+         outils/windows-labo3/cle-depuis-saisie.mjs reconstruit à l'identique. */
+      saisieWorkflow: publiquePem.replace(/\n+$/, '').replace(/\n/g, '\\n'),
+      empreinte: empreinte,
+      artefact: 'STI-v2.0-Labo3-cle-' + empreinte.slice(0, 12)
+    };
+  }
+
+  function urlWorkflow(depot) {
+    var cible = depot || depotCible();
+    return 'https://github.com/' + cible.proprietaire + '/' + cible.nom + '/actions/workflows/windows-labo3.yml';
+  }
+
   global.STILabo3Admin = {
     lirePostes: lirePostes,
     signer: signer,
     verifierPublication: verifierPublication,
     lireSommes: lireSommes,
     depotCible: depotCible,
+    genererCles: genererCles,
+    pemDepuis: pemDepuis,
+    urlWorkflow: urlWorkflow,
+    PREFIXE_SPKI_ED25519: PREFIXE_SPKI_ED25519,
     TAG_INSTALLATEUR: TAG_INSTALLATEUR
   };
   /* Affiche l'état de l'installateur publié : lien réel si la release existe et
@@ -144,7 +202,81 @@
     return resultat;
   }
 
+  /* Clés créées pendant la session : mémoire de la page uniquement. Aucun
+     stockage du navigateur n'est touché, aucun cookie n'est écrit, et rien n'est
+     envoyé au réseau ; fermer l'onglet les fait disparaître. */
+  var clesCourantes = null;
+
+  function telechargerTexte(nom, texte, type) {
+    var url = URL.createObjectURL(new Blob([texte], { type: type }));
+    var a = document.createElement('a'); a.href = url; a.download = nom;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+  }
+
+  function afficher(id, texte) {
+    var element = document.getElementById(id);
+    if (element) element.textContent = texte;
+    return element;
+  }
+
+  function devoiler(id) {
+    var element = document.getElementById(id);
+    if (element) element.hidden = false;
+    return element;
+  }
+
+  /* Panneau des clés : création de la paire, téléchargement de la clé privée,
+     copie de la clé publique au format exact du champ de workflow. */
+  function initialiserCles() {
+    var lien = document.getElementById('labo3-workflow-lien');
+    if (lien) lien.href = urlWorkflow();
+    var bouton = document.getElementById('labo3-cles-generer');
+    if (!bouton) return;
+    var copier = document.getElementById('labo3-cle-copier');
+    var champSaisie = document.getElementById('labo3-cle-saisie');
+
+    bouton.addEventListener('click', async function () {
+      bouton.disabled = true;
+      try {
+        clesCourantes = await genererCles({});
+        /* La clé privée quitte la page par un téléchargement immédiat : c'est la
+           seule copie, l'administrateur en est responsable. */
+        telechargerTexte('cle-privee-labo3.pem', clesCourantes.priveePem, 'application/x-pem-file');
+        var pem = devoiler('labo3-cle-publique-wrap');
+        if (pem) pem.value = clesCourantes.publiquePem;
+        if (champSaisie) champSaisie.value = clesCourantes.saisieWorkflow;
+        devoiler('labo3-cle-saisie-wrap');
+        if (copier) copier.hidden = false;
+        afficher('labo3-cle-empreinte',
+          'SHA-256 de la clé publique : ' + clesCourantes.empreinte +
+          ' — artefact attendu : ' + clesCourantes.artefact);
+        devoiler('labo3-cle-empreinte-wrap');
+        afficher('labo3-cles-etat',
+          'Paire Ed25519 créée. La clé privée vient d’être téléchargée : conservez-la hors du dépôt et du support USB. ' +
+          'Elle n’est ni stockée par cette page ni envoyée au réseau. Vous pouvez signer tout de suite sans la resélectionner.');
+      } catch (e) {
+        clesCourantes = null;
+        afficher('labo3-cles-etat', 'Échec : ' + e.message);
+      } finally { bouton.disabled = false; }
+    });
+
+    if (copier) copier.addEventListener('click', async function () {
+      if (!clesCourantes) { afficher('labo3-cles-etat', 'Créez d’abord la paire de clés.'); return; }
+      try {
+        await global.navigator.clipboard.writeText(clesCourantes.saisieWorkflow);
+        afficher('labo3-cles-etat',
+          'Clé publique copiée au format du champ « cle_publique » : une seule ligne, fins de ligne \\n. Collez-la telle quelle.');
+      } catch (e) {
+        if (champSaisie) { champSaisie.focus(); champSaisie.select(); }
+        afficher('labo3-cles-etat',
+          'Copie automatique refusée par le navigateur : le texte est sélectionné, copiez-le avec Ctrl+C.');
+      }
+    });
+  }
+
   function initialiser() {
+    initialiserCles();
     var verifier = document.getElementById('labo3-installateur-verifier');
     if (verifier) verifier.addEventListener('click', function () { rafraichirInstallateur(); });
     rafraichirInstallateur();
@@ -156,15 +288,23 @@
       var releves = document.getElementById('labo3-postes');
       bouton.disabled = true;
       try {
-        if (!cle.files.length || !releves.files.length) throw new Error('Sélectionnez les relevés et votre clé privée de signature.');
-        if (cle.files[0].size > 16384 || Array.from(releves.files).some(function (f) { return f.size > 16384; })) throw new Error('Fichier trop volumineux.');
+        if (!releves.files.length) throw new Error('Sélectionnez les relevés des postes (1 à 20 JSON).');
+        if (Array.from(releves.files).some(function (f) { return f.size > 16384; })) throw new Error('Fichier trop volumineux.');
+        /* La clé créée dans cette page est encore en mémoire : inutile de la
+           resélectionner. Sinon, le fichier choisi est exigé. */
+        var pem;
+        if (cle.files.length) {
+          if (cle.files[0].size > 16384) throw new Error('Fichier trop volumineux.');
+          pem = await cle.files[0].text();
+        } else if (clesCourantes) {
+          pem = clesCourantes.priveePem;
+        } else {
+          throw new Error('Sélectionnez votre clé privée, ou créez la paire de clés ci-dessus.');
+        }
         var postes = lirePostes(await Promise.all(Array.from(releves.files, function (f) { return f.text(); })));
-        var autorisation = await signer(postes, await cle.files[0].text());
-        var url = URL.createObjectURL(new Blob([JSON.stringify(autorisation, null, 2)], { type: 'application/json' }));
-        var a = document.createElement('a'); a.href = url; a.download = 'autorisation-labo3.json';
-        document.body.appendChild(a); a.click(); a.remove();
-        setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
-        etat.textContent = 'Autorisation téléchargée pour ' + postes.length + ' poste(s). La protection ne sera active qu’avec le futur installateur et sa clé publique de confiance.';
+        var autorisation = await signer(postes, pem);
+        telechargerTexte('autorisation-labo3.json', JSON.stringify(autorisation, null, 2), 'application/json');
+        etat.textContent = 'Autorisation téléchargée pour ' + postes.length + ' poste(s). Elle ne sera acceptée que par un installateur compilé avec la clé publique correspondante.';
       } catch (e) { etat.textContent = 'Échec : ' + e.message; }
       finally { cle.value = ''; bouton.disabled = false; }
     });

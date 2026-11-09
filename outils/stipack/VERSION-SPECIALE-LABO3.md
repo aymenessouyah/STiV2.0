@@ -21,13 +21,26 @@ utilisé avec ces paquets.
    `powershell -NoProfile -File .\relever-poste-labo3.ps1 -Sortie E:\poste-01.json`.
    Aucune connexion requise. Ne pas contourner une politique d'exécution administrée :
    demander l'approbation du responsable informatique si Windows bloque le script.
-2. Sur l'ordinateur de préparation (Node.js nécessaire à cette étape seulement),
-   créer un dossier privé **hors du dépôt et hors du support distribué** :
-   `node outils/stipack/autorisation-labo3.mjs cles /chemin/prive/privee.pem /chemin/prive/publique.pem`.
-3. Réunir les valeurs `empreinte` des relevés dans `postes.json`, un tableau JSON
-   de 1 à 20 chaînes uniques. Ne pas confondre ces empreintes avec le SHA-256 du paquet.
-4. Signer :
+2. Créer la paire de clés Ed25519, **une seule fois**. Deux voies équivalentes :
+   - **Dans le tableau de bord** (section « STI v2.0 version spéciale Labo 3 ») :
+     bouton **« Créer la paire de clés Ed25519 »**. La clé privée est téléchargée
+     immédiatement (`cle-privee-labo3.pem`) et n'est ni stockée par la page ni
+     envoyée au réseau ; la clé publique s'affiche, avec son SHA-256 et le nom
+     d'artefact attendu, et un bouton la copie au format exact du champ
+     `cle_publique` du workflow. Rangez la clé privée **hors du dépôt et hors du
+     support distribué**.
+   - **En ligne de commande** (Node.js nécessaire à cette étape seulement) :
+     `node outils/stipack/autorisation-labo3.mjs cles /chemin/prive/privee.pem /chemin/prive/publique.pem`,
+     ou `openssl genpkey -algorithm ed25519 -out privee.pem` puis
+     `openssl pkey -in privee.pem -pubout -out publique.pem`.
+3. Réunir les valeurs `empreinte` des relevés. Soit les JSON sont déposés dans le
+   panneau du tableau de bord (1 à 20 fichiers) et le bouton **« Télécharger
+   l'autorisation signée »** produit `autorisation-labo3.json` — la clé créée à
+   l'étape 2 est encore en mémoire, inutile de la resélectionner ; soit en ligne de
+   commande : valeurs `empreinte` dans `postes.json`, tableau JSON de 1 à 20
+   chaînes uniques, puis
    `node outils/stipack/autorisation-labo3.mjs signer postes.json /chemin/prive/privee.pem autorisation.json`.
+   Ne pas confondre ces empreintes de poste avec le SHA-256 du paquet.
 
 La clé privée doit rester secrète et sauvegardée par l'administrateur. Seule la clé
 publique sera intégrée au futur exécutable ; ne pas accepter une clé publique
@@ -73,13 +86,23 @@ refuserait aussi ; `--accepter-volume-leger` permet d'assumer ce choix.
 ## Étapes restantes avant diffusion
 
 - Compiler avec la clé publique de production : workflow « Windows Labo3 » →
-  *Run workflow* → coller la clé publique PEM, ou `compiler.ps1 -Tester` sur un
-  poste Windows avec SDK .NET 8. Noter le SHA-256 de l'exécutable.
+  *Run workflow* → coller la clé publique dans `cle_publique` → **cocher
+  `publier`** pour créer la release `labo3-windows` → *Run workflow*. Le lien du
+  workflow est dans le panneau du tableau de bord ; ce déclenchement exige votre
+  compte GitHub, le panneau ne manipule aucun jeton. L'artefact est nommé
+  `STI-v2.0-Labo3-cle-<12 premiers caractères du SHA-256 de la clé>` : comparez-les
+  au SHA-256 affiché par le panneau pour être certain que votre clé est embarquée.
+  Alternative sans GitHub : `compiler.ps1 -ClePublique … -Tester` sur un poste
+  Windows avec SDK .NET 8. Noter le SHA-256 de l'exécutable.
 - Tester sur un poste réel du laboratoire : installation depuis USB, poste non
   autorisé refusé, réseau coupé, vidéo lourde, PDF, fermeture/réouverture,
   mise à jour au-dessus d'une version existante.
-- Publier l'exécutable dans une release GitHub et activer le lien de téléchargement
-  du tableau de bord, encore désactivé.
+- Une fois la release `labo3-windows` créée, le panneau du tableau de bord active
+  seul son lien de téléchargement (bouton « Vérifier la release ») et affiche la
+  version, la date, la taille et le SHA-256 à comparer. Tant que la release
+  n'existe pas, le lien reste désactivé et la raison exacte est affichée.
+  La release est publique : n'y joignez jamais la clé privée ni une autorisation
+  signée.
 - Préparer la dernière version sur l'ordinateur connecté, figée à un commit unique,
   puis installer et mettre à jour les 20 postes depuis USB sans connexion.
 - Rappeler aux utilisateurs que les services Supabase (progressions synchronisées,
