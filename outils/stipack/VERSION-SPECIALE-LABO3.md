@@ -42,8 +42,8 @@ ne protège pas contre la modification de l'exécutable par un administrateur lo
   (aucune clé lue depuis le support USB), à l'installation, au lancement et avant
   chaque document servi. 20 postes maximum.
 - Extraction d'un `.stipack` complet (`STI-STIPACK/1`, dispositions `plateforme/` et
-  racine) avec SHA-256 par fichier, refus des chemins dangereux, liens, doublons de
-  casse et fichiers non annoncés, nettoyage en cas d'échec.
+  racine) avec SHA-256 par fichier, refus des chemins dangereux, liens, fichiers non
+  annoncés et volumes non complets, nettoyage en cas d'échec.
 - Installation par version dans `%LocalAppData%\STI-Labo3\versions` : l'ancienne
   version est conservée, le raccourci du Bureau n'est remplacé qu'après réussite.
   Aucun privilège administrateur requis.
@@ -51,6 +51,24 @@ ne protège pas contre la modification de l'exécutable par un administrateur lo
   `no-store`, CSP restrictive, `admin.html`, `portail.html` et `sw.js` bloqués,
   service workers désactivés, session locale injectée pour `acces.js`. Fermer la
   fenêtre arrête le serveur.
+
+## Doublons de casse connus (3 paires)
+
+Le dépôt contient `cours/PHP-recap.html` **et** `cours/php-recap.html`, ainsi que
+`projets/sti0/Sondage.html` / `sondage.html` et `projets/sti0/Statistiques.html` /
+`statistiques.html` : des fichiers distincts que NTFS ne peut pas stocker dans le
+même dossier.
+
+L'installateur conserve le premier annoncé dans le manifeste, ignore les autres, et
+écrit la liste dans `doublons-ignores.txt` du dossier de version. Les deux
+orthographes ouvrent donc le fichier conservé : la navigation fonctionne, seule la
+variante servie peut différer de quelques lignes (description meta, scripts
+`acces.js`/`config.js` présents dans les variantes minuscules). Lever toute
+ambiguïté demanderait de renommer ou supprimer une variante **dans le dépôt** :
+décision qui vous appartient, la plateforme n'est pas modifiée ici.
+
+`preparer-disque.mjs` refuse par ailleurs `--volume leger`, que l'installateur
+refuserait aussi ; `--accepter-volume-leger` permet d'assumer ce choix.
 
 ## Étapes restantes avant diffusion
 

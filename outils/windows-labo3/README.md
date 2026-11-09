@@ -15,10 +15,12 @@ de l'ancien installateur v316. Nom et logo officiels embarqués depuis `assets/i
    dispositions `plateforme/` et racine) vers
    `%LocalAppData%\STI-Labo3\versions\<horodatage>-<guid>\plateforme`, avec
    vérification SHA-256 de chaque fichier, refus des chemins dangereux, des liens,
-   des doublons de casse et des fichiers non annoncés. L'autorisation est recopiée
+   des fichiers non annoncés et des volumes non complets. L'autorisation est recopiée
    puis recontrôlée. Le raccourci du Bureau n'est remplacé qu'après réussite ;
    en cas d'échec la destination partielle est supprimée et l'ancienne version
    conservée. Aucun privilège administrateur requis (`asInvoker`).
+   Les doublons de casse du dépôt réel sont ignorés de façon déterministe et tracés
+   (`doublons-ignores.txt`) — voir ci-dessous.
 3. **Exécution locale** — serveur Kestrel sur la boucle locale uniquement
    (`127.0.0.1`, ports essayés 18763 à 18767 puis port libre choisi par le système :
    un poste qui occupe déjà le premier port n'empêche pas l'ouverture), cookie de
@@ -29,6 +31,30 @@ de l'ancien installateur v316. Nom et logo officiels embarqués depuis `assets/i
    (`__STI_NATIVE_AUTHENTICATED_V316`, `sti-session-cache`, `sti-labo3-permanent`)
    est injectée dans chaque document, après recontrôle de l'autorisation. Fermer la
    fenêtre arrête le serveur.
+
+### Doublons de casse du dépôt réel
+
+Le dépôt contient trois paires de fichiers dont le chemin ne diffère que par la
+casse, avec des contenus distincts (variante principale / variante de travail) :
+
+| conservé (premier annoncé) | ignoré |
+|---|---|
+| `cours/PHP-recap.html` | `cours/php-recap.html` |
+| `projets/sti0/Sondage.html` | `projets/sti0/sondage.html` |
+| `projets/sti0/Statistiques.html` | `projets/sti0/statistiques.html` |
+
+NTFS ne peut pas les stocker simultanément. L'installateur conserve le **premier
+fichier annoncé dans le manifeste**, ignore les suivants, les signale dans le
+journal et en écrit la liste dans `doublons-ignores.txt` à côté de
+`autorisation-labo3.json`. Le système de fichiers étant insensible à la casse, les
+deux orthographes ouvrent le fichier conservé : la navigation fonctionne, seule la
+variante servie peut différer de quelques lignes. Refuser tout le paquet aurait
+rendu l'installateur inutilisable avec le dépôt réel.
+
+Un même nom annoncé **deux fois au caractère près** reste en revanche refusé :
+c'est une archive ambiguë, pas un doublon de casse. Supprimer toute ambiguïté de
+casse dans le dépôt reste possible, mais c'est une modification de la plateforme :
+elle n'est pas faite ici.
 
 ## Compilation
 
