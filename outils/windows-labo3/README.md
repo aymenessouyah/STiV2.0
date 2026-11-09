@@ -56,6 +56,15 @@ sans cookie, injection de session, blocage admin/portail, lecture vidéo partiel
 (`preparer-fixture.mjs`) génère une clé Ed25519 jetable et une autorisation pour le
 `MachineGuid` de la machine de test.
 
+`paquet-fixture.mjs` fabrique en plus un **vrai** `.stipack` avec le générateur du
+tableau de bord (`assets/js/stipack.js`, chargé dans le contexte Node courant) à
+partir de fichiers réels du dépôt, dans les deux dispositions. La suite Windows
+extrait ces paquets et sert leur `index.html` : le contrat de format est donc
+vérifié contre ce que l'administrateur fabriquera réellement. Si le schéma du
+manifeste change, la suite casse ici plutôt qu'en salle. (Un contexte VM séparé
+casserait les `instanceof Uint8Array` du générateur, qui écrirait des listes
+d'octets à la place du contenu.)
+
 `.github/workflows/windows-labo3.yml` exécute cette suite sur un runner
 `windows-latest` et publie un binaire de contrôle. **Ce binaire n'est pas
 distribuable** : il embarque une clé de test jetable, pas la clé de production.
