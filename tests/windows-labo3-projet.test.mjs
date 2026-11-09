@@ -63,10 +63,17 @@ test('robustesse en salle : port de repli, purge des versions, marge disque', ()
   assert.match(deploiement, /catch \(IOException\)/);
   assert.match(deploiement, /EspaceSuffisant/);
   assert.match(lire('outils/windows-labo3/PackageInstaller.cs'), /Espace insuffisant sur/);
+  // Le dépôt réel contient des fichiers qui ne diffèrent que par la casse : ils ne
+  // sont ni tus ni refusés en bloc, mais ignorés de façon déterministe et rapportés.
+  const installeur = lire('outils/windows-labo3/PackageInstaller.cs');
+  assert.match(installeur, /DoublonsIgnores/, 'les doublons de casse ignorés sont rapportés');
+  assert.match(installeur, /Doublon de casse ignoré/);
+  assert.match(lire('outils/windows-labo3/Deployment.cs'), /doublons-ignores\.txt/, 'trace écrite à côté de l’autorisation');
 });
 test('validation Windows réelle outillée : suite .NET et workflow', () => {
   const suite = lire('outils/windows-labo3-tests/Program.cs');
-  for (const attendu of ['Authorization.Check', 'PackageInstaller.ExtractAsync', 'LocalRuntime.StartAsync', '206', 'refus.json', 'NettoyerVersions', 'EspaceSuffisant', 'PortsEssayes'])
+  for (const attendu of ['Authorization.Check', 'PackageInstaller.ExtractAsync', 'LocalRuntime.StartAsync', '206', 'refus.json', 'NettoyerVersions', 'EspaceSuffisant', 'PortsEssayes',
+    'ArchiveMulti', 'Doublon ignoré rapporté', 'Le premier annoncé est conservé', 'même nom annoncé deux fois', '--volume complet'])
     assert.ok(suite.includes(attendu), 'contrôle manquant : ' + attendu);
   const workflow = lire('.github/workflows/windows-labo3.yml');
   assert.match(workflow, /runs-on: windows-latest/);

@@ -14,7 +14,8 @@
 
   Les fabrications se font dans un dossier temporaire, avec un seuil minuscule,
   pour rester rapides : ce sont la composition et les contrôles qui sont testés,
-  pas le poids du média.
+  pas le poids du média. Un paquet allégé étant refusé par l'installateur Labo 3,
+  ces appels passent --accepter-volume-leger ; le refus lui-même a son propre test.
 */
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -83,7 +84,7 @@ test('média : dossier complet, procédure et vérificateur, paquet du commit co
     const media = join(dossier, 'media');
     const faux = fauxInstallateur(dossier);
     const { code, sortie } = lancer([
-      '--volume', 'leger', '--seuil-mo', '0.2',
+      '--volume', 'leger', '--seuil-mo', '0.2', '--accepter-volume-leger',
       '--sortie', media,
       '--installeur', faux.exe,
       '--empreinte-attendue', sha256(faux.exe),
@@ -159,7 +160,7 @@ test('média : empreintes.txt couvre tous les fichiers et le contrôle passe', (
     const media = join(dossier, 'media');
     const faux = fauxInstallateur(dossier);
     const { code } = lancer([
-      '--volume', 'leger', '--seuil-mo', '0.2',
+      '--volume', 'leger', '--seuil-mo', '0.2', '--accepter-volume-leger',
       '--sortie', media,
       '--installeur', faux.exe,
       '--accepter-installeur-inconnu',
@@ -191,7 +192,7 @@ test('média : un fichier abîmé est signalé et le contrôle échoue', () => {
     const media = join(dossier, 'media');
     const faux = fauxInstallateur(dossier);
     lancer([
-      '--volume', 'leger', '--seuil-mo', '0.2',
+      '--volume', 'leger', '--seuil-mo', '0.2', '--accepter-volume-leger',
       '--sortie', media,
       '--installeur', faux.exe,
       '--accepter-installeur-inconnu',
@@ -223,7 +224,7 @@ test('média : installateur non contrôlé refusé, empreinte fausse refusée, f
   try {
     const faux = fauxInstallateur(dossier);
     const refus = lancer([
-      '--volume', 'leger', '--seuil-mo', '0.2',
+      '--volume', 'leger', '--seuil-mo', '0.2', '--accepter-volume-leger',
       '--sortie', join(dossier, 'refus'),
       '--installeur', faux.exe
     ]);
@@ -232,7 +233,7 @@ test('média : installateur non contrôlé refusé, empreinte fausse refusée, f
     assert.match(refus.sortie, /--empreinte-attendue/);
 
     const mauvaise = lancer([
-      '--volume', 'leger', '--seuil-mo', '0.2',
+      '--volume', 'leger', '--seuil-mo', '0.2', '--accepter-volume-leger',
       '--sortie', join(dossier, 'fausse'),
       '--installeur', faux.exe,
       '--empreinte-attendue', 'a'.repeat(64)
@@ -244,7 +245,7 @@ test('média : installateur non contrôlé refusé, empreinte fausse refusée, f
     const pasExe = join(dossier, 'imposteur.exe');
     writeFileSync(pasExe, 'ceci n\'est pas un exécutable\n');
     const refusExe = lancer([
-      '--volume', 'leger', '--seuil-mo', '0.2',
+      '--volume', 'leger', '--seuil-mo', '0.2', '--accepter-volume-leger',
       '--sortie', join(dossier, 'pas-exe'),
       '--installeur', pasExe,
       '--accepter-installeur-inconnu'
@@ -269,7 +270,7 @@ test('média : autorisation malformée refusée, clé privée jamais copiée', (
     const mauvaise = join(dossier, 'autorisation-labo3.json');
     writeFileSync(mauvaise, JSON.stringify({ algorithme: 'Ed25519', donnees: 'e30=', signature: 'eA==' }));
     const refus = lancer([
-      '--volume', 'leger', '--seuil-mo', '0.2',
+      '--volume', 'leger', '--seuil-mo', '0.2', '--accepter-volume-leger',
       '--sortie', media,
       '--autorisation', mauvaise
     ]);
@@ -295,7 +296,7 @@ test('média : une archive ZIP de release est décompressée et l’EXE déposé
     const media = join(dossier, 'media');
     const faux = fauxInstallateur(dossier);
     const { code, sortie } = lancer([
-      '--volume', 'leger', '--seuil-mo', '0.2',
+      '--volume', 'leger', '--seuil-mo', '0.2', '--accepter-volume-leger',
       '--sortie', media,
       '--installeur', faux.zip,
       '--accepter-installeur-inconnu'
@@ -314,7 +315,7 @@ test('média : sans installateur, le dossier est préparé et le manque est anno
   const dossier = dossierTemporaire();
   try {
     const media = join(dossier, 'media');
-    const { code, sortie } = lancer(['--volume', 'leger', '--seuil-mo', '0.2', '--sortie', media]);
+    const { code, sortie } = lancer(['--volume', 'leger', '--seuil-mo', '0.2', '--accepter-volume-leger', '--sortie', media]);
     assert.equal(code, 0, sortie);
     assert.match(sortie, /Média incomplet/);
     assert.match(sortie, /STI-Labo3-Installation\.exe — compilé avec votre clé publique/);
@@ -329,12 +330,32 @@ test('média : le paquet du média est relu par le vérificateur du dépôt', ()
   const dossier = dossierTemporaire();
   try {
     const media = join(dossier, 'media');
-    lancer(['--volume', 'leger', '--seuil-mo', '0.2', '--sortie', media]);
+    lancer(['--volume', 'leger', '--seuil-mo', '0.2', '--sortie', media, '--accepter-volume-leger']);
     const sortie = execFileSync('node', ['outils/stipack/construire-stipack.mjs', '--verifier', join(media, 'STI-Labo3-Plateforme.stipack')], {
       cwd: root, encoding: 'utf8'
     });
     assert.match(sortie, /0 anomalie/);
     assert.match(sortie, new RegExp('commit ' + execFileSync('git', ['rev-parse', '--short=8', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim()));
+  } finally {
+    rmSync(dossier, { recursive: true, force: true });
+  }
+});
+
+/* L'installateur « STI v2.0 version spéciale Labo 3 » n'installe que des paquets
+   complets : préparer un support allégé produirait une clé refusée par les 20
+   postes. Le refus doit tomber avant toute écriture, et nommer l'échappatoire. */
+test('média : un volume allégé est refusé, car l’installateur exige un paquet complet', () => {
+  const dossier = dossierTemporaire();
+  try {
+    const refus = lancer(['--volume', 'leger', '--seuil-mo', '0.2', '--sortie', join(dossier, 'media')]);
+    assert.notEqual(refus.code, 0, 'un volume allégé ne doit pas passer inaperçu');
+    assert.match(refus.sortie, /n'installe que des paquets complets/);
+    assert.match(refus.sortie, /--accepter-volume-leger/, 'l’échappatoire est nommée');
+    assert.equal(readdirSync(dossier).length, 0, 'rien n’a été écrit sur le support');
+
+    const assume = lancer(['--volume', 'leger', '--seuil-mo', '0.2', '--sortie', join(dossier, 'media'), '--accepter-volume-leger']);
+    assert.equal(assume.code, 0, assume.sortie);
+    assert.match(assume.sortie, /volume leger/);
   } finally {
     rmSync(dossier, { recursive: true, force: true });
   }

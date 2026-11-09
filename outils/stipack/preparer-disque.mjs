@@ -31,7 +31,8 @@
  *   node outils/stipack/preparer-disque.mjs --sortie /media/USB/STI-Labo3-20-postes \
  *        --installeur ~/Téléchargements/STI-Labo3-Installation.exe \
  *        --empreinte-attendue 9f2c… --autorisation ~/prive/autorisation-labo3.json
- *   node outils/stipack/preparer-disque.mjs --volume leger --seuil-mo 0.5   (média réduit)
+ *   node outils/stipack/preparer-disque.mjs --volume leger --seuil-mo 0.5 \
+ *        --accepter-volume-leger   (média réduit, refusé par l'installateur Labo 3)
  *   node outils/stipack/preparer-disque.mjs --verifier /media/USB/STI-Labo3-20-postes
  * ========================================================================== */
 
@@ -299,6 +300,16 @@ function construire() {
   const autorisation = argValeur('--autorisation', null);
   const empreinteAttendue = (argValeur('--empreinte-attendue', null) || '').trim().toLowerCase();
   const disposition = (argValeur('--disposition', 'plateforme') || 'plateforme').toLowerCase();
+
+  /* L'installateur Windows n'installe que des paquets complets : préparer un support
+     allégé produirait une clé que les 20 postes refuseraient. Le refus tombe avant
+     toute écriture sur le support ; l'échappatoire est explicite. */
+  if (volume !== 'complet' && !process.argv.includes('--accepter-volume-leger')) {
+    throw new Error(
+      `--volume ${volume} refusé : l'installateur « STI v2.0 version spéciale Labo 3 » n'installe que des paquets complets.\n` +
+      '  Refaites le support avec --volume complet (défaut), ou assumez l\'incompatibilité avec --accepter-volume-leger.'
+    );
+  }
 
   fs.mkdirSync(sortie, { recursive: true });
   process.stdout.write(`\n💾 Média d’installation — ${sortie}\n`);
