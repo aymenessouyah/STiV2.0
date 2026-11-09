@@ -2587,6 +2587,36 @@
         </div>
       </details>
     </div>
+    <div class="stipack-bloc" id="bloc-labo3-support" aria-labelledby="labo3-titre">
+      <h3 id="labo3-titre">💼 Préparer le support spécial Labo3 — 20 postes maximum</h3>
+      <p><strong>En construction : aucun installateur spécial Labo3 n’est encore disponible.</strong>
+        L’EXE v316 n’est pas compatible avec le paquet non chiffré ci-dessous. Ne pas utiliser ce support comme une installation prête.</p>
+      <ol>
+        <li><strong>Relever les postes hors ligne.</strong>
+          <a href="outils/stipack/relever-poste-labo3.ps1" download="relever-poste-labo3.ps1">Télécharger l’outil Windows de relevé</a>.
+          L’exécuter sur chaque poste et conserver les fichiers JSON distincts.</li>
+        <li><strong>Préparer l’autorisation signée.</strong> La clé privée doit être créée une seule fois et conservée par l’administrateur, jamais sur le support distribué.
+          <a href="outils/stipack/VERSION-SPECIALE-LABO3.md" download> Télécharger le guide de préparation et des clés</a>.
+          <div class="stipack-commandes">
+            <label for="labo3-postes">Relevés des postes (1 à 20 JSON)
+              <input type="file" id="labo3-postes" accept=".json" multiple>
+            </label>
+            <label for="labo3-cle">Clé privée Ed25519 existante (PEM, traitement local uniquement)
+              <input type="file" id="labo3-cle" accept=".pem">
+            </label>
+            <button type="button" class="btn-outil" id="labo3-signer">Télécharger l’autorisation signée</button>
+          </div>
+          <p id="labo3-etat" role="status" aria-live="polite">Aucune clé n’est stockée par ce panneau ni envoyée au serveur. Aucun mot de passe Labo3 n’est nécessaire.</p>
+        </li>
+        <li><strong>Créer le paquet de la dernière mise à jour.</strong>
+          Utiliser <a href="#bloc-stipack">Nouveau stipack</a> ci-dessous avec « Tout le site ».
+          Les empreintes des fichiers sont incluses ; elles ne remplacent pas l’autorisation des postes.</li>
+        <li><strong>Installateur Windows spécial Labo3 :</strong>
+          <button type="button" class="btn-outil" disabled>Indisponible — développement nécessaire</button>
+          Il devra vérifier l’autorisation à l’installation et à chaque lancement, sans portail ni connexion.</li>
+      </ol>
+      <p class="aide-windows-note">À distribuer : installateur compatible, paquet et autorisation signée. Ne jamais distribuer la clé privée. Une signature autorise les postes ; ce n’est pas un fichier de chiffrement du paquet.</p>
+    </div>
     <div class="stipack-bloc" id="bloc-stipack">
       <div class="stipack-entete">
         <div>
@@ -5194,6 +5224,7 @@
 <script src="assets/js/sante.js?v=471" defer></script>
   <script src="assets/js/stipack.js?v=616" defer></script>
   <script src="assets/js/admin-stipack.js?v=616" defer></script>
+  <script src="assets/js/admin-labo3.js?v=1" defer></script>
 <!-- v606 : bouton du ruban « Services ». Il est placé hors écran tant que le
      ruban ne l'a pas adopté ; ensuite, la feuille de style de l'administration le
      remet dans le flux (position: static !important) avec les autres services. -->
