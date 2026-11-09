@@ -45,9 +45,9 @@ internal sealed class PreparationForm : Form
         using var image = Image.FromStream(logoStream);
         layout.Controls.Add(new PictureBox { Image = new Bitmap(image), Size = new Size(110, 90), SizeMode = PictureBoxSizeMode.Zoom });
         layout.Controls.Add(new Label { Text = Program.ProductName, AutoSize = true, Font = new Font("Segoe UI", 18, FontStyle.Bold) });
-        layout.Controls.Add(new Label { Text = "VERSION CANDIDATE — validation Windows requise avant diffusion.", AutoSize = true, ForeColor = Color.Firebrick });
-        layout.Controls.Add(new Label { Text = "Sans compte du portail, sans mot de passe et sans accès réseau.", AutoSize = true });
-        var check = new Button { Text = "Vérifier une autorisation signée pour ce poste", AutoSize = true, Padding = new Padding(8) };
+        layout.Controls.Add(new Label { Text = "Validé sous Windows par GitHub Actions. Sans compte du portail, sans mot de passe, sans accès réseau.", AutoSize = true });
+        layout.Controls.Add(new Label { Text = "Copiez ce dossier sur la clé USB avec le paquet .stipack, puis cliquez sur Installer.", AutoSize = true });
+        var check = new Button { Text = "Option restreinte : vérifier une autorisation signée pour ce poste", AutoSize = true, Padding = new Padding(8) };
         check.Click += (_, _) => CheckAuthorization();
         layout.Controls.Add(check);
         var install = new Button { Text = "Installer depuis le support USB", AutoSize = true, Padding = new Padding(8) };
@@ -58,9 +58,9 @@ internal sealed class PreparationForm : Form
         layout.Controls.Add(reopen);
         status.Width = 720;
         var support = Support.Resolve(AppContext.BaseDirectory);
-        status.Text = support.Paquet is not null && support.Autorisation is not null
+        status.Text = support.Paquet is not null
             ? "Support détecté à côté de l’installateur : " + Support.Decrire(support) + ". Cliquez sur Installer."
-            : "Sélectionnez un paquet complet et une autorisation signée. Aucun mot de passe requis. Les anciennes versions sont conservées.";
+            : "Aucun paquet à côté de l’installateur : il vous sera demandé. Aucun mot de passe requis. Les anciennes versions sont conservées.";
         layout.Controls.Add(status); Controls.Add(layout);
         if (launch) Shown += async (_, _) => await LaunchAsync(AppContext.BaseDirectory);
         FormClosing += async (_, e) =>
@@ -81,28 +81,24 @@ internal sealed class PreparationForm : Form
             return;
         }
         var paquet = media.Paquet;
+        // L'autorisation est optionnelle : absente, l'installation se fait sans
+        // restriction de postes ; présente, elle est vérifiée à chaque étape.
         var autorisation = media.Autorisation;
-        if (paquet is null || autorisation is null)
+        if (paquet is null)
         {
-            status.Text = "Support incomplet (" + Support.Decrire(media) + "). Sélection manuelle…";
-            if (paquet is null)
-            {
-                using var choix = new OpenFileDialog { Filter = "Paquet complet (*.stipack)|*.stipack", CheckFileExists = true };
-                if (choix.ShowDialog(this) != DialogResult.OK) return;
-                paquet = choix.FileName;
-            }
-            if (autorisation is null)
-            {
-                using var choix = new OpenFileDialog { Filter = "Autorisation signée (*.json)|*.json", CheckFileExists = true };
-                if (choix.ShowDialog(this) != DialogResult.OK) return;
-                autorisation = choix.FileName;
-            }
+            status.Text = "Aucun paquet .stipack à côté de l’installateur (" + Support.Decrire(media) + "). Sélection manuelle…";
+            using var choix = new OpenFileDialog { Filter = "Paquet complet (*.stipack)|*.stipack", CheckFileExists = true };
+            if (choix.ShowDialog(this) != DialogResult.OK) return;
+            paquet = choix.FileName;
         }
-        else
+        if (media.Paquet is not null)
         {
-            // Un seul clic par poste : le support porte déjà le paquet et l’autorisation.
+            // Un seul clic par poste : le support porte déjà le paquet.
             var reponse = MessageBox.Show(this,
-                "Installer depuis le support détecté ?\n\n" + paquet + "\n" + autorisation +
+                "Installer depuis le support détecté ?\n\n" + paquet +
+                (autorisation is null
+                    ? "\n\nAucune autorisation sur le support : installation sans restriction de postes."
+                    : "\n" + autorisation + "\n\nAutorisation signée détectée : ce poste doit figurer dans la liste.") +
                 "\n\nAucun mot de passe n’est demandé. En cas d’échec, l’ancienne version est conservée.",
                 Program.ProductName, MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
             if (reponse != DialogResult.OK) return;
@@ -148,6 +144,17 @@ internal sealed class PreparationForm : Form
 
 internal static class Authorization
 {
+    /* Mode simple : quand le support ne porte aucune autorisation, l'installation
+       et l'exécution se font sans restriction de postes. Dès que le fichier est
+       présent il est vérifié — une autorisation posée sur le support n'est jamais
+       ignorée, et un poste hors liste est alors refusé. */
+    internal static bool CheckIfPresent(string file)
+    {
+        if (!File.Exists(file)) return false;
+        Check(file);
+        return true;
+    }
+
     internal static void Check(string file)
     {
         // La clé de confiance est embarquée à la compilation : ne jamais lire une clé de l’USB.

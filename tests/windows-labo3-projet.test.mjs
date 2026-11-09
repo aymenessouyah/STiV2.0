@@ -110,3 +110,47 @@ test('scripts PowerShell : aucun guillemet typographique (casse l’analyse)', (
     assert.equal(ouvrantes, fermantes, fichier + ' : accolades déséquilibrées');
   }
 });
+
+/* Le laboratoire a retenu le parcours simple : copier, double-cliquer, installer.
+   L'autorisation signée reste possible, mais ne doit jamais être exigée par
+   défaut — et ne doit jamais être ignorée quand elle est présente. */
+test('mode simple : aucune autorisation exigée, restriction conservée en option', () => {
+  const programme = lire('outils/windows-labo3/Program.cs');
+  const runtime = lire('outils/windows-labo3/LocalRuntime.cs');
+  const deploiement = lire('outils/windows-labo3/Deployment.cs');
+  assert.match(programme, /internal static bool CheckIfPresent\(string file\)/);
+  assert.match(programme, /if \(!File\.Exists\(file\)\) return false;/);
+  assert.match(programme, /Check\(file\);\n        return true;/, 'un fichier présent est vraiment vérifié');
+  assert.equal((runtime.match(/Authorization\.CheckIfPresent/g) || []).length, 2,
+    'démarrage et chaque document : contrôle conservé, mais conditionnel');
+  assert.doesNotMatch(runtime, /Authorization\.Check\(/, 'plus aucun contrôle inconditionnel à l’exécution');
+  assert.match(deploiement, /InstallAsync\(string package, string\? authorization/);
+  assert.match(deploiement, /if \(authorization is not null\) Authorization\.Check\(authorization\)/);
+  // Le parcours simple ne doit plus ouvrir de sélecteur pour une autorisation.
+  assert.doesNotMatch(programme, /Filter = "Autorisation signée/);
+  const suite = lire('outils/windows-labo3-tests/Program.cs');
+  assert.match(suite, /Mode simple : plateforme servie sans autorisation/);
+  assert.match(suite, /une autorisation posée est quand même vérifiée/);
+});
+
+test('compilation : clé publique facultative, mode simple par défaut', () => {
+  const script = lire('outils/windows-labo3/compiler.ps1');
+  assert.doesNotMatch(script, /Mandatory = \$true\)\]\[string\]\$ClePublique/, 'la clé n’est plus obligatoire');
+  assert.match(script, /\$Restreint = -not \[string\]::IsNullOrWhiteSpace\(\$ClePublique\)/);
+  assert.match(script, /if \(\$Restreint\) \{ \$Arguments \+= "-p:Labo3PublicKey=\$ClePublique" \}/);
+  // Un binaire simple ne doit embarquer aucune clé : le contrôle final l’exige.
+  assert.match(script, /ABSENTE/);
+  assert.match(script, /Installateur simple attendu sans clé embarquée/);
+  assert.match(script, /ce binaire accepte tous les postes/, 'le risque du mode simple est écrit noir sur blanc');
+});
+
+test('publication : automatique sur main, après validation, clé facultative', () => {
+  const workflow = lire('.github/workflows/windows-labo3.yml');
+  assert.match(workflow, /needs: windows/, 'on ne publie que du code validé par la suite Windows');
+  assert.match(workflow, /github\.event_name == 'push' && github\.ref == 'refs\/heads\/main'/);
+  assert.match(workflow, /if: \$\{\{ github\.event\.inputs\.cle_publique != '' \}\}/, 'clé vide = compilation simple');
+  assert.match(workflow, /Mode simple : aucune cle embarquee/);
+  assert.match(workflow, /STI-v2\.0-Labo3-simple/);
+  assert.match(workflow, /gh release create labo3-windows/);
+  assert.match(workflow, /--clobber/, 'une republication remplace l’exécutable');
+});

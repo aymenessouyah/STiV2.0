@@ -2,19 +2,30 @@
 
 ## État réel
 
-Les autorisations signées, le relevé hors ligne des postes et l'installateur
-Windows « STI v2.0 version spéciale Labo 3 » (`outils/windows-labo3`) sont
-développés. La compilation, la suite de tests réels et la publication autonome
+Le parcours retenu pour le laboratoire est le **mode simple** : un installateur et
+un paquet sur la clé USB, aucun relevé de poste, aucune clé, aucune signature.
+L'installateur Windows « STI v2.0 version spéciale Labo 3 » (`outils/windows-labo3`)
+est développé ; la compilation, la suite de tests réels et la publication autonome
 ont **réussi sur un runner Windows GitHub Actions**.
 
-Ce qui manque encore pour diffuser : un binaire compilé avec la **clé publique de
-production** de l'administrateur, un test sur un poste réel du laboratoire, puis
-une release GitHub. Les binaires produits par le job de validation embarquent une
-clé de test jetable et refusent toutes les autorisations réelles : ne pas les
-diffuser. L'ancien v316 n'est ni corrigé ni compatible ; il ne doit plus être
-utilisé avec ces paquets.
+L'exécutable simple est **publié automatiquement par la CI** dans la release
+`labo3-windows` dès qu'une modification de l'outil Windows arrive sur `main` :
+plus aucun workflow à déclencher à la main, plus aucune clé à coller. Le lien de
+téléchargement du tableau de bord s'active seul quand la release existe.
 
-## Autoriser jusqu'à 20 postes
+Le job de validation embarque une clé de test jetable et ne publie rien : ne pas
+diffuser ses binaires. L'ancien v316 n'est ni corrigé ni compatible ; il ne doit
+plus être utilisé avec ces paquets.
+
+Reste avant diffusion : un test sur un poste réel du laboratoire (installation
+depuis USB, réseau coupé, vidéo lourde, fermeture/réouverture, mise à jour
+par-dessus une version existante).
+
+## Option : restreindre jusqu'à 20 postes
+
+Le mode simple accepte toute machine qui reçoit le support. Les étapes ci-dessous
+ne sont nécessaires que pour limiter l'installation à une liste signée, avec un
+exécutable compilé à part (voir `README.md`, section « Option »).
 
 1. Sur chaque poste Windows, exécuter `relever-poste-labo3.ps1` avec PowerShell,
    avec une sortie distincte par machine :
@@ -51,9 +62,12 @@ ne protège pas contre la modification de l'exécutable par un administrateur lo
 
 ## Ce que fait déjà l'installateur
 
-- Vérification Ed25519 hors ligne avec la clé publique **embarquée à la compilation**
-  (aucune clé lue depuis le support USB), à l'installation, au lancement et avant
-  chaque document servi. 20 postes maximum.
+- **Mode simple par défaut** : aucun fichier d'autorisation requis, aucune clé
+  embarquée, aucun relevé de poste. Le paquet placé à côté de l'exécutable suffit.
+- **Mode restreint** si une `autorisation-labo3.json` est installée : vérification
+  Ed25519 hors ligne avec la clé publique **embarquée à la compilation** (aucune clé
+  lue depuis le support USB), à l'installation, au lancement et avant chaque document
+  servi, 20 postes maximum. Une autorisation présente n'est jamais ignorée.
 - Extraction d'un `.stipack` complet (`STI-STIPACK/1`, dispositions `plateforme/` et
   racine) avec SHA-256 par fichier, refus des chemins dangereux, liens, fichiers non
   annoncés et volumes non complets, nettoyage en cas d'échec.
@@ -83,40 +97,40 @@ décision qui vous appartient, la plateforme n'est pas modifiée ici.
 `preparer-disque.mjs` refuse par ailleurs `--volume leger`, que l'installateur
 refuserait aussi ; `--accepter-volume-leger` permet d'assumer ce choix.
 
-## Étapes restantes avant diffusion
+## Étapes restantes avant diffusion (mode simple)
 
-- Compiler avec la clé publique de production : workflow « Windows Labo3 » →
-  *Run workflow* → coller la clé publique dans `cle_publique` → **cocher
-  `publier`** pour créer la release `labo3-windows` → *Run workflow*. Le lien du
-  workflow est dans le panneau du tableau de bord ; ce déclenchement exige votre
-  compte GitHub, le panneau ne manipule aucun jeton. L'artefact est nommé
-  `STI-v2.0-Labo3-cle-<12 premiers caractères du SHA-256 de la clé>` : comparez-les
-  au SHA-256 affiché par le panneau pour être certain que votre clé est embarquée.
-  Alternative sans GitHub : `compiler.ps1 -ClePublique … -Tester` sur un poste
-  Windows avec SDK .NET 8. Noter le SHA-256 de l'exécutable.
-- Tester sur un poste réel du laboratoire : installation depuis USB, poste non
-  autorisé refusé, réseau coupé, vidéo lourde, PDF, fermeture/réouverture,
-  mise à jour au-dessus d'une version existante.
-- Une fois la release `labo3-windows` créée, le panneau du tableau de bord active
-  seul son lien de téléchargement (bouton « Vérifier la release ») et affiche la
-  version, la date, la taille et le SHA-256 à comparer. Tant que la release
+- Attendre la première publication automatique : la CI crée la release
+  `labo3-windows` dès qu'une modification de `outils/windows-labo3/**` arrive sur
+  `main`. Le panneau du tableau de bord active alors seul son lien de
+  téléchargement et affiche version, date, taille et SHA-256. Tant que la release
   n'existe pas, le lien reste désactivé et la raison exacte est affichée.
-  La release est publique : n'y joignez jamais la clé privée ni une autorisation
-  signée.
-- Préparer la dernière version sur l'ordinateur connecté, figée à un commit unique,
-  puis installer et mettre à jour les 20 postes depuis USB sans connexion.
+- Télécharger l'exécutable, noter son SHA-256, et préparer la clé USB : soit
+  l'EXE + le `.stipack` dans le même dossier, soit `preparer-disque.mjs` pour
+  obtenir en plus la procédure imprimable, les empreintes et le vérificateur.
+- Tester sur un poste réel du laboratoire : installation depuis USB, réseau coupé,
+  vidéo lourde, PDF, fermeture/réouverture, mise à jour au-dessus d'une version
+  existante.
 - Rappeler aux utilisateurs que les services Supabase (progressions synchronisées,
   comptes, quiz en ligne) restent indisponibles hors ligne.
+- Se souvenir que le mode simple accepte **toute machine qui reçoit la clé** :
+  ne distribuer le support que dans le cadre du laboratoire. L'option restreinte
+  (relevé des postes, paire de clés, exécution manuelle du workflow avec
+  `cle_publique` et `publier`, média préparé avec `--autorisation`) est décrite
+  dans `README.md`.
 
 ## Panneau du tableau de bord
 
-La section « Préparer le support spécial Labo3 » regroupe le téléchargement du
-script de relevé, le guide des clés, la signature locale des relevés JSON et
-l'accès au générateur stipack. Sélectionner la clé PKCS#8 produite par l'outil
-`autorisation-labo3.mjs` : le navigateur signe avec Web Crypto Ed25519 en HTTPS.
-La clé n'est ni envoyée ni conservée dans le stockage du navigateur ; le champ
-fichier est vidé après l'opération. Un navigateur ne prenant pas en charge
-Ed25519 affiche une erreur : utiliser alors l'outil Node documenté plus haut.
+La section « STI v2.0 version spéciale Labo 3 — préparer le support » tient en
+**trois gestes** : télécharger l'installateur publié par la CI, créer le paquet
+avec le bloc « Nouveau stipack », copier les deux sur la clé USB. Aucun relevé de
+poste, aucune clé et aucune signature n'y sont demandés.
+
+Le parcours restreint est regroupé dans un volet replié (« Option : restreindre
+l'installation à 20 postes précis ») : script de relevé, création de la paire
+Ed25519 dans le navigateur, signature locale des relevés JSON, lien vers le
+workflow. La clé privée y est téléchargée immédiatement, jamais stockée dans le
+navigateur ni envoyée au réseau ; le champ fichier est vidé après l'opération. Un
+navigateur sans Ed25519 affiche une erreur et la commande `openssl` de repli.
 
 Le fichier téléchargé est `autorisation-labo3.json`, compatible avec le vérificateur
 Node **et** avec l'installateur Windows : mêmes empreintes, même schéma de signature.

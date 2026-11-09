@@ -8,26 +8,39 @@
  *   STI-Labo3-20-postes/
  *   ├── STI-Labo3-Installation.exe            l’installateur « version spéciale Labo 3 »
  *   ├── STI-Labo3-Plateforme.stipack          le paquet du dernier commit (complet)
- *   ├── autorisation-labo3.json               la liste signée des 20 postes autorisés
  *   ├── LISEZ-MOI-20-POSTES.txt               la procédure, poste par poste
  *   ├── empreintes.txt                        SHA-256 de chaque fichier du média
- *   └── verifier-media.ps1                    contrôle avant d’installer (un clic)
+ *   ├── verifier-media.cmd                    contrôle avant d’installer (double-clic)
+ *   └── autorisation-labo3.json               OPTIONNEL : restreint à 20 postes
  *
- * L’installateur détecte le paquet et l’autorisation placés à côté de lui : sur
- * chaque poste, il suffit d’ouvrir ce dossier, de lancer l’EXE et de confirmer.
- * Aucun mot de passe n’est demandé. Le contrôle des empreintes évite d’installer
- * depuis un média abîmé. WebView2 n’est plus requis : la plateforme s’ouvre dans
- * le navigateur du poste, servi par un serveur strictement local.
+ * L’installateur détecte le paquet placé à côté de lui : sur chaque poste, il
+ * suffit d’ouvrir ce dossier, de lancer l’EXE et de confirmer. Aucun mot de passe
+ * n’est demandé, aucune clé, aucun relevé d’empreinte de poste. Le contrôle des
+ * empreintes évite d’installer depuis un média abîmé. WebView2 n’est plus requis :
+ * la plateforme s’ouvre dans le navigateur du poste, servi par un serveur
+ * strictement local.
  *
- * L’exécutable n’est pas téléchargeable dans le dépôt : il est compilé avec la
- * clé PUBLIQUE de l’administrateur (workflow « Windows Labo3 » ou
- * outils/windows-labo3/compiler.ps1). Passer son SHA-256 via --empreinte-attendue
- * pour garantir que le binaire copié est bien celui qui a été produit.
+ * Deux modes, au choix :
+ *   simple (défaut)   aucun fichier d’autorisation : toute machine qui reçoit ce
+ *                     dossier peut installer. C’est le parcours « copier,
+ *                     double-cliquer, installer ».
+ *   restreint         --autorisation <fichier signé> : seuls les postes de la
+ *                     liste (20 maximum) sont acceptés, et l’exécutable doit
+ *                     avoir été compilé avec la clé publique correspondante.
+ *
+ * L’exécutable simple est publié automatiquement par la CI dans la release
+ * `labo3-windows` (lien de téléchargement dans le tableau de bord). Passer son
+ * SHA-256 via --empreinte-attendue pour garantir que le binaire copié est bien
+ * celui qui a été produit.
  *
  * Le paquet est fabriqué par outils/stipack/construire-stipack.mjs, donc il
  * décrit le dernier commit du dépôt (git ls-files sur HEAD).
  *
  * Exemples :
+ *   # mode simple (recommandé)
+ *   node outils/stipack/preparer-disque.mjs --sortie /media/USB/STI-Labo3-20-postes \
+ *        --installeur ~/Téléchargements/STI-Labo3-Installation.exe --empreinte-attendue 9f2c…
+ *   # mode restreint à 20 postes signés
  *   node outils/stipack/preparer-disque.mjs --sortie /media/USB/STI-Labo3-20-postes \
  *        --installeur ~/Téléchargements/STI-Labo3-Installation.exe \
  *        --empreinte-attendue 9f2c… --autorisation ~/prive/autorisation-labo3.json
@@ -139,6 +152,9 @@ function texteProcedure(infos) {
     `Fichiers    : ${infos.fichiers}`,
     `Contenu     : ${tailleLisible(infos.octetsDecompresses)} décompressés`,
     `Préparé le  : ${infos.prepareLe}`,
+    `Mode        : ${infos.restreint
+      ? `restreint — ${infos.postes} poste(s) autorisé(s) par signature`
+      : 'simple — aucune restriction, tout poste recevant ce dossier peut installer'}`,
     '',
     '──────────────────────────────────────────────────────────────',
     'CE QUE CONTIENT CE DOSSIER',
@@ -146,12 +162,17 @@ function texteProcedure(infos) {
     '',
     `  ${NOM_EXE}`,
     '      l’installateur « STI v2.0 version spéciale Labo 3 ». Il détecte le',
-    '      paquet et l’autorisation placés à côté de lui.',
+    '      paquet placé à côté de lui.',
     `  ${NOM_PAQUET}`,
     '      la plateforme complète, telle qu’au dernier commit.',
-    `  ${NOM_AUTORISATION}`,
-    '      la liste signée des postes autorisés (20 maximum). Sans elle,',
-    '      l’installateur refuse de continuer.',
+    ...(infos.restreint
+      ? [`  ${NOM_AUTORISATION}`,
+         '      la liste signée des postes autorisés (20 maximum). Sans elle,',
+         '      l’installateur refuse de continuer.']
+      : [`  ${NOM_AUTORISATION}  (absent : mode simple)`,
+         '      ce dossier n’impose aucune liste de postes. Pour restreindre à 20',
+         '      machines, régénérer le média avec --autorisation et un exécutable',
+         '      compilé avec la clé publique correspondante.']),
     '  empreintes.txt',
     '      l’empreinte SHA-256 de chaque fichier du dossier.',
     '  verifier-media.cmd',
@@ -174,12 +195,14 @@ function texteProcedure(infos) {
     '     → « Informations complémentaires » puis « Exécuter quand même »',
     '       si SmartScreen s’affiche (l’installateur n’est pas signé).',
     '',
-    '  4. Confirmer l’installation : le paquet et l’autorisation du dossier sont',
-    '     repris automatiquement. AUCUN mot de passe n’est demandé, aucune',
-    '     connexion au portail n’est nécessaire.',
-    '     → « Ce poste n’est pas autorisé pour le Labo 3 » signifie que son',
-    '       empreinte ne figure pas dans la liste signée : refaire un relevé',
-    '       et régénérer l’autorisation, pas réinstaller.',
+    '  4. Confirmer l’installation : le paquet du dossier est repris',
+    '     automatiquement. AUCUN mot de passe n’est demandé, aucune connexion au',
+    '     portail n’est nécessaire.',
+    ...(infos.restreint
+      ? ['     → « Ce poste n’est pas autorisé pour le Labo 3 » signifie que son',
+         '       empreinte ne figure pas dans la liste signée : refaire un relevé',
+         '       et régénérer l’autorisation, pas réinstaller.']
+      : []),
     '',
     '  5. Vérifier : la plateforme s’ouvre dans le navigateur, sans Internet.',
     '     Garder la fenêtre de l’application ouverte pendant la séance : elle',
@@ -197,8 +220,10 @@ function texteProcedure(infos) {
     '',
     '  Pour régénérer ce média avec la toute dernière version du site :',
     '    node outils/stipack/preparer-disque.mjs --sortie <dossier du disque> \\',
-    '      --installeur <STI-Labo3-Installation.exe> --empreinte-attendue <sha256> \\',
-    '      --autorisation <autorisation-labo3.json>',
+    '      --installeur <STI-Labo3-Installation.exe> --empreinte-attendue <sha256>',
+    ...(infos.restreint
+      ? ['      --autorisation <autorisation-labo3.json>']
+      : []),
     '',
     '──────────────────────────────────────────────────────────────',
     'CE QUE CE MEDIA NE FAIT PAS',
@@ -418,9 +443,10 @@ function construire() {
     process.stdout.write(`② Installateur : non fourni — déposez ${NOM_EXE} dans ce dossier\n`);
   }
 
-  /* 3. L’autorisation signée : obligatoire pour installer quoi que ce soit.
-        Contrôle de structure seulement — la signature, elle, est vérifiée par
-        l’exécutable avec la clé publique embarquée à la compilation. */
+  /* 3. L’autorisation signée : OPTIONNELLE. Absente, le média est en mode
+        simple et tout poste peut installer. Présente, elle restreint aux postes
+        listés — la signature est vérifiée par l’exécutable avec la clé publique
+        embarquée à la compilation. Contrôle de structure seulement ici. */
   let postesAutorises = null;
   if (autorisation) {
     const source = path.resolve(autorisation);
@@ -438,7 +464,8 @@ function construire() {
     process.stdout.write('   ⚠ La signature n’est pas vérifiée ici : seul l’exécutable compilé\n' +
       '     avec votre clé publique peut le faire. Ne jamais copier la clé privée.\n');
   } else {
-    process.stdout.write(`③ Autorisation : non fournie — ${NOM_AUTORISATION} doit être déposé dans ce dossier\n`);
+    process.stdout.write('③ Autorisation : aucune — mode simple, tous les postes acceptés\n' +
+      '   (pour restreindre à 20 machines : --autorisation <fichier signé>)\n');
   }
 
   /* 4. Procédure et vérificateur. */
@@ -452,7 +479,9 @@ function construire() {
     seuil: manifeste.seuilOctetsParFichier,
     fichiers: manifeste.contenu.fichiers,
     octetsDecompresses: manifeste.contenu.octetsDecompresses,
-    prepareLe
+    prepareLe,
+    restreint: Boolean(postesAutorises),
+    postes: postesAutorises
   }), 'utf8');
   fs.writeFileSync(path.join(sortie, NOM_VERIFIEUR), texteVerifieur(), 'utf8');
   fs.writeFileSync(path.join(sortie, NOM_LANCEUR), texteLanceur(), 'utf8');
@@ -475,22 +504,17 @@ function construire() {
     process.stdout.write(`  ${nom.padEnd(38)} ${tailleLisible(fs.statSync(path.join(sortie, nom)).size).padStart(9)}\n`);
   }
   process.stdout.write('─'.repeat(62) + '\n');
-  if (sansInstalleur || sansAutorisation) {
-    process.stdout.write('\n⚠ Média incomplet :\n');
-    if (sansInstalleur) {
-      process.stdout.write(`   • ${NOM_EXE} — compilé avec votre clé publique :\n` +
-        '     workflow « Windows Labo3 » (Run workflow) ou outils/windows-labo3/compiler.ps1.\n');
-    }
-    if (sansAutorisation) {
-      process.stdout.write(`   • ${NOM_AUTORISATION} — signée depuis le tableau de bord ou\n` +
-        '     outils/stipack/autorisation-labo3.mjs (20 postes maximum).\n');
-    }
-    process.stdout.write('   Sans ces deux fichiers, l’installation est impossible sur les postes.\n\n');
+  if (sansInstalleur) {
+    process.stdout.write('\n⚠ Média incomplet :\n' +
+      `   • ${NOM_EXE} — publié par la CI dans la release labo3-windows (lien de\n` +
+      '     téléchargement dans le tableau de bord), ou outils/windows-labo3/compiler.ps1.\n' +
+      '   Sans lui, l’installation est impossible sur les postes.\n\n');
   } else {
     process.stdout.write(
-      `\n✅ Média prêt : copier ce dossier sur le disque dur / la clé, une seule fois.\n` +
+      `\n✅ Média prêt (${sansAutorisation ? 'mode simple, sans restriction de postes' : `mode restreint, ${postesAutorises} poste(s) autorisé(s)`}) :\n` +
+      '   copier ce dossier sur le disque dur / la clé, une seule fois.\n' +
       `   Sur chaque poste : double-clic sur ${NOM_LANCEUR}, puis lancer ${nomInstalleur}\n` +
-      `   et confirmer. Aucun mot de passe. ${postesAutorises} poste(s) autorisé(s).\n\n`
+      '   et confirmer. Aucun mot de passe, aucune clé, aucun réseau.\n\n'
     );
   }
   return { sortie, fichiers, totalOctets, manifeste, sansInstalleur, sansAutorisation, postesAutorises };

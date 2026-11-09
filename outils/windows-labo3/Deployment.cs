@@ -35,9 +35,11 @@ internal static class Deployment
         }
     }
 
-    internal static async Task<string> InstallAsync(string package, string authorization, IProgress<string> progress)
+    /// `authorization` est optionnel : null installe sans restriction de postes.
+    internal static async Task<string> InstallAsync(string package, string? authorization, IProgress<string> progress)
     {
-        Authorization.Check(authorization);
+        if (authorization is not null) Authorization.Check(authorization);
+        else progress.Report("Aucune autorisation sur le support : installation sans restriction de postes.");
         var root = RacineVersions();
         Directory.CreateDirectory(root);
         var version = Path.Combine(root, DateTime.UtcNow.ToString("yyyyMMdd-HHmmss") + "-" + Guid.NewGuid().ToString("N"));
@@ -56,9 +58,12 @@ internal static class Deployment
                      .. extraction.DoublonsIgnores]);
                 progress.Report($"{extraction.DoublonsIgnores.Count} doublon(s) de casse ignoré(s) — voir doublons-ignores.txt");
             }
-            File.Copy(authorization, Path.Combine(version, "autorisation-labo3.json"));
-            // Empêche un changement de l'autorisation entre le premier contrôle et sa copie.
-            Authorization.Check(Path.Combine(version, "autorisation-labo3.json"));
+            if (authorization is not null)
+            {
+                File.Copy(authorization, Path.Combine(version, "autorisation-labo3.json"));
+                // Empêche un changement de l'autorisation entre le premier contrôle et sa copie.
+                Authorization.Check(Path.Combine(version, "autorisation-labo3.json"));
+            }
             File.Copy(Environment.ProcessPath!, Path.Combine(version, "STI-Labo3-Installation.exe"));
             // Le raccourci est remplacé seulement après extraction et validation complètes.
             CreateShortcut(version);

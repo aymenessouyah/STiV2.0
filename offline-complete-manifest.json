@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-09T15:36:15Z",
+  "generatedAt": "2026-11-09T17:13:57Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 786,
-  "totalBytes": 1145989255,
+  "totalBytes": 1145990931,
   "files": [
     {
       "path": "404.html",
@@ -67,8 +67,8 @@
     },
     {
       "path": "admin.html",
-      "bytes": 363586,
-      "gitSha": "e64c9cfd43fcc475780cb2045702e0997e5f585f"
+      "bytes": 365262,
+      "gitSha": "2b4f90cb2f2bc96c5bbec746ba09d51e46877c3f"
     },
     {
       "path": "assets/audio/cours-sti-ch1.mp3",

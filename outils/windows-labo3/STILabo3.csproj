@@ -9,9 +9,9 @@
     <AssemblyName>STI-Labo3-Installation</AssemblyName>
     <Product>STI v2.0 version spéciale Labo 3</Product>
     <Title>STI v2.0 version spéciale Labo 3</Title>
-    <Description>Installation hors ligne Labo 3 — version candidate</Description>
+    <Description>Installation hors ligne Labo 3 — copier, double-cliquer, installer</Description>
     <ApplicationIcon>../../assets/icons/STI_by_AE.ico</ApplicationIcon>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <!-- Publication autonome pilotée par compiler.ps1 : RID win-x64, autonome, fichier unique. -->
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>

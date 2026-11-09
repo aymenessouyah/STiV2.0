@@ -1,16 +1,18 @@
 name: Windows Labo3 — validation et publication de contrôle
 on:
   push:
-    branches: ['main', 'arena/c0c72e60-stiv2-0', 'arena/fca8f2b9-stiv2-0']
+    branches: ['main', 'arena/b74f6465-stiv2-0']
     paths: ['outils/windows-labo3/**', 'outils/windows-labo3-tests/**', 'outils/stipack/autorisation-labo3.mjs', '.github/workflows/windows-labo3.yml']
   pull_request:
     paths: ['outils/windows-labo3/**', 'outils/windows-labo3-tests/**', 'outils/stipack/autorisation-labo3.mjs', '.github/workflows/windows-labo3.yml']
   workflow_dispatch:
     inputs:
       cle_publique:
-        description: 'Clé PUBLIQUE Ed25519 (PEM SPKI), lignes séparées par \n. Jamais la clé privée.'
-        required: true
+        description: 'Optionnel. Clé PUBLIQUE Ed25519 (PEM SPKI), lignes séparées par \n. Vide = installateur simple, sans restriction de postes. Jamais la clé privée.'
+        required: false
         type: string
+        default: ''
+
       publier:
         description: 'Publier la release « labo3-windows » (active le lien du tableau de bord)'
         required: false
@@ -126,7 +128,10 @@ jobs:
   # Publication de production : uniquement sur demande manuelle, avec la clé
   # PUBLIQUE de l'administrateur. La clé privée ne doit jamais être saisie ici.
   publication:
-    if: github.event_name == 'workflow_dispatch'
+    # Sur main, la publication suit la validation : l'installateur simple de la
+    # release labo3-windows reste aligné sur le dépôt, sans geste de l'admin.
+    needs: windows
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: windows-latest
     timeout-minutes: 30
     permissions:
@@ -141,6 +146,7 @@ jobs:
           node-version: '22'
 
       - name: Reconstruire et vérifier la clé publique fournie
+        if: ${{ github.event.inputs.cle_publique != '' }}
         shell: pwsh
         env:
           LABO3_CLE_PUBLIQUE: ${{ github.event.inputs.cle_publique }}
@@ -151,12 +157,18 @@ jobs:
           $empreinte | Out-File -FilePath (Join-Path $env:RUNNER_TEMP 'cle.sha256') -Encoding ascii
           Write-Host "Cle publique validee, sha256 : $empreinte"
 
-      - name: Compiler l’installateur avec la clé de production
+      - name: Compiler l’installateur
         shell: pwsh
         run: |
           $cle = Join-Path $env:RUNNER_TEMP 'publique.pem'
           $sortie = Join-Path $env:RUNNER_TEMP 'publication'
-          .\outils\windows-labo3\compiler.ps1 -ClePublique $cle -Sortie $sortie
+          if (Test-Path -LiteralPath $cle) {
+            Write-Host 'Mode restreint : compilation avec la cle publique fournie.'
+            .\outils\windows-labo3\compiler.ps1 -ClePublique $cle -Sortie $sortie
+          } else {
+            Write-Host 'Mode simple : aucune cle embarquee, tous les postes acceptes.'
+            .\outils\windows-labo3\compiler.ps1 -Sortie $sortie
+          }
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Empreintes et notice de diffusion
@@ -169,37 +181,59 @@ jobs:
           }
           $lignes | Out-File -FilePath (Join-Path $sortie 'SHA256SUMS.txt') -Encoding ascii
           $commit = (git rev-parse HEAD).Trim()
-          $cle = (Get-Content -Raw (Join-Path $env:RUNNER_TEMP 'cle.sha256')).Trim()
-          $cle.Substring(0, 12) | Out-File -FilePath (Join-Path $env:RUNNER_TEMP 'cle.court') -Encoding ascii
           $date = (Get-Date).ToUniversalTime().ToString('o')
-          $notice = @(
-            'STI v2.0 version spéciale Labo 3',
-            "commit : $commit",
-            "clé publique embarquée (sha256) : $cle",
-            "généré le : $date",
-            '',
-            'Vérifiez que cette empreinte est bien celle de VOTRE clé publique de',
-            'production. Un binaire compilé avec une autre clé refuse toutes vos',
-            'autorisations signées.',
-            '',
-            'Avant diffusion : tester sur un poste autorisé ET sur un poste non autorisé,',
-            'réseau coupé. Ne jamais joindre la clé privée au support USB.'
-          ) -join "`r`n"
+          $fichierCle = Join-Path $env:RUNNER_TEMP 'cle.sha256'
+          if (Test-Path -LiteralPath $fichierCle) {
+            $cle = (Get-Content -Raw $fichierCle).Trim()
+            $cle.Substring(0, 12) | Out-File -FilePath (Join-Path $env:RUNNER_TEMP 'cle.court') -Encoding ascii
+            $notice = @(
+              'STI v2.0 version spéciale Labo 3 — installateur RESTREINT',
+              "commit : $commit",
+              "clé publique embarquée (sha256) : $cle",
+              "généré le : $date",
+              '',
+              'Vérifiez que cette empreinte est bien celle de VOTRE clé publique de',
+              'production. Un binaire compilé avec une autre clé refuse toutes vos',
+              'autorisations signées.',
+              '',
+              'Avant diffusion : tester sur un poste autorisé ET sur un poste non autorisé,',
+              'réseau coupé. Ne jamais joindre la clé privée au support USB.'
+            ) -join "`r`n"
+          } else {
+            'simple' | Out-File -FilePath (Join-Path $env:RUNNER_TEMP 'cle.court') -Encoding ascii
+            $notice = @(
+              'STI v2.0 version spéciale Labo 3 — installateur SIMPLE',
+              "commit : $commit",
+              "généré le : $date",
+              '',
+              'Aucune clé embarquée, aucune restriction de postes : toute machine qui',
+              'reçoit le support USB peut installer et ouvrir la plateforme. Aucun mot',
+              'de passe, aucun compte du portail, aucun accès réseau requis.',
+              '',
+              'Emploi : copier ce dossier sur la clé USB à côté du paquet .stipack,',
+              'puis exécuter STI-Labo3-Installation.exe sur chaque poste et cliquer',
+              'sur Installer. Vérifier SHA256SUMS.txt après téléchargement.',
+              '',
+              'Les services Supabase (progressions synchronisées, comptes, quiz en ligne)',
+              'restent indisponibles hors ligne.'
+            ) -join "`r`n"
+          }
           $notice | Out-File -FilePath (Join-Path $sortie 'LISEZ-MOI.txt') -Encoding utf8
           Get-Content (Join-Path $sortie 'SHA256SUMS.txt')
 
-      - name: Nommer l’artefact d’après l’empreinte de la clé embarquée
+      - name: Nommer l’artefact d’après le mode de compilation
         id: nom
         shell: pwsh
         run: |
           $court = (Get-Content -Raw (Join-Path $env:RUNNER_TEMP 'cle.court')).Trim()
-          "nom=STI-v2.0-Labo3-cle-$court" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          $nom = if ($court -eq 'simple') { 'STI-v2.0-Labo3-simple' } else { "STI-v2.0-Labo3-cle-$court" }
+          "nom=$nom" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
-      # Publication publique : l'exécutable ne fonctionne qu'avec une autorisation
-      # signée par la clé privée correspondante, et le tableau de bord ne propose le
+      # Publication : automatique sur main (installateur simple), ou sur demande
+      # explicite en déclenchement manuel. Le tableau de bord ne propose le
       # téléchargement que si SHA256SUMS.txt accompagne le binaire.
       - name: Publier la release labo3-windows
-        if: ${{ github.event.inputs.publier == 'true' }}
+        if: ${{ github.event_name == 'push' || github.event.inputs.publier == 'true' }}
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -223,5 +257,6 @@ jobs:
           if-no-files-found: error
 
 # Le job « windows » n'uploade rien : il embarque une clé de test jetable.
-# Seul le job « publication », déclenché manuellement avec la clé publique de
-# l'administrateur, produit un installateur diffusable.
+# Le job « publication » produit l'installateur diffusable : simple par défaut
+# (aucune clé, publié automatiquement sur main dans la release labo3-windows),
+# ou restreint si une clé publique est fournie en déclenchement manuel.
