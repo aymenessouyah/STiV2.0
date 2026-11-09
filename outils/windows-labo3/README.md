@@ -78,6 +78,12 @@ diffusable. Pour obtenir un installateur de production, deux chemins :
   (exécutable, `SHA256SUMS.txt`, notice). Le nom porte les 12 premiers caractères
   du SHA-256 de la clé embarquée : le vérifier avant diffusion. Déclencher ce
   workflow exige le droit `actions: write` sur le dépôt.
+  Cocher **`publier`** pour que le même run publie la release `labo3-windows`
+  (exécutable + `SHA256SUMS.txt`) : le tableau de bord détecte cette release et
+  active alors son lien de téléchargement, avec le SHA-256 affiché. Une release
+  existante est écrasée (`--clobber`). La release est publique : l'exécutable ne
+  fait rien sans autorisation signée par votre clé privée, mais ne publiez que le
+  binaire destiné au laboratoire.
 - **Poste Windows** — `.\outils\windows-labo3\compiler.ps1 -ClePublique publique.pem -Tester`.
 
 `verifier-cle-publique.mjs` refuse une clé privée, un PEM illisible ou un autre
