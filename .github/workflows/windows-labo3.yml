@@ -1,7 +1,7 @@
 name: Windows Labo3 — validation et publication de contrôle
 on:
   push:
-    branches: ['main', 'arena/c0c72e60-stiv2-0']
+    branches: ['main', 'arena/c0c72e60-stiv2-0', 'arena/fca8f2b9-stiv2-0']
     paths: ['outils/windows-labo3/**', 'outils/windows-labo3-tests/**', 'outils/stipack/autorisation-labo3.mjs', '.github/workflows/windows-labo3.yml']
   pull_request:
     paths: ['outils/windows-labo3/**', 'outils/windows-labo3-tests/**', 'outils/stipack/autorisation-labo3.mjs', '.github/workflows/windows-labo3.yml']
@@ -20,6 +20,30 @@ permissions:
   contents: read
   pull-requests: write
 jobs:
+  # Le panneau du tableau de bord (création des clés, détection de la release) et
+  # l'outillage de préparation sont vérifiés ici : la suite Windows ne les exerce pas.
+  node:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Tests Node du parcours Labo 3
+        run: |
+          node --test \
+            tests/labo3-cles-navigateur.test.mjs \
+            tests/labo3-admin.test.mjs \
+            tests/labo3-autorisation.test.mjs \
+            tests/labo3-cle-saisie.test.mjs \
+            tests/labo3-installateur-publie.test.mjs \
+            tests/labo3-paquet-fixture.test.mjs \
+            tests/windows-labo3-projet.test.mjs \
+            tests/stipack-admin-v616.test.mjs \
+            tests/stipack-media.test.mjs \
+            tests/fidelite-origine.test.mjs
+
   windows:
     runs-on: windows-latest
     timeout-minutes: 30
