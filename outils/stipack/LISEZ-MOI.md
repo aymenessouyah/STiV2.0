@@ -115,20 +115,31 @@ Options reconnues : `--volume leger|complet`, `--seuil-mo <n>`,
 
 ## Préparer le disque pour 20 postes (une seule fois)
 
+Le plus simple ne demande aucun outil : copier `STI-Labo3-Installation.exe` et le
+`.stipack` **dans le même dossier** de la clé. L'installateur détecte le paquet placé
+à côté de lui. La commande ci-dessous ajoute la procédure imprimable, les empreintes
+et le vérificateur à double-clic.
+
 ```bash
-# Média complet : tout le site + l'installateur + l'autorisation signée + la procédure
+# Média complet : tout le site + l'installateur + la procédure + les empreintes
+node outils/stipack/preparer-disque.mjs \
+  --sortie /media/USB/STI-Labo3-20-postes \
+  --installeur ~/Téléchargements/STI-Labo3-Installation.exe \
+  --empreinte-attendue 9f2c…b7
+
+# Même média, restreint à une liste signée de 20 postes (option)
 node outils/stipack/preparer-disque.mjs \
   --sortie /media/USB/STI-Labo3-20-postes \
   --installeur ~/Téléchargements/STI-Labo3-Installation.exe \
   --empreinte-attendue 9f2c…b7 \
   --autorisation ~/Administration/autorisation-labo3.json
 
-# Média réduit (fichiers jusqu'à 0,5 Mo), pour une clé de petite taille
-node outils/stipack/preparer-disque.mjs --volume leger --seuil-mo 0.5
-
 # Contrôler un média déjà copié
 node outils/stipack/preparer-disque.mjs --verifier /media/USB/STI-Labo3-20-postes
 ```
+
+`--volume leger` est refusé : l'installateur Labo 3 n'installe que des paquets
+complets (`--accepter-volume-leger` pour assumer l'incompatibilité).
 
 Le dossier produit :
 
@@ -136,28 +147,28 @@ Le dossier produit :
 STI-Labo3-20-postes/
 ├── STI-Labo3-Installation.exe            l’installateur (copié, ou extrait du ZIP)
 ├── STI-Labo3-Plateforme.stipack          le paquet du dernier commit
-├── autorisation-labo3.json               la liste signée des 20 postes autorisés
 ├── LISEZ-MOI-20-POSTES.txt               la procédure + tableau de suivi des 20 postes
 ├── empreintes.txt                        SHA-256 de chaque fichier du média
 ├── verifier-media.cmd                    double-clic : contrôle avant installation
-└── verifier-media.ps1                    le même contrôle, appelé par le .cmd
+├── verifier-media.ps1                    le même contrôle, appelé par le .cmd
+└── autorisation-labo3.json               OPTIONNEL : restreint à 20 postes signés
 ```
 
 Sur chaque poste : double-clic sur `verifier-media.cmd`, puis sur l'EXE —
-l'installateur reprend tout seul le `.stipack` **et** l'autorisation placés à côté
-de lui, et demande seulement une confirmation. Aucun mot de passe.
+l'installateur reprend tout seul le `.stipack` placé à côté de lui et demande
+seulement une confirmation. Aucun mot de passe, aucune clé, aucun réseau.
 
-`--installeur` accepte l'EXE ou un ZIP le contenant. L'exécutable étant compilé par
-l'administrateur avec sa propre clé publique, **aucune empreinte n'est publiée
-d'avance** : passer `--empreinte-attendue <sha256>` (valeur affichée par
-`compiler.ps1` ou présente dans `SHA256SUMS.txt` de l'artefact) pour garantir la
-copie. À défaut, l'outil refuse sauf `--accepter-installeur-inconnu`. Un fichier
-sans en-tête `MZ` est refusé.
+`--installeur` accepte l'EXE ou un ZIP le contenant. L'exécutable simple est publié
+par la CI dans la release `labo3-windows` : passer `--empreinte-attendue <sha256>`
+(valeur affichée par le tableau de bord ou présente dans `SHA256SUMS.txt` de la
+release) pour garantir la copie. À défaut, l'outil refuse sauf
+`--accepter-installeur-inconnu`. Un fichier sans en-tête `MZ` est refusé.
 
-`--autorisation <fichier>` copie l'autorisation signée après un contrôle de
-structure (format `STI-LABO3-AUTORISATION/1`, laboratoire, 1 à 20 empreintes
-uniques). La **signature**, elle, n'est vérifiable que par l'exécutable, avec la clé
-publique embarquée à la compilation. WebView2 n'est plus nécessaire : la plateforme
+`--autorisation <fichier>` est **optionnel** : il fait passer le média en mode
+restreint, après un contrôle de structure (format `STI-LABO3-AUTORISATION/1`,
+laboratoire, 1 à 20 empreintes uniques). La **signature**, elle, n'est vérifiable
+que par un exécutable compilé avec la clé publique correspondante — celui de la
+release accepte tous les postes. WebView2 n'est plus nécessaire : la plateforme
 s'ouvre dans le navigateur du poste.
 
 ## Toujours la dernière mise à jour
