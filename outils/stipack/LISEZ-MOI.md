@@ -13,14 +13,14 @@
 
 | Où | Comment | Ce qu'elle produit |
 |---|---|---|
-| **Tableau de bord admin** — section « Application Windows v316 » | bouton **🧱 Nouveau stipack** (`assets/js/stipack.js` + `assets/js/admin-stipack.js`) | le même format, assemblé dans le navigateur à partir des fichiers du site, puis téléchargé |
+| **Tableau de bord admin** — section « STI v2.0 version spéciale Labo 3 » | bouton **🧱 Nouveau stipack** (`assets/js/stipack.js` + `assets/js/admin-stipack.js`) | le même format, assemblé dans le navigateur à partir des fichiers du site, puis téléchargé |
 | **Poste de développement** | `node outils/stipack/construire-stipack.mjs` | le même format, écrit directement sur le disque, avec contrôle CRC32 + SHA-256 après écriture |
 
 Les deux écrivent la même structure, vérifiable par le même `--verifier`.
 
 ### Le bouton du tableau de bord
 
-Dans « 🪟 Application Windows v316 — guide et assistance », le bloc
+Dans « 🪟 STI v2.0 version spéciale Labo 3 — guide et assistance », le bloc
 « 🧱 Nouveau stipack » :
 
 1. demande la liste des fichiers **au dernier commit du dépôt** (API GitHub, arbre
@@ -116,10 +116,12 @@ Options reconnues : `--volume leger|complet`, `--seuil-mo <n>`,
 ## Préparer le disque pour 20 postes (une seule fois)
 
 ```bash
-# Média complet : tout le site + l'installateur + la procédure
+# Média complet : tout le site + l'installateur + l'autorisation signée + la procédure
 node outils/stipack/preparer-disque.mjs \
   --sortie /media/USB/STI-Labo3-20-postes \
-  --installeur ~/Téléchargements/STI-Labo3-Windows-v316.zip
+  --installeur ~/Téléchargements/STI-Labo3-Installation.exe \
+  --empreinte-attendue 9f2c…b7 \
+  --autorisation ~/Administration/autorisation-labo3.json
 
 # Média réduit (fichiers jusqu'à 0,5 Mo), pour une clé de petite taille
 node outils/stipack/preparer-disque.mjs --volume leger --seuil-mo 0.5
@@ -132,8 +134,9 @@ Le dossier produit :
 
 ```
 STI-Labo3-20-postes/
-├── STI-Labo3-Windows-v316.exe            l’installateur (copié, ou extrait du ZIP)
+├── STI-Labo3-Installation.exe            l’installateur (copié, ou extrait du ZIP)
 ├── STI-Labo3-Plateforme.stipack          le paquet du dernier commit
+├── autorisation-labo3.json               la liste signée des 20 postes autorisés
 ├── LISEZ-MOI-20-POSTES.txt               la procédure + tableau de suivi des 20 postes
 ├── empreintes.txt                        SHA-256 de chaque fichier du média
 ├── verifier-media.cmd                    double-clic : contrôle avant installation
@@ -141,13 +144,21 @@ STI-Labo3-20-postes/
 ```
 
 Sur chaque poste : double-clic sur `verifier-media.cmd`, puis sur l'EXE —
-l'installateur reprend tout seul le `.stipack` placé à côté de lui.
+l'installateur reprend tout seul le `.stipack` **et** l'autorisation placés à côté
+de lui, et demande seulement une confirmation. Aucun mot de passe.
 
-`--installeur` accepte indifféremment l'EXE ou le ZIP de la release ; l'empreinte
-est comparée à celle publiée pour `windows-v316` et le média est **refusé** si elle
-ne correspond à rien (`--accepter-installeur-inconnu` pour passer outre en
-connaissance de cause). `--webview2 <fichier>` ajoute l'installateur WebView2 au
-média pour les postes qui en manquent.
+`--installeur` accepte l'EXE ou un ZIP le contenant. L'exécutable étant compilé par
+l'administrateur avec sa propre clé publique, **aucune empreinte n'est publiée
+d'avance** : passer `--empreinte-attendue <sha256>` (valeur affichée par
+`compiler.ps1` ou présente dans `SHA256SUMS.txt` de l'artefact) pour garantir la
+copie. À défaut, l'outil refuse sauf `--accepter-installeur-inconnu`. Un fichier
+sans en-tête `MZ` est refusé.
+
+`--autorisation <fichier>` copie l'autorisation signée après un contrôle de
+structure (format `STI-LABO3-AUTORISATION/1`, laboratoire, 1 à 20 empreintes
+uniques). La **signature**, elle, n'est vérifiable que par l'exécutable, avec la clé
+publique embarquée à la compilation. WebView2 n'est plus nécessaire : la plateforme
+s'ouvre dans le navigateur du poste.
 
 ## Toujours la dernière mise à jour
 
@@ -201,17 +212,24 @@ unzip -p STI-Labo3-Plateforme.stipack empreintes.txt > /tmp/e.txt
 unzip -q STI-Labo3-Plateforme.stipack -d /tmp/p && (cd /tmp/p && sha256sum -c /tmp/e.txt)
 ```
 
-## Ce que le paquet ne peut pas deviner
+## Le contrat entre le paquet et l'installateur
 
-Le format exact attendu par l'installateur **STI-Labo3-Windows.exe** n'est
-documenté par aucun fichier du dépôt, et son code source n'est disponible que
-dans l'asset `STI-Labo3-Windows-v316-source.zip` de la release `windows-v316`.
-La structure décrite ici est donc la reconstitution la plus plausible
-(archive ZIP + `plateforme/` + manifeste). Si l'installateur exige une autre
-disposition — contenu à la racine de l'archive, dossier nommé autrement,
-manifeste d'un autre schéma — il suffit d'ajuster la fonction `construire()`
-du script : la collecte des fichiers, les empreintes, l'écriture ZIP et le
-contrôle final restent inchangés.
+Le lecteur est désormais dans le dépôt : `outils/windows-labo3/PackageInstaller.cs`.
+Il n'y a donc plus de format à deviner. Ce qu'il exige :
+
+- `stipack.json` à la racine de l'archive, `format` = `STI-STIPACK/1`,
+  `volume` = `complet` ;
+- `contenu.dossier` = `plateforme/` **ou** chaîne vide (les deux dispositions
+  produites par les fabriques sont acceptées) ;
+- chaque fichier annoncé présent une seule fois, avec sa taille et son SHA-256
+  exacts ; aucun fichier non annoncé ; aucun lien symbolique ; aucun doublon de
+  casse (le système de fichiers Windows ne les distingue pas) ;
+- un `index.html` une fois le préfixe retiré ;
+- chemins relatifs en `/`, sans composant vide, `.`, `..`, nom réservé Windows
+  (`CON`, `NUL`, `LPT1`…), caractère interdit, point ou espace final.
+
+Tout écart est refusé avant écriture, et une extraction interrompue supprime la
+destination partielle : l'ancienne version installée reste utilisable.
 
 ## Ce qui est exclu, et pourquoi
 

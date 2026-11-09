@@ -767,6 +767,8 @@
   }
   .btn-outil:hover { transform: translate(-1px, -1px); border-color: #f4511e; color: #f4511e; background: #fffdf7; }
   .btn-outil.vert { background: #e3f6e8; color: #177245; border-color: #177245; box-shadow: 2px 2px 0 #177245; }
+  /* Installateur Labo 3 : état tant qu'aucune release n'est publiée. */
+  .btn-outil-desactive, .btn-outil[disabled] { opacity: .55; cursor: not-allowed; transform: none; border-color: #94a3b8; color: #475569; background: #f1f5f9; }
   .btn-outil.vert:hover { background: #d2eedb; color: #115934; }
 
   /* Bandeau récapitulatif quand une classe est appelée / sélectionnée */
@@ -2567,13 +2569,25 @@
         <li><strong>Relever les postes hors ligne.</strong>
           <a href="outils/stipack/relever-poste-labo3.ps1" download="relever-poste-labo3.ps1">Télécharger l’outil Windows de relevé</a>.
           L’exécuter sur chaque poste et conserver les fichiers JSON distincts.</li>
-        <li><strong>Préparer l’autorisation signée.</strong> La clé privée doit être créée une seule fois et conservée par l’administrateur, jamais sur le support distribué.
+        <li><strong>Créer la paire de clés, puis l’autorisation signée.</strong> La clé privée est créée une seule fois et conservée par l’administrateur, jamais sur le support distribué.
           <a href="outils/stipack/VERSION-SPECIALE-LABO3.md" download> Télécharger le guide de préparation et des clés</a>.
+          <div class="stipack-commandes">
+            <button type="button" class="btn-outil" id="labo3-cles-generer">🔑 Créer la paire de clés Ed25519</button>
+            <button type="button" class="btn-outil" id="labo3-cle-copier" hidden>Copier la clé publique pour le workflow</button>
+          </div>
+          <label for="labo3-cle-publique" id="labo3-cle-publique-wrap" hidden>Clé publique PEM — c’est elle qui sera gravée dans l’installateur
+            <textarea id="labo3-cle-publique" rows="3" readonly spellcheck="false"></textarea>
+          </label>
+          <label for="labo3-cle-saisie" id="labo3-cle-saisie-wrap" hidden>À coller dans le champ <code>cle_publique</code> du workflow
+            <input type="text" id="labo3-cle-saisie" readonly spellcheck="false">
+          </label>
+          <p id="labo3-cle-empreinte-wrap" hidden><code id="labo3-cle-empreinte"></code></p>
+          <p id="labo3-cles-etat" role="status" aria-live="polite">La clé privée est téléchargée immédiatement : elle n’est ni stockée par cette page, ni envoyée au réseau. Sans Web Crypto (page ouverte hors HTTPS), utilisez plutôt <code>openssl genpkey -algorithm ed25519 -out privee.pem</code> puis <code>openssl pkey -in privee.pem -pubout -out publique.pem</code>.</p>
           <div class="stipack-commandes">
             <label for="labo3-postes">Relevés des postes (1 à 20 JSON)
               <input type="file" id="labo3-postes" accept=".json" multiple>
             </label>
-            <label for="labo3-cle">Clé privée Ed25519 existante (PEM, traitement local uniquement)
+            <label for="labo3-cle">Clé privée Ed25519 (PEM, traitement local uniquement) — inutile si vous venez de la créer ici
               <input type="file" id="labo3-cle" accept=".pem">
             </label>
             <button type="button" class="btn-outil" id="labo3-signer">Télécharger l’autorisation signée</button>
@@ -2584,11 +2598,22 @@
           Utiliser <a href="#bloc-stipack">Nouveau stipack</a> ci-dessous avec « Tout le site ».
           Les empreintes des fichiers sont incluses ; elles ne remplacent pas l’autorisation des postes.</li>
         <li><strong>Compiler et valider l’installateur « STI v2.0 version spéciale Labo 3 ».</strong>
-          <button type="button" class="btn-outil" disabled>Téléchargement indisponible — compilation avec votre clé publique requise</button>
+          <button type="button" class="btn-outil btn-outil-desactive" id="labo3-installateur-lien" disabled>Téléchargement indisponible</button>
+          <button type="button" class="btn-outil" id="labo3-installateur-verifier">Vérifier la release</button>
+          <span id="labo3-installateur-etat" role="status" aria-live="polite">Vérification en cours…</span>
+          Si vous venez de publier la release <code>labo3-windows</code>, le lien ci-dessus s’active tout seul et affiche le SHA-256 à comparer.
           Deux façons d’obtenir l’exécutable, la clé publique étant embarquée dedans :
           <ul>
-            <li>GitHub Actions → workflow <strong>Windows Labo3</strong> → <em>Run workflow</em> → coller la clé publique PEM (lignes séparées par <code>\n</code>) → télécharger l’artefact et son <code>SHA256SUMS.txt</code>.</li>
-            <li>Poste Windows avec SDK .NET 8 : <code>.\outils\windows-labo3\compiler.ps1 -ClePublique C:\Administration\publique.pem -Tester</code>.</li>
+            <li><a id="labo3-workflow-lien" href="https://github.com/aymenessouyah/STiV2.0/actions/workflows/windows-labo3.yml">Ouvrir le workflow « Windows Labo3 »</a>
+              → <em>Run workflow</em> → choisir la branche → coller la clé publique dans <code>cle_publique</code> (bouton « Copier la clé publique pour le workflow » ci-dessus)
+              → <strong>cocher <code>publier</code></strong> pour créer la release <code>labo3-windows</code> → <em>Run workflow</em>.
+              Ce déclenchement se fait avec votre compte GitHub : ce panneau ne demande ni ne manipule aucun jeton.
+              Sans la case <code>publier</code>, l’exécutable n’est déposé qu’en artefact de l’exécution, nommé
+              <code>STI-v2.0-Labo3-cle-…</code> ; comparez ces 12 caractères au SHA-256 affiché ci-dessus pour vérifier
+              que c’est bien votre clé qui est embarquée. La release étant publique, n’y joignez jamais la clé privée
+              ni une autorisation signée.</li>
+            <li>Poste Windows avec SDK .NET 8 : <code>.\outils\windows-labo3\compiler.ps1 -ClePublique C:\Administration\publique.pem</code>
+              (ajouter <code>-Tester</code> pour rejouer la suite Windows avant de publier).</li>
           </ul>
           La clé privée ne doit jamais être saisie ni copiée sur le support. L’installateur vérifie l’autorisation à l’installation et à chaque ouverture de document, sans portail, sans mot de passe et sans réseau.</li>
       </ol>
@@ -5201,7 +5226,7 @@
 <script src="assets/js/sante.js?v=471" defer></script>
   <script src="assets/js/stipack.js?v=616" defer></script>
   <script src="assets/js/admin-stipack.js?v=616" defer></script>
-  <script src="assets/js/admin-labo3.js?v=1" defer></script>
+  <script src="assets/js/admin-labo3.js?v=3" defer></script>
 <!-- v606 : bouton du ruban « Services ». Il est placé hors écran tant que le
      ruban ne l'a pas adopté ; ensuite, la feuille de style de l'administration le
      remet dans le flux (position: static !important) avec les autres services. -->
