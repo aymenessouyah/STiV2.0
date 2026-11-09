@@ -51,30 +51,16 @@ internal sealed class PreparationForm : Form
         check.Click += (_, _) => CheckAuthorization();
         layout.Controls.Add(check);
         var install = new Button { Text = "Installer depuis le support USB", AutoSize = true, Padding = new Padding(8) };
-        install.Click += async (_, _) =>
-        {
-            if (runtime is not null) { status.Text = "Fermez la plateforme avant une mise à jour."; return; }
-            using var package = new OpenFileDialog { Filter = "Paquet complet (*.stipack)|*.stipack", CheckFileExists = true };
-            if (package.ShowDialog(this) != DialogResult.OK) return;
-            using var authorization = new OpenFileDialog { Filter = "Autorisation signée (*.json)|*.json", CheckFileExists = true };
-            if (authorization.ShowDialog(this) != DialogResult.OK) return;
-            install.Enabled = false;
-            try
-            {
-                var progress = new Progress<string>(text => status.Text = text);
-                var version = await Deployment.InstallAsync(package.FileName, authorization.FileName, progress);
-                status.Text = "Installation validée. Raccourci créé sur le Bureau. Ouverture locale…";
-                await LaunchAsync(version);
-            }
-            catch (Exception e) { status.ForeColor = Color.Firebrick; status.Text = "Installation impossible : " + e.Message + " L’ancienne version est conservée."; }
-            finally { install.Enabled = true; }
-        };
+        install.Click += async (_, _) => await InstallerDepuisSupportAsync(install);
         layout.Controls.Add(install);
         var reopen = new Button { Text = "Rouvrir la plateforme locale", AutoSize = true };
         reopen.Click += (_, _) => runtime?.Open();
         layout.Controls.Add(reopen);
         status.Width = 720;
-        status.Text = "Sélectionnez un paquet complet et une autorisation signée. Aucun mot de passe requis. Les anciennes versions sont conservées.";
+        var support = Support.Resolve(AppContext.BaseDirectory);
+        status.Text = support.Paquet is not null && support.Autorisation is not null
+            ? "Support détecté à côté de l’installateur : " + Support.Decrire(support) + ". Cliquez sur Installer."
+            : "Sélectionnez un paquet complet et une autorisation signée. Aucun mot de passe requis. Les anciennes versions sont conservées.";
         layout.Controls.Add(status); Controls.Add(layout);
         if (launch) Shown += async (_, _) => await LaunchAsync(AppContext.BaseDirectory);
         FormClosing += async (_, e) =>
@@ -84,6 +70,57 @@ internal sealed class PreparationForm : Form
             try { await runtime.DisposeAsync(); } finally { runtime = null; Close(); }
         };
     }
+    private async Task InstallerDepuisSupportAsync(Button bouton)
+    {
+        if (runtime is not null) { status.Text = "Fermez la plateforme avant une mise à jour."; return; }
+        var media = Support.Resolve(AppContext.BaseDirectory);
+        if (media.Paquets.Length > 1)
+        {
+            status.ForeColor = Color.Firebrick;
+            status.Text = "Plusieurs paquets .stipack à côté de l’installateur : n’en garder qu’un, puis relancer.";
+            return;
+        }
+        var paquet = media.Paquet;
+        var autorisation = media.Autorisation;
+        if (paquet is null || autorisation is null)
+        {
+            status.Text = "Support incomplet (" + Support.Decrire(media) + "). Sélection manuelle…";
+            if (paquet is null)
+            {
+                using var choix = new OpenFileDialog { Filter = "Paquet complet (*.stipack)|*.stipack", CheckFileExists = true };
+                if (choix.ShowDialog(this) != DialogResult.OK) return;
+                paquet = choix.FileName;
+            }
+            if (autorisation is null)
+            {
+                using var choix = new OpenFileDialog { Filter = "Autorisation signée (*.json)|*.json", CheckFileExists = true };
+                if (choix.ShowDialog(this) != DialogResult.OK) return;
+                autorisation = choix.FileName;
+            }
+        }
+        else
+        {
+            // Un seul clic par poste : le support porte déjà le paquet et l’autorisation.
+            var reponse = MessageBox.Show(this,
+                "Installer depuis le support détecté ?\n\n" + paquet + "\n" + autorisation +
+                "\n\nAucun mot de passe n’est demandé. En cas d’échec, l’ancienne version est conservée.",
+                Program.ProductName, MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+            if (reponse != DialogResult.OK) return;
+        }
+        bouton.Enabled = false;
+        try
+        {
+            var progression = new Progress<string>(texte => status.Text = texte);
+            status.ForeColor = Color.Black;
+            var version = await Deployment.InstallAsync(paquet, autorisation, progression);
+            status.ForeColor = Color.DarkGreen;
+            status.Text = "Installation validée. Raccourci créé sur le Bureau. Ouverture locale…";
+            await LaunchAsync(version);
+        }
+        catch (Exception e) { status.ForeColor = Color.Firebrick; status.Text = "Installation impossible : " + e.Message + " L’ancienne version est conservée."; }
+        finally { bouton.Enabled = true; }
+    }
+
     private async Task LaunchAsync(string directory)
     {
         try
