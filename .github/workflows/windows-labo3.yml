@@ -197,7 +197,11 @@ jobs:
               'autorisations signées.',
               '',
               'Avant diffusion : tester sur un poste autorisé ET sur un poste non autorisé,',
-              'réseau coupé. Ne jamais joindre la clé privée au support USB.'
+              'réseau coupé. Ne jamais joindre la clé privée au support USB.',
+              '',
+              'Empreintes SHA-256 des fichiers publiés, recopiées dans la notice car un',
+              'navigateur ne peut pas télécharger SHA256SUMS.txt depuis une release :',
+              ($lignes -join "`r`n")
             ) -join "`r`n"
           } else {
             'simple' | Out-File -FilePath (Join-Path $env:RUNNER_TEMP 'cle.court') -Encoding ascii
@@ -215,7 +219,11 @@ jobs:
               'sur Installer. Vérifier SHA256SUMS.txt après téléchargement.',
               '',
               'Les services Supabase (progressions synchronisées, comptes, quiz en ligne)',
-              'restent indisponibles hors ligne.'
+              'restent indisponibles hors ligne.',
+              '',
+              'Empreintes SHA-256 des fichiers publiés, recopiées dans la notice car un',
+              'navigateur ne peut pas télécharger SHA256SUMS.txt depuis une release :',
+              ($lignes -join "`r`n")
             ) -join "`r`n"
           }
           $notice | Out-File -FilePath (Join-Path $sortie 'LISEZ-MOI.txt') -Encoding utf8
@@ -247,6 +255,13 @@ jobs:
             gh release upload labo3-windows $exe $sommes --repo $env:GITHUB_REPOSITORY --clobber
             if ($LASTEXITCODE -ne 0) { exit 1 }
           }
+          # Quand la release existe déjà, `gh release create` échoue et le repli
+          # `gh release upload --clobber` remplace les fichiers SANS toucher à la
+          # notice : le tableau de bord, qui lit le SHA-256 dans cette notice,
+          # resterait sur une notice périmée. Cette ligne rend la notice solidaire
+          # du binaire publié, à chaque passage.
+          gh release edit labo3-windows --repo $env:GITHUB_REPOSITORY --notes-file $notice
+          if ($LASTEXITCODE -ne 0) { exit 1 }
           gh release view labo3-windows --repo $env:GITHUB_REPOSITORY --json tagName,assets
 
       - uses: actions/upload-artifact@v4
