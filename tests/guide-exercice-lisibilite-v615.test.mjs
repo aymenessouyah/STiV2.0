@@ -136,9 +136,9 @@ test('v615 — le bandeau récapitulatif est peint avec la palette, pas en crèm
 /* ── 4. publication ─────────────────────────────────────────────────────── */
 
 test('v615 — publication : version, lot, cache-buster et révisions', () => {
-  assert.match(sw, /var VERSION_PUBLIEE = "v625";/);
-  assert.match(sw, /var PUBLIEE_LE = "2026-11-07T22:28:49Z";/);
-  assert.match(sw, /Historique lots : v625-tp-css3-3si-20261107, v624-tp6-guide-20261104, v619-tp6-series6-20261104,/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v626";/);
+  assert.match(sw, /var PUBLIEE_LE = "2026-11-08T08:32:48Z";/);
+  assert.match(sw, /Historique lots : v626-visionneuse-mission-cinema-20261108, v625-tp-css3-3si-20261107, v624-tp6-guide-20261104,/);
   assert.match(adminHtml, /assets\/js\/admin\.js\?v=615-perf/);
   assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "guide-exercice-liste-v621" }'));
   assert.ok(sw.includes('{ url: "./admin.html", revision: "guide-exercice-mount-v623" }'));
