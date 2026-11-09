@@ -59,6 +59,21 @@ test('validation Windows réelle outillée : suite .NET et workflow', () => {
   const workflow = lire('.github/workflows/windows-labo3.yml');
   assert.match(workflow, /runs-on: windows-latest/);
   assert.match(workflow, /compiler.ps1 -ClePublique/);
-  assert.match(workflow, /Aucun upload ni release/);
+  assert.match(workflow, /clé de test jetable/);
   assert.match(lire('outils/windows-labo3/compiler.ps1'), /ne pas publier|publication refusée/i);
+});
+test('publication de production : clé publique only, artefact et empreintes', () => {
+  const workflow = lire('.github/workflows/windows-labo3.yml');
+  assert.match(workflow, /workflow_dispatch:\n\s+inputs:\n\s+cle_publique:/);
+  assert.match(workflow, /if: github.event_name == 'workflow_dispatch'/);
+  assert.match(workflow, /verifier-cle-publique\.mjs/);
+  assert.match(workflow, /SHA256SUMS\.txt/);
+  assert.match(workflow, /actions\/upload-artifact@v4/);
+  // La clé privée ne doit jamais être un paramètre de compilation ou de workflow.
+  assert.doesNotMatch(workflow, /cle_privee|privateKey|privee\.pem/);
+  const verificateur = lire('outils/windows-labo3/verifier-cle-publique.mjs');
+  assert.match(verificateur, /PRIVATE KEY/i);
+  assert.match(verificateur, /asymmetricKeyType !== 'ed25519'/);
+  assert.match(verificateur, /der.length !== 44/);
+  assert.match(lire('outils/windows-labo3/compiler.ps1'), /verifier-cle-publique\.mjs/);
 });

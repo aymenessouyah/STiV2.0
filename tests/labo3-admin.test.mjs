@@ -27,6 +27,6 @@ test('panneau : clé incorrecte refusée, absence de stockage et de réseau dans
   assert.doesNotMatch(code, /\bfetch\s*\(|localStorage|sessionStorage|XMLHttpRequest/);
   const html = readFileSync(new URL('../admin.html', import.meta.url), 'utf8');
   assert.match(html, /id="bloc-labo3-support"/);
-  assert.match(html, /disabled>Téléchargement indisponible — validation Windows en cours/);
+  assert.match(html, /disabled>Téléchargement indisponible — compilation avec votre clé publique requise/);
   assert.match(html, /assets\/js\/admin-labo3.js/);
 });

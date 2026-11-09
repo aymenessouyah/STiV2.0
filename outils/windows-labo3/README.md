@@ -58,22 +58,42 @@ sans cookie, injection de session, blocage admin/portail, lecture vidéo partiel
 `windows-latest` et publie un binaire de contrôle. **Ce binaire n'est pas
 distribuable** : il embarque une clé de test jetable, pas la clé de production.
 
-## État — à valider avant diffusion aux 20 postes
+## État
 
-- La suite et la publication n'ont **pas encore été observées sur un runner
-  Windows** au moment de cette rédaction : le SDK .NET est absent de
-  l'environnement de développement. Lancer le workflow et corriger les erreurs de
-  compilation avant toute annonce de disponibilité.
-- Vérifier sur un poste réel du laboratoire : installation depuis un support USB,
-  refus sur un poste non autorisé, fonctionnement réseau coupé, lecture d'une vidéo
-  lourde, fermeture/réouverture, et conservation de l'ancienne version.
-- Le port local 18763 est fixe : en cas de conflit, l'ouverture échoue. Prévoir un
+**Validé sous Windows par GitHub Actions** (runner `windows-latest`) : compilation
+du projet et de la suite de tests, exécution des contrôles réels (signature,
+empreinte du poste, les deux dispositions, refus des chemins dangereux, extraction
+avec SHA-256, conservation de l'ancienne version, serveur local, injection de
+session, blocage admin/portail, lecture vidéo partielle, recontrôle d'autorisation),
+puis publication autonome et vérification de la clé embarquée.
+
+Ces exécutions utilisent une **clé de test jetable** : leur binaire n'est pas
+diffusable. Pour obtenir un installateur de production, deux chemins :
+
+- **GitHub Actions** — workflow « Windows Labo3 — validation et publication de
+  contrôle » → *Run workflow* → coller la clé **publique** PEM (lignes séparées
+  par `\n`), puis télécharger l'artefact
+  `STI-v2.0-version-speciale-Labo-3` (exécutable, `SHA256SUMS.txt`, notice).
+- **Poste Windows** — `.\outils\windows-labo3\compiler.ps1 -ClePublique publique.pem -Tester`.
+
+`verifier-cle-publique.mjs` refuse une clé privée, un PEM illisible ou un autre
+algorithme avant toute compilation ; il est appelé automatiquement par les deux
+chemins. Aucune clé privée ne transite par le workflow.
+
+## Reste à faire avant diffusion aux 20 postes
+
+- Compiler avec la **clé publique de production** de l'administrateur (celle dont
+  la clé privée signe les autorisations), puis noter le SHA-256 de l'exécutable.
+- Tester sur un poste réel du laboratoire : installation depuis le support USB,
+  refus sur un poste non autorisé, réseau coupé, vidéo lourde, fermeture puis
+  réouverture, conservation de l'ancienne version.
+- Publier l'exécutable dans une release GitHub et activer le lien de téléchargement
+  du tableau de bord, actuellement désactivé.
+- Le port local 18763 est fixe : en cas de conflit l'ouverture échoue. Prévoir un
   port de repli si cela se produit en salle.
 - Le contrôle repose sur `MachineGuid` : il change après réinstallation et se
-  duplique par clonage d'image. Un administrateur local peut remplacer le binaire.
-  Ce n'est pas une protection inviolable, mais un contrôle d'usage.
+  duplique par clonage d'image ; un administrateur local peut remplacer le binaire.
+  C'est un contrôle d'usage, pas une protection inviolable.
 - Les fonctions liées à Supabase (progressions synchronisées, comptes, quiz en
-  ligne) restent indisponibles hors ligne : le paquet copie des fichiers, il ne
-  rend pas ces services locaux.
-- Publier l'exécutable signé avec la clé de production, joindre son SHA-256 dans le
-  tableau de bord, puis activer le lien de téléchargement actuellement désactivé.
+  ligne) restent indisponibles hors ligne : copier les fichiers ne rend pas ces
+  services locaux.

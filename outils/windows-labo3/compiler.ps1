@@ -21,6 +21,14 @@ $ClePublique = (Resolve-Path -LiteralPath $ClePublique).Path
 if ((Get-Content -Raw -LiteralPath $ClePublique) -notmatch '^-----BEGIN PUBLIC KEY-----') {
     throw 'Fournir uniquement la clé PUBLIQUE Ed25519 (SPKI), jamais la clé privée.'
 }
+# Contrôle avant compilation : une clé invalide produirait un installateur qui
+# refuse toutes les autorisations, sans erreur visible.
+if (Get-Command node -ErrorAction SilentlyContinue) {
+    node (Join-Path $PSScriptRoot 'verifier-cle-publique.mjs') $ClePublique
+    if ($LASTEXITCODE -ne 0) { throw 'Clé publique refusée : compilation annulée.' }
+} else {
+    Write-Warning 'Node.js absent : la clé n’a pas pu être vérifiée avant compilation.'
+}
 if ($Tester) {
     $fixture = Join-Path $env:TEMP ("sti-labo3-fixture-" + [guid]::NewGuid().ToString('N'))
     $guid = (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Cryptography').MachineGuid
