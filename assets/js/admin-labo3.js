@@ -87,10 +87,19 @@
     if (!sommes || !urlDeReleaseAttendue(depot, sommes.browser_download_url)) {
       return { publie: false, raison: 'SHA256SUMS.txt absent de la release : empreinte invérifiable.' };
     }
-    var texteSommes;
-    try { texteSommes = await (await chercher(sommes.browser_download_url, { cache: 'no-store' })).text(); }
-    catch (erreur) { return { publie: false, raison: 'empreintes illisibles : ' + erreur.message }; }
-    var empreinte = lireSommes(texteSommes)[exe.name];
+    /* L'hôte de téléchargement des releases (release-assets.githubusercontent.com)
+       n'envoie pas d'en-tête CORS : un navigateur ne peut pas y lire le fichier
+       SHA256SUMS.txt — c'est l'échec « Failed to fetch » vu en conditions réelles.
+       L'empreinte est donc lue d'abord dans la notice de la release, où le job de
+       publication la recopie ligne par ligne ; la lecture du fichier ne reste
+       qu'un repli, pour les notices antérieures à ce réglage. */
+    var empreinte = lireSommes(release.body)[exe.name];
+    if (!/^[0-9a-f]{64}$/.test(empreinte || '')) {
+      var texteSommes;
+      try { texteSommes = await (await chercher(sommes.browser_download_url, { cache: 'no-store' })).text(); }
+      catch (erreur) { return { publie: false, raison: 'empreintes illisibles : ' + erreur.message + ' (notice de release sans somme).' }; }
+      empreinte = lireSommes(texteSommes)[exe.name];
+    }
     if (!/^[0-9a-f]{64}$/.test(empreinte || '')) {
       return { publie: false, raison: 'aucune empreinte SHA-256 pour ' + exe.name + ' dans ' + NOM_SOMMES + '.' };
     }
