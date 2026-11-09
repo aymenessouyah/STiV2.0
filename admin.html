@@ -2560,8 +2560,9 @@
     </div>
     <div class="stipack-bloc" id="bloc-labo3-support" aria-labelledby="labo3-titre">
       <h3 id="labo3-titre"><img src="assets/icons/sti-logo-complet.png" alt="Logo officiel STI v2.0" width="64" height="64" style="object-fit:contain;vertical-align:middle"> STI v2.0 version spéciale Labo 3 — préparer le support</h3>
-      <p><strong>En construction : aucun installateur spécial Labo3 n’est encore disponible.</strong>
-        L’ancien EXE ne doit pas être utilisé avec ce nouveau parcours. Ne pas utiliser ce support comme une installation prête.</p>
+      <p><strong>Version candidate : le nouvel installateur n’est pas encore publié.</strong>
+        Il est développé dans <code>outils/windows-labo3</code> et doit être compilé puis validé sous Windows avant diffusion.
+        L’ancien EXE v316 ne doit pas être utilisé avec ce nouveau parcours : ne pas distribuer ce support comme une installation prête.</p>
       <ol>
         <li><strong>Relever les postes hors ligne.</strong>
           <a href="outils/stipack/relever-poste-labo3.ps1" download="relever-poste-labo3.ps1">Télécharger l’outil Windows de relevé</a>.
@@ -2582,9 +2583,12 @@
         <li><strong>Créer le paquet de la dernière mise à jour.</strong>
           Utiliser <a href="#bloc-stipack">Nouveau stipack</a> ci-dessous avec « Tout le site ».
           Les empreintes des fichiers sont incluses ; elles ne remplacent pas l’autorisation des postes.</li>
-        <li><strong>Installateur Windows spécial Labo3 :</strong>
-          <button type="button" class="btn-outil" disabled>Indisponible — développement nécessaire</button>
-          Il devra vérifier l’autorisation à l’installation et à chaque lancement, sans portail ni connexion.</li>
+        <li><strong>Compiler et valider l’installateur « STI v2.0 version spéciale Labo 3 ».</strong>
+          <button type="button" class="btn-outil" disabled>Téléchargement indisponible — validation Windows en cours</button>
+          Sur un poste de préparation Windows avec SDK .NET 8 :
+          <code>.\outils\windows-labo3\compiler.ps1 -ClePublique C:\Administration\publique.pem -Tester</code>.
+          La clé publique de production est embarquée dans l’exécutable ; la clé privée reste chez l’administrateur.
+          Il vérifie l’autorisation à l’installation et à chaque ouverture de document, sans portail, sans mot de passe et sans réseau.</li>
       </ol>
       <p class="aide-windows-note">À distribuer : installateur compatible, paquet et autorisation signée. Ne jamais distribuer la clé privée. Une signature autorise les postes ; ce n’est pas un fichier de chiffrement du paquet.</p>
     </div>

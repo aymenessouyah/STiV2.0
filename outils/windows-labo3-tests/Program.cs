@@ -1,0 +1,70 @@
+using System.IO.Compression;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
+using STILabo3;
+
+var fixture = Path.GetFullPath(args[0]);
+var root = Path.Combine(Path.GetTempPath(), "sti-tests-" + Guid.NewGuid().ToString("N"));
+Directory.CreateDirectory(root);
+var passed = 0;
+void Assert(bool condition, string message) { if (!condition) throw new Exception(message); passed++; }
+async Task Refuse(Func<Task> action, string name)
+{
+    try { await action(); } catch { passed++; return; }
+    throw new Exception("Refus attendu : " + name);
+}
+string Archive(string prefix, bool corrupt = false, string extra = "", string? fileName = null)
+{
+    var file = Path.Combine(root, Guid.NewGuid() + ".stipack");
+    using var zip = ZipFile.Open(file, ZipArchiveMode.Create);
+    var bytes = Encoding.UTF8.GetBytes("<!doctype html><html><head></head><body>Labo3</body></html>");
+    var name = fileName ?? prefix + "index.html";
+    using (var s = zip.CreateEntry(name).Open()) s.Write(bytes);
+    using (var s = new StreamWriter(zip.CreateEntry("stipack.json").Open()))
+        s.Write(JsonSerializer.Serialize(new { format = "STI-STIPACK/1", volume = "complet", contenu = new { dossier = prefix }, fichiers = new[] { new { chemin = name, octets = bytes.Length, sha256 = corrupt ? new string('0',64) : Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant() } } }));
+    if (extra != "") { using var s = new StreamWriter(zip.CreateEntry(extra).Open()); s.Write("extra"); }
+    return file;
+}
+try
+{
+    Authorization.Check(Path.Combine(fixture, "autorisation-labo3.json")); passed++;
+    await Refuse(() => { Authorization.Check(Path.Combine(fixture, "refus.json")); return Task.CompletedTask; }, "autre poste");
+    foreach (var path in new[] { "../x", "/x", "C:/x", "a\\b", "CON.txt", "x/../b", "a./b", "x:stream", "a//b" })
+        await Refuse(() => { PackageInstaller.SafePath(root, path); return Task.CompletedTask; }, path);
+    foreach (var prefix in new[] { "", "plateforme/" })
+    {
+        var destination = Path.Combine(root, Guid.NewGuid().ToString());
+        await PackageInstaller.ExtractAsync(Archive(prefix), destination);
+        Assert(File.Exists(Path.Combine(destination, "index.html")), "Accueil extrait pour " + prefix);
+    }
+    var bad = Path.Combine(root, "corrompu");
+    await Refuse(() => PackageInstaller.ExtractAsync(Archive("", corrupt: true), bad), "SHA-256 incorrect");
+    Assert(!Directory.Exists(bad), "Nettoyage extraction incomplète");
+    await Refuse(() => PackageInstaller.ExtractAsync(Archive("", extra: "inconnu.txt"), Path.Combine(root, "extra")), "fichier non annoncé");
+    await Refuse(() => PackageInstaller.ExtractAsync(Archive("", extra: "INDEX.HTML"), Path.Combine(root, "case")), "collision de casse");
+    await Refuse(() => PackageInstaller.ExtractAsync(Archive("", fileName: "../index.html"), Path.Combine(root, "traversal")), "traversée");
+    var existing = Path.Combine(root, "existing"); Directory.CreateDirectory(existing);
+    File.WriteAllText(Path.Combine(existing, "temoin"), "conserver");
+    await Refuse(() => PackageInstaller.ExtractAsync(Archive(""), existing), "destination existante");
+    Assert(File.ReadAllText(Path.Combine(existing, "temoin")) == "conserver", "Ancienne version conservée");
+    var version = Path.Combine(root, "runtime"); Directory.CreateDirectory(version);
+    await PackageInstaller.ExtractAsync(Archive(""), Path.Combine(version, "plateforme"));
+    File.WriteAllBytes(Path.Combine(version, "plateforme", "video.mp4"), new byte[] { 1, 2, 3, 4 });
+    File.Copy(Path.Combine(fixture, "autorisation-labo3.json"), Path.Combine(version, "autorisation-labo3.json"));
+    await using var runtime = await LocalRuntime.StartAsync(version);
+    using var client = new HttpClient(new HttpClientHandler { UseCookies = true });
+    var origin = runtime.LaunchUri.GetLeftPart(UriPartial.Authority);
+    Assert((int)(await client.GetAsync(origin + "/index.html")).StatusCode == 403, "Accès sans cookie refusé");
+    var html = await client.GetStringAsync(runtime.LaunchUri);
+    Assert(html.Contains("__STI_NATIVE_AUTHENTICATED_V316=true"), "Session locale injectée");
+    Assert((int)(await client.GetAsync(origin + "/admin.html")).StatusCode == 403, "Admin bloqué");
+    using var request = new HttpRequestMessage(HttpMethod.Get, origin + "/video.mp4");
+    request.Headers.Range = new System.Net.Http.Headers.RangeHeaderValue(1, 2);
+    using var response = await client.SendAsync(request);
+    Assert((int)response.StatusCode == 206 && (await response.Content.ReadAsByteArrayAsync()).SequenceEqual(new byte[] { 2, 3 }), "Lecture vidéo partielle");
+    File.Copy(Path.Combine(fixture, "refus.json"), Path.Combine(version, "autorisation-labo3.json"), true);
+    Assert((int)(await client.GetAsync(origin + "/index.html")).StatusCode == 403, "Autorisation recontrôlée au lancement document");
+    Console.WriteLine($"{passed} contrôles Windows réussis.");
+}
+finally { Directory.Delete(root, true); }

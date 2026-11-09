@@ -87,3 +87,8 @@ build/
 
 # Média d’installation pour les postes (outils/stipack/preparer-disque.mjs)
 /dist-stipack/
+
+# Projets .NET Windows Labo3 : artefacts de compilation locaux
+bin/
+obj/
+/outils/windows-labo3-tests/fixtures/

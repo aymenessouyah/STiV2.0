@@ -1,48 +1,79 @@
 # STI v2.0 version spéciale Labo 3
 
-Nouveau projet Windows autonome (.NET 8, WinForms, Windows x64), distinct de
-l'ancien installateur. Nom et logo officiels intégrés depuis `assets/icons` :
+Projet Windows autonome (.NET 8, WinForms + Kestrel local, Windows x64), distinct
+de l'ancien installateur v316. Nom et logo officiels embarqués depuis `assets/icons` :
 `STI_by_AE.ico` pour l'exécutable et `sti-logo-complet.png` pour la fenêtre.
-Ces ressources sont embarquées, pas téléchargées à l'exécution.
 
-## Statut : préversion de contrôle, pas encore installateur
+## Ce que fait l'application
 
-La fenêtre permet de vérifier une autorisation Ed25519 signée pour ce poste,
-sans réseau ni mot de passe. La clé publique de confiance est embarquée à la
-compilation ; aucune clé du support USB n'est acceptée à sa place. Sans clé,
-la vérification refuse de continuer. Le moteur d'installation, le raccourci,
-le serveur local et l'ouverture sans portail ne sont **pas encore implémentés**.
-Le bouton Installer est désactivé. Aucun fichier existant ni ancien EXE n'est
-supprimé. Cette préversion n'est pas une livraison destinée aux élèves.
+1. **Vérification d'autorisation** — signature Ed25519 vérifiée hors ligne avec la
+   clé publique embarquée à la compilation (`STILabo3.PublicKey.pem`). Empreinte du
+   poste lue dans `HKLM\SOFTWARE\Microsoft\Cryptography\MachineGuid`, normalisée
+   `STI-LABO3/1\n` + GUID minuscule, puis SHA-256. Aucun mot de passe, aucun portail,
+   aucune requête réseau. 20 postes maximum, liste triée et sans doublon.
+2. **Installation** — extraction d'un `.stipack` complet (`STI-STIPACK/1`,
+   dispositions `plateforme/` et racine) vers
+   `%LocalAppData%\STI-Labo3\versions\<horodatage>-<guid>\plateforme`, avec
+   vérification SHA-256 de chaque fichier, refus des chemins dangereux, des liens,
+   des doublons de casse et des fichiers non annoncés. L'autorisation est recopiée
+   puis recontrôlée. Le raccourci du Bureau n'est remplacé qu'après réussite ;
+   en cas d'échec la destination partielle est supprimée et l'ancienne version
+   conservée. Aucun privilège administrateur requis (`asInvoker`).
+3. **Exécution locale** — serveur Kestrel sur `127.0.0.1:18763` uniquement, cookie
+   de session aléatoire par lancement, en-têtes `no-store`, CSP restrictive, refus
+   des requêtes hors boucle locale et des origines étrangères. `admin.html`,
+   `portail.html` et `sw.js` sont bloqués ; les service workers sont désactivés pour
+   éviter tout cache hors contrôle. La session locale attendue par `acces.js`
+   (`__STI_NATIVE_AUTHENTICATED_V316`, `sti-session-cache`, `sti-labo3-permanent`)
+   est injectée dans chaque document, après recontrôle de l'autorisation. Fermer la
+   fenêtre arrête le serveur.
 
-## Compiler une préversion
+## Compilation
 
-Sur un poste de préparation Windows avec SDK .NET 8 et Internet pour restaurer
-NSec.Cryptography (Ed25519, version fixée dans le projet) :
+Sur un poste Windows avec SDK .NET 8 et accès à nuget.org (NSec.Cryptography 24.4.0) :
 
 ```powershell
-.\outils\windows-labo3\compiler.ps1 -ClePublique C:\Administration\publique.pem
+.\outils\windows-labo3\compiler.ps1 -ClePublique C:\Administration\publique.pem -Tester
 ```
 
-Utiliser la clé publique correspondant à la clé privée de signature des autorisations.
-La clé privée ne doit jamais être livrée ni embarquée. La sortie est ignorée par Git
-sous `dist-stipack/windows-preversion`. La compilation est autonome : .NET n'a pas
-à être installé sur les postes cibles. La bibliothèque native NSec doit être incluse
-par la publication ; tester le résultat sur une machine vierge.
+`-Tester` exécute d'abord la suite Windows réelle, puis publie un exécutable
+autonome (single-file, self-contained, bibliothèques natives incluses), vérifie que
+la clé embarquée correspond à la clé fournie et affiche son SHA-256. La sortie est
+ignorée par Git (`dist-stipack/`). Utiliser la clé publique correspondant à la clé
+privée de signature des autorisations ; la clé privée ne doit jamais être embarquée
+ni copiée sur le support.
 
-## Validation restante avant diffusion
+## Tests
 
-Ce projet n'a **pas été compilé ni exécuté sous Windows** dans l'environnement de
-travail (SDK .NET absent). Vérifier la restauration NSec, la compilation WinForms,
-l'affichage des deux logos, et l'interopérabilité avec des autorisations du tableau
-de bord : poste admis, autre poste, signature modifiée, clé erronée, clé absente.
+`outils/windows-labo3-tests` est un exécutable de test .NET qui appelle directement
+les types internes (`InternalsVisibleTo`). Il couvre : poste autorisé, poste refusé,
+chemins dangereux, les deux dispositions, empreinte corrompue avec nettoyage, fichier
+non annoncé, collision de casse, traversée, destination existante conservée, accès
+sans cookie, injection de session, blocage admin/portail, lecture vidéo partielle
+(HTTP 206) et recontrôle de l'autorisation au lancement. La fixture
+(`preparer-fixture.mjs`) génère une clé Ed25519 jetable et une autorisation pour le
+`MachineGuid` de la machine de test.
 
-Puis construire et tester le moteur d'installation : vérification SHA-256, extraction
-sécurisée, prise en charge des deux dispositions stipack, refus des chemins dangereux,
-conservation de l'ancienne version et retour arrière. Enfin intégrer l'ouverture
-locale sans portail et le contrôle d'autorisation à chaque démarrage.
+`.github/workflows/windows-labo3.yml` exécute cette suite sur un runner
+`windows-latest` et publie un binaire de contrôle. **Ce binaire n'est pas
+distribuable** : il embarque une clé de test jetable, pas la clé de production.
 
-Le tableau de bord ne doit proposer aucun lien d'installation tant que ces étapes
-ne sont pas validées et qu'un véritable artefact Windows n'a pas été publié.
-Retirer les liens historiques du tableau de bord ne désinstalle rien sur les postes
-et ne supprime pas les anciennes releases GitHub.
+## État — à valider avant diffusion aux 20 postes
+
+- La suite et la publication n'ont **pas encore été observées sur un runner
+  Windows** au moment de cette rédaction : le SDK .NET est absent de
+  l'environnement de développement. Lancer le workflow et corriger les erreurs de
+  compilation avant toute annonce de disponibilité.
+- Vérifier sur un poste réel du laboratoire : installation depuis un support USB,
+  refus sur un poste non autorisé, fonctionnement réseau coupé, lecture d'une vidéo
+  lourde, fermeture/réouverture, et conservation de l'ancienne version.
+- Le port local 18763 est fixe : en cas de conflit, l'ouverture échoue. Prévoir un
+  port de repli si cela se produit en salle.
+- Le contrôle repose sur `MachineGuid` : il change après réinstallation et se
+  duplique par clonage d'image. Un administrateur local peut remplacer le binaire.
+  Ce n'est pas une protection inviolable, mais un contrôle d'usage.
+- Les fonctions liées à Supabase (progressions synchronisées, comptes, quiz en
+  ligne) restent indisponibles hors ligne : le paquet copie des fichiers, il ne
+  rend pas ces services locaux.
+- Publier l'exécutable signé avec la clé de production, joindre son SHA-256 dans le
+  tableau de bord, puis activer le lien de téléchargement actuellement désactivé.

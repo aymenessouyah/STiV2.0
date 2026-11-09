@@ -1,0 +1,40 @@
+name: Windows Labo3 — validation et publication de contrôle
+on:
+  push:
+    branches: ['main', 'arena/c0c72e60-stiv2-0']
+    paths: ['outils/windows-labo3/**', 'outils/windows-labo3-tests/**', 'outils/stipack/autorisation-labo3.mjs', '.github/workflows/windows-labo3.yml']
+  pull_request:
+    paths: ['outils/windows-labo3/**', 'outils/windows-labo3-tests/**', 'outils/stipack/autorisation-labo3.mjs', '.github/workflows/windows-labo3.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Fixture de test jetable (clé et autorisation du runner)
+        shell: pwsh
+        run: |
+          $guid = (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Cryptography').MachineGuid
+          node outils/windows-labo3-tests/preparer-fixture.mjs "$env:RUNNER_TEMP/labo3-fixture" $guid
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Tests réels sous Windows (signature, extraction, serveur local, vidéo)
+        shell: pwsh
+        run: |
+          dotnet run --project outils/windows-labo3-tests/STILabo3.Tests.csproj -c Release "-p:Labo3PublicKey=$env:RUNNER_TEMP/labo3-fixture/publique.pem" -- "$env:RUNNER_TEMP/labo3-fixture"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Publication autonome et contrôle de la clé embarquée
+        shell: pwsh
+        run: |
+          .\outils\windows-labo3\compiler.ps1 -ClePublique "$env:RUNNER_TEMP/labo3-fixture/publique.pem" -Sortie "$env:RUNNER_TEMP/labo3-build"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+# Aucun upload ni release : cette compilation embarque une clé de test jetable.
+# Une diffusion réelle exige la clé publique de production de l'administrateur.
