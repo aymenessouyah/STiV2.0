@@ -15,18 +15,46 @@ de l'ancien installateur v316. Nom et logo officiels embarqués depuis `assets/i
    dispositions `plateforme/` et racine) vers
    `%LocalAppData%\STI-Labo3\versions\<horodatage>-<guid>\plateforme`, avec
    vérification SHA-256 de chaque fichier, refus des chemins dangereux, des liens,
-   des doublons de casse et des fichiers non annoncés. L'autorisation est recopiée
+   des fichiers non annoncés et des volumes non complets. L'autorisation est recopiée
    puis recontrôlée. Le raccourci du Bureau n'est remplacé qu'après réussite ;
    en cas d'échec la destination partielle est supprimée et l'ancienne version
    conservée. Aucun privilège administrateur requis (`asInvoker`).
-3. **Exécution locale** — serveur Kestrel sur `127.0.0.1:18763` uniquement, cookie
-   de session aléatoire par lancement, en-têtes `no-store`, CSP restrictive, refus
-   des requêtes hors boucle locale et des origines étrangères. `admin.html`,
+   Les doublons de casse du dépôt réel sont ignorés de façon déterministe et tracés
+   (`doublons-ignores.txt`) — voir ci-dessous.
+3. **Exécution locale** — serveur Kestrel sur la boucle locale uniquement
+   (`127.0.0.1`, ports essayés 18763 à 18767 puis port libre choisi par le système :
+   un poste qui occupe déjà le premier port n'empêche pas l'ouverture), cookie de
+   session aléatoire par lancement, en-têtes `no-store`, CSP restrictive, refus des
+   hôtes non locaux et des requêtes cross-origin. `admin.html`,
    `portail.html` et `sw.js` sont bloqués ; les service workers sont désactivés pour
    éviter tout cache hors contrôle. La session locale attendue par `acces.js`
    (`__STI_NATIVE_AUTHENTICATED_V316`, `sti-session-cache`, `sti-labo3-permanent`)
    est injectée dans chaque document, après recontrôle de l'autorisation. Fermer la
    fenêtre arrête le serveur.
+
+### Doublons de casse du dépôt réel
+
+Le dépôt contient trois paires de fichiers dont le chemin ne diffère que par la
+casse, avec des contenus distincts (variante principale / variante de travail) :
+
+| conservé (premier annoncé) | ignoré |
+|---|---|
+| `cours/PHP-recap.html` | `cours/php-recap.html` |
+| `projets/sti0/Sondage.html` | `projets/sti0/sondage.html` |
+| `projets/sti0/Statistiques.html` | `projets/sti0/statistiques.html` |
+
+NTFS ne peut pas les stocker simultanément. L'installateur conserve le **premier
+fichier annoncé dans le manifeste**, ignore les suivants, les signale dans le
+journal et en écrit la liste dans `doublons-ignores.txt` à côté de
+`autorisation-labo3.json`. Le système de fichiers étant insensible à la casse, les
+deux orthographes ouvrent le fichier conservé : la navigation fonctionne, seule la
+variante servie peut différer de quelques lignes. Refuser tout le paquet aurait
+rendu l'installateur inutilisable avec le dépôt réel.
+
+Un même nom annoncé **deux fois au caractère près** reste en revanche refusé :
+c'est une archive ambiguë, pas un doublon de casse. Supprimer toute ambiguïté de
+casse dans le dépôt reste possible, mais c'est une modification de la plateforme :
+elle n'est pas faite ici.
 
 ## Compilation
 
@@ -54,6 +82,15 @@ sans cookie, injection de session, blocage admin/portail, lecture vidéo partiel
 (`preparer-fixture.mjs`) génère une clé Ed25519 jetable et une autorisation pour le
 `MachineGuid` de la machine de test.
 
+`paquet-fixture.mjs` fabrique en plus un **vrai** `.stipack` avec le générateur du
+tableau de bord (`assets/js/stipack.js`, chargé dans le contexte Node courant) à
+partir de fichiers réels du dépôt, dans les deux dispositions. La suite Windows
+extrait ces paquets et sert leur `index.html` : le contrat de format est donc
+vérifié contre ce que l'administrateur fabriquera réellement. Si le schéma du
+manifeste change, la suite casse ici plutôt qu'en salle. (Un contexte VM séparé
+casserait les `instanceof Uint8Array` du générateur, qui écrirait des listes
+d'octets à la place du contenu.)
+
 `.github/workflows/windows-labo3.yml` exécute cette suite sur un runner
 `windows-latest` et publie un binaire de contrôle. **Ce binaire n'est pas
 distribuable** : il embarque une clé de test jetable, pas la clé de production.
@@ -76,6 +113,12 @@ diffusable. Pour obtenir un installateur de production, deux chemins :
   (exécutable, `SHA256SUMS.txt`, notice). Le nom porte les 12 premiers caractères
   du SHA-256 de la clé embarquée : le vérifier avant diffusion. Déclencher ce
   workflow exige le droit `actions: write` sur le dépôt.
+  Cocher **`publier`** pour que le même run publie la release `labo3-windows`
+  (exécutable + `SHA256SUMS.txt`) : le tableau de bord détecte cette release et
+  active alors son lien de téléchargement, avec le SHA-256 affiché. Une release
+  existante est écrasée (`--clobber`). La release est publique : l'exécutable ne
+  fait rien sans autorisation signée par votre clé privée, mais ne publiez que le
+  binaire destiné au laboratoire.
 - **Poste Windows** — `.\outils\windows-labo3\compiler.ps1 -ClePublique publique.pem -Tester`.
 
 `verifier-cle-publique.mjs` refuse une clé privée, un PEM illisible ou un autre

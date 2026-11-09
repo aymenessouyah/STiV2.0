@@ -6,24 +6,33 @@
  * s'installent à partir du même dossier, sans réseau :
  *
  *   STI-Labo3-20-postes/
- *   ├── STI-Labo3-Windows-v316.exe            l’installateur officiel
+ *   ├── STI-Labo3-Installation.exe            l’installateur « version spéciale Labo 3 »
  *   ├── STI-Labo3-Plateforme.stipack          le paquet du dernier commit (complet)
+ *   ├── autorisation-labo3.json               la liste signée des 20 postes autorisés
  *   ├── LISEZ-MOI-20-POSTES.txt               la procédure, poste par poste
  *   ├── empreintes.txt                        SHA-256 de chaque fichier du média
- *   ├── verifier-media.ps1                    contrôle avant d’installer (un clic)
- *   └── MicrosoftEdgeWebView2Runtime-x64.exe  facultatif, si un poste manque de WebView2
+ *   └── verifier-media.ps1                    contrôle avant d’installer (un clic)
  *
- * L’installateur démarre l’installation tout seul quand un .stipack se trouve à
- * côté de lui : sur chaque poste, il suffit d’ouvrir ce dossier et de lancer
- * l’EXE. Le contrôle des empreintes évite d’installer depuis un média abîmé.
+ * L’installateur détecte le paquet et l’autorisation placés à côté de lui : sur
+ * chaque poste, il suffit d’ouvrir ce dossier, de lancer l’EXE et de confirmer.
+ * Aucun mot de passe n’est demandé. Le contrôle des empreintes évite d’installer
+ * depuis un média abîmé. WebView2 n’est plus requis : la plateforme s’ouvre dans
+ * le navigateur du poste, servi par un serveur strictement local.
+ *
+ * L’exécutable n’est pas téléchargeable dans le dépôt : il est compilé avec la
+ * clé PUBLIQUE de l’administrateur (workflow « Windows Labo3 » ou
+ * outils/windows-labo3/compiler.ps1). Passer son SHA-256 via --empreinte-attendue
+ * pour garantir que le binaire copié est bien celui qui a été produit.
  *
  * Le paquet est fabriqué par outils/stipack/construire-stipack.mjs, donc il
  * décrit le dernier commit du dépôt (git ls-files sur HEAD).
  *
  * Exemples :
  *   node outils/stipack/preparer-disque.mjs --sortie /media/USB/STI-Labo3-20-postes \
- *        --installeur ~/Téléchargements/STI-Labo3-Windows-v316.zip
- *   node outils/stipack/preparer-disque.mjs --volume leger --seuil-mo 0.5   (média réduit)
+ *        --installeur ~/Téléchargements/STI-Labo3-Installation.exe \
+ *        --empreinte-attendue 9f2c… --autorisation ~/prive/autorisation-labo3.json
+ *   node outils/stipack/preparer-disque.mjs --volume leger --seuil-mo 0.5 \
+ *        --accepter-volume-leger   (média réduit, refusé par l'installateur Labo 3)
  *   node outils/stipack/preparer-disque.mjs --verifier /media/USB/STI-Labo3-20-postes
  * ========================================================================== */
 
@@ -32,23 +41,20 @@ import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import zlib from 'node:zlib';
+import { inspecterAutorisation } from './autorisation-labo3.mjs';
 
 const RACINE = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..', '..');
 const FABRIQUE = path.join(RACINE, 'outils', 'stipack', 'construire-stipack.mjs');
 const NOM_PAQUET = 'STI-Labo3-Plateforme.stipack';
-const NOM_EXE = 'STI-Labo3-Windows-v316.exe';
+const NOM_EXE = 'STI-Labo3-Installation.exe';
+const NOM_AUTORISATION = 'autorisation-labo3.json';
 const NOM_PROCEDURE = 'LISEZ-MOI-20-POSTES.txt';
 const NOM_EMPREINTES = 'empreintes.txt';
 const NOM_VERIFIEUR = 'verifier-media.ps1';
 const NOM_LANCEUR = 'verifier-media.cmd';
-const NOM_WEBVIEW2 = 'MicrosoftEdgeWebView2Runtime-x64.exe';
-
-/* Empreintes publiées avec la release windows-v316 : elles permettent de dire si
-   l’installateur déposé sur le disque est bien celui que le site distribue. */
-const CONNUES = new Map([
-  ['ee3ca9e2de56441dc4478e27e81ff5e9b5b13b813b95f2654bb349ba49399b4a', { quoi: 'STI-Labo3-Windows-v316.exe', version: 'v316' }],
-  ['dfa180f54a2610456590a2b573a6701e7cabcb58ec4ed8bf89c07b7a7600f4e7', { quoi: 'STI-Labo3-Windows-v316.zip', version: 'v316' }]
-]);
+/* L’exécutable est compilé par l’administrateur avec sa propre clé publique :
+   aucune empreinte ne peut être publiée d’avance ici. --empreinte-attendue la
+   remplace ; à défaut, un consentement explicite est exigé. */
 
 function argValeur(nom, defaut = null) {
   const i = process.argv.indexOf(nom);
@@ -139,10 +145,13 @@ function texteProcedure(infos) {
     '──────────────────────────────────────────────────────────────',
     '',
     `  ${NOM_EXE}`,
-    '      l’installateur. Il démarre l’installation tout seul quand un',
-    '      paquet .stipack se trouve à côté de lui.',
+    '      l’installateur « STI v2.0 version spéciale Labo 3 ». Il détecte le',
+    '      paquet et l’autorisation placés à côté de lui.',
     `  ${NOM_PAQUET}`,
     '      la plateforme complète, telle qu’au dernier commit.',
+    `  ${NOM_AUTORISATION}`,
+    '      la liste signée des postes autorisés (20 maximum). Sans elle,',
+    '      l’installateur refuse de continuer.',
     '  empreintes.txt',
     '      l’empreinte SHA-256 de chaque fichier du dossier.',
     '  verifier-media.cmd',
@@ -164,16 +173,17 @@ function texteProcedure(infos) {
     `  3. Lancer ${NOM_EXE}.`,
     '     → « Informations complémentaires » puis « Exécuter quand même »',
     '       si SmartScreen s’affiche (l’installateur n’est pas signé).',
-    '     → Si le dossier manque de WebView2, installer d’abord',
-    `       ${NOM_WEBVIEW2} (fourni si présent), puis relancer.`,
     '',
-    '  4. L’installation reprend le paquet trouvé à côté de l’installateur.',
-    '     Si elle le demande : sélectionner',
-    `       ${NOM_PAQUET}`,
-    '     puis saisir le mot de passe initial.',
+    '  4. Confirmer l’installation : le paquet et l’autorisation du dossier sont',
+    '     repris automatiquement. AUCUN mot de passe n’est demandé, aucune',
+    '     connexion au portail n’est nécessaire.',
+    '     → « Ce poste n’est pas autorisé pour le Labo 3 » signifie que son',
+    '       empreinte ne figure pas dans la liste signée : refaire un relevé',
+    '       et régénérer l’autorisation, pas réinstaller.',
     '',
-    '  5. Vérifier : ouvrir le raccourci « STI by AE — L’Atelier du Web »,',
-    '     la page d’accueil doit s’afficher sans Internet.',
+    '  5. Vérifier : la plateforme s’ouvre dans le navigateur, sans Internet.',
+    '     Garder la fenêtre de l’application ouverte pendant la séance : elle',
+    '     héberge le serveur local. Le raccourci créé sur le Bureau la relance.',
     '',
     '  6. Débrancher le disque et passer au poste suivant.',
     '',
@@ -181,11 +191,24 @@ function texteProcedure(infos) {
     'RÉINSTALLATION / MISE À JOUR D’UN POSTE',
     '──────────────────────────────────────────────────────────────',
     '',
-    '  Le même dossier sert à remettre un poste d’aplomb : relancer l’EXE,',
-    '  la nouvelle version remplace l’ancienne et son raccourci.',
+    '  Le même dossier sert à remettre un poste d’aplomb : relancer l’EXE installe',
+    '  une version supplémentaire sans supprimer la précédente, puis remplace le',
+    '  raccourci. En cas d’échec, l’ancienne version reste utilisable.',
     '',
     '  Pour régénérer ce média avec la toute dernière version du site :',
-    '    node outils/stipack/preparer-disque.mjs --sortie <dossier du disque>',
+    '    node outils/stipack/preparer-disque.mjs --sortie <dossier du disque> \\',
+    '      --installeur <STI-Labo3-Installation.exe> --empreinte-attendue <sha256> \\',
+    '      --autorisation <autorisation-labo3.json>',
+    '',
+    '──────────────────────────────────────────────────────────────',
+    'CE QUE CE MEDIA NE FAIT PAS',
+    '──────────────────────────────────────────────────────────────',
+    '',
+    '  Hors ligne, les services en ligne restent indisponibles : comptes du portail,',
+    '  progressions synchronisées, quiz enregistrés côté serveur. Les fichiers sont',
+    '  locaux ; ces services, non. Ne pas promettre ces fonctions aux élèves.',
+    '',
+    '  La clé privée de signature ne doit JAMAIS être copiée sur ce support.',
     '',
     '──────────────────────────────────────────────────────────────',
     'SUIVI DES 20 POSTES',
@@ -193,9 +216,9 @@ function texteProcedure(infos) {
     '',
     '  Noter au fur et à mesure (ou imprimer cette page) :',
     '',
-    '   poste | date | vérif. média | installé | accueil OK | mot de passe remis',
-    '   ------+------+--------------+----------+------------+------------------',
-    ...Array.from({ length: 20 }, (_, i) => `   ${String(i + 1).padEnd(5)} |      |              |          |            |`),
+    '   poste | date | vérif. média | autorisé | installé | accueil hors ligne OK',
+    '   ------+------+--------------+----------+----------+----------------------',
+    ...Array.from({ length: 20 }, (_, i) => `   ${String(i + 1).padEnd(5)} |      |              |          |          |`),
     ''
   ];
   return lignes.join('\n');
@@ -274,8 +297,19 @@ function construire() {
   const volume = (argValeur('--volume', 'complet') || 'complet').toLowerCase();
   const seuilMo = argValeur('--seuil-mo', null);
   const installeur = argValeur('--installeur', null);
-  const webview2 = argValeur('--webview2', null);
+  const autorisation = argValeur('--autorisation', null);
+  const empreinteAttendue = (argValeur('--empreinte-attendue', null) || '').trim().toLowerCase();
   const disposition = (argValeur('--disposition', 'plateforme') || 'plateforme').toLowerCase();
+
+  /* L'installateur Windows n'installe que des paquets complets : préparer un support
+     allégé produirait une clé que les 20 postes refuseraient. Le refus tombe avant
+     toute écriture sur le support ; l'échappatoire est explicite. */
+  if (volume !== 'complet' && !process.argv.includes('--accepter-volume-leger')) {
+    throw new Error(
+      `--volume ${volume} refusé : l'installateur « STI v2.0 version spéciale Labo 3 » n'installe que des paquets complets.\n` +
+      '  Refaites le support avec --volume complet (défaut), ou assumez l\'incompatibilité avec --accepter-volume-leger.'
+    );
+  }
 
   fs.mkdirSync(sortie, { recursive: true });
   process.stdout.write(`\n💾 Média d’installation — ${sortie}\n`);
@@ -315,50 +349,96 @@ function construire() {
   );
   process.stdout.write(`   ${tailleLisible(fs.statSync(paquet).size)} · ${manifeste.contenu.fichiers} fichiers · commit ${manifeste.version.commitCourt}\n`);
 
-  /* 2. L’installateur : copié, extrait d’un ZIP au besoin, et vérifié. */
+  /* 2. L’installateur : copié, extrait d’un ZIP au besoin, et vérifié.
+        Aucune empreinte n’est publiée d’avance : le binaire est compilé avec la
+        clé publique de l’administrateur. --empreinte-attendue est le SHA-256
+        affiché par compiler.ps1 (ou SHA256SUMS.txt de l’artefact). */
   let nomInstalleur = null;
   if (installeur) {
     const source = path.resolve(installeur);
     if (!fs.existsSync(source)) throw new Error(`installateur introuvable : ${source}`);
-    const empreinteSource = sha256Fichier(source);
-    const connue = CONNUES.get(empreinteSource);
-
     process.stdout.write('② Installateur…\n');
+    let empreinteSource;
+    let sourceExe;
+    let dossierExtraction = null;
     if (/\.zip$/i.test(source)) {
-      const dossierExtraction = path.join(sortie, '.extraction');
+      dossierExtraction = path.join(sortie, '.extraction');
       fs.mkdirSync(dossierExtraction, { recursive: true });
       const extraits = extraireZip(source, dossierExtraction);
       const exe = extraits.find((n) => /\.exe$/i.test(n));
       if (!exe) throw new Error('aucun .exe dans l’archive fournie');
       nomInstalleur = NOM_EXE;
-      fs.copyFileSync(path.join(dossierExtraction, exe), path.join(sortie, nomInstalleur));
-      fs.rmSync(dossierExtraction, { recursive: true, force: true });
-      process.stdout.write(`   ZIP ${connue ? `reconnu (${connue.version})` : 'INCONNU'} → ${nomInstalleur}\n`);
+      sourceExe = path.join(dossierExtraction, exe);
+      process.stdout.write(`   ZIP → ${nomInstalleur}\n`);
     } else {
       nomInstalleur = path.basename(source);
-      fs.copyFileSync(source, path.join(sortie, nomInstalleur));
-      process.stdout.write(`   ${nomInstalleur} ${connue ? `reconnu (${connue.version})` : '— empreinte INCONNUE'}\n`);
+      sourceExe = source;
+      process.stdout.write(`   ${nomInstalleur}\n`);
     }
-    if (!connue && !drapeau('--accepter-installeur-inconnu')) {
+    empreinteSource = sha256Fichier(sourceExe);
+    process.stdout.write(`   sha256 : ${empreinteSource}\n`);
+
+    /* Contrôle avant copie : un binaire refusé ne doit rien laisser sur le média. */
+    if (empreinteAttendue) {
+      if (empreinteSource !== empreinteAttendue) {
+        if (dossierExtraction) fs.rmSync(dossierExtraction, { recursive: true, force: true });
+        throw new Error(
+          `l’installateur ne correspond pas à l’empreinte attendue.\n` +
+          `   attendu : ${empreinteAttendue}\n   obtenu  : ${empreinteSource}`
+        );
+      }
+      process.stdout.write('   empreinte attendue : conforme\n');
+    } else if (!drapeau('--accepter-installeur-inconnu')) {
+      if (dossierExtraction) fs.rmSync(dossierExtraction, { recursive: true, force: true });
       throw new Error(
-        'l’installateur ne correspond à aucune empreinte publiée (v316).\n' +
-        '   Vérifiez l’origine du fichier, ou relancez avec --accepter-installeur-inconnu.'
+        'empreinte de l’installateur non vérifiée.\n' +
+        '   Passez --empreinte-attendue <sha256> (affiché par compiler.ps1 ou\n' +
+        '   SHA256SUMS.txt de l’artefact), ou --accepter-installeur-inconnu\n' +
+        '   si vous assumez ce binaire sans contrôle.'
       );
+    } else {
+      process.stdout.write('   ⚠ empreinte non vérifiée (--accepter-installeur-inconnu)\n');
     }
-    const empreinteCopie = sha256Fichier(path.join(sortie, nomInstalleur));
-    if (empreinteCopie !== sha256Fichier(source) && !/\.zip$/i.test(source)) {
+
+    /* En-tête MZ lu sur 2 octets : évite de charger un binaire de 150 Mo. */
+    const descripteur = fs.openSync(sourceExe, 'r');
+    const entete = Buffer.alloc(2);
+    try { fs.readSync(descripteur, entete, 0, 2, 0); } finally { fs.closeSync(descripteur); }
+    if (entete.toString('latin1') !== 'MZ') {
+      if (dossierExtraction) fs.rmSync(dossierExtraction, { recursive: true, force: true });
+      throw new Error('le fichier fourni n’est pas un exécutable Windows (en-tête MZ absent)');
+    }
+
+    fs.copyFileSync(sourceExe, path.join(sortie, nomInstalleur));
+    if (dossierExtraction) fs.rmSync(dossierExtraction, { recursive: true, force: true });
+    if (sha256Fichier(path.join(sortie, nomInstalleur)) !== empreinteSource) {
       throw new Error('la copie de l’installateur diffère de la source');
     }
   } else {
     process.stdout.write(`② Installateur : non fourni — déposez ${NOM_EXE} dans ce dossier\n`);
   }
 
-  /* 3. WebView2 facultatif. */
-  if (webview2) {
-    const source = path.resolve(webview2);
-    if (!fs.existsSync(source)) throw new Error(`WebView2 introuvable : ${source}`);
-    fs.copyFileSync(source, path.join(sortie, NOM_WEBVIEW2));
-    process.stdout.write(`③ WebView2 copié (${tailleLisible(fs.statSync(source).size)})\n`);
+  /* 3. L’autorisation signée : obligatoire pour installer quoi que ce soit.
+        Contrôle de structure seulement — la signature, elle, est vérifiée par
+        l’exécutable avec la clé publique embarquée à la compilation. */
+  let postesAutorises = null;
+  if (autorisation) {
+    const source = path.resolve(autorisation);
+    if (!fs.existsSync(source)) throw new Error(`autorisation introuvable : ${source}`);
+    let enveloppe;
+    try { enveloppe = JSON.parse(fs.readFileSync(source, 'utf8')); }
+    catch (erreur) { throw new Error(`autorisation illisible : ${erreur.message}`); }
+    const infos = inspecterAutorisation(enveloppe);
+    postesAutorises = infos.postes;
+    fs.copyFileSync(source, path.join(sortie, NOM_AUTORISATION));
+    process.stdout.write(`③ Autorisation copiée : ${infos.postes} poste(s) — ${infos.laboratoire}\n`);
+    if (sha256Fichier(path.join(sortie, NOM_AUTORISATION)) !== sha256Fichier(source)) {
+      throw new Error('la copie de l’autorisation diffère de la source');
+    }
+    process.stdout.write('   ⚠ La signature n’est pas vérifiée ici : seul l’exécutable compilé\n' +
+      '     avec votre clé publique peut le faire. Ne jamais copier la clé privée.\n');
+  } else {
+    process.stdout.write(`③ Autorisation : non fournie — ${NOM_AUTORISATION} doit être déposé dans ce dossier\n`);
   }
 
   /* 4. Procédure et vérificateur. */
@@ -389,19 +469,31 @@ function construire() {
   process.stdout.write(`⑤ ${NOM_EMPREINTES} : ${fichiers.length} fichier(s), ${tailleLisible(totalOctets)}\n`);
 
   const sansInstalleur = !nomInstalleur;
+  const sansAutorisation = !postesAutorises;
   process.stdout.write('\n' + '─'.repeat(62) + '\n');
   for (const nom of fichiers) {
     process.stdout.write(`  ${nom.padEnd(38)} ${tailleLisible(fs.statSync(path.join(sortie, nom)).size).padStart(9)}\n`);
   }
   process.stdout.write('─'.repeat(62) + '\n');
-  process.stdout.write(
-    sansInstalleur
-      ? `\n⚠ Média incomplet : ${NOM_EXE} doit être déposé dans ce dossier.\n` +
-        '  (téléchargement : release windows-v316 du dépôt STiV2.0)\n\n'
-      : `\n✅ Média prêt : copier ce dossier sur le disque dur / la clé, une seule fois.\n` +
-        `   Sur chaque poste : double-clic sur ${NOM_LANCEUR}, puis lancer ${nomInstalleur}.\n\n`
-  );
-  return { sortie, fichiers, totalOctets, manifeste, sansInstalleur };
+  if (sansInstalleur || sansAutorisation) {
+    process.stdout.write('\n⚠ Média incomplet :\n');
+    if (sansInstalleur) {
+      process.stdout.write(`   • ${NOM_EXE} — compilé avec votre clé publique :\n` +
+        '     workflow « Windows Labo3 » (Run workflow) ou outils/windows-labo3/compiler.ps1.\n');
+    }
+    if (sansAutorisation) {
+      process.stdout.write(`   • ${NOM_AUTORISATION} — signée depuis le tableau de bord ou\n` +
+        '     outils/stipack/autorisation-labo3.mjs (20 postes maximum).\n');
+    }
+    process.stdout.write('   Sans ces deux fichiers, l’installation est impossible sur les postes.\n\n');
+  } else {
+    process.stdout.write(
+      `\n✅ Média prêt : copier ce dossier sur le disque dur / la clé, une seule fois.\n` +
+      `   Sur chaque poste : double-clic sur ${NOM_LANCEUR}, puis lancer ${nomInstalleur}\n` +
+      `   et confirmer. Aucun mot de passe. ${postesAutorises} poste(s) autorisé(s).\n\n`
+    );
+  }
+  return { sortie, fichiers, totalOctets, manifeste, sansInstalleur, sansAutorisation, postesAutorises };
 }
 
 /* -------------------------------------------------------------- vérifier */

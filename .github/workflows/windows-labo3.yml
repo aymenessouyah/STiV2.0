@@ -11,6 +11,11 @@ on:
         description: 'Clé PUBLIQUE Ed25519 (PEM SPKI), lignes séparées par \n. Jamais la clé privée.'
         required: true
         type: string
+      publier:
+        description: 'Publier la release « labo3-windows » (active le lien du tableau de bord)'
+        required: false
+        type: boolean
+        default: false
 permissions:
   contents: read
   pull-requests: write
@@ -36,6 +41,15 @@ jobs:
           node outils/windows-labo3-tests/preparer-fixture.mjs $fixture $guid *>&1 | Tee-Object -FilePath $journal
           exit $LASTEXITCODE
 
+      - name: Paquets réels fabriqués par le générateur du tableau de bord
+        shell: pwsh
+        run: |
+          $journal = Join-Path $env:RUNNER_TEMP 'labo3-journal.log'
+          node outils/windows-labo3-tests/paquet-fixture.mjs "$env:RUNNER_TEMP/paquet-plateforme.stipack" plateforme *>&1 | Tee-Object -FilePath $journal -Append
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node outils/windows-labo3-tests/paquet-fixture.mjs "$env:RUNNER_TEMP/paquet-racine.stipack" racine *>&1 | Tee-Object -FilePath $journal -Append
+          exit $LASTEXITCODE
+
       - name: Compilation du projet et de la suite de tests
         shell: pwsh
         run: |
@@ -49,7 +63,9 @@ jobs:
         run: |
           $fixture = Join-Path $env:RUNNER_TEMP 'labo3-fixture'
           $journal = Join-Path $env:RUNNER_TEMP 'labo3-journal.log'
-          dotnet run --project outils/windows-labo3-tests/STILabo3.Tests.csproj -c Release --no-build "-p:Labo3PublicKey=$fixture/publique.pem" -- $fixture *>&1 | Tee-Object -FilePath $journal -Append
+          $reel = Join-Path $env:RUNNER_TEMP 'paquet-plateforme.stipack'
+          $racine = Join-Path $env:RUNNER_TEMP 'paquet-racine.stipack'
+          dotnet run --project outils/windows-labo3-tests/STILabo3.Tests.csproj -c Release --no-build "-p:Labo3PublicKey=$fixture/publique.pem" -- $fixture $reel $racine *>&1 | Tee-Object -FilePath $journal -Append
           exit $LASTEXITCODE
 
       - name: Publication autonome et contrôle de la clé embarquée
@@ -89,6 +105,8 @@ jobs:
     if: github.event_name == 'workflow_dispatch'
     runs-on: windows-latest
     timeout-minutes: 30
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
@@ -152,6 +170,26 @@ jobs:
         run: |
           $court = (Get-Content -Raw (Join-Path $env:RUNNER_TEMP 'cle.court')).Trim()
           "nom=STI-v2.0-Labo3-cle-$court" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      # Publication publique : l'exécutable ne fonctionne qu'avec une autorisation
+      # signée par la clé privée correspondante, et le tableau de bord ne propose le
+      # téléchargement que si SHA256SUMS.txt accompagne le binaire.
+      - name: Publier la release labo3-windows
+        if: ${{ github.event.inputs.publier == 'true' }}
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $sortie = Join-Path $env:RUNNER_TEMP 'publication'
+          $exe = Join-Path $sortie 'STI-Labo3-Installation.exe'
+          $sommes = Join-Path $sortie 'SHA256SUMS.txt'
+          $notice = Join-Path $sortie 'LISEZ-MOI.txt'
+          gh release create labo3-windows $exe $sommes --repo $env:GITHUB_REPOSITORY --title 'STI v2.0 version spéciale Labo 3' --notes-file $notice
+          if ($LASTEXITCODE -ne 0) {
+            gh release upload labo3-windows $exe $sommes --repo $env:GITHUB_REPOSITORY --clobber
+            if ($LASTEXITCODE -ne 0) { exit 1 }
+          }
+          gh release view labo3-windows --repo $env:GITHUB_REPOSITORY --json tagName,assets
 
       - uses: actions/upload-artifact@v4
         with:

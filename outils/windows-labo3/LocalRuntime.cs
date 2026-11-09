@@ -2,9 +2,13 @@ using System.Diagnostics;
 using System.Net;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace STILabo3;
@@ -13,23 +17,44 @@ internal sealed class LocalRuntime : IAsyncDisposable
 {
     private readonly WebApplication app;
     internal Uri LaunchUri { get; }
-    private const int Port = 18763; // Origine stable pour les progressions locales du navigateur.
-    private LocalRuntime(WebApplication application, string token) { app = application; LaunchUri = new Uri($"http://127.0.0.1:{Port}/__launch/{token}"); }
-    internal static async Task<LocalRuntime> StartAsync(string versionDirectory)
+
+    // Port préféré, puis replis : en salle, un poste peut déjà occuper le premier.
+    // Le dernier candidat (0) laisse le système choisir un port libre.
+    internal static readonly int[] PortsEssayes = [18763, 18764, 18765, 18766, 18767, 0];
+
+    private LocalRuntime(WebApplication application, Uri launchUri) { app = application; LaunchUri = launchUri; }
+
+    internal static async Task<LocalRuntime> StartAsync(string versionDirectory, int[]? ports = null)
     {
+        // Contrôlé une fois ici, puis avant chaque document servi.
         Authorization.Check(Path.Combine(versionDirectory, "autorisation-labo3.json"));
+        Exception? derniere = null;
+        foreach (var port in ports ?? PortsEssayes)
+        {
+            try { return await DemarrerAsync(versionDirectory, port); }
+            catch (Exception erreur) when (erreur is AddressInUseException or IOException) { derniere = erreur; }
+        }
+        throw new InvalidOperationException("Aucun port local disponible pour servir la plateforme.", derniere);
+    }
+
+    private static async Task<LocalRuntime> DemarrerAsync(string versionDirectory, int port)
+    {
         var root = Path.Combine(versionDirectory, "plateforme");
-        if (!File.Exists(Path.Combine(root, "index.html"))) throw new IOException("Plateforme installée absente.");
+        if (!File.Exists(Path.Combine(root, "index.html"))) throw new InvalidOperationException("Plateforme installée absente.");
         var builder = WebApplication.CreateBuilder();
         builder.Logging.ClearProviders();
-        builder.WebHost.UseKestrel(o => o.Listen(IPAddress.Loopback, Port));
+        builder.WebHost.UseKestrel(o => o.Listen(IPAddress.Loopback, port));
         var app = builder.Build();
         var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
         var mime = new FileExtensionContentTypeProvider();
         app.Run(async context =>
         {
             var request = context.Request;
-            if (request.Host.Value != $"127.0.0.1:{Port}" || request.Method is not ("GET" or "HEAD")) { context.Response.StatusCode = 403; return; }
+            // Kestrel n'écoute que sur la boucle locale ; on refuse en plus tout
+            // hôte qui ne la désigne pas, et toute requête cross-origin.
+            var hote = request.Host.Host;
+            if (hote is not ("127.0.0.1" or "localhost" or "[::1]" or "::1") || request.Method is not ("GET" or "HEAD"))
+            { context.Response.StatusCode = 403; return; }
             context.Response.Headers.CacheControl = "no-store";
             context.Response.Headers.XContentTypeOptions = "nosniff";
             context.Response.Headers["Referrer-Policy"] = "no-referrer";
@@ -40,7 +65,8 @@ internal sealed class LocalRuntime : IAsyncDisposable
                 context.Response.Redirect("/index.html"); return;
             }
             if (request.Cookies["sti-labo3"] != token) { context.Response.StatusCode = 403; return; }
-            if (request.Headers.Origin.Count > 0 && request.Headers.Origin != $"http://127.0.0.1:{Port}") { context.Response.StatusCode = 403; return; }
+            if (request.Headers.Origin.Count > 0 && request.Headers.Origin != $"{request.Scheme}://{request.Host.Value}")
+            { context.Response.StatusCode = 403; return; }
             // Réévaluer la signature avant chaque document, pas seulement à l'installation.
             var relative = (request.Path.Value ?? "").TrimStart('/');
             if (relative == "") relative = "index.html";
@@ -74,10 +100,18 @@ internal sealed class LocalRuntime : IAsyncDisposable
             if (!mime.TryGetContentType(file, out var contentType)) contentType = "application/octet-stream";
             await Results.File(file, contentType, enableRangeProcessing: true).ExecuteAsync(context);
         });
-        try { await app.StartAsync(); }
+        try
+        {
+            await app.StartAsync();
+            // Avec le port 0, l'adresse réelle n'est connue qu'après démarrage.
+            var adresses = app.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>()?.Addresses;
+            var adresse = adresses is { Count: > 0 } ? adresses.First() : $"http://127.0.0.1:{port}";
+            var origine = new Uri(adresse);
+            return new LocalRuntime(app, new Uri(origine, "/__launch/" + token));
+        }
         catch { await app.DisposeAsync(); throw; }
-        return new LocalRuntime(app, token);
     }
+
     internal void Open() => Process.Start(new ProcessStartInfo(LaunchUri.AbsoluteUri) { UseShellExecute = true });
     public async ValueTask DisposeAsync() { await app.StopAsync(); await app.DisposeAsync(); }
 
