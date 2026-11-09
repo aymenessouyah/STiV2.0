@@ -77,3 +77,17 @@ test('publication de production : clé publique only, artefact et empreintes', (
   assert.match(verificateur, /der.length !== 44/);
   assert.match(lire('outils/windows-labo3/compiler.ps1'), /verifier-cle-publique\.mjs/);
 });
+test('scripts PowerShell : aucun guillemet typographique (casse l’analyse)', () => {
+  // PowerShell traite U+2018/U+2019/U+201C/U+201D comme des délimiteurs de chaîne :
+  // une apostrophe typographique dans un message ferme la chaîne et le script
+  // échoue avec « Missing closing '}' » avant même de s’exécuter.
+  const fichiers = ['outils/windows-labo3/compiler.ps1', 'outils/stipack/relever-poste-labo3.ps1'];
+  for (const fichier of fichiers) {
+    if (!existsSync(new URL('../' + fichier, import.meta.url))) continue;
+    const texte = lire(fichier);
+    assert.doesNotMatch(texte, /[\u2018\u2019\u201C\u201D]/, fichier + ' contient un guillemet typographique');
+    const ouvrantes = (texte.match(/{/g) || []).length;
+    const fermantes = (texte.match(/}/g) || []).length;
+    assert.equal(ouvrantes, fermantes, fichier + ' : accolades déséquilibrées');
+  }
+});

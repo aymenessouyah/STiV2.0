@@ -27,7 +27,9 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     node (Join-Path $PSScriptRoot 'verifier-cle-publique.mjs') $ClePublique
     if ($LASTEXITCODE -ne 0) { throw 'Clé publique refusée : compilation annulée.' }
 } else {
-    Write-Warning 'Node.js absent : la clé n’a pas pu être vérifiée avant compilation.'
+    # Apostrophe droite et guillemets doubles : PowerShell traite U+2019 comme un
+    # délimiteur de chaîne, ce qui casse l'analyse du script.
+    Write-Warning "Node.js absent : la clé publique n'a pas pu être vérifiée avant compilation."
 }
 if ($Tester) {
     $fixture = Join-Path $env:TEMP ("sti-labo3-fixture-" + [guid]::NewGuid().ToString('N'))
