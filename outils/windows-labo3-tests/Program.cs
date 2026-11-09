@@ -29,6 +29,22 @@ string Archive(string prefix, bool corrupt = false, string extra = "", string? f
     if (extra != "") { using var s = new StreamWriter(zip.CreateEntry(extra).Open()); s.Write("extra"); }
     return file;
 }
+/* Plusieurs fichiers annoncés, éventuellement en double à la casse près. */
+string ArchiveMulti(string prefix, string volume, params (string Nom, string Contenu)[] fichiers)
+{
+    var file = Path.Combine(root, Guid.NewGuid() + ".stipack");
+    using var zip = ZipFile.Open(file, ZipArchiveMode.Create);
+    var annonces = new List<object>();
+    foreach (var (nom, contenu) in fichiers)
+    {
+        var bytes = Encoding.UTF8.GetBytes(contenu);
+        using (var s = zip.CreateEntry(prefix + nom).Open()) s.Write(bytes);
+        annonces.Add(new { chemin = prefix + nom, octets = bytes.Length, sha256 = Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant() });
+    }
+    using (var s = new StreamWriter(zip.CreateEntry("stipack.json").Open()))
+        s.Write(JsonSerializer.Serialize(new { format = "STI-STIPACK/1", volume, contenu = new { dossier = prefix }, fichiers = annonces.ToArray() }));
+    return file;
+}
 try
 {
     Authorization.Check(Path.Combine(fixture, "autorisation-labo3.json")); passed++;
@@ -45,7 +61,29 @@ try
     await Refuse(() => PackageInstaller.ExtractAsync(Archive("", corrupt: true), bad), "SHA-256 incorrect");
     Assert(!Directory.Exists(bad), "Nettoyage extraction incomplète");
     await Refuse(() => PackageInstaller.ExtractAsync(Archive("", extra: "inconnu.txt"), Path.Combine(root, "extra")), "fichier non annoncé");
-    await Refuse(() => PackageInstaller.ExtractAsync(Archive("", extra: "INDEX.HTML"), Path.Combine(root, "case")), "collision de casse");
+    await Refuse(() => PackageInstaller.ExtractAsync(Archive("", extra: "INDEX.HTML"), Path.Combine(root, "case")), "entrée non annoncée à la casse près");
+    /* Doublons de casse : le dépôt réel contient cours/PHP-recap.html ET
+       cours/php-recap.html, contenus distincts. Windows ne peut pas les stocker
+       tous les deux : le premier annoncé est installé, les autres sont ignorés et
+       rapportés. Refuser tout le paquet rendrait l'installateur inutilisable. */
+    var doublon = Path.Combine(root, "doublon-" + Guid.NewGuid().ToString("N"));
+    var extrait = await PackageInstaller.ExtractAsync(ArchiveMulti("plateforme/", "complet",
+        ("index.html", "<html>accueil</html>"),
+        ("PHP-recap.html", "<html>variante principale</html>"),
+        ("php-recap.html", "<html>variante de travail</html>")), doublon);
+    Assert(extrait.Fichiers == 2, "Deux fichiers installés sur trois annoncés : " + extrait.Fichiers);
+    Assert(extrait.DoublonsIgnores.Count == 1 && extrait.DoublonsIgnores[0].EndsWith("plateforme/php-recap.html"),
+        "Doublon ignoré rapporté : " + string.Join(",", extrait.DoublonsIgnores));
+    Assert(File.ReadAllText(Path.Combine(doublon, "PHP-recap.html")).Contains("principale"), "Le premier annoncé est conservé");
+    await Refuse(() => PackageInstaller.ExtractAsync(ArchiveMulti("plateforme/", "complet",
+        ("index.html", "<html>a</html>"), ("index.html", "<html>b</html>")), Path.Combine(root, "exact")),
+        "même nom annoncé deux fois : archive ambiguë");
+    try
+    {
+        await PackageInstaller.ExtractAsync(ArchiveMulti("plateforme/", "leger", ("index.html", "<html></html>")), Path.Combine(root, "vol"));
+        throw new Exception("Volume léger accepté");
+    }
+    catch (InvalidDataException ex) { Assert(ex.Message.Contains("--volume complet"), "Le refus du volume léger dit comment corriger"); }
     await Refuse(() => PackageInstaller.ExtractAsync(Archive("", fileName: "../index.html"), Path.Combine(root, "traversal")), "traversée");
     var existing = Path.Combine(root, "existing"); Directory.CreateDirectory(existing);
     File.WriteAllText(Path.Combine(existing, "temoin"), "conserver");
