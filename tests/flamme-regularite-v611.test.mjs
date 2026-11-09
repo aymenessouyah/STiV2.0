@@ -27,6 +27,7 @@ function profilVM(initial) {
   const data = new Map([['sti-profil-abonne', JSON.stringify(initial)]]);
   const classes = { add() {}, remove() {}, contains() { return false; }, toggle() {} };
   const contexte = {
+    Date,
     document: { documentElement: { classList: classes, setAttribute() {} }, body: { classList: classes } },
     localStorage: {
       getItem: (k) => (data.has(k) ? data.get(k) : null),
@@ -161,9 +162,9 @@ test('v611 — la carte du tableau de bord est sobre et accessible', () => {
 test('v611 — publication : version, cache-busters et révisions', () => {
   assert.match(sw, /var VERSION_PUBLIEE = "v(?:6(?:1[1-9]|[2-9]\d)|[7-9]\d\d)";/);
   assert.match(sw, /v611-flamme-regularite-20261101/);
-  for (const url of ['./assets/js/profil.js', './assets/js/app.js', './assets/css/theme.css', './dashboard.html']) {
-    assert.ok(sw.includes(`revision: "flamme-regularite-v611"`), 'révision attendue : ' + url);
-    assert.ok(sw.split('\n').some((l) => l.includes(`url: "${url}"`) && l.includes('flamme-regularite-v611')), url);
+  for (const [url, revision] of [['./assets/js/profil.js', 'flamme-regularite-v611'], ['./assets/js/app.js', 'tp6-series6-v619'], ['./assets/css/theme.css', 'flamme-regularite-v611'], ['./dashboard.html', 'flamme-regularite-v611']]) {
+    assert.ok(sw.includes(`revision: "${revision}"`), 'révision attendue : ' + url);
+    assert.ok(sw.split('\n').some((l) => l.includes(`url: "${url}"`) && l.includes(revision)), url);
   }
   const page = lire('dashboard.html');
   assert.match(page, /assets\/js\/profil\.js\?v=611-flamme/);

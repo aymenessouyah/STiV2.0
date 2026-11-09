@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1a365d">
+  <meta name="description" content="Correction vidéo du TP6 Mission cinéma : rappels de cours et correction SQL en sept parties.">
+  <title>TP6 · Mission cinéma — Je fais tout le SQL</title>
+  <style>
+    :root{color-scheme:light;--bg:#f8fafc;--panel:#fff;--panel-2:#dbeafe;--ink:#1a202c;--muted:#475569;--line:#cbd5e1;--navy:#1a365d;--blue:#1d4ed8;--blue-mid:#2b6cb0;--orange:#ea580c;--yellow:#facc15;--green:#15803d;--shadow:0 12px 30px rgba(15,23,42,.10)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font:16px/1.6 "Segoe UI",Arial,sans-serif}
+    a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}button{font:inherit}.wrap{width:min(1120px,calc(100% - 36px));margin:auto}
+    .top{padding:18px 0;border-bottom:2px solid var(--navy);background:#fff}.brand{display:flex;align-items:center;gap:12px;color:var(--navy);text-decoration:none;font-size:.9rem}.brand img{width:36px;height:36px;object-fit:contain}.brand b{color:var(--navy)}
+    .hero{padding:42px 24px 28px;text-align:center}.capsule-tag{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--yellow);border-radius:10px;padding:8px 16px;color:#fff;background:linear-gradient(135deg,var(--orange),#c2410c);font-size:.82rem;font-weight:850;letter-spacing:.07em;text-transform:uppercase;box-shadow:0 6px 18px rgba(234,88,12,.24)}.capsule-tag:before{content:"▶";font-size:.72rem}h1,h2,h3,p{margin-top:0}.hero h1{margin:18px auto 10px;font-size:clamp(2rem,5vw,3.2rem);line-height:1.08;letter-spacing:-.03em;color:var(--navy);text-transform:uppercase}.hero h1 span{color:var(--blue)}.hero p{max-width:780px;margin:0 auto;color:var(--muted);font-size:1.04rem}.hero-meta{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:20px}.hero-meta span{border:1.5px solid var(--line);border-radius:8px;background:#fff;padding:6px 11px;color:#334155;font-size:.82rem}
+    .video-shell{margin:20px auto 34px;padding:14px;border:2px solid var(--navy);border-radius:12px;background:#fff;box-shadow:var(--shadow)}.video-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:6px 8px 14px;color:var(--navy)}.video-head strong{font-size:1rem}.live-pill{font-size:.78rem;color:var(--navy);border:1.5px solid var(--blue-mid);border-radius:8px;background:#dbeafe;padding:5px 10px;font-weight:750}.video-frame{overflow:hidden;border:1px solid #94a3b8;border-radius:8px;background:#05070b;aspect-ratio:16/9}.video-frame video{display:block;width:100%;height:100%;object-fit:contain;background:#05070b}.video-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 8px 3px;color:var(--muted);font-size:.9rem}.action-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:9px 16px;border:2px solid var(--yellow);border-radius:9px;background:linear-gradient(135deg,var(--orange),#c2410c);color:#fff;font-weight:800}.action-btn:hover{background:linear-gradient(135deg,#f97316,var(--orange));text-decoration:none}.video-note{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 8px 3px;color:var(--muted);font-size:.88rem}.video-note a{font-weight:750}
+    .section-title{display:flex;align-items:end;justify-content:space-between;gap:18px;margin:44px 0 16px;border-bottom:3px solid var(--navy);padding-bottom:10px}.section-title h2{font-size:1.5rem;margin:0;letter-spacing:-.02em;color:var(--navy)}.section-title p{margin:0;color:var(--muted);font-size:.9rem}.part-layout{display:grid;grid-template-columns:minmax(215px,.7fr) minmax(0,1.5fr);gap:16px;align-items:stretch}.part-list{display:grid;gap:8px;align-content:start}.part-btn{display:flex;align-items:center;gap:12px;text-align:left;width:100%;padding:12px;border-radius:8px;border:1.5px solid var(--line);background:#fff;color:#334155;cursor:pointer;transition:.18s ease}.part-btn:hover,.part-btn[aria-pressed="true"]{border-color:var(--blue);background:#dbeafe;color:var(--navy);transform:translateX(2px)}.part-number{display:grid;place-items:center;flex:0 0 32px;height:32px;border-radius:6px;background:var(--navy);color:#fff;font-weight:850}.part-btn[aria-pressed="true"] .part-number{background:var(--orange);color:#fff}.part-btn span:last-child{font-weight:700;font-size:.9rem}
+    .recap{min-height:100%;padding:24px;border-radius:10px;border:1.5px solid var(--line);border-top:5px solid var(--blue-mid);background:#fff;box-shadow:0 2px 6px rgba(15,23,42,.05)}.recap-kicker{color:var(--blue);font-weight:850;text-transform:uppercase;letter-spacing:.08em;font-size:.76rem}.recap h3{font-size:1.45rem;margin:8px 0 10px;color:var(--navy)}.recap-intro{color:#475569;margin-bottom:16px}.recap ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}.recap li{position:relative;padding-left:24px;color:#1e293b}.recap li:before{content:"✓";position:absolute;left:0;top:0;color:var(--green);font-weight:900}.rule{margin-top:17px;padding:12px 14px;border-radius:7px;background:#fef3c7;border-left:5px solid var(--orange);color:#713f12;font-size:.92rem}.recap code{color:var(--navy);background:#eff6ff;padding:2px 5px;border-radius:4px;font-size:.94em}
+    .how{margin:18px 0 60px;padding:18px 20px;border:1.5px solid var(--line);border-left:5px solid var(--blue-mid);border-radius:9px;color:#475569;background:#fff}.how strong{color:var(--navy)}.footer{padding:20px 0 32px;border-top:2px solid var(--navy);background:#fff;color:#64748b;font-size:.84rem}.footer-inner{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.footer a{color:var(--blue);font-weight:700}
+    @media(max-width:760px){.hero{padding-top:34px}.part-layout{grid-template-columns:1fr}.part-list{grid-template-columns:repeat(2,minmax(0,1fr))}.part-btn{padding:9px}.part-btn span:last-child{font-size:.8rem}.part-number{flex-basis:28px;height:28px}.section-title{display:block}.section-title p{margin-top:5px}.video-note{display:block}.video-actions{align-items:stretch}.video-actions .action-btn{width:100%}}
+    @media(max-width:420px){.wrap{width:calc(100% - 24px)}.part-list{grid-template-columns:1fr 1fr;gap:6px}.part-btn{gap:7px}.part-btn span:last-child{font-size:.74rem}.recap{padding:18px}.video-shell{padding:7px}.video-head{padding:5px 4px 10px}.video-head{align-items:flex-start;flex-direction:column}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+  </style>
+</head>
+<body data-sti-guide-exercice="exercices/sql/TP6-Mission-cinema-enonce.html">
+  <header class="top"><div class="wrap"><a class="brand" href="../exercices/series-exercices.html#bdd"><img src="assets/images/sti-logo.png" alt=""><span><b>STI Version 2.0</b><br>Retour aux exercices SQL</span></a></div></header>
+  <main class="wrap">
+    <section class="hero" aria-labelledby="title">
+      <span class="capsule-tag">Je fais tout le SQL</span>
+      <h1 id="title">TP6 : <span>Mission cinéma</span></h1>
+      <p>Le nouveau montage guidé couvre les 70 questions du corrigé actualisé, avec une narration pédagogique et un rappel de cours avant chaque partie.</p>
+      <div class="hero-meta"><span>🎬 Vidéo pas à pas</span><span>📚 7 rappels express</span><span>🗄️ SQL · MariaDB / MySQL</span></div>
+    </section>
+
+    <section class="video-shell" aria-labelledby="video-title">
+      <div class="video-head" data-sti-video><strong id="video-title">Correction détaillée · questions 1 à 70</strong><span class="live-pill">Durée : 12 min 49</span></div>
+      <div class="video-frame" data-sti-video><video data-sti-video controls playsinline preload="metadata" poster="assets/images/je-fais-tout-sql-poster.jpg" aria-label="Nouveau montage de correction du TP6 Mission cinéma, couvrant 70 questions en sept parties"><source src="assets/video/TD_SQL_Cinema_corrige_v3.mp4" type="video/mp4">Votre navigateur ne prend pas en charge la lecture vidéo. <a href="assets/video/TD_SQL_Cinema_corrige_v3.mp4">Télécharger la vidéo</a>.</video></div>
+      <div class="video-actions"><a class="action-btn" data-sti-video href="assets/video/TD_SQL_Cinema_corrige_v3.mp4" target="_blank" rel="noopener">▶ Ouvrir directement la vidéo</a><a data-sti-correction href="Corrige_TD_SQL_Cinema.pdf" target="_blank" rel="noopener">Lire le corrigé écrit complet, questions 1 à 70 ↗</a></div>
+    </section>
+
+    <section aria-labelledby="recap-title">
+      <div class="section-title"><h2 id="recap-title">Un rappel de cours par partie</h2><p id="part-counter" aria-live="polite">Partie 1 sur 7</p></div>
+      <div class="part-layout">
+        <nav class="part-list" aria-label="Choisir une partie">
+          <button class="part-btn" type="button" data-part="0" aria-pressed="true"><span class="part-number">01</span><span>LDD · Structure</span></button>
+          <button class="part-btn" type="button" data-part="1" aria-pressed="false"><span class="part-number">02</span><span>LMD · Manipulation</span></button>
+          <button class="part-btn" type="button" data-part="2" aria-pressed="false"><span class="part-number">03</span><span>SELECT · Requêtes</span></button>
+          <button class="part-btn" type="button" data-part="3" aria-pressed="false"><span class="part-number">04</span><span>Fonctions de dates</span></button>
+          <button class="part-btn" type="button" data-part="4" aria-pressed="false"><span class="part-number">05</span><span>Contraintes</span></button>
+          <button class="part-btn" type="button" data-part="5" aria-pressed="false"><span class="part-number">06</span><span>Prévoir le résultat</span></button>
+          <button class="part-btn" type="button" data-part="6" aria-pressed="false"><span class="part-number">07</span><span>Prévoir l’erreur</span></button>
+        </nav>
+        <article class="recap" aria-live="polite" aria-atomic="true">
+          <span class="recap-kicker" id="recap-kicker">Rappel express · Partie 1</span>
+          <h3 id="recap-heading">LDD : définir la structure</h3>
+          <p class="recap-intro" id="recap-intro">Le LDD décrit les objets de la base : tables, colonnes et contraintes.</p>
+          <ul id="recap-points"></ul>
+          <div class="rule" id="recap-rule"></div>
+        </article>
+      </div>
+    </section>
+    <aside class="how"><strong>Suivre la correction pas à pas.</strong> La vidéo explique les 70 questions dans l’ordre, montre les requêtes, les résultats et les pièges. Utilisez les sept boutons pour revenir au rappel de cours de chaque partie.</aside>
+  </main>
+  <footer class="footer"><div class="wrap footer-inner"><span>TP6 · Mission cinéma · Je fais tout le SQL</span><a href="../exercices/sql/TP6-Mission-cinema-enonce.html">Revenir à l’énoncé</a></div></footer>
+  <script>
+    (function(){
+      'use strict';
+      var parts = [
+        {title:'LDD : définir la structure',intro:'Le LDD décrit les objets de la base : tables, colonnes et contraintes.',points:['Déclarer une clé primaire avec <code>PRIMARY KEY</code> ; relier les tables avec <code>FOREIGN KEY … REFERENCES</code>.','Créer d’abord les tables parentes, puis les tables qui portent les clés étrangères.','<code>CHECK</code> vérifie une règle de domaine ; <code>NOT NULL</code> interdit une valeur absente.','<code>ALTER TABLE</code> ajoute ou modifie une colonne ; <code>DROP</code> supprime un objet.'],rule:'À retenir : une contrainte de clé étrangère empêche de supprimer une table parente encore référencée.'},
+        {title:'LMD : manipuler les données',intro:'Le LMD agit sur les lignes : on insère, modifie ou supprime des enregistrements.',points:['<code>INSERT INTO table (colonnes) VALUES (valeurs)</code> rend l’insertion explicite et lisible.','<code>UPDATE</code> modifie les lignes satisfaisant <code>WHERE</code> ; sans filtre, toutes les lignes sont concernées.','<code>DELETE FROM</code> supprime les lignes ciblées ; vérifier la condition avant l’exécution.','Les jointures et sous-requêtes permettent de cibler des lignes à partir d’autres tables.'],rule:'Réflexe sécurité : tester d’abord le même critère avec un SELECT, puis appliquer UPDATE ou DELETE.'},
+        {title:'SELECT : filtrer, joindre, regrouper',intro:'Une requête de sélection suit une logique : choisir les tables, filtrer les lignes, puis présenter ou agréger les résultats.',points:['Ordre d’écriture : <code>SELECT … FROM … WHERE … GROUP BY … HAVING … ORDER BY</code>.','La condition de jointure relie les clés correspondantes ; une condition manquante crée un produit cartésien.','<code>WHERE</code> filtre les lignes avant le regroupement ; <code>HAVING</code> filtre les groupes après agrégation.','<code>COUNT</code>, <code>SUM</code>, <code>AVG</code>, <code>MIN</code> et <code>MAX</code> calculent des statistiques.'],rule:'Pour une auto-jointure, donner deux alias à la même table et une condition qui évite de comparer une ligne à elle-même.'},
+        {title:'Fonctions de dates',intro:'Les fonctions de dates extraient une partie d’une date, calculent un écart ou construisent un intervalle.',points:['<code>YEAR(date)</code> extrait l’année ; <code>MONTH(date)</code> extrait le mois.','<code>TIMESTAMPDIFF(YEAR, dateNaiss, CURDATE())</code> calcule un âge en années révolues.','<code>DATE_SUB(CURDATE(), INTERVAL n DAY)</code> recule d’un nombre de jours.','Une date SQL s’écrit au format ISO <code>YYYY-MM-DD</code> ; <code>BETWEEN</code> inclut ses deux bornes.'],rule:'Les résultats liés à CURDATE() changent avec la date d’exécution : fixer une date de référence pour comparer.'},
+        {title:'DEFAULT, NULL et clés étrangères',intro:'Les contraintes décrivent les valeurs autorisées et le comportement des liens entre tables.',points:['<code>DEFAULT</code> s’applique lorsqu’une colonne est omise à l’insertion ; modifier DEFAULT ne réécrit pas les anciennes lignes.','Avant d’imposer <code>NOT NULL</code>, corriger les lignes qui contiennent déjà NULL.','Tester une valeur absente avec <code>IS NULL</code> ou <code>IS NOT NULL</code>, jamais avec <code>= NULL</code>.','<code>ON UPDATE CASCADE</code> propage une modification de clé ; <code>ON DELETE CASCADE</code> supprime les lignes dépendantes.'],rule:'Une cascade est puissante : l’utiliser seulement si la suppression ou la modification automatique est voulue.'},
+        {title:'Prévoir un résultat',intro:'Pour prédire le résultat, suivre l’exécution logique de la requête et tenir compte des valeurs NULL.',points:['Évaluer les conditions et les jointures avant le regroupement ; une jointure interne élimine les lignes sans correspondance.','<code>COUNT(*)</code> compte les lignes ; <code>COUNT(colonne)</code> ignore les valeurs NULL.','Les fonctions d’agrégation comme <code>AVG</code> ignorent les NULL.','En SQL, une comparaison à NULL donne UNKNOWN : une ligne NULL ne satisfait généralement pas un filtre vrai/faux.'],rule:'Méthode : noter les lignes retenues, former les groupes, calculer les agrégats, puis appliquer HAVING et ORDER BY.'},
+        {title:'Prévoir une erreur',intro:'Une insertion ou une suppression peut échouer lorsqu’elle viole une contrainte définie dans le schéma.',points:['Une clé primaire doit être unique et non nulle : un doublon déclenche une erreur.','Une contrainte <code>CHECK</code> rejette les valeurs qui ne respectent pas la condition.','Une clé étrangère doit désigner une ligne existante dans la table parente.','Supprimer une ligne parente encore référencée échoue, sauf règle de cascade explicitement prévue.'],rule:'Pour diagnostiquer : identifier la contrainte violée, la table concernée et la valeur qui pose problème.'}
+      ];
+      var buttons=[].slice.call(document.querySelectorAll('.part-btn'));
+      var heading=document.getElementById('recap-heading'),intro=document.getElementById('recap-intro'),points=document.getElementById('recap-points'),rule=document.getElementById('recap-rule'),counter=document.getElementById('part-counter'),kicker=document.getElementById('recap-kicker');
+      function show(index){var p=parts[index];if(!p)return;buttons.forEach(function(b,i){b.setAttribute('aria-pressed',i===index?'true':'false')});heading.textContent=p.title;intro.textContent=p.intro;kicker.textContent='Rappel express · Partie '+(index+1);counter.textContent='Partie '+(index+1)+' sur '+parts.length;points.innerHTML=p.points.map(function(x){return '<li>'+x+'</li>'}).join('');rule.textContent=p.rule;}
+      buttons.forEach(function(button){button.addEventListener('click',function(){show(Number(button.dataset.part))})});
+      show(0);
+    })();
+  </script>
+  <script src="../assets/js/guide-exercice.js?v=614" defer></script>
+</body>
+</html>

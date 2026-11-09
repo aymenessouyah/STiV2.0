@@ -158,7 +158,7 @@
       icone: "🗄️",
       badgeClasse: "badge-sql",
       couleur: "#34d399",
-      nbVideos: 4,
+      nbVideos: 5,
       urlCours: "cours/sql.html",
       urlQuiz: "quiz/sql.html",
       urlAudio: "assets/audio/sql-cours.mp3",
@@ -563,6 +563,17 @@
       titre: "SQL Série 5 — Dates et GROUP BY", dureeTexte: "18:09",
       srcPrincipal: "assets/videos/sql-serie5.mp4", urlCours: "cours/sql.html#videos",
       codeApercu: "SELECT ... WHERE ...;"
+    },
+    {
+      /* v618 : correction détaillée TP6, narration pas à pas des 70 questions. */
+      id: "sql-tp6-mission-cinema",
+      matiere: "sql", nomMatiere: "SQL", badgeClasse: "badge-sql", couleur: "#34d399", reserve4si: true,
+      titre: "Je fais tout le SQL — TP6 Mission cinéma",
+      dureeTexte: "12:49",
+      srcPrincipal: "mission-cinema/assets/video/TD_SQL_Cinema_corrige_v3.mp4",
+      srcSecours: "mission-cinema/assets/video/TD_SQL_Cinema_corrige_v3.mp4",
+      urlCours: "mission-cinema/correction-video.html",
+      codeApercu: "SELECT … FROM film WHERE …;"
     },
     {
       id: "php-cours",
@@ -1080,7 +1091,7 @@
     attacherSuiviElementVideo(vidHero, meta);
 
     if (btnOverlay) {
-      btnOverlay.setAttribute("aria-label", "CAPSULE VIDÉO EXPLICATIVE " + meta.titre + " : lancer la vidéo");
+      btnOverlay.setAttribute("aria-label", (meta.id === "sql-tp6-mission-cinema" ? "JE FAIS TOUT LE SQL " : "CAPSULE VIDÉO EXPLICATIVE ") + meta.titre + " : lancer la vidéo");
       btnOverlay.addEventListener("click", function () {
         ouvrirModaleVideo(meta.id, 0);
       });
@@ -1101,11 +1112,10 @@
     return matieresVideo(v).indexOf(idMat) !== -1;
   }
 
-  /* v550 : les trois capsules (boucles, console, PHP) portent un liseré propre,
-     et chaque carte de la grille reçoit un effet de survol différent. L'indice
-     est tiré de l'identifiant : stable d'un chargement à l'autre, et deux cartes
-     voisines ne retombent pas sur le même effet. */
-  var CAPSULES_VIDEO = { "boucle-pour": true, "console-variables": true, "php-variables": true, "fonctions-chaine": true, "date-js": true, "php-chaines": true };
+  /* v550 : les capsules pédagogiques portent un liseré propre et chaque carte
+     reçoit un effet de survol différent. L'indice est tiré de l'identifiant :
+     stable d'un chargement à l'autre. */
+  var CAPSULES_VIDEO = { "boucle-pour": true, "console-variables": true, "php-variables": true, "fonctions-chaine": true, "date-js": true, "php-chaines": true, "sql-tp6-mission-cinema": true };
   function estCapsuleVideo(v) {
     var cle = String((v && v.id) || "");
     if (CAPSULES_VIDEO[cle]) return true;
@@ -1184,7 +1194,8 @@
     grille.dataset.signatureVideos = signature;
     grille.innerHTML = liste.map(function (v) {
       var dejaVue = vues.indexOf(v.id) !== -1;
-      var poster = creerPosterSvgDataUri(v.titre, v.nomMatiere, v.couleur, v.codeApercu);
+      var poster = v.id === "sql-tp6-mission-cinema" ? "mission-cinema/assets/images/je-fais-tout-sql-poster.jpg" : creerPosterSvgDataUri(v.titre, v.nomMatiere, v.couleur, v.codeApercu);
+      var libelleBadgeCapsule = v.id === "sql-tp6-mission-cinema" ? "Je fais tout le SQL" : "Capsule";
       return (
         '<article class="video-card' + (v.reserve4si ? " sti-4si-only" : "") +
           (estCapsuleVideo(v) ? " video-card--capsule" : "") +
@@ -1197,7 +1208,7 @@
              survol v550 sur cette même carte. Le texte est réel, pas un
              `content` CSS : il se met à l'échelle et se traduit ; il reste
              décoratif (aria-hidden), le titre de la carte dit déjà tout. */
-          (estCapsuleVideo(v) ? '<span class="video-card__capsule sti-etiquette-capsule" aria-hidden="true">Capsule</span>' : "") +
+          (estCapsuleVideo(v) ? '<span class="video-card__capsule sti-etiquette-capsule" aria-hidden="true">' + echapperHtml(libelleBadgeCapsule) + '</span>' : "") +
           '<button type="button" class="video-card__thumb" data-play-video="' + echapperHtml(v.id) + '" aria-label="▶ ' + (dejaVue ? '✓ Vue ' : '') + echapperHtml(v.dureeTexte) + ' — Lire la vidéo ' + echapperHtml(v.titre) + '">' +
             '<img src="' + echapperHtml(poster) + '" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" />' +
             '<span class="video-card__play"><span class="video-play-btn" aria-hidden="true">▶</span></span>' +
@@ -2085,7 +2096,7 @@
     }).join("");
 
     var vidsHtml = videosMatiere.map(function (v) {
-      var poster = creerPosterSvgDataUri(v.titre, v.nomMatiere, v.couleur, v.codeApercu);
+      var poster = v.id === "sql-tp6-mission-cinema" ? "mission-cinema/assets/images/je-fais-tout-sql-poster.jpg" : creerPosterSvgDataUri(v.titre, v.nomMatiere, v.couleur, v.codeApercu);
       return (
         '<article class="card">' +
           '<h3 style="margin-bottom:10px">🎬 ' + echapperHtml(v.titre) + " (" + echapperHtml(v.dureeTexte) + ")</h3>" +

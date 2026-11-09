@@ -1,6 +1,6 @@
 {
- "commentaire": "Catalogue du « Guide exercice » — généré depuis le dépôt (titres, corrections et vidéos détectées). Ne pas éditer à la main.",
- "version": 1,
+ "commentaire": "Catalogue du « Guide exercice » — titres, corrections et vidéos des pages d’exercices.",
+ "version": 2,
  "pages": [
   {
    "chemin": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Enonce.pdf.html",
@@ -54,6 +54,13 @@
   {
    "chemin": "exercices/html-css/TP3-css.pdf.html",
    "titre": "TP 3 — Page d'accueil interactive, Ariana (CSS3)",
+   "matiere": "html-css",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/html-css/TP CSS3  Transform, Filtres, Transitions et Animations – 3ème SI/index.html",
+   "titre": "TP CSS3 — Transform, Filtres, Transitions et Animations · 3ème SI",
    "matiere": "html-css",
    "correction": true,
    "video": false
@@ -458,15 +465,22 @@
    "video": true
   },
   {
+   "chemin": "exercices/sql/TP6-Mission-cinema-enonce.html",
+   "titre": "Série 6 / TP6 : Mission cinéma — Énoncé",
+   "matiere": "sql",
+   "correction": true,
+   "video": true
+  },
+  {
    "chemin": "exercices/sql/sql-correction.html",
-   "titre": "Corrigé : Série 6 BD - Récap LDD + LMD (Base ÉTUDIANT)",
+   "titre": "Corrigé : Récapitulatif SQL LDD + LMD (Base ÉTUDIANT)",
    "matiere": "sql",
    "correction": true,
    "video": true
   },
   {
    "chemin": "exercices/sql/sql.html",
-   "titre": "Série 6 : Récap LDD + LMD (Base ÉTUDIANT) - Lycée Rafeha",
+   "titre": "Récapitulatif SQL : LDD + LMD (Base ÉTUDIANT) - Lycée Rafeha",
    "matiere": "sql",
    "correction": true,
    "video": true

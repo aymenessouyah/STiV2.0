@@ -1,7 +1,7 @@
 /* v607 — « 0 min · 0 sess. » alors que l'élève travaille
    ---------------------------------------------------------------------------
    Capture du professeur : la fiche de MESBEHI Asma affiche « Temps (cumul)
-   0 min · 0 sess. » alors que la même fiche montre 6/151 pages, 2 cours,
+   0 min · 0 sess. » alors que la même fiche montre 6/154 pages, 2 cours,
    3 exercices, 4 modules, 3/20 vidéos et 2/20 de moyenne.
 
    Ce n'est pas une incohérence de calcul : les deux moitiés de la fiche ne
@@ -74,7 +74,7 @@ test('v607 — publication : cache-buster, révisions et version', () => {
   /* v610 : admin.js porte désormais sa propre révision ; acces.js garde la sienne. */
   assert.ok(sw.includes('{ url: "./assets/js/acces.js", revision: "journal-acces-v607" }'),
     'révision attendue pour ./assets/js/acces.js');
-  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "guide-lisibilite-v615" }'),
+  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "guide-exercice-liste-v621" }'),
     'révision attendue pour ./assets/js/admin.js');
-  assert.match(sw, /\{ url: "\.\/admin\.html", revision: "guide-lisibilite-v615" \}/);
+  assert.match(sw, /\{ url: "\.\/admin\.html", revision: "guide-exercice-mount-v623" \}/);
 });

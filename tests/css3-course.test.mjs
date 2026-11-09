@@ -64,9 +64,9 @@ test('CSS3 : fenêtres originales, laboratoires, exemples, diagramme et sandbox'
   assert.match(css, /var\(--course-accent\)/);
 });
 
-test('CSS3 : huit exercices, corrections, documents et médias locaux', () => {
+test('CSS3 : neuf exercices, corrections, documents et médias locaux', () => {
   assert.equal((html.match(/class="exo-card-full"/g) || []).length, 9);
-  assert.equal((html.match(/data-exo-check="[^"]+"/g) || []).length, 8);
+  assert.equal((html.match(/data-exo-check="[^"]+"/g) || []).length, 9);
   assert.equal((html.match(/class="exo-solution"/g) || []).length, 6);
   assert.equal((html.match(/class="exo-no-solution"/g) || []).length, 2);
   const projet = html.split('<article class="exo-card-full" id="exo-tunisie"')[1].split('</article>')[0];
@@ -116,8 +116,8 @@ test('CSS3 : fichiers révisés disponibles pour le hors-ligne', () => {
   const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];
   for (const path of ['cours/css3.html', 'assets/css/cours-css3.css', 'assets/js/cours-css3.js', 'assets/js/profil.js', 'assets/js/app.js']) {
     const revision = path === 'assets/css/cours-css3.css' ? 'videos-pas-a-pas-css3-20261027' :
-      path === 'cours/css3.html' ? 'tp-transitions-v512' :
-      path === 'assets/js/app.js' ? 'flamme-regularite-v611' :
+      path === 'cours/css3.html' ? 'tp-css3-3si-v625' :
+      path === 'assets/js/app.js' ? 'tp6-series6-v619' :
       path === 'assets/css/cours.css' ? 'tp-evenements-v500' :
       path === 'assets/js/cours-css3.js' ? 'tp-transitions-v512' :
       path === 'assets/js/profil.js' ? 'flamme-regularite-v611' : 'suivi-contextes-v491';

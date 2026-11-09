@@ -5,13 +5,13 @@
   "use strict";
   var cfg = window.STI_AUTH || { URL: "https://vywujxmepvcbgedgmger.supabase.co", CLE: "sb_publishable_FI5FimytONd5VdWK6GfXLA_I6vPTrvn" };
   /* v581 — dénominateurs réels du site (ils étaient figés à 15 vidéos et
-     8 audios, alors que la vitrine compte 27 capsules et que le dossier
+     8 audios, alors que la vitrine compte 28 capsules et que le dossier
      assets/audio en contient 16 hors ambiance). Un élève qui avait tout vu
      affichait donc « 15/15 » puis « 16/15 ». */
   /* v583 : le dénominateur des pages vient du manifeste de couverture
      (assets/pages-couverture.json, régénéré par outils/couverture/generer-couverture.py).
      La valeur ci-dessous n'est qu'un repli hors-ligne, tenu égal au manifeste par les tests. */
-  var TOTAL_PAGES_SITE = 151;
+  var TOTAL_PAGES_SITE = 154;
   function chargerTotalPagesSite() {
     return fetch("assets/pages-couverture.json", { cache: "no-cache" }).then(function (r) {
       return r && r.ok ? r.json() : null;

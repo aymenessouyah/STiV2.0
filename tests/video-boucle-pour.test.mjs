@@ -546,7 +546,7 @@ test('la capsule se lance depuis la grille de l\'accueil', () => {
 
   /* le service worker sert la nouvelle version du lecteur */
   const sw = lire('sw.js');
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "cours-sti-v578"/);
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "tp6-detail-v618"/);
   /* le lecteur commun n'a pas bougé depuis la v543 : il garde sa révision */
   assert.match(sw, /url: "\.\/assets\/js\/lecteur-commun\.js", revision: "cours-sti-v578"/);
 });
@@ -587,7 +587,7 @@ test('la capsule est dans le paquet hors-ligne complet', () => {
   assert.ok(complet.includes(`"./${VTT}"`), 'VTT hors-ligne');
   assert.ok(!delta.includes(`BouclePour-${VERSION_MEDIA}.mp4`), 'les médias restent hors du delta léger');
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions";/);
-  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "flamme-regularite-v611"/);
+  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "tp6-series6-v619"/);
   assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "cours-sti-v595"/);
 });
 

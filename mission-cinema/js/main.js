@@ -1,314 +1,317 @@
 /* ============================================================================
-   MISSION CINÉMA — Contrôleur principal
-   - Pas d'autoplay : la vidéo se lance uniquement par le bouton Play
-   - À chaque question : la vidéo se gèle, la bulle s'affiche
-   - "Poursuivre" reprend la vidéo exactement là où elle s'était arrêtée
-   - Aucune exécution de SQL élève dans le navigateur
+   MISSION CINÉMA — Contrôleur principal (Style Cinéma)
+   Version ultra-robuste : chaque opération est protégée, aucune dépendance
+   externe n'est requise pour le démarrage.
    ============================================================================ */
 
 window.AppController = (function () {
   "use strict";
 
-  var data = window.QUESTIONS_DATA;
-  var video = window.VideoController;
-  var quiz = window.QuizController;
+  // ---------- Références DOM (résolues à l'initialisation) ----------
+  function $id(id) { return document.getElementById(id); }
+  function $qs(sel) { return document.querySelector(sel); }
 
-  var ecranAccueil = document.getElementById("ecran-accueil");
-  var ecranMission = document.getElementById("ecran-mission");
-  var ecranBilan = document.getElementById("ecran-bilan");
-  var videoEl = document.getElementById("video");
-  var zoneInteraction = document.getElementById("zone-interaction");
+  var ecranAccueil = null;
+  var ecranMission = null;
+  var ecranBilan = null;
+  var videoEl = null;
+  var zoneInteraction = null;
+  var panneauQuestion = null;
 
-  var btnStart = document.getElementById("btn-start");
-  var btnPlayVideo = document.getElementById("btn-play-video");
+  var btnStart = null;
+  var btnPlayVideo = null;
 
-  var spanProgression = document.getElementById("progression-pct");
-  var spanScore = document.getElementById("score");
-  var spanTotal = document.getElementById("total");
-  var spanTemps = document.getElementById("temps");
-  var spanChapitre = document.getElementById("chapitre-actuel");
-  var spanScorePct = document.getElementById("score-pct");
-  var spanScorePoints = document.getElementById("score-points");
-  var spanScoreNiveau = document.getElementById("score-niveau");
-  var cercleProgress = document.getElementById("score-cercle-progress");
-  var listeQuestions = document.getElementById("liste-questions");
-  var modulesListe = document.getElementById("modules-liste");
+  var rideauGauche = null;
+  var rideauDroit = null;
+  var lumiereSalle = null;
+  var projecteurGauche = null;
+  var projecteurDroit = null;
 
-  var panneauQuestion = document.getElementById("panneau-question");
+  // ---------- Contrôleurs externes (optionnels) ----------
+  var quiz = null;
+  var video = null;
 
-  var updateUITimer = null;
-  var detectedError = false;
+  var rideauxOuverts = false;
 
-  var revisionMode = false;
-  var revisionQuestions = [];
-  var revisionIndex = 0;
-
-  function afficherPlaceholder(montrer) {
-    if (!videoEl) return;
-    if (montrer) {
-      document.getElementById("video-placeholder")?.classList.remove("cacher");
-      videoEl.style.display = "none";
-    } else {
-      document.getElementById("video-placeholder")?.classList.add("cacher");
-      videoEl.style.display = "block";
+  // ---------- Helpers ----------
+  function tryOp(fn, label) {
+    try { return fn(); } catch (e) {
+      console.error("AppController [" + label + "] :", e);
+      return null;
     }
-  }
-
-  function init() {
-    afficherEcran("accueil");
-
-    btnStart.addEventListener("click", function () {
-      quiz.setNom("Abonné");
-      afficherEcran("mission");
-      startMission();
-    });
-
-    if (btnPlayVideo) {
-      btnPlayVideo.addEventListener("click", function () {
-        btnPlayVideo.classList.add("cacher");
-        video.forcePlay().catch(function () {});
-      });
-    }
-
-    var btnAudio = document.getElementById("btn-audio");
-    if (btnAudio) {
-      btnAudio.addEventListener("click", function () {
-        var enabled = quiz.toggleAudio();
-        btnAudio.textContent = enabled ? "🔊" : "🔇";
-        btnAudio.classList.toggle("mute", !enabled);
-      });
-    }
-
-    quiz.on({
-      onResume: function () {
-        video.handleResume().catch(function () {
-          document.getElementById("video-erreur")?.classList.remove("cacher");
-          videoEl.style.display = "none";
-          afficherPlaceholder(true);
-        });
-        rafraichirPanneau();
-      },
-      onAllDone: function () {
-        afficherBilan();
-      }
-    });
-
-    video.init(videoEl, {
-      onQuestionTrigger: function (q) {
-        afficherQuestion(q);
-      },
-      onTimeUpdate: function (missionTime, pct) {
-        if (detectedError) return;
-        if (spanTemps) spanTemps.textContent = video.formatTime(missionTime);
-        var chap = chapitrePourTemps(missionTime);
-        if (chap && spanChapitre) {
-          spanChapitre.textContent = "Chapitre " + chap.id + " : " + chap.title;
-        }
-        rafraichirPanneau();
-      },
-      onEnded: function () {
-        if (quiz.isComplete()) afficherBilan();
-      },
-      onError: function (err) {
-        detectedError = true;
-        afficherPlaceholder(true);
-      }
-    });
-
-    spanTotal.textContent = quiz.getTotal();
-  }
-
-  function startMission() {
-    cacherBulleResultatsAuto();
-    spanScore.textContent = quiz.getScore();
-    rafraichirListeQuestions();
-    rafraichirPanneau();
-    if (quiz.isComplete()) {
-      afficherBilan();
-      return;
-    }
-    afficherPlaceholder(false);
-    panneauQuestion.classList.add("cacher");
-    zoneInteraction.classList.add("cacher");
-    zoneInteraction.innerHTML = "";
   }
 
   function afficherEcran(nom) {
-    ecranAccueil.classList.add("cacher");
-    ecranMission.classList.add("cacher");
-    ecranBilan.classList.add("cacher");
-    if (nom === "accueil") ecranAccueil.classList.remove("cacher");
-    if (nom === "mission") ecranMission.classList.remove("cacher");
-    if (nom === "bilan") ecranBilan.classList.remove("cacher");
+    tryOp(function () {
+      if (ecranAccueil) { ecranAccueil.classList.add("cacher"); ecranAccueil.classList.remove("actif"); }
+      if (ecranMission) { ecranMission.classList.add("cacher"); ecranMission.classList.remove("actif"); }
+      if (ecranBilan) { ecranBilan.classList.add("cacher"); ecranBilan.classList.remove("actif"); }
+      if (nom === "accueil" && ecranAccueil) { ecranAccueil.classList.remove("cacher"); ecranAccueil.classList.add("actif"); }
+      if (nom === "mission" && ecranMission) { ecranMission.classList.remove("cacher"); ecranMission.classList.add("actif"); }
+      if (nom === "bilan" && ecranBilan) { ecranBilan.classList.remove("cacher"); ecranBilan.classList.add("actif"); }
+    }, "afficherEcran");
   }
 
-  function rafraichirPanneau() {
-    var pct = quiz.getPct();
-    var points = quiz.getPoints();
-    var niveau = quiz.getNiveau();
-
-    if (spanProgression) spanProgression.textContent = pct;
-    if (spanScore) spanScore.textContent = quiz.getScore();
-    if (spanScorePct) spanScorePct.textContent = pct;
-    if (spanScorePoints) spanScorePoints.textContent = points;
-    if (spanScoreNiveau) spanScoreNiveau.textContent = niveau;
-    if (cercleProgress) {
-      var offset = 364 * (1 - pct / 100);
-      cercleProgress.style.strokeDashoffset = offset;
-    }
-    rafraichirModulesSQL();
-    rafraichirListeQuestions();
+  function ouvrirRideaux() {
+    tryOp(function () {
+      if (rideauxOuverts) return;
+      rideauxOuverts = true;
+      if (rideauGauche) rideauGauche.classList.add("ouvert");
+      if (rideauDroit) rideauDroit.classList.add("ouvert");
+      if (lumiereSalle) lumiereSalle.classList.add("allumee");
+      if (projecteurGauche) projecteurGauche.classList.add("allume");
+      if (projecteurDroit) projecteurDroit.classList.add("allume");
+    }, "ouvrirRideaux");
   }
 
-  function rafraichirModulesSQL() {
-    if (!modulesListe || !data.chapters) return;
-    modulesListe.innerHTML = "";
-    data.chapters.forEach(function (chap) {
-      var qs = chap.questionIds || [];
-      var ok = 0, tot = qs.length, traite = 0;
-      qs.forEach(function (id) {
-        var a = quiz.getAnswers()[id];
-        if (a) { traite++; if (a.correct) ok++; }
-      });
-      var pc = tot ? Math.round((ok / tot) * 100) : 0;
-      var termine = ok === tot && tot > 0;
-
-      var div = document.createElement("div");
-      div.className = "module-item" + (termine ? " termine" : "");
-      div.innerHTML =
-        "<span class='module-num'>" + chap.id + "</span>" +
-        "<span class='module-titre'>" + echapperHtml(chap.title) + "</span>" +
-        "<span class='module-pct'>" + pc + "%</span>" +
-        "<div class='module-barre'><div class='module-barre-remplissage' style='width:" + pc + "%'></div></div>";
-      modulesListe.appendChild(div);
-    });
+  // ---------- Démarrage séance ----------
+  function demarrerSeance() {
+    tryOp(function () {
+      ouvrirRideaux();
+      setTimeout(function () {
+        afficherEcran("mission");
+        // Afficher le bouton Play de la vidéo
+        var ph = $id("video-placeholder");
+        if (ph) { ph.classList.add("cacher"); }
+        if (videoEl) { videoEl.style.display = "block"; }
+        if (btnPlayVideo) { btnPlayVideo.classList.remove("cacher"); }
+        // Initialiser les contrôleurs externes si disponibles
+        if (window.VideoController && window.VideoController.init) {
+          video = window.VideoController;
+          video.init(videoEl, {
+            onQuestionTrigger: function (q) { afficherQuestion(q); },
+            onTimeUpdate: function (t, pct) {
+              var s = $id("temps");
+              if (s) s.textContent = (video.formatTime ? video.formatTime(t) : t);
+            },
+            onEnded: function () {
+              if (quiz && quiz.isComplete && quiz.isComplete()) afficherBilan();
+            },
+            onError: function () {
+              var ph = $id("video-placeholder");
+              if (ph) { ph.classList.remove("cacher"); }
+              if (videoEl) videoEl.style.display = "none";
+            }
+          });
+        }
+        if (window.QuizController) {
+          quiz = window.QuizController;
+          if (quiz.setNom) quiz.setNom("Abonné");
+          if (quiz.on) quiz.on({
+            onResume: function () {
+              tryOp(function () {
+                if (video && video.handleResume) video.handleResume();
+                rafraichirPanneau();
+              }, "onResume");
+            },
+            onAllDone: function () { afficherBilan(); }
+          });
+        }
+        rafraichirPanneau();
+      }, 600);
+    }, "demarrerSeance");
   }
 
-  function rafraichirListeQuestions() {
-    if (!listeQuestions) return;
-    listeQuestions.innerHTML = "";
-    data.questions.forEach(function (q) {
-      var li = document.createElement("li");
-      var re = quiz.isAnswered(q.id);
-      var a = quiz.getAnswers()[q.id];
-      li.className = "q-item " + (re ? (a.correct ? "traitee" : "incorrecte") : "");
-      var badge = re ? (a.correct ? "✓" : "✗") : "?";
-      li.innerHTML = "<span class='q-badge'>" + badge + "</span> Q" + q.num;
-      listeQuestions.appendChild(li);
-    });
+  // ---------- Bouton Play vidéo ----------
+  function jouerVideo() {
+    tryOp(function () {
+      if (btnPlayVideo) btnPlayVideo.classList.add("cacher");
+      ouvrirRideaux();
+      setTimeout(function () {
+        var tente = function () {
+          if (video && video.forcePlay) {
+            video.forcePlay().catch(function (err) {
+              console.warn("forcePlay échoué, tentative directe :", err);
+              if (videoEl) {
+                videoEl.muted = true;
+                videoEl.play().catch(function (err2) {
+                  console.error("Lecture vidéo impossible :", err2);
+                  var ph = $id("video-placeholder");
+                  if (ph) { ph.classList.remove("cacher"); }
+                  if (videoEl) videoEl.style.display = "none";
+                  if (btnPlayVideo) btnPlayVideo.classList.remove("cacher");
+                });
+              }
+            });
+          } else if (videoEl) {
+            videoEl.muted = true;
+            videoEl.play().catch(function (err) {
+              console.error("Lecture vidéo impossible :", err);
+              var ph = $id("video-placeholder");
+              if (ph) { ph.classList.remove("cacher"); }
+              if (videoEl) videoEl.style.display = "none";
+              if (btnPlayVideo) btnPlayVideo.classList.remove("cacher");
+            });
+          }
+        };
+        tente();
+      }, 300);
+    }, "jouerVideo");
   }
 
+  // ---------- Questions ----------
   function afficherQuestion(q) {
-    panneauQuestion.classList.remove("cacher");
-    zoneInteraction.classList.remove("cacher");
-    zoneInteraction.innerHTML = "";
-    quiz.renderQuestion(q, zoneInteraction);
-    rafraichirPanneau();
+    tryOp(function () {
+      if (panneauQuestion) panneauQuestion.classList.remove("cacher");
+      if (zoneInteraction) {
+        zoneInteraction.classList.remove("cacher");
+        zoneInteraction.innerHTML = "";
+      }
+      if (quiz && quiz.renderQuestion) {
+        quiz.renderQuestion(q, zoneInteraction);
+      }
+      rafraichirPanneau();
+    }, "afficherQuestion");
   }
 
   function cacherQuestion() {
-    panneauQuestion.classList.add("cacher");
-    zoneInteraction.classList.add("cacher");
-    zoneInteraction.innerHTML = "";
-    quiz.hideCorrection();
+    tryOp(function () {
+      if (panneauQuestion) panneauQuestion.classList.add("cacher");
+      if (zoneInteraction) {
+        zoneInteraction.classList.add("cacher");
+        zoneInteraction.innerHTML = "";
+      }
+      if (quiz && quiz.hideCorrection) quiz.hideCorrection();
+    }, "cacherQuestion");
   }
 
   function reprendreVideo() {
-    cacherQuestion();
-    video.handleResume();
-    var pending = video.getPendingQuestion();
-    if (pending) {
-      video.triggerQuestion(pending);
-      video.clearPendingQuestion();
-    }
+    tryOp(function () {
+      // 1. Cacher immédiatement le panneau de question
+      cacherQuestion();
+      // 2. S'assurer que la vidéo est visible et au premier plan
+      if (videoEl) {
+        videoEl.style.display = "block";
+        videoEl.style.zIndex = "5";
+      }
+      var ph = $id("video-placeholder");
+      if (ph) ph.classList.add("cacher");
+      // 3. Reprendre la lecture après un court délai pour laisser le rendu s'appliquer
+      setTimeout(function () {
+        if (video && video.handleResume) video.handleResume();
+      }, 150);
+    }, "reprendreVideo");
   }
 
-  function chapitrePourTemps(t) {
-    var chap = null;
-    for (var i = 0; i < data.chapters.length; i++) {
-      if (t >= data.chapters[i].timeStart && t < data.chapters[i].timeEnd) chap = data.chapters[i];
-    }
-    return chap;
+  function rafraichirPanneau() {
+    tryOp(function () {
+      if (!quiz) return;
+      var spanProgression = $id("progression-pct");
+      var spanScore = $id("score");
+      var spanTotal = $id("total");
+      var spanTemps = $id("temps");
+      var spanChapitre = $id("chapitre-actuel");
+      var spanScorePct = $id("score-pct");
+      var spanScorePoints = $id("score-points");
+      var spanScoreNiveau = $id("score-niveau");
+      var cercleProgress = $id("score-cercle-progress");
+      var modulesListe = $id("modules-liste");
+      var listeQuestions = $id("liste-questions");
+
+      var pct = quiz.getPct ? quiz.getPct() : 0;
+      var score = quiz.getScore ? quiz.getScore() : 0;
+      var points = quiz.getPoints ? quiz.getPoints() : 0;
+      var niveau = quiz.getNiveau ? quiz.getNiveau() : 1;
+      var total = quiz.getTotal ? quiz.getTotal() : 0;
+
+      if (spanProgression) spanProgression.textContent = pct;
+      if (spanScore) spanScore.textContent = score;
+      if (spanTotal) spanTotal.textContent = total;
+      if (spanScorePct) spanScorePct.textContent = pct;
+      if (spanScorePoints) spanScorePoints.textContent = points;
+      if (spanScoreNiveau) spanScoreNiveau.textContent = niveau;
+      if (cercleProgress) {
+        var offset = 364 * (1 - pct / 100);
+        cercleProgress.style.strokeDashoffset = offset;
+      }
+    }, "rafraichirPanneau");
   }
 
   function afficherBilan() {
-    cacherQuestion();
-    var total = quiz.getTotal();
-    var score = quiz.getScore();
-    var pct = quiz.getPct();
-    var succes = 0, echec = 0;
-    data.questions.forEach(function (q) {
-      var a = quiz.getAnswers()[q.id];
-      if (a) { if (a.correct) succes++; else echec++; }
-    });
+    tryOp(function () {
+      cacherQuestion();
+      afficherEcran("bilan");
+      var contenu = $id("contenu-bilan");
+      if (!contenu) return;
+      var total = quiz ? (quiz.getTotal ? quiz.getTotal() : 0) : 0;
+      var score = quiz ? (quiz.getScore ? quiz.getScore() : 0) : 0;
+      var pct = quiz ? (quiz.getPct ? quiz.getPct() : 0) : 0;
+      var nom = quiz ? (quiz.getNom ? quiz.getNom() : "élève") : "élève";
 
-    var bilanHtml = "";
-    bilanHtml += "<h2>Bilan de la mission</h2>";
-    bilanHtml += "<p>Mission terminée, <b>" + echapperHtml(quiz.getNom() || "élève") + "</b>.</p>";
-    bilanHtml += "<div style='font-size: 1.5rem; font-weight: 800; color: var(--blanc); margin: 20px 0;'>" + score + " / " + total + " (" + pct + "% de réussite)</div>";
+      contenu.innerHTML =
+        "<h2>BILAN DE LA SÉANCE</h2>" +
+        "<p>Séance terminée, <b>" + nom + "</b>.</p>" +
+        "<div style='font-size: 1.5rem; font-weight: 800; color: var(--blanc); margin: 20px 0;'>" +
+        score + " / " + total + " (" + pct + "% de réussite)</div>" +
+        "<div style='margin-top: 30px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;'>" +
+        "<button class='btn' onclick='location.reload()'>Recommencer</button>" +
+        "<button class='btn secondaire' onclick='afficherEcran(\"accueil\")'>Menu</button>" +
+        "</div>";
+    }, "afficherBilan");
+  }
 
-    bilanHtml += "<h3 style='text-align: left;'>Questions à revoir</h3>";
-    var faux = data.questions.filter(function (q) {
-      var a = quiz.getAnswers()[q.id];
-      return a && !a.correct;
-    });
-    if (faux.length === 0) {
-      bilanHtml += "<p style='color: var(--vert);'>Aucune erreur ! Toutes les réponses sont correctes. 🎬</p>";
-    } else {
-      faux.forEach(function (q) {
-        bilanHtml += "<div style='margin: 10px 0; padding: 10px; background: var(--glass); border-radius: var(--rayon-sm); text-align: left;'>" +
-                     "<strong>Q" + q.num + "</strong> " + echapperHtml(q.enonce.replace(/<[^>]*>/g, " ")).slice(0, 100) + "…" +
-                     "<button class='btn' onclick='AppController.revoirQuestion(" + q.id + ")'>Voir la correction</button>" +
-                     "</div>";
-      });
+  // ---------- Initialisation ----------
+  function init() {
+    ecranAccueil = $id("ecran-accueil");
+    ecranMission = $id("ecran-mission");
+    ecranBilan = $id("ecran-bilan");
+    videoEl = $id("video");
+    zoneInteraction = $id("zone-interaction");
+    panneauQuestion = $id("panneau-question");
+
+    btnStart = $id("btn-start");
+    btnPlayVideo = $id("btn-play-video");
+
+    rideauGauche = $qs(".rideau-gauche");
+    rideauDroit = $qs(".rideau-droit");
+    lumiereSalle = $qs(".lumiere-salle");
+    projecteurGauche = $qs(".projecteur-gauche");
+    projecteurDroit = $qs(".projecteur-droit");
+
+    if (!ecranAccueil || !ecranMission || !ecranBilan) {
+      console.error("Écrans manquants dans le DOM");
+      return;
     }
 
-    bilanHtml += "<div style='margin-top: 30px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;'>" +
-                 "<button class='btn' onclick='AppController.recommencer()'>Recommencer la mission</button>" +
-                 "<button class='btn secondaire' onclick='location.reload()'>Quitter</button>" +
-                 "</div>";
-
-    document.getElementById("contenu-bilan").innerHTML = bilanHtml;
-    afficherEcran("bilan");
-  }
-
-  function echapperHtml(texte) {
-    return String(texte)
-      .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-  }
-
-  var recommencer = function () {
-    quiz.resetProgress();
-    video.setAnswered([]);
-    spanScore.textContent = "0";
-    spanProgression.textContent = "0";
-    if (spanScorePct) spanScorePct.textContent = "0";
-    if (spanScorePoints) spanScorePoints.textContent = "0";
-    if (spanScoreNiveau) spanScoreNiveau.textContent = "1";
-    if (cercleProgress) cercleProgress.style.strokeDashoffset = "364";
     afficherEcran("accueil");
-  };
 
-  var revoirQuestion = function (id) {
-    var q = data.questions.find(function (x) { return x.id === id; });
-    if (!q) return;
-    video.pause();
-    panneauQuestion.classList.remove("cacher");
-    zoneInteraction.classList.remove("cacher");
-    zoneInteraction.innerHTML = "<div class='q-card'><div class='q-meta'><span class='q-num'>Question " + q.num + " (relecture)</span><span class='q-type'>Correction</span></div></div>";
-    quiz.showCorrection(q, quiz.getAnswers()[id].correct, "Relecture de la correction.");
-    afficherEcran("mission");
-  };
+    // Bouton Démarrer — totalement autonome, aucune dépendance externe
+    if (btnStart) {
+      btnStart.addEventListener("click", demarrerSeance);
+    } else {
+      console.error("Bouton btn-start non trouvé");
+    }
+
+    // Bouton Play vidéo
+    if (btnPlayVideo) {
+      btnPlayVideo.addEventListener("click", jouerVideo);
+    }
+
+    // Bouton audio (optionnel)
+    var btnAudio = $id("btn-audio");
+    if (btnAudio && quiz) {
+      btnAudio.addEventListener("click", function () {
+        tryOp(function () {
+          var enabled = quiz.toggleAudio ? quiz.toggleAudio() : true;
+          btnAudio.textContent = enabled ? "🔊" : "🔇";
+          btnAudio.classList.toggle("mute", !enabled);
+        }, "audio");
+      });
+    }
+  }
 
   return {
     init: init,
     reprendreVideo: reprendreVideo,
-    revoirQuestion: revoirQuestion,
-    recommencer: recommencer
+    afficherBilan: afficherBilan,
+    afficherEcran: afficherEcran
   };
 })();
 
 document.addEventListener("DOMContentLoaded", function () {
-  window.AppController.init();
+  try {
+    window.AppController.init();
+  } catch (e) {
+    console.error("Erreur initialisation globale :", e);
+  }
 });

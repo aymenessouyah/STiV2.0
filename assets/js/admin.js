@@ -36,7 +36,7 @@
      outils/couverture/generer-couverture.py (toutes les pages HTML du site hors
      tests/, casse réelle, n calculé). TOTAL_PAGES_SITE_ADMIN n'est qu'un repli
      hors-ligne : un test vérifie qu'il reste égal au manifeste. */
-  var TOTAL_PAGES_SITE_ADMIN = 151;
+  var TOTAL_PAGES_SITE_ADMIN = 154;
   function chargerTotalPagesSiteAdmin() {
     return fetch("assets/pages-couverture.json", { cache: "no-cache" }).then(function (r) {
       return r && r.ok ? r.json() : null;
@@ -6191,6 +6191,7 @@
     "video:sql-serie4": "SQL Série 4",
     "video:sql-serie4-2": "SQL Série 4.2 (GestLocation)",
     "video:sql-serie5": "SQL Série 5",
+    "video:sql-tp6-mission-cinema": "TP6 SQL — Mission cinéma",
     "video:sql-serie6": "SQL Série 6",
     "video:sql-guide-requete": "Guide Requête SQL",
     "video:validation-nom-prenom-js": "JS Validation Nom/Prénom",
@@ -6227,7 +6228,7 @@
      aucun travail de l'élève, et elles gonflaient artificiellement le compteur.
      Toute clé qui commence par « drapeau » est donc ignorée, ici comme dans les
      données venues du cloud (MEDIAS_DECORATIFS_ADMIN, v581). */
-  /* v589 : inventaire complet des vidéos du site = les 27 capsules de l'accueil
+  /* v589 : inventaire complet des vidéos du site = les 28 capsules de l'accueil
      (mêmes identifiants que CATALOGUE_VIDEOS de app.js) + les 6 vidéos des pages
      de cours (séries SQL 1 à 3 et 6, Explore Tunisie Flex/Float) déjà recensées
      par admin-vues-videos.js. Ordre imposé : cours STI, HTML5, CSS3, JavaScript,
@@ -6267,7 +6268,8 @@
     { key: "video:php-synthese", label: "Synthèse PHP", niveau: "4si" },
     { key: "video:php-guichet", label: "Guichet PHP/MySQLi", niveau: "4si" },
     { key: "video:sql-serie4", label: "SQL Série 4 (jointures)", niveau: "4si" },
-    { key: "video:sql-serie5", label: "SQL Série 5 (dates)", niveau: "4si" }
+    { key: "video:sql-serie5", label: "SQL Série 5 (dates)", niveau: "4si" },
+    { key: "video:sql-tp6-mission-cinema", label: "TP6 — Mission cinéma (correction)", niveau: "4si" }
   ];
 
   /* v589 : deux anciennes clés désignent la même capsule (renommage passé). On les
@@ -7041,6 +7043,8 @@
   var guideCatalogue = null;      /* liste des exercices (JSON du dépôt) */
   var guideReglage = null;        /* réglage courant, édité dans la page */
   var guideChargeLe = 0;
+  var guideErreurCatalogue = "";
+  var guideErreurLecture = "";
 
   function guideEtat(texte, couleur) {
     var el = document.getElementById("guide-etat");
@@ -7058,17 +7062,54 @@
     el.classList.toggle("visible", Boolean(texte));
   }
 
-  /* Catalogue : fichier généré depuis le dépôt (titres, corrections et vidéos
-     détectées). Si le fichier manque, on liste au moins les chemins connus. */
+  /* Catalogue généré depuis le dépôt (titres, corrections et vidéos détectées).
+     Essai à la racine configurée puis en relatif ; une panne affiche un état
+     explicite et un bouton de nouvel essai au lieu de laisser une liste vide. */
   function chargerCatalogueGuide() {
-    if (guideCatalogue) return Promise.resolve(guideCatalogue);
-    return fetch(cfg.RACINE + "assets/guide-exercice-catalogue.json", { cache: "no-cache" })
-      .then(function (r) { return r && r.ok ? r.json() : null; })
-      .then(function (j) {
-        guideCatalogue = (j && Array.isArray(j.pages)) ? j.pages : [];
-        return guideCatalogue;
-      })
-      .catch(function () { guideCatalogue = []; return guideCatalogue; });
+    if (Array.isArray(guideCatalogue)) return Promise.resolve(guideCatalogue);
+    var racines = [cfg && cfg.RACINE ? cfg.RACINE : "./", "./"];
+    var urls = [];
+    racines.forEach(function (racine) {
+      var url = String(racine || "./") + "assets/guide-exercice-catalogue.json";
+      if (urls.indexOf(url) === -1) urls.push(url);
+    });
+    function essayer(indice) {
+      return fetch(urls[indice], { cache: "no-cache" })
+        .then(function (r) {
+          if (!r || !r.ok) throw new Error("catalogue HTTP " + (r ? r.status : "indisponible"));
+          return r.json();
+        })
+        .then(function (j) {
+          if (!j || !Array.isArray(j.pages) || !j.pages.length) throw new Error("catalogue vide ou invalide");
+          guideCatalogue = j.pages;
+          guideErreurCatalogue = "";
+          return guideCatalogue;
+        })
+        .catch(function (e) {
+          if (indice + 1 < urls.length) return essayer(indice + 1);
+          throw e;
+        });
+    }
+    return essayer(0).catch(function (e) {
+      guideCatalogue = null;
+      guideErreurCatalogue = "Impossible de charger la liste des exercices" +
+        (e && e.message ? " (" + e.message + ")" : "") + ". Vérifiez la connexion puis réessayez.";
+      return [];
+    });
+  }
+
+  function remplirFiltreMatiereGuide() {
+    var select = document.getElementById("guide-filtre-matiere");
+    if (!select || !Array.isArray(guideCatalogue)) return;
+    while (select.options && select.options.length > 1) select.remove(1);
+    var matieres = {};
+    guideCatalogue.forEach(function (p) { if (p.matiere) matieres[p.matiere] = true; });
+    Object.keys(matieres).sort().forEach(function (m) {
+      var option = document.createElement("option");
+      option.value = m;
+      option.textContent = m.toUpperCase();
+      select.appendChild(option);
+    });
   }
 
   function reglageGuidePropre(brut) {
@@ -7112,11 +7153,14 @@
         if (r && r.error) throw r.error;
         guideReglage = reglageGuidePropre(r && r.data ? r.data.value : null);
         guideChargeLe = Date.now();
+        guideErreurLecture = "";
         return guideReglage;
       })
       .catch(function (e) {
         guideReglage = reglageGuidePropre(null);
-        guideEtat("⚠️ Lecture impossible (" + ((e && e.message) || "droits ou connexion") + ") — réglage par défaut affiché.", "var(--adm-red)");
+        guideChargeLe = 0;
+        guideErreurLecture = "⚠️ Lecture impossible (" + ((e && e.message) || "droits ou connexion") + ") — réglage par défaut affiché.";
+        guideEtat(guideErreurLecture, "var(--adm-red)");
         return guideReglage;
       });
   }
@@ -7134,6 +7178,29 @@
         .toLowerCase().indexOf(filtre) !== -1;
     });
     cont.innerHTML = "";
+    if (guideErreurCatalogue) {
+      var erreur = document.createElement("p");
+      erreur.style.cssText = "margin:10px;font-weight:800;color:var(--adm-red)";
+      erreur.textContent = "⚠️ " + guideErreurCatalogue;
+      var reessayer = document.createElement("button");
+      reessayer.type = "button";
+      reessayer.className = "btn-outil";
+      reessayer.textContent = "↻ Réessayer";
+      reessayer.addEventListener("click", function () {
+        guideCatalogue = null;
+        guideErreurCatalogue = "";
+        cont.textContent = "Chargement de la liste…";
+        chargerCatalogueGuide().then(function () {
+          remplirFiltreMatiereGuide();
+          rendreGuideListe();
+          majGuideResume();
+        });
+      });
+      cont.append(erreur, reessayer);
+      guideResume("Liste des exercices indisponible.");
+      guideEtat("⚠️ " + guideErreurCatalogue, "var(--adm-red)");
+      return;
+    }
     if (!pages.length) {
       cont.innerHTML = "<p style='margin:10px;font-weight:800;color:var(--adm-muted)'>Aucun exercice ne correspond au filtre.</p>";
       guideResume("0 exercice affiché.");
@@ -7203,10 +7270,19 @@
   function majGuideResume() {
     var c = reglageGuidePropre(guideReglage);
     var nb = Object.keys(c.parExercice).length;
+    if (guideErreurCatalogue) {
+      guideEtat("⚠️ " + guideErreurCatalogue, "var(--adm-red)");
+      return;
+    }
+    if (guideErreurLecture) {
+      guideEtat(guideErreurLecture, "var(--adm-red)");
+      return;
+    }
     guideEtat("Défaut : corrections " + (c.corrections ? "visibles" : "masquées") +
       ", vidéos " + (c.videos ? "visibles" : "masquées") +
       (nb ? " · " + nb + " exception(s)" : "") +
-      (guideChargeLe ? "" : " · non enregistré"), "var(--adm-green)");
+      (guideChargeLe ? "" : " · valeurs par défaut provisoires"),
+      guideChargeLe ? "var(--adm-green)" : "var(--adm-amber)");
   }
 
   function enregistrerReglageGuide() {
@@ -7221,6 +7297,7 @@
       if (r && r.error) throw r.error;
       guideReglage = c;
       guideChargeLe = Date.now();
+      guideErreurLecture = "";
       guideEtat("✅ Enregistré et publié à " + new Date().toLocaleTimeString("fr-FR") + ".", "var(--adm-green)");
       msg("📘 Guide exercice : réglage publié pour tous les élèves.", "ok");
       return c;
@@ -7278,18 +7355,19 @@
         function () { bEnr.disabled = false; });
     });
 
-    Promise.all([chargerCatalogueGuide(), lireReglageGuide()]).then(function () {
-      if (selMatiere) {
-        var vues = {};
-        (guideCatalogue || []).forEach(function (p) { if (p.matiere) vues[p.matiere] = true; });
-        Object.keys(vues).sort().forEach(function (m) {
-          var o = document.createElement("option");
-          o.value = m; o.textContent = m.toUpperCase();
-          selMatiere.appendChild(o);
-        });
-      }
+    /* La liste locale ne doit pas attendre le réseau Supabase : les 72 exercices
+       s'affichent aussitôt avec les valeurs par défaut, puis leurs exceptions sont
+       appliquées dès que le réglage partagé répond. */
+    guideEtat("⏳ Chargement de la liste des exercices…");
+    chargerCatalogueGuide().then(function () {
+      remplirFiltreMatiereGuide();
       recalquerDefauts();
       rendreGuideListe();
+      majGuideResume();
+    });
+    lireReglageGuide().then(function () {
+      recalquerDefauts();
+      if (Array.isArray(guideCatalogue) && !guideErreurCatalogue) rendreGuideListe();
       majGuideResume();
       if (guideChargeLe) guideEtat("Réglage lu dans la base.", "var(--adm-green)");
     });

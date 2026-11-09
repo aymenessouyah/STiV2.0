@@ -948,7 +948,7 @@
     if (u.indexOf("tp-groupby-bd") !== -1 || u.indexOf("tp3-correction-bd") !== -1 || u.indexOf("sql-serie3") !== -1) return "la Série 3 de BD (SQL — Group By)";
     if (u.indexOf("tp-bd-jointure-sous-requetes-group-by") !== -1 || u.indexOf("tp4-correction-bd") !== -1 || u.indexOf("enonce-serie4-a4") !== -1 || u.indexOf("sql-serie4") !== -1) return "la Série 4 de BD (SQL — Jointures, Sous-requêtes & Group By)";
     if (u.indexOf("tp-date-ssr-j-gp-bd") !== -1 || u.indexOf("tp-date-ssr-j-gp-correction-bd") !== -1 || u.indexOf("enonce-serie5-a4") !== -1 || u.indexOf("sql-serie5") !== -1) return "la Série 5 de BD (SQL — Dates, Jointures & Group By)";
-    if (u.indexOf("exercices/sql/sql.html") !== -1 || u.indexOf("exercices/sql/sql-correction.html") !== -1 || u.indexOf("/sql/sql.html") !== -1 || u.indexOf("/sql/sql-correction.html") !== -1 || u.indexOf("sql-serie6") !== -1) return "la Série 6 de BD (SQL — Récap LDD + LMD)";
+    if (u.indexOf("exercices/sql/sql.html") !== -1 || u.indexOf("exercices/sql/sql-correction.html") !== -1 || u.indexOf("/sql/sql.html") !== -1 || u.indexOf("/sql/sql-correction.html") !== -1 || u.indexOf("sql-serie6") !== -1) return "le récapitulatif SQL de la base ÉTUDIANT (LDD + LMD)";
     return null;
   }
 

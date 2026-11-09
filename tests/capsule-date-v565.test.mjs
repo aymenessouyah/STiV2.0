@@ -225,9 +225,9 @@ test('la capsule est dans le paquet hors-ligne et versionnée', () => {
   assert.ok(sw.includes(`"./assets/videos/DateJS-v565.mp4"`), 'MP4 hors-ligne');
   assert.ok(sw.includes(`"./assets/subtitles/DateJS-fr-v565.vtt"`), 'VTT hors-ligne');
   /* v573 : l'accueil et le livre connecté repartent au lot « 3ème SI 2026 ». */
-  const REV_PAGES = { './index.html': 'cours-sti-v596', './cours/javascript.html': 'cours-sti-v595',
-    './cours/php.html': 'cours-sti-v595', './assets/js/app.js': 'flamme-regularite-v611',
-    './assets/js/admin-vues-videos.js': 'videos-supabase-v613' };
+  const REV_PAGES = { './index.html': 'tp6-capsule-v616', './cours/javascript.html': 'cours-sti-v595',
+    './cours/php.html': 'cours-sti-v595', './assets/js/app.js': 'tp6-series6-v619', './assets/js/protection.js': 'tp6-detail-v618',
+    './assets/js/admin-vues-videos.js': 'tp6-capsule-v616' };
   const attendu = (page) => REV_PAGES[page] || 'cours-sti-v578';
   for (const page of ['./index.html', './cours/javascript.html', './assets/js/app.js',
     './assets/js/protection.js', './assets/js/lecteur-commun.js',
@@ -240,7 +240,7 @@ test('les totaux de l’accueil et du catalogue suivent', () => {
   const liste = catalogue();
   const index = lire('index.html');
   const js = liste.filter((v) => (v.matieres || [v.matiere]).includes('javascript')).length;
-  assert.equal(liste.length, 27, 'vingt-sept capsules');
+  assert.equal(liste.length, 28, 'vingt-huit capsules');
   assert.equal(js, 8, 'huit capsules JavaScript');
   assert.ok(index.includes(`data-video-filter="all">Toutes (${liste.length})</button>`));
   assert.ok(index.includes(`<span id="videosTotalNombre">${liste.length}</span>`));
