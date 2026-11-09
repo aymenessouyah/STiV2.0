@@ -150,10 +150,14 @@ n'est pas diffusable. L'installateur diffusable, lui, est produit par le job
 
 - **Automatiquement sur `main`** — dès qu'une modification de l'outil Windows
   arrive sur `main`, le binaire **simple** (aucune clé embarquée) est publié dans
-  la release `labo3-windows` avec `SHA256SUMS.txt` et une notice. Une release
-  existante est écrasée (`--clobber`). Le tableau de bord détecte cette release et
-  active seul son lien de téléchargement, avec le SHA-256 affiché. Aucun geste de
-  l'administrateur, aucun jeton à coller.
+  la release `labo3-windows` avec `SHA256SUMS.txt` et une notice qui recopie les
+  mêmes empreintes SHA-256 : c'est cette notice que lit le tableau de bord, un
+  navigateur ne pouvant pas télécharger `SHA256SUMS.txt` depuis une release
+  (hôte de téléchargement sans en-tête CORS). Une release existante est écrasée
+  (`--clobber`) **et sa notice réécrite** (`gh release edit --notes-file`), pour
+  que notice et binaire sortent toujours du même passage de CI. Le tableau de
+  bord détecte cette release et active seul son lien de téléchargement, avec le
+  SHA-256 affiché. Aucun geste de l'administrateur, aucun jeton à coller.
 - **Manuellement, en mode restreint** — *Run workflow* → coller la clé **publique**
   PEM (lignes séparées par `\n`) → cocher **`publier`**. L'artefact est nommé
   `STI-v2.0-Labo3-cle-<empreinte>` : les 12 premiers caractères du SHA-256 de la

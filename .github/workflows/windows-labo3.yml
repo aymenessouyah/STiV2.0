@@ -255,6 +255,13 @@ jobs:
             gh release upload labo3-windows $exe $sommes --repo $env:GITHUB_REPOSITORY --clobber
             if ($LASTEXITCODE -ne 0) { exit 1 }
           }
+          # Quand la release existe déjà, `gh release create` échoue et le repli
+          # `gh release upload --clobber` remplace les fichiers SANS toucher à la
+          # notice : le tableau de bord, qui lit le SHA-256 dans cette notice,
+          # resterait sur une notice périmée. Cette ligne rend la notice solidaire
+          # du binaire publié, à chaque passage.
+          gh release edit labo3-windows --repo $env:GITHUB_REPOSITORY --notes-file $notice
+          if ($LASTEXITCODE -ne 0) { exit 1 }
           gh release view labo3-windows --repo $env:GITHUB_REPOSITORY --json tagName,assets
 
       - uses: actions/upload-artifact@v4

@@ -153,4 +153,6 @@ test('publication : automatique sur main, après validation, clé facultative', 
   assert.match(workflow, /STI-v2\.0-Labo3-simple/);
   assert.match(workflow, /gh release create labo3-windows/);
   assert.match(workflow, /--clobber/, 'une republication remplace l’exécutable');
+  assert.match(workflow, /gh release edit labo3-windows --repo \$env:GITHUB_REPOSITORY --notes-file \$notice/,
+    'la notice est réécrite à chaque passage : create échoue si la release existe et upload --clobber ne touche pas à la notice');
 });
