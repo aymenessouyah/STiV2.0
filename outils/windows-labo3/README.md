@@ -72,13 +72,20 @@ diffusable. Pour obtenir un installateur de production, deux chemins :
 
 - **GitHub Actions** — workflow « Windows Labo3 — validation et publication de
   contrôle » → *Run workflow* → coller la clé **publique** PEM (lignes séparées
-  par `\n`), puis télécharger l'artefact
-  `STI-v2.0-version-speciale-Labo-3` (exécutable, `SHA256SUMS.txt`, notice).
+  par `\n`), puis télécharger l'artefact `STI-v2.0-Labo3-cle-<empreinte>`
+  (exécutable, `SHA256SUMS.txt`, notice). Le nom porte les 12 premiers caractères
+  du SHA-256 de la clé embarquée : le vérifier avant diffusion. Déclencher ce
+  workflow exige le droit `actions: write` sur le dépôt.
 - **Poste Windows** — `.\outils\windows-labo3\compiler.ps1 -ClePublique publique.pem -Tester`.
 
 `verifier-cle-publique.mjs` refuse une clé privée, un PEM illisible ou un autre
-algorithme avant toute compilation ; il est appelé automatiquement par les deux
-chemins. Aucune clé privée ne transite par le workflow.
+algorithme avant toute compilation ; `compiler.ps1` l'appelle automatiquement.
+`cle-depuis-saisie.mjs` fait le même contrôle pour la saisie sur une seule ligne
+du workflow : il reconstruit les retours à la ligne (`\n` littéraux), refuse deux
+blocs collés — Node ne lirait que le premier et l'exécutable embarquerait une autre
+clé que celle attendue — puis écrit le PEM et affiche son SHA-256. La saisie passe
+par une variable d'environnement, jamais interpolée dans un bloc PowerShell.
+Aucune clé privée ne transite par le workflow.
 
 ## Reste à faire avant diffusion aux 20 postes
 

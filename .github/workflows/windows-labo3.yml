@@ -101,15 +101,13 @@ jobs:
       - name: Reconstruire et vérifier la clé publique fournie
         shell: pwsh
         env:
-          CLE: ${{ github.event.inputs.cle_publique }}
+          LABO3_CLE_PUBLIQUE: ${{ github.event.inputs.cle_publique }}
         run: |
-          $pem = ($env:CLE -replace '\r', '' -replace '\n', "`n").Trim() + "`n"
           $chemin = Join-Path $env:RUNNER_TEMP 'publique.pem'
-          [IO.File]::WriteAllText($chemin, $pem, [Text.Encoding]::ASCII)
-          node outils/windows-labo3/verifier-cle-publique.mjs $chemin
+          $empreinte = node outils/windows-labo3/cle-depuis-saisie.mjs $chemin
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          (Get-FileHash -Algorithm SHA256 $chemin).Hash.ToLowerInvariant() |
-            Out-File -FilePath (Join-Path $env:RUNNER_TEMP 'cle.sha256') -Encoding ascii
+          $empreinte | Out-File -FilePath (Join-Path $env:RUNNER_TEMP 'cle.sha256') -Encoding ascii
+          Write-Host "Cle publique validee, sha256 : $empreinte"
 
       - name: Compiler l’installateur avec la clé de production
         shell: pwsh

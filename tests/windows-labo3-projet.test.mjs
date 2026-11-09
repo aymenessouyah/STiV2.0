@@ -66,7 +66,7 @@ test('publication de production : clé publique only, artefact et empreintes', (
   const workflow = lire('.github/workflows/windows-labo3.yml');
   assert.match(workflow, /workflow_dispatch:\n\s+inputs:\n\s+cle_publique:/);
   assert.match(workflow, /if: github.event_name == 'workflow_dispatch'/);
-  assert.match(workflow, /verifier-cle-publique\.mjs/);
+  assert.match(workflow, /cle-depuis-saisie\.mjs/);
   assert.match(workflow, /SHA256SUMS\.txt/);
   assert.match(workflow, /actions\/upload-artifact@v4/);
   // La clé privée ne doit jamais être un paramètre de compilation ou de workflow.
