@@ -48,6 +48,11 @@ string ArchiveMulti(string prefix, string volume, params (string Nom, string Con
 try
 {
     Authorization.Check(Path.Combine(fixture, "autorisation-labo3.json")); passed++;
+    /* Mode simple : sans autorisation, aucun contrôle de postes. Avec une
+       autorisation présente, elle reste vérifiée — jamais ignorée. */
+    Assert(!Authorization.CheckIfPresent(Path.Combine(fixture, "absente.json")), "Autorisation absente : mode simple, aucun refus");
+    Assert(Authorization.CheckIfPresent(Path.Combine(fixture, "autorisation-labo3.json")), "Autorisation présente : contrôlée");
+    await Refuse(() => { Authorization.CheckIfPresent(Path.Combine(fixture, "refus.json")); return Task.CompletedTask; }, "autre poste en mode simple");
     await Refuse(() => { Authorization.Check(Path.Combine(fixture, "refus.json")); return Task.CompletedTask; }, "autre poste");
     foreach (var path in new[] { "../x", "/x", "C:/x", "a\\b", "CON.txt", "x/../b", "a./b", "x:stream", "a//b" })
         await Refuse(() => { PackageInstaller.SafePath(root, path); return Task.CompletedTask; }, path);
@@ -113,6 +118,23 @@ try
     File.Copy(Path.Combine(fixture, "refus.json"), Path.Combine(version, "autorisation-labo3.json"), true);
     Assert((int)(await client.GetAsync(origin + "/index.html")).StatusCode == 403, "Autorisation recontrôlée au lancement document");
     await Refuse(() => LocalRuntime.StartAsync(version), "démarrage refusé si l’autorisation a été remplacée");
+
+    /* Mode simple : une version sans aucune autorisation démarre et sert la
+       plateforme. C'est le parcours retenu pour le laboratoire. */
+    var versionSimple = Path.Combine(root, "runtime-simple");
+    Directory.CreateDirectory(versionSimple);
+    await PackageInstaller.ExtractAsync(Archive(""), Path.Combine(versionSimple, "plateforme"));
+    Assert(!File.Exists(Path.Combine(versionSimple, "autorisation-labo3.json")), "Version simple : aucune autorisation déposée");
+    await using var runtimeSimple = await LocalRuntime.StartAsync(versionSimple);
+    var pageSimple = await client.GetStringAsync(runtimeSimple.LaunchUri);
+    Assert(pageSimple.Contains("__STI_NATIVE_AUTHENTICATED_V316=true"), "Mode simple : plateforme servie sans autorisation");
+    var origineSimple = runtimeSimple.LaunchUri.GetLeftPart(UriPartial.Authority);
+    Assert((int)(await client.GetAsync(origineSimple + "/admin.html")).StatusCode == 403, "Mode simple : admin toujours bloqué");
+    Assert((int)(await client.GetAsync(origineSimple + "/portail.html")).StatusCode == 403, "Mode simple : portail toujours bloqué");
+    /* Une autorisation posée ensuite redevient contraignante : le mode simple
+       n'est pas une façon de contourner une restriction déjà installée. */
+    File.Copy(Path.Combine(fixture, "refus.json"), Path.Combine(versionSimple, "autorisation-labo3.json"));
+    await Refuse(() => LocalRuntime.StartAsync(versionSimple), "mode simple : une autorisation posée est quand même vérifiée");
 
     // Purge des anciennes versions : les plus récentes restent, la protégée jamais supprimée.
     var versions = Path.Combine(root, "versions");

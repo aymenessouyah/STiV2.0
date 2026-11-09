@@ -80,12 +80,12 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
        admin.js reste servi sous la révision guide-exercice-liste-v621.
        L’empreinte est réactualisée : la page a bien changé, le reste du socle
        (accès, roue, Cote) est inchangé. */
-    /* Labo 3 : le panneau gagne la création de la paire de clés Ed25519 dans le
-       navigateur (clé privée téléchargée, clé publique à coller dans le workflow,
-       empreinte et nom d'artefact annoncés) et le lien vers le workflow « Windows
-       Labo3 » ; cache-buster admin-labo3.js passé en ?v=3. Empreinte
-       réactualisée : seul ce bloc a bougé, le reste du socle est inchangé. */
-    'admin.html': '17e6f23c464da60865793f5e189b7884127aff68f8ee388555b714c30924e574',
+    /* Labo 3 : le panneau est ramené à trois gestes (télécharger l'installateur
+       publié par la CI, créer le paquet, copier sur la clé USB) et le parcours
+       restreint — relevé des postes, paire de clés Ed25519, signature, workflow —
+       est replié dans un <details> optionnel. Empreinte réactualisée : seul ce
+       bloc a bougé, le reste du socle est inchangé. */
+    'admin.html': '0746e140bdf9ec068bc24079c54934e802f844c5fdc2e5c2f9c3b9dafbecebe7',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };

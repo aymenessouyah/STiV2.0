@@ -1,7 +1,8 @@
 namespace STILabo3;
 
-// Ce que le support USB dépose à côté de l'exécutable : un paquet et une
-// autorisation signée. Rien n'est téléchargé, rien n'est deviné au-delà.
+// Ce que le support USB dépose à côté de l'exécutable : un paquet, et
+// éventuellement une autorisation signée (optionnelle). Rien n'est téléchargé,
+// rien n'est deviné au-delà.
 internal static class Support
 {
     internal static readonly string[] NomsAutorisation = ["autorisation-labo3.json", "autorisation.json"];

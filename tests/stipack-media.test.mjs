@@ -154,6 +154,44 @@ test('média : dossier complet, procédure et vérificateur, paquet du commit co
   }
 });
 
+/* Le parcours retenu pour le laboratoire : copier, double-cliquer, installer.
+   Ni clé, ni relevé de poste, ni signature — un installateur et un paquet. */
+test('média simple : sans autorisation, le dossier est complet et la procédure le dit', () => {
+  const dossier = dossierTemporaire();
+  try {
+    const media = join(dossier, 'media');
+    const faux = fauxInstallateur(dossier);
+    const { code, sortie } = lancer([
+      '--volume', 'leger', '--seuil-mo', '0.2', '--accepter-volume-leger',
+      '--sortie', media,
+      '--installeur', faux.exe,
+      '--empreinte-attendue', sha256(faux.exe)
+    ]);
+    assert.equal(code, 0, sortie);
+    assert.match(sortie, /mode simple, sans restriction de postes/);
+    assert.match(sortie, /Aucun mot de passe, aucune clé, aucun réseau/);
+    assert.match(sortie, /Autorisation : aucune — mode simple, tous les postes acceptés/);
+
+    const noms = readdirSync(media).sort();
+    assert.deepEqual(noms, [
+      'LISEZ-MOI-20-POSTES.txt',
+      'STI-Labo3-Installation.exe',
+      'STI-Labo3-Plateforme.stipack',
+      'empreintes.txt',
+      'verifier-media.cmd',
+      'verifier-media.ps1'
+    ], 'aucun fichier d’autorisation en mode simple');
+
+    const procedure = readFileSync(join(media, 'LISEZ-MOI-20-POSTES.txt'), 'utf8');
+    assert.match(procedure, /Mode        : simple — aucune restriction/);
+    assert.match(procedure, /absent : mode simple/);
+    assert.doesNotMatch(procedure, /l’installateur refuse de continuer/, 'la procédure ne promet pas un refus qui n’existe plus');
+    assert.doesNotMatch(procedure, /Ce poste n’est pas autorisé/, 'aucun message de restriction en mode simple');
+  } finally {
+    rmSync(dossier, { recursive: true, force: true });
+  }
+});
+
 test('média : empreintes.txt couvre tous les fichiers et le contrôle passe', () => {
   const dossier = dossierTemporaire();
   try {
@@ -318,9 +356,13 @@ test('média : sans installateur, le dossier est préparé et le manque est anno
     const { code, sortie } = lancer(['--volume', 'leger', '--seuil-mo', '0.2', '--accepter-volume-leger', '--sortie', media]);
     assert.equal(code, 0, sortie);
     assert.match(sortie, /Média incomplet/);
-    assert.match(sortie, /STI-Labo3-Installation\.exe — compilé avec votre clé publique/);
-    assert.match(sortie, /autorisation-labo3\.json — signée depuis le tableau de bord/);
+    assert.match(sortie, /STI-Labo3-Installation\.exe — publié par la CI dans la release labo3-windows/);
+    /* L'autorisation est devenue optionnelle : son absence n'est plus un manque,
+       et aucun fichier d'autorisation n'est inventé sur le média. */
+    assert.doesNotMatch(sortie, /autorisation-labo3\.json — signée/);
+    assert.match(sortie, /mode simple, sans restriction|⚠ Média incomplet/);
     assert.ok(readdirSync(media).includes('STI-Labo3-Plateforme.stipack'), 'le paquet est tout de même fabriqué');
+    assert.ok(!readdirSync(media).includes('autorisation-labo3.json'), 'aucune autorisation inventée');
   } finally {
     rmSync(dossier, { recursive: true, force: true });
   }

@@ -26,8 +26,9 @@ internal sealed class LocalRuntime : IAsyncDisposable
 
     internal static async Task<LocalRuntime> StartAsync(string versionDirectory, int[]? ports = null)
     {
-        // Contrôlé une fois ici, puis avant chaque document servi.
-        Authorization.Check(Path.Combine(versionDirectory, "autorisation-labo3.json"));
+        // Contrôlé une fois ici, puis avant chaque document servi — seulement si
+        // une autorisation est installée (mode simple : aucune restriction).
+        Authorization.CheckIfPresent(Path.Combine(versionDirectory, "autorisation-labo3.json"));
         Exception? derniere = null;
         foreach (var port in ports ?? PortsEssayes)
         {
@@ -86,7 +87,7 @@ internal sealed class LocalRuntime : IAsyncDisposable
             if (!File.Exists(file)) { context.Response.StatusCode = 404; return; }
             if (Path.GetExtension(file).Equals(".html", StringComparison.OrdinalIgnoreCase))
             {
-                try { Authorization.Check(Path.Combine(versionDirectory, "autorisation-labo3.json")); }
+                try { Authorization.CheckIfPresent(Path.Combine(versionDirectory, "autorisation-labo3.json")); }
                 catch { context.Response.StatusCode = 403; return; }
                 var html = await File.ReadAllTextAsync(file);
                 var head = html.IndexOf("<head", StringComparison.OrdinalIgnoreCase);
