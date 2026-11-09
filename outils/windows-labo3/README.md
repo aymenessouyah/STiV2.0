@@ -19,9 +19,11 @@ de l'ancien installateur v316. Nom et logo officiels embarqués depuis `assets/i
    puis recontrôlée. Le raccourci du Bureau n'est remplacé qu'après réussite ;
    en cas d'échec la destination partielle est supprimée et l'ancienne version
    conservée. Aucun privilège administrateur requis (`asInvoker`).
-3. **Exécution locale** — serveur Kestrel sur `127.0.0.1:18763` uniquement, cookie
-   de session aléatoire par lancement, en-têtes `no-store`, CSP restrictive, refus
-   des requêtes hors boucle locale et des origines étrangères. `admin.html`,
+3. **Exécution locale** — serveur Kestrel sur la boucle locale uniquement
+   (`127.0.0.1`, ports essayés 18763 à 18767 puis port libre choisi par le système :
+   un poste qui occupe déjà le premier port n'empêche pas l'ouverture), cookie de
+   session aléatoire par lancement, en-têtes `no-store`, CSP restrictive, refus des
+   hôtes non locaux et des requêtes cross-origin. `admin.html`,
    `portail.html` et `sw.js` sont bloqués ; les service workers sont désactivés pour
    éviter tout cache hors contrôle. La session locale attendue par `acces.js`
    (`__STI_NATIVE_AUTHENTICATED_V316`, `sti-session-cache`, `sti-labo3-permanent`)

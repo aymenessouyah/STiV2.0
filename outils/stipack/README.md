@@ -95,7 +95,8 @@ imprimer : poste, date, contrôle du média, autorisé, installé, accueil hors 
 | « Cette préversion n'a pas de clé publique de confiance intégrée » | Binaire compilé sans clé. Recompiler avec `-ClePublique`. |
 | Signature invalide / format refusé | Autorisation produite avec une autre clé privée que celle de la clé publique embarquée. |
 | Page blanche après installation | Disposition du paquet : refaire le média avec `--disposition racine`. |
-| L'ouverture échoue sans message utile | Le port local 18763 est peut-être occupé sur ce poste ; fermer l'application qui l'utilise et relancer. |
+| L'ouverture échoue sans message utile | Les ports locaux 18763-18767 sont peut-être tous occupés sur ce poste ; fermer les applications en cause et relancer. |
+| « Espace insuffisant sur C: » | Chaque version installée pèse le poids du paquet. Deux versions sont conservées, les plus anciennes purgées ; libérer de l'espace si le message apparaît. |
 | SmartScreen bloque | « Informations complémentaires » → « Exécuter quand même ». |
 
 ## Ce que le support ne fait pas
