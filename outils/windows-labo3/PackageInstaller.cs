@@ -65,6 +65,11 @@ internal static class PackageInstaller
             plan.Add((entry, relative, hash));
         }
         if (!plan.Any(p => p.Relative == "index.html")) throw new InvalidDataException("Accueil index.html absent.");
+        // Échouer avant d'écrire : un disque saturé laisserait une version inutilisable.
+        var racineDisque = Path.GetPathRoot(Path.GetFullPath(destination)) ?? throw new IOException("Destination sans racine de disque.");
+        var disponible = new DriveInfo(racineDisque).AvailableFreeSpace;
+        if (!Deployment.EspaceSuffisant(total, disponible))
+            throw new IOException($"Espace insuffisant sur {racineDisque} : {total / 1048576} Mo nécessaires, {disponible / 1048576} Mo libres (marge de {Deployment.MargeEspaceOctets / 1048576} Mo).");
         foreach (var name in entries.Keys)
             if (name is not ("stipack.json" or "empreintes.txt" or "LISEZ-MOI.txt") && !announced.Contains(name))
                 throw new InvalidDataException("Fichier non annoncé : " + name);

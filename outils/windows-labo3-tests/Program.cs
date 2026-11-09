@@ -63,8 +63,32 @@ try
     request.Headers.Range = new System.Net.Http.Headers.RangeHeaderValue(1, 2);
     using var response = await client.SendAsync(request);
     Assert((int)response.StatusCode == 206 && (await response.Content.ReadAsByteArrayAsync()).SequenceEqual(new byte[] { 2, 3 }), "Lecture vidéo partielle");
+    // Port occupé : une seconde instance doit se replier sur un autre port, pas échouer.
+    await using var seconde = await LocalRuntime.StartAsync(version);
+    Assert(seconde.LaunchUri.Port != runtime.LaunchUri.Port, "Port de repli choisi quand le premier est occupé");
+    Assert((await client.GetStringAsync(seconde.LaunchUri)).Contains("__STI_NATIVE_AUTHENTICATED_V316=true"), "Seconde instance sert la plateforme");
+    Assert(LocalRuntime.PortsEssayes[^1] == 0, "Dernier candidat : port libre choisi par le système");
+
     File.Copy(Path.Combine(fixture, "refus.json"), Path.Combine(version, "autorisation-labo3.json"), true);
     Assert((int)(await client.GetAsync(origin + "/index.html")).StatusCode == 403, "Autorisation recontrôlée au lancement document");
+    await Refuse(() => LocalRuntime.StartAsync(version), "démarrage refusé si l’autorisation a été remplacée");
+
+    // Purge des anciennes versions : les plus récentes restent, la protégée jamais supprimée.
+    var versions = Path.Combine(root, "versions");
+    Directory.CreateDirectory(versions);
+    string[] noms = ["20260101-000000-a", "20260102-000000-b", "20260103-000000-c", "20260104-000000-d"];
+    foreach (var nom in noms) Directory.CreateDirectory(Path.Combine(versions, nom));
+    Deployment.NettoyerVersions(versions, Path.Combine(versions, noms[0]), conserver: 2);
+    Assert(Directory.Exists(Path.Combine(versions, noms[3])) && Directory.Exists(Path.Combine(versions, noms[2])), "Deux versions les plus récentes conservées");
+    Assert(!Directory.Exists(Path.Combine(versions, noms[1])), "Version ancienne purgée");
+    Assert(Directory.Exists(Path.Combine(versions, noms[0])), "Version protégée conservée même si ancienne");
+    Deployment.NettoyerVersions(Path.Combine(root, "absent"), null);
+    passed++; // racine inexistante tolérée
+
+    // Marge d'espace disque : logique pure, le disque du runner n'est pas saturable.
+    Assert(Deployment.EspaceSuffisant(1000, 5000, 100), "Espace suffisant avec marge");
+    Assert(!Deployment.EspaceSuffisant(1000, 1050, 100), "Marge non respectée : refus");
+    Assert(!Deployment.EspaceSuffisant(-1, long.MaxValue, 100), "Taille négative refusée");
     // Support USB : détection du paquet et de l'autorisation à côté de l'exécutable.
     var support = Path.Combine(root, "support");
     Directory.CreateDirectory(support);

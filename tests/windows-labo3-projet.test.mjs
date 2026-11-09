@@ -52,9 +52,21 @@ test('exécution locale : boucle locale seule, portail et admin bloqués, sessio
   assert.match(runtime, /unregister\(\)/);
   assert.match(runtime, /Authorization.Check/);
 });
+test('robustesse en salle : port de repli, purge des versions, marge disque', () => {
+  const runtime = lire('outils/windows-labo3/LocalRuntime.cs');
+  assert.match(runtime, /PortsEssayes = \[18763, 18764, 18765, 18766, 18767, 0\]/);
+  assert.match(runtime, /AddressInUseException or IOException/);
+  assert.match(runtime, /Aucun port local disponible/);
+  const deploiement = lire('outils/windows-labo3/Deployment.cs');
+  assert.match(deploiement, /VersionsConservees = 2/);
+  assert.match(deploiement, /NettoyerVersions\(root, version\)/);
+  assert.match(deploiement, /catch \(IOException\)/);
+  assert.match(deploiement, /EspaceSuffisant/);
+  assert.match(lire('outils/windows-labo3/PackageInstaller.cs'), /Espace insuffisant sur/);
+});
 test('validation Windows réelle outillée : suite .NET et workflow', () => {
   const suite = lire('outils/windows-labo3-tests/Program.cs');
-  for (const attendu of ['Authorization.Check', 'PackageInstaller.ExtractAsync', 'LocalRuntime.StartAsync', '206', 'refus.json'])
+  for (const attendu of ['Authorization.Check', 'PackageInstaller.ExtractAsync', 'LocalRuntime.StartAsync', '206', 'refus.json', 'NettoyerVersions', 'EspaceSuffisant', 'PortsEssayes'])
     assert.ok(suite.includes(attendu), 'contrôle manquant : ' + attendu);
   const workflow = lire('.github/workflows/windows-labo3.yml');
   assert.match(workflow, /runs-on: windows-latest/);
