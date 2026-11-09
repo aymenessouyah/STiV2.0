@@ -8,6 +8,10 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  pull-requests: write
+env:
+  JOURNAL: ${{ runner.temp }}\labo3-journal.log
+  FIXTURE: ${{ runner.temp }}\labo3-fixture
 jobs:
   windows:
     runs-on: windows-latest
@@ -20,21 +24,52 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+
       - name: Fixture de test jetable (clé et autorisation du runner)
         shell: pwsh
         run: |
           $guid = (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Cryptography').MachineGuid
-          node outils/windows-labo3-tests/preparer-fixture.mjs "$env:RUNNER_TEMP/labo3-fixture" $guid
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node outils/windows-labo3-tests/preparer-fixture.mjs $env:FIXTURE $guid *>&1 | Tee-Object -FilePath $env:JOURNAL
+          exit $LASTEXITCODE
+
+      - name: Compilation du projet et de la suite de tests
+        shell: pwsh
+        run: |
+          dotnet build outils/windows-labo3-tests/STILabo3.Tests.csproj -c Release "-p:Labo3PublicKey=$env:FIXTURE/publique.pem" *>&1 | Tee-Object -FilePath $env:JOURNAL -Append
+          exit $LASTEXITCODE
+
       - name: Tests réels sous Windows (signature, extraction, serveur local, vidéo)
         shell: pwsh
         run: |
-          dotnet run --project outils/windows-labo3-tests/STILabo3.Tests.csproj -c Release "-p:Labo3PublicKey=$env:RUNNER_TEMP/labo3-fixture/publique.pem" -- "$env:RUNNER_TEMP/labo3-fixture"
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet run --project outils/windows-labo3-tests/STILabo3.Tests.csproj -c Release --no-build "-p:Labo3PublicKey=$env:FIXTURE/publique.pem" -- $env:FIXTURE *>&1 | Tee-Object -FilePath $env:JOURNAL -Append
+          exit $LASTEXITCODE
+
       - name: Publication autonome et contrôle de la clé embarquée
         shell: pwsh
         run: |
-          .\outils\windows-labo3\compiler.ps1 -ClePublique "$env:RUNNER_TEMP/labo3-fixture/publique.pem" -Sortie "$env:RUNNER_TEMP/labo3-build"
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          try {
+            .\outils\windows-labo3\compiler.ps1 -ClePublique "$env:FIXTURE/publique.pem" -Sortie "$env:RUNNER_TEMP/labo3-build" *>&1 | Tee-Object -FilePath $env:JOURNAL -Append
+          } catch {
+            $_ | Out-String | Tee-Object -FilePath $env:JOURNAL -Append
+            exit 1
+          }
+          exit $LASTEXITCODE
+
+      - name: Rapport d’échec publié sur la PR
+        if: failure()
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $texte = if (Test-Path $env:JOURNAL) { Get-Content -Raw $env:JOURNAL } else { 'Aucun journal produit.' }
+          if ($texte.Length -gt 55000) { $texte = '…journal tronqué…' + $texte.Substring($texte.Length - 55000) }
+          $branche = if ($env:GITHUB_HEAD_REF) { $env:GITHUB_HEAD_REF } else { $env:GITHUB_REF_NAME }
+          $numero = gh pr list --repo $env:GITHUB_REPOSITORY --head $branche --state open --json number --jq '.[0].number'
+          if (-not $numero) { Write-Host "Aucune PR ouverte pour $branche ; journal non publié."; exit 0 }
+          $barre = [string]::new([char]96, 3)
+          $corps = '❌ Validation Windows échouée — run ' + $env:GITHUB_RUN_ID + "`n`n" + $barre + "text`n" + $texte + "`n" + $barre
+          $corps | Out-File -FilePath "$env:RUNNER_TEMP/commentaire.md" -Encoding utf8
+          gh pr comment $numero --repo $env:GITHUB_REPOSITORY --body-file "$env:RUNNER_TEMP/commentaire.md"
+
 # Aucun upload ni release : cette compilation embarque une clé de test jetable.
 # Une diffusion réelle exige la clé publique de production de l'administrateur.
