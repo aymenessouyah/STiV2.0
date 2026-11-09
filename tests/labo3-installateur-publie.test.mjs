@@ -59,6 +59,34 @@ test('release conforme : lien, empreinte SHA-256 et date', async () => {
   assert.equal(appels.length, 2, 'API puis SHA256SUMS.txt, rien d’autre');
 });
 
+test('somme recopiée dans la notice : une seule requête, fichier de release injoignable', async () => {
+  /* Conditions réelles du navigateur : api.github.com envoie les en-têtes CORS,
+     release-assets.githubusercontent.com n'en envoie aucun — la lecture du
+     fichier échoue en « Failed to fetch ». La notice de release porte donc les
+     mêmes lignes que SHA256SUMS.txt, et suffit. */
+  const api = charger();
+  const appels = [];
+  const r = await api.verifierPublication({
+    depot: DEPOT,
+    fetch: async (url) => {
+      appels.push(url);
+      if (url.startsWith('https://api.github.com/')) return reponseJson(Object.assign(release([
+        { name: 'STI-Labo3-Installation.exe', size: 188965590, browser_download_url: BASE + 'STI-Labo3-Installation.exe' },
+        { name: 'SHA256SUMS.txt', browser_download_url: BASE + 'SHA256SUMS.txt' }
+      ]), {
+        body: 'STI v2.0 version spéciale Labo 3 — installateur SIMPLE\n' +
+          'commit : 8fa82e43\n\nEmpreintes SHA-256 des fichiers publiés :\n' +
+          `${SHA}  STI-Labo3-Installation.exe\n`
+      }));
+      throw new TypeError('Failed to fetch');
+    }
+  });
+  assert.equal(r.publie, true);
+  assert.equal(r.sha256, SHA);
+  assert.equal(r.octets, 188965590);
+  assert.equal(appels.length, 1, 'l’API seule : aucun appel vers l’hôte sans CORS');
+});
+
 test('refus : exe sans empreinte, sommes absentes, URL hors dépôt, API en erreur', async () => {
   const api = charger();
   const sommeVide = { ok: true, status: 200, text: async () => 'aucune ligne exploitable\n' };
