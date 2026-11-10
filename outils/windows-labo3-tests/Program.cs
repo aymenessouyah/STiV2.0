@@ -202,6 +202,54 @@ try
         Assert((int)(await client.GetAsync(origineReelle + "/portail.html")).StatusCode == 403, "portail bloqué sur contenu réel");
     }
 
+    /* ---- Session locale silencieuse : état, sondes, résolution de version ----
+       Le serveur vit sans fenêtre ; tout repose sur le fichier d'état et sur la
+       détection d'un serveur vivant. Éprouvé ici sans interface ni navigateur. */
+    var dossierSession = Path.Combine(root, "session");
+    Directory.CreateDirectory(dossierSession);
+    var cheminEtat = Path.Combine(dossierSession, "serveur.json");
+
+    var etat = new EtatSession(Session.FormatEtat, Environment.ProcessId, 18763,
+        "http://127.0.0.1:18763/__launch/" + new string('a', 64), dossierSession, "2026-11-10T00:00:00Z");
+    Session.EcrireEtat(cheminEtat, etat);
+    var relu = Session.LireEtat(cheminEtat);
+    Assert(relu is not null && relu.Format == Session.FormatEtat && relu.Pid == etat.Pid && relu.Port == 18763 && relu.Uri == etat.Uri,
+        "État de session : écrit puis relu identique");
+    File.WriteAllText(cheminEtat, "{corrompu");
+    Assert(Session.LireEtat(cheminEtat) is null, "État corrompu : lu null, jamais une exception");
+    Session.EcrireEtat(cheminEtat, etat with { Format = 99 });
+    Assert(Session.LireEtat(cheminEtat) is null, "État d'un format inconnu : ignoré");
+    Session.EcrireEtat(cheminEtat, etat with { Pid = 999999 });
+    Assert(!Session.ProcessusVivant(999999), "Pid inexistant : serveur considéré mort");
+    Assert(!Session.ProcessusVivant(Environment.ProcessId), "Pid vivant d'un autre processus : pas notre serveur");
+    Assert(!await Session.ServeurEnVieAsync(Session.LireEtat(cheminEtat)), "État d'un serveur mort : inexploitable");
+    Assert(!await Session.ServeurEnVieAsync(null), "État absent : inexploitable");
+    Session.SupprimerEtat(cheminEtat);
+    Assert(Session.LireEtat(cheminEtat) is null, "État supprimé : lecture null");
+
+    using (var ecouteur = new System.Net.Sockets.TcpListener(System.Net.IPAddress.Loopback, 0))
+    {
+        ecouteur.Start();
+        var portEcoute = ((System.Net.IPEndPoint)ecouteur.LocalEndpoint).Port;
+        Assert(await Session.PortEcouteAsync(portEcoute), "Port en écoute : détecté");
+        ecouteur.Stop();
+        Assert(!await Session.PortEcouteAsync(portEcoute), "Port refermé : détecté");
+    }
+
+    var racineVersions = Path.Combine(dossierSession, "versions");
+    var vieille = Path.Combine(racineVersions, "20260101-000000-ancienne");
+    var recente = Path.Combine(racineVersions, "20261231-000000-recente");
+    var vide = Path.Combine(racineVersions, "20261231-000001-incomplete");
+    foreach (var v in new[] { vieille, recente, vide }) Directory.CreateDirectory(Path.Combine(v, "plateforme"));
+    File.WriteAllText(Path.Combine(vieille, "plateforme", "index.html"), "x");
+    File.WriteAllText(Path.Combine(recente, "plateforme", "index.html"), "x");
+    Assert(Session.ResoudreVersion(recente, racineVersions) == recente, "Dossier courant servable : prioritaire");
+    Assert(Session.ResoudreVersion(dossierSession, racineVersions) == recente, "Résolution : la plus récente servable");
+    Directory.Delete(recente, true);
+    Assert(Session.ResoudreVersion(dossierSession, racineVersions) == vieille, "Résolution : repli sur la précédente servable");
+    Directory.Delete(vieille, true);
+    Assert(Session.ResoudreVersion(dossierSession, racineVersions) is null, "Aucune plateforme installée : null, pas d'exception");
+
     Console.WriteLine($"{passed} contrôles Windows réussis.");
 }
 finally { Directory.Delete(root, true); }

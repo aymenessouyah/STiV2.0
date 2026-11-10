@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
@@ -22,7 +23,100 @@ internal static class Program
             return;
         }
         ApplicationConfiguration.Initialize();
-        Application.Run(new PreparationForm(args.Contains("--launch")));
+        // Raccourci du Bureau et EXE installé : aucune boîte d'installation, le
+        // serveur tourne sans fenêtre et le navigateur s'ouvre directement.
+        if (args.Contains("--launch")) { Application.Run(new SessionContext()); return; }
+        Application.Run(new PreparationForm());
+    }
+
+    /// Relance l'EXE installé en mode silencieux : il réutilise un serveur déjà
+    /// vivant ou en démarre un, puis ouvre le navigateur. Rien n'est affiché.
+    internal static Process Relancer(string versionDirectory)
+    {
+        var exe = Path.Combine(versionDirectory, "STI-Labo3-Installation.exe");
+        return Process.Start(new ProcessStartInfo(exe, "--launch")
+        { UseShellExecute = true, WorkingDirectory = versionDirectory });
+    }
+}
+
+// Lancement silencieux : pas de fenêtre, une icône dans la zone de notification
+// de la barre des tâches (double-clic = rouvrir, clic droit = ouvrir / quitter).
+// Un mutex par session utilisateur garantit un seul serveur : le deuxième
+// lancement se contente d'ouvrir le navigateur puis s'efface.
+internal sealed class SessionContext : ApplicationContext
+{
+    private readonly NotifyIcon icone;
+    private readonly Mutex mutex;
+    private readonly bool possede;
+    private LocalRuntime? runtime;
+    private bool mutexLibere;
+
+    public SessionContext()
+    {
+        mutex = new Mutex(true, @"Local\STI-Labo3-Session", out possede);
+        using var flux = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("STILabo3.Icon.ico")!;
+        icone = new NotifyIcon { Icon = new Icon(flux), Text = Program.ProductName, Visible = false };
+        var menu = new ContextMenuStrip();
+        menu.Items.Add("Ouvrir la plateforme", null, (_, _) => runtime?.Open());
+        menu.Items.Add("Quitter", null, async (_, _) => await QuitterAsync());
+        icone.ContextMenuStrip = menu;
+        icone.MouseDoubleClick += (_, _) => runtime?.Open();
+        DemarrerAsync();
+    }
+
+    private async void DemarrerAsync()
+    {
+        try
+        {
+            var chemin = Session.CheminEtat();
+            if (!possede)
+            {
+                // Un autre lancement possède le mutex : on attend son état, on
+                // ouvre le navigateur à sa place, puis on s'efface sans fenêtre.
+                var attendu = await Session.AttendreServeurAsync(chemin, 8000);
+                if (attendu is null) throw new InvalidOperationException("Un lancement est déjà en cours mais aucun serveur local n'apparaît.");
+                Session.OuvrirNavigateur(attendu.Uri);
+                await QuitterAsync();
+                return;
+            }
+            var etat = Session.LireEtat(chemin);
+            if (await Session.ServeurEnVieAsync(etat))
+            {
+                Session.OuvrirNavigateur(etat!.Uri);
+                await QuitterAsync();
+                return;
+            }
+            var version = Session.ResoudreVersion(AppContext.BaseDirectory)
+                ?? throw new InvalidOperationException("Aucune plateforme installée sur ce poste : relancer l'installation depuis la clé USB.");
+            runtime = await LocalRuntime.StartAsync(version);
+            Session.EcrireEtat(chemin, new EtatSession(Session.FormatEtat, Environment.ProcessId,
+                runtime.LaunchUri.Port, runtime.LaunchUri.AbsoluteUri, version, DateTime.UtcNow.ToString("o")));
+            icone.Visible = true;
+            runtime.Open();
+        }
+        catch (Exception e)
+        {
+            icone.Visible = false;
+            MessageBox.Show(e.Message, Program.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            await QuitterAsync();
+        }
+    }
+
+    private async Task QuitterAsync()
+    {
+        icone.Visible = false;
+        if (runtime is not null)
+        {
+            Session.SupprimerEtat(Session.CheminEtat());
+            await runtime.DisposeAsync();
+            runtime = null;
+        }
+        if (possede && !mutexLibere)
+        {
+            mutexLibere = true;
+            try { mutex.ReleaseMutex(); } catch (ApplicationException) { }
+        }
+        ExitThread();
     }
 }
 
@@ -30,9 +124,7 @@ internal static class Program
 internal sealed class PreparationForm : Form
 {
     private readonly Label status = new() { AutoSize = false, Height = 100, Dock = DockStyle.Top };
-    private LocalRuntime? runtime;
-    private bool closing;
-    public PreparationForm(bool launch = false)
+    public PreparationForm()
     {
         Text = Program.ProductName;
         Width = 820; Height = 530; MinimumSize = new Size(720, 480);
@@ -54,7 +146,19 @@ internal sealed class PreparationForm : Form
         install.Click += async (_, _) => await InstallerDepuisSupportAsync(install);
         layout.Controls.Add(install);
         var reopen = new Button { Text = "Rouvrir la plateforme locale", AutoSize = true };
-        reopen.Click += (_, _) => runtime?.Open();
+        reopen.Click += (_, _) =>
+        {
+            var version = Session.ResoudreVersion(AppContext.BaseDirectory);
+            if (version is null)
+            {
+                status.ForeColor = Color.Firebrick;
+                status.Text = "Aucune plateforme installée sur ce poste : installer d’abord depuis le support.";
+                return;
+            }
+            Program.Relancer(version);
+            status.ForeColor = Color.DarkGreen;
+            status.Text = "Plateforme rouverte : le serveur tourne sans fenêtre, icône dans la barre des tâches.";
+        };
         layout.Controls.Add(reopen);
         status.Width = 720;
         var support = Support.Resolve(AppContext.BaseDirectory);
@@ -62,17 +166,15 @@ internal sealed class PreparationForm : Form
             ? "Support détecté à côté de l’installateur : " + Support.Decrire(support) + ". Cliquez sur Installer."
             : "Aucun paquet à côté de l’installateur : il vous sera demandé. Aucun mot de passe requis. Les anciennes versions sont conservées.";
         layout.Controls.Add(status); Controls.Add(layout);
-        if (launch) Shown += async (_, _) => await LaunchAsync(AppContext.BaseDirectory);
-        FormClosing += async (_, e) =>
-        {
-            if (runtime is null || closing) return;
-            e.Cancel = true; closing = true;
-            try { await runtime.DisposeAsync(); } finally { runtime = null; Close(); }
-        };
     }
     private async Task InstallerDepuisSupportAsync(Button bouton)
     {
-        if (runtime is not null) { status.Text = "Fermez la plateforme avant une mise à jour."; return; }
+        if (await Session.ServeurEnVieAsync(Session.LireEtat(Session.CheminEtat())))
+        {
+            status.ForeColor = Color.Firebrick;
+            status.Text = "La plateforme tourne déjà : icône de la barre des tâches → « Quitter », puis relancer la mise à jour.";
+            return;
+        }
         var media = Support.Resolve(AppContext.BaseDirectory);
         if (media.Paquets.Length > 1)
         {
@@ -111,23 +213,15 @@ internal sealed class PreparationForm : Form
             var version = await Deployment.InstallAsync(paquet, autorisation, progression);
             status.ForeColor = Color.DarkGreen;
             status.Text = "Installation validée. Raccourci créé sur le Bureau. Ouverture locale…";
-            await LaunchAsync(version);
+            // Le serveur vit désormais dans un processus silencieux (icône dans
+            // la barre des tâches) : la boîte d'installation s'efface aussitôt.
+            Program.Relancer(version);
+            Close();
         }
         catch (Exception e) { status.ForeColor = Color.Firebrick; status.Text = "Installation impossible : " + e.Message + " L’ancienne version est conservée."; }
         finally { bouton.Enabled = true; }
     }
 
-    private async Task LaunchAsync(string directory)
-    {
-        try
-        {
-            runtime = await LocalRuntime.StartAsync(directory);
-            runtime.Open();
-            status.ForeColor = Color.DarkGreen;
-            status.Text = "Plateforme ouverte dans le navigateur local. Gardez cette fenêtre ouverte ; sa fermeture arrête le serveur. Aucune synchronisation distante n’est disponible.";
-        }
-        catch (Exception e) { status.ForeColor = Color.Firebrick; status.Text = "Ouverture refusée : " + e.Message; }
-    }
     private void CheckAuthorization()
     {
         using var picker = new OpenFileDialog { Filter = "Autorisation Labo3 (*.json)|*.json", CheckFileExists = true };

@@ -61,10 +61,13 @@ binaire non contrôlé ne doit pas partir en salle par inadvertance. Autres opti
    par une autorité payante).
 4. **Confirmer** : le paquet placé à côté de l'exécutable est repris automatiquement.
    Aucun mot de passe, aucune connexion, aucun fichier d'autorisation.
-5. La plateforme s'ouvre dans le navigateur du poste. **Garder la fenêtre de
-   l'application ouverte** pendant la séance : elle héberge le serveur local.
-   Le raccourci « STI v2.0 version spéciale Labo 3 » créé sur le Bureau la relance.
-6. Débrancher et passer au poste suivant.
+5. La plateforme s'ouvre dans le navigateur du poste, et la boîte d'installation
+   se ferme d'elle-même : le serveur local continue de tourner **sans fenêtre**,
+   avec une icône « STI v2.0 version spéciale Labo 3 » dans la barre des tâches
+   (zone de notification). Double-clic sur cette icône = rouvrir la plateforme ;
+   clic droit = quitter.
+6. Débrancher et passer au poste suivant. Le raccourci du Bureau rouvre la
+   plateforme directement, sans réafficher l'installation.
 
 Aucun droit administrateur n'est requis : tout s'installe dans le profil utilisateur.
 
