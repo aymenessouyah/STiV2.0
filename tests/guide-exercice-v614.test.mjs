@@ -234,7 +234,7 @@ test('v615 — les exercices guidés et le corrigé-vidéo TP6 chargent le modul
       else if (nom.endsWith('.html')) pages.push(chemin);
     }
   })(join(racine, 'exercices'));
-  assert.equal(pages.length, 75, 'le nouveau TP CSS3 ajoute sa page de ressources et son aperçu');
+  assert.equal(pages.length, 77, 'la série 7 ajoute son énoncé et son corrigé');
   const tp6 = resolve(racine, 'exercices/sql/TP6-Mission-cinema-enonce.html');
   assert.ok(pages.includes(tp6), 'l’énoncé TP6 est une page d’exercice distincte');
   const sans = pages.filter((p) => p !== tp6 && !readFileSync(p, 'utf8').includes('guide-exercice.js?v=614'));
@@ -310,7 +310,7 @@ test('v614 — l’administration écrit le réglage là où les élèves le lis
 test('v614 — publication : version, cache-busters, révisions et hors-ligne', () => {
   /* v615 : la publication avance (lisibilité en mode ardoise) ; le module élève,
      inchangé, garde son propre lot. */
-  assert.match(sw, /var VERSION_PUBLIEE = "v626";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v627";/);
   assert.match(sw, /v618-tp6-detail-20261104/);
   assert.match(adminHtml, /assets\/js\/admin\.js\?v=615-perf/);
   assert.ok(sw.includes('{ url: "./assets/js/guide-exercice.js", revision: "guide-exercice-tp6-v615" }'));
