@@ -186,8 +186,8 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
   for (const chemin of ['assets/css/cours.css','assets/js/app.js','assets/js/cours-matieres.js','cours/html5.html','cours/css3.html','cours/javascript.html','cours/sql.html','cours/php.html']) {
     const revision = chemin === 'assets/js/app.js' ? 'retrait-display-v628'
       : chemin === 'assets/css/cours.css' ? 'retrait-fond-cours-v508'
-      : chemin === 'cours/css3.html' ? 'retrait-display-v628'
-      : chemin === 'cours/html5.html' ? 'sti-3si-v573'
+      : chemin === 'cours/css3.html' ? 'retrait-explore-float-v629'
+      : chemin === 'cours/html5.html' ? 'retrait-explore-float-v629'
       : chemin === 'cours/javascript.html' ? 'cours-sti-v595'
       : chemin === 'cours/php.html' ? 'cours-sti-v595'
       /* v563 : cours/sql.html reçoit la convention d'écriture d'un schéma. */

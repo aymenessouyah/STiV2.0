@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-10T19:45:34Z",
+  "generatedAt": "2026-11-10T19:53:43Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 791,
-  "totalBytes": 1142882382,
+  "totalFiles": 790,
+  "totalBytes": 1129357409,
   "files": [
     {
       "path": "404.html",
@@ -1276,11 +1276,6 @@
       "gitSha": "ad304921d3252572a2bc2eb5dfaaf07db4b8397d"
     },
     {
-      "path": "assets/videos/explore-tunisie-float.mp4",
-      "bytes": 13522416,
-      "gitSha": "9fea48cf6be3a40b70aa42956a485d35ad1a5011"
-    },
-    {
       "path": "assets/videos/html5-cours.mp4",
       "bytes": 9738810,
       "gitSha": "6c3e225bb59b10109c702797d1ea017d2596d152"
@@ -1412,8 +1407,8 @@
     },
     {
       "path": "cours/css3.html",
-      "bytes": 212657,
-      "gitSha": "59bcbd3b4b73a90dddbb02f272d1ab7bd45c085c"
+      "bytes": 212345,
+      "gitSha": "4fe2ed0b506db5073f4c2070a05f78439ba89c27"
     },
     {
       "path": "cours/datalist.html",
@@ -1427,8 +1422,8 @@
     },
     {
       "path": "cours/html5.html",
-      "bytes": 207681,
-      "gitSha": "fcc79b373ec0cb8a56016e6777a1393b94146c39"
+      "bytes": 207563,
+      "gitSha": "707ca6a2726a704ad54564008975c655b928f011"
     },
     {
       "path": "cours/javascript.html",
@@ -2672,18 +2667,18 @@
     },
     {
       "path": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-float.html",
-      "bytes": 28012,
-      "gitSha": "38a4a595442dcd7cd19949063dcae74cdd9990a7"
+      "bytes": 27440,
+      "gitSha": "0ba2bb5a809a8ef65010850e860cb4c427c08202"
     },
     {
       "path": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-position.html",
-      "bytes": 28015,
-      "gitSha": "d762892c711e922fa865eb5a9b5feef2321f7bd1"
+      "bytes": 27443,
+      "gitSha": "f0a9824c4ba444cd3b1bef2eb59ccc9b4eeffd38"
     },
     {
       "path": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index.html",
-      "bytes": 28000,
-      "gitSha": "caff851cc56b92f3a27efbc1a8ffec697b66fa91"
+      "bytes": 27428,
+      "gitSha": "2b8d6ec74d1ddff3345182feeed833af26a4a2e1"
     },
     {
       "path": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/style-flex.css",
@@ -3157,8 +3152,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 103718,
-      "gitSha": "53bc4d9890556899ffa9266652e55a2009f5bfe8"
+      "bytes": 103241,
+      "gitSha": "5689184ae6194d4e49bb014efc1dba201b5cbabd"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3957,8 +3952,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 107183,
-      "gitSha": "5bc2d28659f742ce32be889555c412cb2305708b"
+      "bytes": 107249,
+      "gitSha": "f2806a2526bd8c880eb9cff1f9ee39a6d0f313d1"
     }
   ]
 }

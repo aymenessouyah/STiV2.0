@@ -80,7 +80,7 @@ test('hors ligne : nouvelles ressources présentes et anciennes révisions inval
     'assets/js/app.js', 'assets/js/profil.js', 'assets/js/cours-html5.js'
   ]) {
     const revision = path === 'assets/js/app.js' ? 'retrait-display-v628' :
-      path === 'cours/html5.html' ? 'sti-3si-v573' :
+      path === 'cours/html5.html' ? 'retrait-explore-float-v629' :
       path === 'assets/css/cours.css' ? 'retrait-fond-cours-v508' :
       path === 'dashboard.html' ? 'flamme-regularite-v611' :
       path === 'assets/js/cours-html5.js' ? 'tp-display-v510' :
