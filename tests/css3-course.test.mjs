@@ -116,7 +116,7 @@ test('CSS3 : fichiers révisés disponibles pour le hors-ligne', () => {
   const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];
   for (const path of ['cours/css3.html', 'assets/css/cours-css3.css', 'assets/js/cours-css3.js', 'assets/js/profil.js', 'assets/js/app.js']) {
     const revision = path === 'assets/css/cours-css3.css' ? 'videos-pas-a-pas-css3-20261027' :
-      path === 'cours/css3.html' ? 'retrait-display-v628' :
+      path === 'cours/css3.html' ? 'retrait-explore-float-v629' :
       path === 'assets/js/app.js' ? 'retrait-display-v628' :
       path === 'assets/css/cours.css' ? 'tp-evenements-v500' :
       path === 'assets/js/cours-css3.js' ? 'retrait-display-v628' :

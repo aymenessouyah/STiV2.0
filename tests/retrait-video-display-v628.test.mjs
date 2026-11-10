@@ -15,7 +15,7 @@ test('la démo Display est retirée sans retirer le TP distinct', () => {
 test('les pages et le catalogue sont actualisés, sans fichier manquant hors ligne', () => {
   const sw = read('sw.js'), manifest = JSON.parse(read('offline-complete-manifest.json'));
   for (const path of ['index.html', 'cours/css3.html', 'assets/js/app.js', 'assets/js/cours-css3.js', 'offline-complete-manifest.json']) {
-    assert.match(sw, new RegExp(`url: "\\./${path.replaceAll('.', '\\.')}", revision: "retrait-display-v628"`));
+    assert.match(sw, new RegExp(`url: "\\./${path.replaceAll('.', '\\.')}", revision: "${["cours/css3.html", "offline-complete-manifest.json"].includes(path) ? "retrait-explore-float-v629" : "retrait-display-v628"}"`));
   }
   assert.ok(!sw.includes('./assets/videos/displayanim.mp4'));
   assert.ok(!manifest.files.some(f => f.path === 'assets/videos/displayanim.mp4'));

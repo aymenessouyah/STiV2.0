@@ -27,7 +27,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v529 : reconnexion-profil.js fusionne les compteurs de vues par appareil. */
   assert.equal(revisions.get('./assets/js/reconnexion-profil.js'), 'vues-videos-v531');
   /* v625 : la page des séries référence le nouveau TP CSS3 3ème SI. */
-  assert.equal(revisions.get('./exercices/series-exercices.html'), 'serie7-sql-v627');
+  assert.equal(revisions.get('./exercices/series-exercices.html'), 'retrait-explore-float-v629');
   assert.equal(revisions.get('./assets/js/cours-html5.js'), 'tp-display-v510');
   assert.equal(revisions.get('./assets/js/cours-css3.js'), 'retrait-display-v628');
   for (const chemin of ['assets/js/cours-javascript.js', 'assets/js/cours-matieres.js']) {
@@ -60,7 +60,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
   assert.equal(revisions.get('./assets/js/app.js'), 'retrait-display-v628');
   assert.equal(revisions.get('./index.html'), 'retrait-display-v628');
-  assert.equal(revisions.get('./offline-complete-manifest.json'), 'retrait-display-v628');
+  assert.equal(revisions.get('./offline-complete-manifest.json'), 'retrait-explore-float-v629');
   assert.equal(revisions.get('./README.md'), 'tp6-detail-v618');
   /* v585 : le tableau de bord annonce le Smart Book 3ᵉ SI à 81 pages ; le drapeau reste au lot v503. */
   assert.equal(revisions.get('./dashboard.html'), 'flamme-regularite-v611');
@@ -81,8 +81,8 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./cours/php.html'), 'cours-sti-v595');
   /* v523 : le cours JavaScript reçoit les liens du TP Train. */
   assert.equal(revisions.get('./cours/javascript.html'), 'cours-sti-v595');
-  assert.equal(revisions.get('./cours/html5.html'), 'sti-3si-v573');
-  assert.equal(revisions.get('./cours/css3.html'), 'retrait-display-v628');
+  assert.equal(revisions.get('./cours/html5.html'), 'retrait-explore-float-v629');
+  assert.equal(revisions.get('./cours/css3.html'), 'retrait-explore-float-v629');
   assert.equal(revisions.get('./assets/js/cours-onglets-mobile.js'), 'onglets-mobile-v493');
   /* v526 : le lecteur commun suit la nouvelle capsule ; les sous-titres restent sur leur lot. */
   assert.equal(revisions.get('./assets/js/lecteur-commun.js'), 'cours-sti-v578');
