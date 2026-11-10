@@ -27,7 +27,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v529 : reconnexion-profil.js fusionne les compteurs de vues par appareil. */
   assert.equal(revisions.get('./assets/js/reconnexion-profil.js'), 'vues-videos-v531');
   /* v625 : la page des séries référence le nouveau TP CSS3 3ème SI. */
-  assert.equal(revisions.get('./exercices/series-exercices.html'), 'tp-css3-3si-v625');
+  assert.equal(revisions.get('./exercices/series-exercices.html'), 'serie7-sql-v627');
   assert.equal(revisions.get('./assets/js/cours-html5.js'), 'tp-display-v510');
   assert.equal(revisions.get('./assets/js/cours-css3.js'), 'tp-transitions-v512');
   for (const chemin of ['assets/js/cours-javascript.js', 'assets/js/cours-matieres.js']) {
@@ -76,7 +76,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./assets/js/admin.js'), 'guide-exercice-liste-v621');
   assert.equal(revisions.get('./assets/css/cours.css'), 'retrait-fond-cours-v508');
   /* v563 : le cours SQL accueille la convention d'écriture d'un schéma. */
-  assert.equal(revisions.get('./cours/sql.html'), 'guide-visuel-sql-v620');
+  assert.equal(revisions.get('./cours/sql.html'), 'serie7-sql-v627');
   /* v549 : la page PHP reçoit la capsule des variables. */
   assert.equal(revisions.get('./cours/php.html'), 'cours-sti-v595');
   /* v523 : le cours JavaScript reçoit les liens du TP Train. */
