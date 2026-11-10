@@ -76,9 +76,9 @@ test('CSS3 : neuf exercices, corrections, documents et médias locaux', () => {
     'Corrigé 1 : Flexbox', 'Corrigé 2 : Float', '../quiz/html-css.html',
     '../Positionnement-animee/index.html', '../cssanimee/index.html',
     '../projets/site-tunisie/correction-details/carte-timbre-droite-haut.html',
-    '../assets/videos/displayanim.mp4', '../documents/annexes/annexe-css3.pdf'
+    '../documents/annexes/annexe-css3.pdf'
   ]) assert.ok(html.toLowerCase().includes(fragment.toLowerCase()), fragment);
-  assert.match(html, /<video[^>]*controls[^>]*playsinline[^>]*preload="metadata"[^>]*poster=/);
+  assert.match(html, /<video[^>]*controls[^>]*playsinline[^>]*preload="none"[^>]*poster=/);
   assert.match(controller, /STIProfil\.enregistrerPositionVideo/);
   assert.match(controller, /global\.ouvrirVideoPasAPasSTI\(ancien\[0\]/);
   for (const match of html.matchAll(/(?:href|src|data-preview-doc)="(\.\.\/[^"#?]+)"/g)) {
@@ -116,16 +116,16 @@ test('CSS3 : fichiers révisés disponibles pour le hors-ligne', () => {
   const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];
   for (const path of ['cours/css3.html', 'assets/css/cours-css3.css', 'assets/js/cours-css3.js', 'assets/js/profil.js', 'assets/js/app.js']) {
     const revision = path === 'assets/css/cours-css3.css' ? 'videos-pas-a-pas-css3-20261027' :
-      path === 'cours/css3.html' ? 'tp-css3-3si-v625' :
-      path === 'assets/js/app.js' ? 'tp6-series6-v619' :
+      path === 'cours/css3.html' ? 'retrait-display-v628' :
+      path === 'assets/js/app.js' ? 'retrait-display-v628' :
       path === 'assets/css/cours.css' ? 'tp-evenements-v500' :
-      path === 'assets/js/cours-css3.js' ? 'tp-transitions-v512' :
+      path === 'assets/js/cours-css3.js' ? 'retrait-display-v628' :
       path === 'assets/js/profil.js' ? 'flamme-regularite-v611' : 'suivi-contextes-v491';
     assert.ok(delta.includes(`url: "./${path}", revision: "${revision}"`), path);
     assert.ok(offline.includes(`"./${path}"`), path);
   }
   for (const path of ['assets/css/cours-css3.css', 'assets/js/cours-css3.js']) assert.ok(shell.includes(`"./${path}"`), path);
-  for (const video of ['displayanim.mp4', 'css-positionnement.mp4', 'css-animee.mp4']) {
+  for (const video of ['css-positionnement.mp4', 'css-animee.mp4']) {
     assert.ok(offline.includes(`"./assets/videos/${video}"`), video);
     assert.ok(!delta.includes(`"./assets/videos/${video}"`), 'pas de téléchargement vidéo automatique');
   }

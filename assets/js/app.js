@@ -283,13 +283,6 @@
       codeApercu: ".grille { display: flex; gap: 16px; }"
     },
     {
-      id: "css3-display",
-      matiere: "css3", nomMatiere: "CSS3", badgeClasse: "badge-css", couleur: "#38bdf8",
-      titre: "CSS3 — Display : la démo animée", dureeTexte: "00:05",
-      srcPrincipal: "assets/videos/displayanim.mp4", urlCours: "cours/css3.html#videos",
-      codeApercu: "display: inline-block;"
-    },
-    {
       /* v526 : correction vidéo du TP Train, Série 6 JavaScript. */
       id: "tp-train-serie6",
       matiere: "javascript",

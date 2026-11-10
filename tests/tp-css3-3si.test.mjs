@@ -64,7 +64,7 @@ test('TP CSS3 3ème SI — présent dans la page des séries et le Guide exercic
 
 test('TP CSS3 3ème SI — les nouvelles pages et les révisions sont livrées hors-ligne', () => {
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
-  assert.ok(delta.includes('{ url: "./cours/css3.html", revision: "tp-css3-3si-v625", refreshIfCached: true }'));
+  assert.ok(delta.includes('{ url: "./cours/css3.html", revision: "retrait-display-v628", refreshIfCached: true }'));
   assert.match(delta, /\{ url: "\.\/exercices\/series-exercices\.html", revision: "[^"]+", refreshIfCached: true \}/);
   assert.ok(delta.includes('{ url: "./assets/guide-exercice-catalogue.json", revision: "tp-css3-3si-v625", refreshIfCached: true }'));
   assert.ok(delta.includes(`./${tpPath}`));
