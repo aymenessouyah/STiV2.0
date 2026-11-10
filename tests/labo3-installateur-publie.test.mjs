@@ -131,7 +131,10 @@ test('empreintes : analyse ligne à ligne, tolérante aux espaces et aux lignes 
 
 test('panneau : le lien reste désactivé tant qu’aucune release n’est vérifiée', () => {
   const html = readFileSync(new URL('../admin.html', import.meta.url), 'utf8');
-  assert.match(html, /id="labo3-installateur-lien" disabled/);
+  /* Garde-fou : cet élément est un <a>, pas un <button> — un bouton ignore
+     href et le clic ne mène nulle part (bug réel constaté le 09/11/2026 :
+     bouton « activé » mais muet au clic). */
+  assert.match(html, /<a class="btn-outil btn-outil-desactive" id="labo3-installateur-lien" aria-disabled="true">/);
   assert.match(html, /id="labo3-installateur-verifier"/);
   assert.match(html, /id="labo3-installateur-etat"[^>]*aria-live="polite"/);
   assert.match(html, /release <code>labo3-windows<\/code>/);

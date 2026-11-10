@@ -765,6 +765,9 @@
     font-size: 12px; font-weight: 900; cursor: pointer; background: #f3ead9; color: #23201a;
     box-shadow: 2px 2px 0 #23201a; transition: transform .1s ease;
   }
+  /* Le téléchargement Labo 3 est un <a> (un bouton ne peut pas porter href) :
+     mêmes appuis visuels que les boutons, sans soulignement de lien. */
+  a.btn-outil { display: inline-block; text-decoration: none; }
   .btn-outil:hover { transform: translate(-1px, -1px); border-color: #f4511e; color: #f4511e; background: #fffdf7; }
   .btn-outil.vert { background: #e3f6e8; color: #177245; border-color: #177245; box-shadow: 2px 2px 0 #177245; }
   /* Installateur Labo 3 : état tant qu'aucune release n'est publiée. */
@@ -2565,7 +2568,7 @@
       <p><strong>Trois gestes, sans clé, sans mot de passe et sans réseau :</strong> télécharger l’installateur, créer le paquet, copier les deux sur la clé USB. Chaque poste s’installe ensuite en un double-clic. L’ancien EXE v316 ne doit pas être utilisé avec ce parcours.</p>
       <ol>
         <li><strong>Télécharger l’installateur.</strong>
-          <button type="button" class="btn-outil btn-outil-desactive" id="labo3-installateur-lien" disabled>Téléchargement indisponible</button>
+          <a class="btn-outil btn-outil-desactive" id="labo3-installateur-lien" aria-disabled="true">Téléchargement indisponible</a>
           <button type="button" class="btn-outil" id="labo3-installateur-verifier">Vérifier la release</button>
           <span id="labo3-installateur-etat" role="status" aria-live="polite">Vérification en cours…</span>
           L’exécutable est publié automatiquement par la CI dans la release <code>labo3-windows</code> dès qu’une modification de l’outil Windows arrive sur <code>main</code> : le lien ci-dessus s’active seul et affiche le SHA-256 à comparer après téléchargement.</li>
@@ -2668,7 +2671,6 @@
       </details>
       <p class="aide-windows-note">Le paquet contient <code>plateforme/</code>, <code>stipack.json</code> (empreinte SHA-256 de chaque fichier), <code>empreintes.txt</code> et <code>LISEZ-MOI.txt</code> ; rien n’est envoyé sur le réseau.</p>
     </div>
-    <p class="aide-windows-note">Le nouveau projet Windows est en préparation ; le téléchargement de l’installateur sera activé après validation.</p>
   </section>
 
   </section>

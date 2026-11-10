@@ -191,9 +191,12 @@
     etat.textContent = 'Vérification de la release « ' + TAG_INSTALLATEUR + ' »…';
     var resultat = await verifierPublication({});
     if (resultat.publie) {
+      /* Cet élément DOIT rester un <a> : sur un <button>, l'affectation de
+         href est inerte et le clic ne mène nulle part — bug vu en conditions
+         réelles le 09/11/2026, bouton « activé » mais muet au clic. */
       lien.href = resultat.url;
       lien.setAttribute('download', resultat.nom);
-      lien.disabled = false;
+      lien.removeAttribute('aria-disabled');
       lien.classList.remove('btn-outil-desactive');
       lien.textContent = 'Télécharger ' + resultat.nom;
       var quand = resultat.publieLe ? new Date(resultat.publieLe).toLocaleString('fr-FR') : 'date inconnue';
@@ -202,7 +205,7 @@
         '. SHA-256 à comparer après téléchargement : ' + resultat.sha256;
     } else {
       lien.removeAttribute('href');
-      lien.disabled = true;
+      lien.setAttribute('aria-disabled', 'true');
       lien.classList.add('btn-outil-desactive');
       lien.textContent = 'Téléchargement indisponible';
       etat.textContent = resultat.raison;
