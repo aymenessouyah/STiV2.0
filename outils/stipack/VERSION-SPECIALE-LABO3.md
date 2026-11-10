@@ -76,8 +76,15 @@ ne protège pas contre la modification de l'exécutable par un administrateur lo
   Aucun privilège administrateur requis.
 - Serveur local Kestrel sur `127.0.0.1` uniquement : cookie aléatoire par lancement,
   `no-store`, CSP restrictive, `admin.html`, `portail.html` et `sw.js` bloqués,
-  service workers désactivés, session locale injectée pour `acces.js`. Fermer la
-  fenêtre arrête le serveur.
+  service workers désactivés, session locale injectée pour `acces.js`.
+- Session silencieuse : le serveur tourne sans fenêtre, icône dans la zone de
+  notification de la barre des tâches (double-clic = rouvrir, clic droit =
+  quitter) ; l'état `%LocalAppData%\STI-Labo3\serveur.json` (port, jeton, pid)
+  permet au raccourci du Bureau de rouvrir la plateforme directement, sans
+  réafficher la boîte d'installation. Un mutex par session interdit un second
+  serveur. « Quitter » depuis l'icône arrête le serveur ; Windows interdisant
+  l'épinglage programmatique à la barre des tâches, l'épinglage central reste un
+  clic droit utilisateur sur le raccourci.
 
 ## Doublons de casse connus (3 paires)
 

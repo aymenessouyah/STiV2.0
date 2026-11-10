@@ -2575,7 +2575,7 @@
         <li><strong>Créer le paquet de la dernière mise à jour.</strong>
           Utiliser <a href="#bloc-stipack">Nouveau stipack</a> ci-dessous avec « Tout le site », puis télécharger le <code>.stipack</code>. Les empreintes des fichiers sont incluses dans le paquet.</li>
         <li><strong>Copier sur la clé USB, puis installer sur chaque poste.</strong>
-          Placer l’EXE et le <code>.stipack</code> <em>dans le même dossier</em> de la clé. Sur chaque poste : ouvrir ce dossier, lancer l’EXE (« Informations complémentaires » puis « Exécuter quand même » si SmartScreen s’affiche), puis <em>Installer</em>. La plateforme s’ouvre dans le navigateur, sans Internet ; un raccourci est créé sur le Bureau. Garder la fenêtre ouverte pendant la séance : sa fermeture arrête le serveur local.
+          Placer l’EXE et le <code>.stipack</code> <em>dans le même dossier</em> de la clé. Sur chaque poste : ouvrir ce dossier, lancer l’EXE (« Informations complémentaires » puis « Exécuter quand même » si SmartScreen s’affiche), puis <em>Installer</em>. La plateforme s’ouvre dans le navigateur, sans Internet ; un raccourci est créé sur le Bureau et la boîte d’installation se ferme seule. Le serveur continue sans fenêtre : une icône « STI v2.0 version spéciale Labo 3 » reste dans la barre des tâches (double-clic = rouvrir, clic droit = quitter). Le raccourci du Bureau rouvre la plateforme directement, sans réafficher l’installation.
           Pour assembler la clé en une commande (procédure imprimable, empreintes et vérificateur inclus) :
           <code>node outils/stipack/preparer-disque.mjs --sortie &lt;dossier de la clé&gt; --installeur &lt;STI-Labo3-Installation.exe&gt; --empreinte-attendue &lt;sha256&gt;</code></li>
       </ol>

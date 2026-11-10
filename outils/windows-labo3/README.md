@@ -2,7 +2,8 @@
 
 Projet Windows autonome (.NET 8, WinForms + Kestrel local, Windows x64), distinct
 de l'ancien installateur v316. Nom et logo officiels embarqués depuis `assets/icons` :
-`STI_by_AE.ico` pour l'exécutable et `sti-logo-complet.png` pour la fenêtre.
+`STI_by_AE.ico` pour l'exécutable, le raccourci du Bureau et l'icône de la barre
+des tâches ; `sti-logo-complet.png` pour la fenêtre d'installation.
 
 ## Ce que fait l'application
 
@@ -34,8 +35,20 @@ de l'ancien installateur v316. Nom et logo officiels embarqués depuis `assets/i
    `portail.html` et `sw.js` sont bloqués ; les service workers sont désactivés pour
    éviter tout cache hors contrôle. La session locale attendue par `acces.js`
    (`__STI_NATIVE_AUTHENTICATED_V316`, `sti-session-cache`, `sti-labo3-permanent`)
-   est injectée dans chaque document, après recontrôle de l'autorisation. Fermer la
-   fenêtre arrête le serveur.
+   est injectée dans chaque document, après recontrôle de l'autorisation.
+4. **Session silencieuse** — le serveur vit dans un processus **sans fenêtre** :
+   sa présence est une icône dans la zone de notification de la barre des
+   tâches (double-clic = rouvrir le navigateur, clic droit = « Ouvrir la
+   plateforme » / « Quitter »). Un fichier d'état
+   `%LocalAppData%\STI-Labo3\serveur.json` porte le port, le jeton et le pid :
+   le raccourci du Bureau (`--launch`) rouvre donc la plateforme **directement**,
+   sans réafficher la boîte d'installation ; un mutex par session garantit un
+   seul serveur (le deuxième lancement ouvre le navigateur puis s'efface).
+   Après une installation réussie, la boîte se ferme d'elle-même et passe le
+   relais au processus silencieux. Windows interdisant aux programmes d'épingler
+   une icône au centre de la barre des tâches, l'épinglage reste un geste
+   utilisateur (clic droit sur le raccourci) ; l'icône de notification est la
+   présence permanente fournie d'office.
 
 ### Doublons de casse du dépôt réel
 

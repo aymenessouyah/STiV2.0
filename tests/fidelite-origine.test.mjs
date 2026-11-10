@@ -85,7 +85,7 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
        restreint — relevé des postes, paire de clés Ed25519, signature, workflow —
        est replié dans un <details> optionnel. Empreinte réactualisée : seul ce
        bloc a bougé, le reste du socle est inchangé. */
-    'admin.html': 'dcfe1cf371e6b2b52a3dbfef44db6195525907d5ece0d12d4cc6367efef5627a',
+    'admin.html': '4b491a493f3bfcdf2f74144fd01c15b8d089296163e2cc9717d6a3158de9fa52',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };
