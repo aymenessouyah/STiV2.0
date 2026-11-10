@@ -29,7 +29,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v625 : la page des séries référence le nouveau TP CSS3 3ème SI. */
   assert.equal(revisions.get('./exercices/series-exercices.html'), 'serie7-sql-v627');
   assert.equal(revisions.get('./assets/js/cours-html5.js'), 'tp-display-v510');
-  assert.equal(revisions.get('./assets/js/cours-css3.js'), 'tp-transitions-v512');
+  assert.equal(revisions.get('./assets/js/cours-css3.js'), 'retrait-display-v628');
   for (const chemin of ['assets/js/cours-javascript.js', 'assets/js/cours-matieres.js']) {
     assert.equal(revisions.get('./' + chemin), 'progression-chapitres-v492', chemin);
   }
@@ -58,9 +58,9 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   }
   assert.equal(revisions.get('./quiz/php.html'), 'plafond-a-v555');
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
-  assert.equal(revisions.get('./assets/js/app.js'), 'tp6-series6-v619');
-  assert.equal(revisions.get('./index.html'), 'tp6-capsule-v616');
-  assert.equal(revisions.get('./offline-complete-manifest.json'), 'guide-exercice-mount-v623');
+  assert.equal(revisions.get('./assets/js/app.js'), 'retrait-display-v628');
+  assert.equal(revisions.get('./index.html'), 'retrait-display-v628');
+  assert.equal(revisions.get('./offline-complete-manifest.json'), 'retrait-display-v628');
   assert.equal(revisions.get('./README.md'), 'tp6-detail-v618');
   /* v585 : le tableau de bord annonce le Smart Book 3ᵉ SI à 81 pages ; le drapeau reste au lot v503. */
   assert.equal(revisions.get('./dashboard.html'), 'flamme-regularite-v611');
@@ -72,7 +72,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./admin.html'), 'guide-exercice-mount-v623');
   assert.equal(revisions.get('./assets/js/sante.js'), 'tp-transitions-v512');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */
-  assert.equal(revisions.get('./index.html'), 'tp6-capsule-v616');
+  assert.equal(revisions.get('./index.html'), 'retrait-display-v628');
   assert.equal(revisions.get('./assets/js/admin.js'), 'guide-exercice-liste-v621');
   assert.equal(revisions.get('./assets/css/cours.css'), 'retrait-fond-cours-v508');
   /* v563 : le cours SQL accueille la convention d'écriture d'un schéma. */
@@ -82,7 +82,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v523 : le cours JavaScript reçoit les liens du TP Train. */
   assert.equal(revisions.get('./cours/javascript.html'), 'cours-sti-v595');
   assert.equal(revisions.get('./cours/html5.html'), 'sti-3si-v573');
-  assert.equal(revisions.get('./cours/css3.html'), 'tp-css3-3si-v625');
+  assert.equal(revisions.get('./cours/css3.html'), 'retrait-display-v628');
   assert.equal(revisions.get('./assets/js/cours-onglets-mobile.js'), 'onglets-mobile-v493');
   /* v526 : le lecteur commun suit la nouvelle capsule ; les sous-titres restent sur leur lot. */
   assert.equal(revisions.get('./assets/js/lecteur-commun.js'), 'cours-sti-v578');

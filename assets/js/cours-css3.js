@@ -371,12 +371,9 @@
     lecteur.__dernierEnregistrement=0;
   }
   function selectionPlaylist(nom){
-    var display=nom==='display',lecon=lecons[nom],lecteur=id('playlistLessonVideo'),videoDisplay=id('tabCourseVideo');
-    if(!display&&!lecon)return;
+    var lecon=lecons[nom],lecteur=id('playlistLessonVideo');
+    if(!lecon)return;
     $$('[data-playlist]').forEach(function(b){var actif=b.dataset.playlist===nom;b.classList.toggle('is-active',actif);b.setAttribute('aria-pressed',String(actif));});
-    id('playlistDisplay').hidden=!display;id('playlistLesson').hidden=display;
-    if(display){if(!lecteur.paused)lecteur.pause();return;}
-    if(!videoDisplay.paused)videoDisplay.pause();
     id('playlistLessonTitle').textContent=lecon.titre;id('playlistLessonDescription').textContent=lecon.description;id('playlistLessonLink').hidden=!lecon.url;if(lecon.url)id('playlistLessonLink').href=lecon.url;
     id('playlistLessonVideoCard').hidden=!lecon.video;
     if(lecon.video && lecteur.dataset.videoId!==lecon.videoId){
@@ -402,8 +399,8 @@
       var item=ev.target.closest('[data-playlist]');if(item){selectionPlaylist(item.dataset.playlist);return;}
       var plein=ev.target.closest('[data-fullscreen-video]');if(plein){var v=id(plein.dataset.fullscreenVideo);if(v&&v.requestFullscreen){var p=v.requestFullscreen();if(p&&p.catch)p.catch(function(){});}return;}
       var resume=ev.target.closest('[data-resume-video]');if(resume){var carte=resume.closest('.featured-video-card'),video=carte&&$('video[data-css-video]',carte);if(!video)return;var pos=positionVideo(identifiantVideo(video));try{video.currentTime=pos;}catch(e){video.addEventListener('loadedmetadata',function(){try{video.currentTime=pos;}catch(erreur){}},{once:true});}var play=video.play();if(play&&play.catch)play.catch(function(){});return;}
-      if(ev.target.closest('[data-play-display]')){var video=id('heroCourseVideo');video.scrollIntoView({behavior:'smooth',block:'center'});var play=video.play();if(play&&play.catch)play.catch(function(){});}
     });
+    selectionPlaylist('cours');
     actualiserVideos();
   }
   function demarrer(){if(!document.body.classList.contains('course-page--css3'))return;

@@ -137,14 +137,14 @@ function dureeMp4(path) {
   } finally { closeSync(fd); }
 }
 
-test('catalogue : fichiers réels, 28 entrées distinctes, durées MP4 et restrictions', () => {
+test('catalogue : fichiers réels, 27 entrées distinctes, durées MP4 et restrictions', () => {
   const js = lire('assets/js/app.js');
   const texte = js.split('var CATALOGUE_VIDEOS = ')[1].split('\n  ];')[0] + '\n  ]';
   const catalogue = vm.runInNewContext('(' + texte + ')');
-  assert.equal(catalogue.length, 28);
+  assert.equal(catalogue.length, 27);
   assert.equal(new Set(catalogue.map(v => v.id)).size, catalogue.length);
   const comptes = {}; for (const v of catalogue) comptes[v.matiere] = (comptes[v.matiere] || 0) + 1;
-  assert.deepEqual(comptes, { sti:1, html5:4, css3:5, javascript:8, sql:5, php:5 });
+  assert.deepEqual(comptes, { sti:1, html5:4, css3:4, javascript:8, sql:5, php:5 });
   assert.ok(catalogue.some(v => v.id === 'tp-evenements-liens'
     && v.matieres.join() === 'html5,css3'
     && v.srcPrincipal === 'assets/videos/tp-evenements-liens-v2.mp4'
@@ -161,7 +161,7 @@ test('catalogue : fichiers réels, 28 entrées distinctes, durées MP4 et restri
     assert.equal(min * 60 + sec, Math.round(dureeMp4(v.srcPrincipal)), v.id + ' : durée réelle');
     if (v.matiere === 'php' || /^sql-serie[45]$/.test(v.id)) assert.equal(v.reserve4si, true, v.id);
   }
-  assert.ok(catalogue.some(v => v.srcPrincipal === 'assets/videos/displayanim.mp4'));
+  assert.ok(!catalogue.some(v => v.srcPrincipal === 'assets/videos/displayanim.mp4'));
   assert.ok(catalogue.some(v => v.id === 'validation-nom-prenom-js' && v.srcPrincipal === 'assets/videos/validation-nom-prenom-js.mp4'));
   assert.equal(existsSync(resolve(root, 'exercices/javascript/validation-nom-prenom-js.mp4')), false);
   assert.ok(catalogue.some(v => v.id === 'sql-initiation' && v.srcPrincipal === 'exercices/sql/sql-construire-requete-guide-texte.mp4'));
@@ -184,9 +184,9 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
   }
   assert.doesNotMatch(delta, /"\.\/[^"\n]+\.(?:mp4|mp3|pdf|wasm)"/i);
   for (const chemin of ['assets/css/cours.css','assets/js/app.js','assets/js/cours-matieres.js','cours/html5.html','cours/css3.html','cours/javascript.html','cours/sql.html','cours/php.html']) {
-    const revision = chemin === 'assets/js/app.js' ? 'tp6-series6-v619'
+    const revision = chemin === 'assets/js/app.js' ? 'retrait-display-v628'
       : chemin === 'assets/css/cours.css' ? 'retrait-fond-cours-v508'
-      : chemin === 'cours/css3.html' ? 'tp-css3-3si-v625'
+      : chemin === 'cours/css3.html' ? 'retrait-display-v628'
       : chemin === 'cours/html5.html' ? 'sti-3si-v573'
       : chemin === 'cours/javascript.html' ? 'cours-sti-v595'
       : chemin === 'cours/php.html' ? 'cours-sti-v595'
@@ -456,7 +456,7 @@ test('v513 : les totaux de vidéos de l’accueil suivent le catalogue', () => {
   const compter = (cle) => catalogue.filter((v) => ((v.matieres || [v.matiere]).indexOf(cle) !== -1)).length;
   const total = catalogue.length;
   /* Une seule source de vérité : 28 entrées depuis l’ajout de la capsule SQL TP6, dont le cours STI. */
-  assert.equal(total, 28);
+  assert.equal(total, 27);
   assert.ok(index.includes(`data-video-filter="all">Toutes (${total})</button>`), 'pastille « Toutes »');
   assert.match(index, new RegExp(`id="videosTotalNombre">${total}</span>`));
   /* Les pastilles par matière, les cartes de cours et le pied de page disent la même chose. */

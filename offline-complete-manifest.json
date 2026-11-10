@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-10T19:11:13Z",
+  "generatedAt": "2026-11-10T19:45:34Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 792,
-  "totalBytes": 1146565549,
+  "totalFiles": 791,
+  "totalBytes": 1142882382,
   "files": [
     {
       "path": "404.html",
@@ -747,8 +747,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 139522,
-      "gitSha": "8e09f881d96c1d882a56fc179b69bef0f9ddaa01"
+      "bytes": 139189,
+      "gitSha": "a1b2400b668bfbb3c71c84d80ea500f207be1a84"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -767,8 +767,8 @@
     },
     {
       "path": "assets/js/cours-css3.js",
-      "bytes": 45173,
-      "gitSha": "9b72a4479386e9db53fd891f89c1776e4c25650a"
+      "bytes": 44739,
+      "gitSha": "9dba3f90a475486b218c211811c6805bf31433dc"
     },
     {
       "path": "assets/js/cours-html5.js",
@@ -1271,11 +1271,6 @@
       "gitSha": "8d09afa5ffe52526224112366e28b90e2931f5a5"
     },
     {
-      "path": "assets/videos/displayanim.mp4",
-      "bytes": 3678655,
-      "gitSha": "3a6e4ea1f215f2aacd1b025b5bf0f1541ca2033f"
-    },
-    {
       "path": "assets/videos/explore-tunisie-flex.mp4",
       "bytes": 13106630,
       "gitSha": "ad304921d3252572a2bc2eb5dfaaf07db4b8397d"
@@ -1417,8 +1412,8 @@
     },
     {
       "path": "cours/css3.html",
-      "bytes": 216410,
-      "gitSha": "f18c0891c71687a56c2a3d0256f952980c9430b7"
+      "bytes": 212657,
+      "gitSha": "59bcbd3b4b73a90dddbb02f272d1ab7bd45c085c"
     },
     {
       "path": "cours/datalist.html",
@@ -3328,7 +3323,7 @@
     {
       "path": "index.html",
       "bytes": 65714,
-      "gitSha": "d0c2ca910826cf211dc04f033688c55955e6d403"
+      "gitSha": "e76c9229a3d764e9387a9c88fcf25f97e7f57554"
     },
     {
       "path": "livre-smart.html",
@@ -3962,8 +3957,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 107175,
-      "gitSha": "82ba5e36a9cf9a316d88f379ad11341a65d2b01c"
+      "bytes": 107183,
+      "gitSha": "5bc2d28659f742ce32be889555c412cb2305708b"
     }
   ]
 }
