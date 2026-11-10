@@ -32,6 +32,6 @@ test('panneau : clé refusée si invalide, rien de stocké, réseau limité à l
   assert.doesNotMatch(code, /method\s*:\s*['"]POST|body\s*:/);
   const html = readFileSync(new URL('../admin.html', import.meta.url), 'utf8');
   assert.match(html, /id="bloc-labo3-support"/);
-  assert.match(html, /id="labo3-installateur-lien" disabled>Téléchargement indisponible</);
+  assert.match(html, /<a class="btn-outil btn-outil-desactive" id="labo3-installateur-lien" aria-disabled="true">Téléchargement indisponible<\/a>/);
   assert.match(html, /assets\/js\/admin-labo3.js/);
 });
