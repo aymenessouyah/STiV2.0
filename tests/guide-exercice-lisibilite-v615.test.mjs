@@ -136,9 +136,9 @@ test('v615 — le bandeau récapitulatif est peint avec la palette, pas en crèm
 /* ── 4. publication ─────────────────────────────────────────────────────── */
 
 test('v615 — publication : version, lot, cache-buster et révisions', () => {
-  assert.match(sw, /var VERSION_PUBLIEE = "v629";/);
-  assert.match(sw, /var PUBLIEE_LE = "2026-11-10T19:53:29Z";/);
-  assert.match(sw, /Historique lots : v629-retrait-explore-float-20261110, v628-retrait-video-display-20261110, v627-serie7-sql-20261110, v626-visionneuse-mission-cinema-20261109, v625-tp-css3-3si-20261107, v624-tp6-guide-20261104,/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v630";/);
+  assert.match(sw, /var PUBLIEE_LE = "2026-11-11T06:34:16Z";/);
+  assert.match(sw, /Historique lots : v630-cache-labo3-20261111, v629-retrait-explore-float-20261110, v628-retrait-video-display-20261110, v627-serie7-sql-20261110, v626-visionneuse-mission-cinema-20261109, v625-tp-css3-3si-20261107, v624-tp6-guide-20261104,/);
   assert.match(adminHtml, /assets\/js\/admin\.js\?v=615-perf/);
   assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "guide-exercice-liste-v621" }'));
   assert.ok(sw.includes('{ url: "./admin.html", revision: "guide-exercice-mount-v623" }'));

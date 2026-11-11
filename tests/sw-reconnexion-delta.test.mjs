@@ -200,3 +200,17 @@ for (const matiere of ['html5', 'css3', 'javascript', 'matieres']) {
     assert.deepEqual(e.requetes, [cible, cible]);
   });
 }
+
+test('Labo 3 : ancienne copie du module avec query string remplacée sans perdre la copie si le réseau échoue', async () => {
+  const cible = './assets/js/admin-labo3.js';
+  const e = await environnement({ cible, panne: '503' });
+  await e.synchroniser();
+  assert.equal(await (await e.cache.match(cible, { ignoreSearch: true })).text(), 'ancienne version');
+  assert.equal(await e.revisions.match(e.marqueur), undefined);
+  e.setPanne('');
+  await e.synchroniser();
+  assert.match(await (await e.cache.match(cible, { ignoreSearch: true })).text(), /^nouveau :/);
+  assert.ok(await e.revisions.match(e.marqueur));
+  assert.equal(await e.cache.match(cible + '?v=ancien'), undefined);
+  assert.deepEqual(e.requetes, [cible, cible]);
+});
