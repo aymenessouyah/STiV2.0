@@ -58,10 +58,10 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   }
   assert.equal(revisions.get('./quiz/php.html'), 'plafond-a-v555');
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
-  assert.equal(revisions.get('./assets/js/app.js'), 'capsule-sql7-v638');
+  assert.equal(revisions.get('./assets/js/app.js'), 'capsule-sql7-v640');
   assert.equal(revisions.get('./index.html'), 'capsule-sql7-v638');
-  assert.equal(revisions.get('./offline-complete-manifest.json'), 'capsule-sql7-v638');
-  assert.equal(revisions.get('./README.md'), 'capsule-sql7-v638');
+  assert.equal(revisions.get('./offline-complete-manifest.json'), 'capsule-sql7-v640');
+  assert.equal(revisions.get('./README.md'), 'capsule-sql7-v640');
   /* v585 : le tableau de bord annonce le Smart Book 3ᵉ SI à 81 pages ; le drapeau reste au lot v503. */
   assert.equal(revisions.get('./dashboard.html'), 'flamme-regularite-v611');
   assert.equal(revisions.get('./assets/images/drapeau-tunisie.svg'), 'accueil-lycee-v503');
@@ -76,7 +76,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./assets/js/admin.js'), 'capsule-sql7-v638');
   assert.equal(revisions.get('./assets/css/cours.css'), 'retrait-fond-cours-v508');
   /* v563 : le cours SQL accueille la convention d'écriture d'un schéma. */
-  assert.equal(revisions.get('./cours/sql.html'), 'capsule-sql7-v638');
+  assert.equal(revisions.get('./cours/sql.html'), 'capsule-sql7-v640');
   /* v549 : la page PHP reçoit la capsule des variables. */
   assert.equal(revisions.get('./cours/php.html'), 'cours-sti-v595');
   /* v523 : le cours JavaScript reçoit les liens du TP Train. */
@@ -87,7 +87,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v526 : le lecteur commun suit la nouvelle capsule ; les sous-titres restent sur leur lot. */
   assert.equal(revisions.get('./assets/js/lecteur-commun.js'), 'capsule-sql7-v638');
   assert.equal(revisions.get('./assets/subtitles/validation-nom-prenom-js-fr.vtt'), 'video-js-validation-v485');
-  assert.equal(revisions.get('./assets/js/protection.js'), 'capsule-sql7-v638');
+  assert.equal(revisions.get('./assets/js/protection.js'), 'capsule-sql7-v640');
   for (const chemin of ['package.json', 'package-lock.json']) {
     assert.equal(revisions.get('./' + chemin), 'xp-operations-v487', chemin);
   }

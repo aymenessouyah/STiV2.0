@@ -19,10 +19,10 @@ test('la série 7 est accessible dans les deux catalogues SQL', () => {
 });
 
 test('la v627 actualise les pages appelantes sans précharger les PDF', () => {
-  assert.match(sw, /VERSION_PUBLIEE = "v638"/);
+  assert.match(sw, /VERSION_PUBLIEE = "v640"/);
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   for (const path of ['cours/sql.html', 'exercices/series-exercices.html']) {
-    assert.ok(delta.includes(`{ url: "./${path}", revision: "${path === 'cours/sql.html' ? 'capsule-sql7-v638' : 'retrait-mission-cinema-v633'}", refreshIfCached: true }`));
+    assert.ok(delta.includes(`{ url: "./${path}", revision: "${path === 'cours/sql.html' ? 'capsule-sql7-v640' : 'retrait-mission-cinema-v633'}", refreshIfCached: true }`));
   }
   const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];
   const manifest = JSON.parse(text('offline-complete-manifest.json'));

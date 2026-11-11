@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-11T15:59:03Z",
+  "generatedAt": "2026-11-11T16:05:46Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 790,
-  "totalBytes": 1135338853,
+  "totalFiles": 789,
+  "totalBytes": 1177404506,
   "files": [
     {
       "path": "404.html",
@@ -63,7 +63,7 @@
     {
       "path": "README.md",
       "bytes": 72538,
-      "gitSha": "adfd8e9ae867bc1dce5380745018cb98e58adf51"
+      "gitSha": "2436182bcbdfba99b056826583298e7c838bb101"
     },
     {
       "path": "admin.html",
@@ -752,8 +752,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 139739,
-      "gitSha": "74b31aa688a76a0d04f0a3bb0bc2a81a9eed0a34"
+      "bytes": 139651,
+      "gitSha": "ee32e5668eb0bfc19f3e8bebff4086420bb39e1c"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -907,8 +907,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 254681,
-      "gitSha": "86dbbbdca2c2c662ee3751ad5615dd8d2c269c5b"
+      "bytes": 254650,
+      "gitSha": "41c6cf0a87c4aef55fe8b0e26ec1c99d8de7f1a6"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -1166,11 +1166,6 @@
       "gitSha": "c44d1f80c468cd1e31fc123b4c6001df552453c9"
     },
     {
-      "path": "assets/subtitles/sql-serie7-having-groupby-sous-requetes-v2-fr.vtt",
-      "bytes": 7192,
-      "gitSha": "56dd9a5c4d59436aaec0021f4375a638540e731e"
-    },
-    {
       "path": "assets/subtitles/tp-train-serie6-fr.vtt",
       "bytes": 9145,
       "gitSha": "e5993b7deb1238ec160b4a4dc5e06e15e4f0743e"
@@ -1346,9 +1341,9 @@
       "gitSha": "6b1142870ded1e6a69f56d1686de747b92b9ee7d"
     },
     {
-      "path": "assets/videos/sql-serie7-having-groupby-sous-requetes-v2.mp4",
-      "bytes": 6651956,
-      "gitSha": "8b6681a44c1b2dc5ed8363e8a5be108d363b373f"
+      "path": "assets/videos/sql-serie7-groupby-having-sous-requetes-v3.mp4",
+      "bytes": 48724686,
+      "gitSha": "0ae9c0bc4f9e1e0c033ffbff02ef5f436a719ba3"
     },
     {
       "path": "assets/videos/sql-tp6-mission-cinema.mp4",
@@ -1477,8 +1472,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 147494,
-      "gitSha": "9ea2eb6e35bc00bd93eca86293fbabc62f7f52c0"
+      "bytes": 147457,
+      "gitSha": "c839d8b3179a33946f52e54b8748cb615738d342"
     },
     {
       "path": "cours/systemes-technologies-internet.html",
@@ -3952,8 +3947,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 109381,
-      "gitSha": "535aeab45e23ed75b6173ec9742f4cfb8deaa89d"
+      "bytes": 109652,
+      "gitSha": "eabf454cae78e09d081ac6167c64c681cbaab140"
     }
   ]
 }
