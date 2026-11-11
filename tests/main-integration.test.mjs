@@ -60,8 +60,8 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
   assert.equal(revisions.get('./assets/js/app.js'), 'retrait-mission-cinema-v633');
   assert.equal(revisions.get('./index.html'), 'retrait-mission-cinema-v633');
-  assert.equal(revisions.get('./offline-complete-manifest.json'), 'retrait-mission-cinema-v633');
-  assert.equal(revisions.get('./README.md'), 'retrait-mission-cinema-v633');
+  assert.equal(revisions.get('./offline-complete-manifest.json'), 'tp6-exercices-v634');
+  assert.equal(revisions.get('./README.md'), 'tp6-exercices-v634');
   /* v585 : le tableau de bord annonce le Smart Book 3ᵉ SI à 81 pages ; le drapeau reste au lot v503. */
   assert.equal(revisions.get('./dashboard.html'), 'flamme-regularite-v611');
   assert.equal(revisions.get('./assets/images/drapeau-tunisie.svg'), 'accueil-lycee-v503');
@@ -69,14 +69,14 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./assets/js/news-perso.js'), 'ruban-vert-v517');
   /* v507 : ruban sans logo et compteurs de vidéos. */
   assert.equal(revisions.get('./assets/css/theme.css'), 'flamme-regularite-v611');
-  assert.equal(revisions.get('./admin.html'), 'retrait-mission-cinema-v633');
+  assert.equal(revisions.get('./admin.html'), 'tp6-exercices-v634');
   assert.equal(revisions.get('./assets/js/sante.js'), 'tp-transitions-v512');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */
   assert.equal(revisions.get('./index.html'), 'retrait-mission-cinema-v633');
-  assert.equal(revisions.get('./assets/js/admin.js'), 'retrait-mission-cinema-v633');
+  assert.equal(revisions.get('./assets/js/admin.js'), 'tp6-exercices-v634');
   assert.equal(revisions.get('./assets/css/cours.css'), 'retrait-fond-cours-v508');
   /* v563 : le cours SQL accueille la convention d'écriture d'un schéma. */
-  assert.equal(revisions.get('./cours/sql.html'), 'retrait-mission-cinema-v633');
+  assert.equal(revisions.get('./cours/sql.html'), 'tp6-exercices-v634');
   /* v549 : la page PHP reçoit la capsule des variables. */
   assert.equal(revisions.get('./cours/php.html'), 'cours-sti-v595');
   /* v523 : le cours JavaScript reçoit les liens du TP Train. */

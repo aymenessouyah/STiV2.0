@@ -2,8 +2,8 @@
   "version": "v582-sti-atelier-v386",
   "generatedAt": "2026-11-10T12:40:00Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 784,
-  "totalBytes": 1098072063,
+  "totalFiles": 786,
+  "totalBytes": 1098749875,
   "files": [
     {
       "path": "404.html",
@@ -63,12 +63,12 @@
     {
       "path": "README.md",
       "bytes": 72386,
-      "gitSha": "fca7c922ba4a48f406f0f69805771ecbe5406da8"
+      "gitSha": "da6e9a366ee1cd9cfff69297fe5f414892f71dff"
     },
     {
       "path": "admin.html",
       "bytes": 366155,
-      "gitSha": "42fb76c463ec5c6fddb492c11301e97895b763dc"
+      "gitSha": "02e0e93bfaf90eeb5fdd49192bc79009e4fb606a"
     },
     {
       "path": "assets/audio/cours-sti-ch1.mp3",
@@ -738,12 +738,12 @@
     {
       "path": "assets/js/admin.js",
       "bytes": 823119,
-      "gitSha": "75c0d16b8b6605bd171fd43d74e939d6ff72349a"
+      "gitSha": "173cabb51cf40b8bc594234102a87c0b493a9df7"
     },
     {
       "path": "assets/js/analytique.js",
       "bytes": 18719,
-      "gitSha": "153e226011efc0b4fa7ec4b3db00a3861160308a"
+      "gitSha": "aa55af87aa422c76fd37f23aeb784cbaf0adb017"
     },
     {
       "path": "assets/js/app.js",
@@ -972,8 +972,8 @@
     },
     {
       "path": "assets/js/roue-couverture.js",
-      "bytes": 14250,
-      "gitSha": "2121e84fd6f9adc07deabce8921423c61f26b0de"
+      "bytes": 14298,
+      "gitSha": "a85d33010f77a59c0a666c84865e2cdcebc96684"
     },
     {
       "path": "assets/js/roue-habillage.js",
@@ -1072,8 +1072,8 @@
     },
     {
       "path": "assets/pages-couverture.json",
-      "bytes": 6418,
-      "gitSha": "07928d6e2527555d08c62f6bdad4f59b3cd6605a"
+      "bytes": 6466,
+      "gitSha": "3372f10162999ccf3472f6a8855c64991938ae46"
     },
     {
       "path": "assets/streams/css3-v302/css3-1080p.m3u8",
@@ -1457,8 +1457,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 145157,
-      "gitSha": "c39264a65016b6c53b1a8c625e5c2af88e605ed9"
+      "bytes": 145867,
+      "gitSha": "b2f44c001449f73fc4038f051bf4634384da531b"
     },
     {
       "path": "cours/systemes-technologies-internet.html",
@@ -3161,6 +3161,11 @@
       "gitSha": "0de472aad2b3a0355d31cc1352ecfaa9ae24d602"
     },
     {
+      "path": "exercices/sql/Corrige_TD_SQL_Cinema.pdf",
+      "bytes": 660351,
+      "gitSha": "2fb9ffd384d13e28f5d8a9aef5818675666f411b"
+    },
+    {
       "path": "exercices/sql/Série 4.2 - GestLocation - Corrigé.pdf",
       "bytes": 76307,
       "gitSha": "0791a67647773266eb3a19fe822b763cf79e047f"
@@ -3179,6 +3184,11 @@
       "path": "exercices/sql/Série 4.2 - GestLocation - énoncé.pdf",
       "bytes": 55415,
       "gitSha": "4a3dc6090d045b7a52dd72aa834d96ffac51696c"
+    },
+    {
+      "path": "exercices/sql/TP6-Mission-cinema-enonce.html",
+      "bytes": 16711,
+      "gitSha": "31af674be611563007547fa1c14078cba1d4bcfb"
     },
     {
       "path": "exercices/sql/Tp-BD-Jointure-sous-requetes-Group-By.html",
@@ -3922,8 +3932,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 108334,
-      "gitSha": "d6cdb8b8d4d9c4c4ca2221311dfead6783dc5719"
+      "bytes": 108278,
+      "gitSha": "ac866cddcf73bf78566bf63a797714d7d6dbddf9"
     }
   ]
 }
