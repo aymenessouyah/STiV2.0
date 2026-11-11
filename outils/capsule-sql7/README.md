@@ -1,5 +1,9 @@
 # Capsule SQL — série 7
 
-La capsule est une création originale basée sur le scénario fourni : les médias d'une vidéo externe ne sont pas inclus. Le montage utilise les clips de voix synthétique dans `voix/`, des planches créées avec Pillow, et une piste sonore originale générée par FFmpeg. La narration mêle quelques expressions tunisiennes au français ; la piste WebVTT les traduit en français. Les repères des sous-titres sont estimés par proportion de texte dans chaque prise : une vérification manuelle est recommandée avant une diffusion définitive.
+La seconde version est une création originale construite à partir du scénario fourni : tableaux, croix de couleur accompagnées d'une légende, repères au stylo, requêtes avec résultats et duels en écran partagé. Les médias d'une vidéo externe ne sont pas inclus. La narration est en français ; la musique douce est synthétisée par le script.
 
-Pour reconstruire : installer Python 3, Pillow et imageio-ffmpeg, puis exécuter `python3 outils/capsule-sql7/render.py`. Le script produit le MP4 avec une piste de sous-titres intégrée et le WebVTT utilisé par le lecteur du cours. Les fondus sont courts ; aucune ressource externe n'est nécessaire à la lecture.
+## Refaire la vidéo
+
+Installer Python 3, Pillow et imageio-ffmpeg, puis exécuter `python3 outils/capsule-sql7/render-v2.py`. Les dix prises de narration sont dans `voix-v2/`. Le script produit le MP4 et la piste WebVTT utilisée par le cours ; une piste de sous-titres est également intégrée au MP4. Les repères sont estimés à partir du texte et des pauses détectées dans la voix : leur synchronisation doit être contrôlée manuellement avant une diffusion définitive.
+
+`render.py` et `voix/` conservent les sources de la première version à titre historique ; seul le nouveau fichier vidéo est lié au site et au paquet hors ligne.

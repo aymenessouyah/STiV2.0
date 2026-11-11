@@ -3,12 +3,12 @@ import assert from 'node:assert/strict';
 import { readFileSync, statSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 const read = p => readFileSync(p, 'utf8');
-const mp4='assets/videos/sql-serie7-group-by-having.mp4';
-const vtt='assets/subtitles/sql-serie7-group-by-having-fr.vtt';
+const mp4='assets/videos/sql-serie7-having-groupby-sous-requetes-v2.mp4';
+const vtt='assets/subtitles/sql-serie7-having-groupby-sous-requetes-v2-fr.vtt';
 test('capsule série 7 et sous-titres disponibles dans le cours SQL', () => {
  const html=read('cours/sql.html');
  const section=html.split('<section id="videos"')[1].split('<div class="matiere-video-grid">')[0];
- assert.match(section, /Série 7 · Pour mieux comprendre GROUP BY et HAVING/);
+ assert.match(section, /Série 7 · Capsule SQL : HAVING, GROUP BY et sous-requêtes/);
  assert.ok(section.includes('../'+mp4)); assert.ok(section.includes('../'+vtt));
  assert.match(section, /preload="none"/); assert.match(section, /srclang="fr"/);
  assert.ok(statSync(mp4).size > 1000000); assert.match(read(vtt), /^WEBVTT/);
