@@ -1,1 +1,0 @@
-/* Service Worker désactivé - pas de cache pour éviter les versions obsolètes */

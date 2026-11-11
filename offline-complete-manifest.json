@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-10T11:13:26Z",
+  "generatedAt": "2026-11-10T12:40:00Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 790,
-  "totalBytes": 1129359882,
+  "totalFiles": 784,
+  "totalBytes": 1098072063,
   "files": [
     {
       "path": "404.html",
@@ -63,12 +63,12 @@
     {
       "path": "README.md",
       "bytes": 72386,
-      "gitSha": "87e845662a4542cd0144bbbfab70547e52937990"
+      "gitSha": "fca7c922ba4a48f406f0f69805771ecbe5406da8"
     },
     {
       "path": "admin.html",
       "bytes": 366155,
-      "gitSha": "4b63fa33aa0673de683de86c4098aa25fee2f9f7"
+      "gitSha": "42fb76c463ec5c6fddb492c11301e97895b763dc"
     },
     {
       "path": "assets/audio/cours-sti-ch1.mp3",
@@ -342,8 +342,8 @@
     },
     {
       "path": "assets/data/nouveautes.json",
-      "bytes": 46721,
-      "gitSha": "7b299ff02a1836509b0162582d7ee830dd3dda9c"
+      "bytes": 46061,
+      "gitSha": "eac1d3fa55d8a3c7716283f8ccf52cc899976b64"
     },
     {
       "path": "assets/data/quiz-banque.json",
@@ -477,8 +477,8 @@
     },
     {
       "path": "assets/guide-exercice-catalogue.json",
-      "bytes": 14862,
-      "gitSha": "d7c937b6ee3780aef9223643cfbd494bf36c4c1e"
+      "bytes": 14670,
+      "gitSha": "1658f0ae76d59b99eddcefa856132bb876b99d1e"
     },
     {
       "path": "assets/icons/STI_by_AE.ico",
@@ -732,23 +732,23 @@
     },
     {
       "path": "assets/js/admin-vues-videos.js",
-      "bytes": 33556,
-      "gitSha": "f9e122229ccb7bf8a6e90f187b1e00fe91749180"
+      "bytes": 33442,
+      "gitSha": "045099480c7e2d63466c8b6c53967da302cd7dfd"
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 823292,
-      "gitSha": "626708c9bba14aa772853b394cc673da63618238"
+      "bytes": 823119,
+      "gitSha": "75c0d16b8b6605bd171fd43d74e939d6ff72349a"
     },
     {
       "path": "assets/js/analytique.js",
       "bytes": 18719,
-      "gitSha": "eec0c35930c424eba0427f388f3c468e5743adf3"
+      "gitSha": "153e226011efc0b4fa7ec4b3db00a3861160308a"
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 139189,
-      "gitSha": "a1b2400b668bfbb3c71c84d80ea500f207be1a84"
+      "bytes": 138244,
+      "gitSha": "5b66513676206297583a5458c7780f00d4dcf85b"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -902,8 +902,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 255118,
-      "gitSha": "aeab07ff4f0bac87468600d5354350be352256b7"
+      "bytes": 252874,
+      "gitSha": "9aa3f484ce938cc8d7f72e87c78c74775e12c7d0"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -972,8 +972,8 @@
     },
     {
       "path": "assets/js/roue-couverture.js",
-      "bytes": 14075,
-      "gitSha": "edff3c248088b305202b8313b80522c15eea47b0"
+      "bytes": 14250,
+      "gitSha": "2121e84fd6f9adc07deabce8921423c61f26b0de"
     },
     {
       "path": "assets/js/roue-habillage.js",
@@ -1062,8 +1062,8 @@
     },
     {
       "path": "assets/js/visionneuse-exercices.js",
-      "bytes": 22775,
-      "gitSha": "a0d7ed71109e721df99eeba277a2c5a626ffdc08"
+      "bytes": 22513,
+      "gitSha": "65fff76d59bc0ca51cf6fd510e2eeb4fc39550c1"
     },
     {
       "path": "assets/js/xp-plancher.js",
@@ -1072,8 +1072,8 @@
     },
     {
       "path": "assets/pages-couverture.json",
-      "bytes": 6243,
-      "gitSha": "40fc16c658aa613d2a3902106bf32354d171da49"
+      "bytes": 6418,
+      "gitSha": "07928d6e2527555d08c62f6bdad4f59b3cd6605a"
     },
     {
       "path": "assets/streams/css3-v302/css3-1080p.m3u8",
@@ -1457,8 +1457,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 147211,
-      "gitSha": "19d04574806e84ced6ed4e2dc98e452e36af1215"
+      "bytes": 145157,
+      "gitSha": "c39264a65016b6c53b1a8c625e5c2af88e605ed9"
     },
     {
       "path": "cours/systemes-technologies-internet.html",
@@ -3152,8 +3152,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 103241,
-      "gitSha": "5689184ae6194d4e49bb014efc1dba201b5cbabd"
+      "bytes": 102484,
+      "gitSha": "ccd8a7cab13f9f90d594df3d7f40e9c653b5eb38"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3179,11 +3179,6 @@
       "path": "exercices/sql/Série 4.2 - GestLocation - énoncé.pdf",
       "bytes": 55415,
       "gitSha": "4a3dc6090d045b7a52dd72aa834d96ffac51696c"
-    },
-    {
-      "path": "exercices/sql/TP6-Mission-cinema-enonce.html",
-      "bytes": 16711,
-      "gitSha": "31af674be611563007547fa1c14078cba1d4bcfb"
     },
     {
       "path": "exercices/sql/Tp-BD-Jointure-sous-requetes-Group-By.html",
@@ -3318,7 +3313,7 @@
     {
       "path": "index.html",
       "bytes": 65714,
-      "gitSha": "e76c9229a3d764e9387a9c88fcf25f97e7f57554"
+      "gitSha": "e51320ceda38b7ee2795845886850eea480ce409"
     },
     {
       "path": "livre-smart.html",
@@ -3344,31 +3339,6 @@
       "path": "migration-photos-bucket.html",
       "bytes": 11350,
       "gitSha": "f5489adb4ecfb458c247b9a23a448cc8b1ad5b65"
-    },
-    {
-      "path": "mission-cinema/Corrige_TD_SQL_Cinema.pdf",
-      "bytes": 660351,
-      "gitSha": "2fb9ffd384d13e28f5d8a9aef5818675666f411b"
-    },
-    {
-      "path": "mission-cinema/Corrige_TD_SQL_Cinema_guide_visuel.pdf",
-      "bytes": 664680,
-      "gitSha": "58f388a8097c6afa4bec5dc6d91976c58b58845b"
-    },
-    {
-      "path": "mission-cinema/assets/images/je-fais-tout-sql-poster.jpg",
-      "bytes": 72397,
-      "gitSha": "bd5cc1ffc194a7b434bd325d6ca020d09398b153"
-    },
-    {
-      "path": "mission-cinema/assets/video/TD_SQL_Cinema_corrige_v3.mp4",
-      "bytes": 29850406,
-      "gitSha": "b1b280cf594fb5a4596e21a3c7e8f31f3af21825"
-    },
-    {
-      "path": "mission-cinema/correction-video.html",
-      "bytes": 17068,
-      "gitSha": "8ca04a9c4468145e188564472bb791cfe2b02df0"
     },
     {
       "path": "nouveautes.html",
@@ -3952,8 +3922,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 107489,
-      "gitSha": "e30df2ec77054125ec7017440afca2c34a4271ce"
+      "bytes": 108334,
+      "gitSha": "d6cdb8b8d4d9c4c4ca2221311dfead6783dc5719"
     }
   ]
 }

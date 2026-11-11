@@ -66,7 +66,6 @@
     { id: "sql-initiation", titre: "SQL — Construire une requête", matiere: "sql", icone: "🗃️" },
     { id: "sql-serie4", titre: "SQL Série 4 — Jointures", matiere: "sql", icone: "🗃️" },
     { id: "sql-serie5", titre: "SQL Série 5 — Dates", matiere: "sql", icone: "🗃️" },
-    { id: "sql-tp6-mission-cinema", titre: "TP6 Mission cinéma — Correction", matiere: "sql", icone: "🎬" },
     { id: "php-cours", titre: "PHP & MySQLi", matiere: "php", icone: "🐘" },
     { id: "php-synthese", titre: "PHP — Synthèse élèves", matiere: "php", icone: "🐘" },
     { id: "php-guichet", titre: "PHP — Application Guichet", matiere: "php", icone: "🐘" },

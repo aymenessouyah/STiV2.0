@@ -465,13 +465,6 @@
    "video": true
   },
   {
-   "chemin": "exercices/sql/TP6-Mission-cinema-enonce.html",
-   "titre": "Série 6 / TP6 : Mission cinéma — Énoncé",
-   "matiere": "sql",
-   "correction": true,
-   "video": true
-  },
-  {
    "chemin": "exercices/sql/sql-correction.html",
    "titre": "Corrigé : Récapitulatif SQL LDD + LMD (Base ÉTUDIANT)",
    "matiere": "sql",

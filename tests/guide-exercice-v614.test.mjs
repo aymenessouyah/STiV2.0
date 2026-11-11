@@ -145,28 +145,6 @@ test('v614 — corrections et vidéos se commandent séparément', () => {
   assert.equal(uneVideo.attributes.hidden, undefined, 'la vidéo reste visible');
 });
 
-test('v615 — le corrigé et la vidéo TP6 partagent le réglage de l’énoncé', () => {
-  const cle = 'exercices/sql/TP6-Mission-cinema-enonce.html';
-  const lienCorrige = element({ tagName: 'A', 'data-sti-correction': '' });
-  const lienVideo = element({ tagName: 'A', 'data-sti-video': '' });
-  const video = element({ tagName: 'VIDEO' });
-  const { api } = chargerModule({
-    elements: [lienCorrige, lienVideo, video],
-    chemin: '/mission-cinema/correction-video.html',
-    exercice: cle
-  });
-  const resultat = api.appliquer({
-    corrections: false, videos: false,
-    parExercice: { [cle]: { corrections: false, videos: false } }
-  });
-  assert.equal(api.cheminCourant(), cle, 'la page compagnon reprend la clé canonique du TP6');
-  assert.equal(resultat.corrections, 1);
-  assert.equal(resultat.videos, 2);
-  assert.equal(lienCorrige.attributes.hidden, 'hidden', 'le lien PDF du corrigé est masqué');
-  assert.equal(lienVideo.attributes.hidden, 'hidden', 'le lien direct de la vidéo est masqué');
-  assert.equal(video.attributes.hidden, 'hidden', 'le lecteur vidéo est masqué');
-});
-
 test('v614 — une exception par exercice l’emporte sur le défaut', () => {
   const api = chargerModule().api;
   const base = { corrections: false, videos: false,
@@ -225,7 +203,7 @@ test('v614 — quand une correction est masquée, l’élève est prévenu', () 
   assert.doesNotMatch(bandeau.textContent, /vidéos/, 'on ne parle que de ce qui est masqué');
 });
 
-test('v615 — les exercices guidés et le corrigé-vidéo TP6 chargent le module', () => {
+test('v615 — les exercices guidés chargent le module', () => {
   const pages = [];
   (function parcourir(dir) {
     for (const nom of readdirSync(dir)) {
@@ -234,28 +212,19 @@ test('v615 — les exercices guidés et le corrigé-vidéo TP6 chargent le modul
       else if (nom.endsWith('.html')) pages.push(chemin);
     }
   })(join(racine, 'exercices'));
-  assert.equal(pages.length, 77, 'la série 7 ajoute son énoncé et son corrigé');
-  const tp6 = resolve(racine, 'exercices/sql/TP6-Mission-cinema-enonce.html');
-  assert.ok(pages.includes(tp6), 'l’énoncé TP6 est une page d’exercice distincte');
-  const sans = pages.filter((p) => p !== tp6 && !readFileSync(p, 'utf8').includes('guide-exercice.js?v=614'));
-  assert.deepEqual(sans, [], 'toutes les autres pages d’exercice chargent le module');
-  const correctionPage = lire('mission-cinema/correction-video.html');
-  assert.match(correctionPage, /data-sti-guide-exercice="exercices\/sql\/TP6-Mission-cinema-enonce\.html"/);
-  assert.match(correctionPage, /<div class="video-frame" data-sti-video><video/);
-  assert.match(correctionPage, /data-sti-correction href="Corrige_TD_SQL_Cinema\.pdf"/);
-  assert.match(correctionPage, /guide-exercice\.js\?v=614/);
+  assert.equal(pages.length, 76, 'après retrait du TP cinéma');
+  const sans = pages.filter((p) => !readFileSync(p, 'utf8').includes('guide-exercice.js?v=614'));
+  assert.deepEqual(sans, [], 'toutes les pages d’exercice chargent le module');
 });
 
 test('v614 — le catalogue décrit les exercices, sans invention', () => {
   const j = JSON.parse(lire('assets/guide-exercice-catalogue.json'));
-  assert.equal(j.pages.length, 74);
+  assert.equal(j.pages.length, 73);
   const correction = j.pages.filter((p) => p.correction).length;
   const video = j.pages.filter((p) => p.video).length;
   assert.ok(correction >= 60, 'les corrections sont bien repérées (' + correction + ')');
   assert.ok(video >= 30, 'les vidéos sont bien repérées (' + video + ')');
   assert.ok(j.pages.every((p) => p.chemin.startsWith('exercices/') && p.titre), 'chemin et titre pour chacun');
-  const tp6 = j.pages.find((p) => p.chemin === 'exercices/sql/TP6-Mission-cinema-enonce.html');
-  assert.ok(tp6 && /Série 6.*Mission cinéma/.test(tp6.titre), 'la Série 6 du catalogue est Mission cinéma');
   assert.doesNotMatch(j.pages.find((p) => p.chemin === 'exercices/sql/sql.html').titre, /Série 6/, 'le récapitulatif ÉTUDIANT n’est pas la Série 6');
   /* Aucun doublon de chemin. */
   assert.equal(new Set(j.pages.map((p) => p.chemin)).size, j.pages.length);
@@ -310,12 +279,12 @@ test('v614 — l’administration écrit le réglage là où les élèves le lis
 test('v614 — publication : version, cache-busters, révisions et hors-ligne', () => {
   /* v615 : la publication avance (lisibilité en mode ardoise) ; le module élève,
      inchangé, garde son propre lot. */
-  assert.match(sw, /var VERSION_PUBLIEE = "v632";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v633";/);
   assert.match(sw, /v618-tp6-detail-20261104/);
   assert.match(adminHtml, /assets\/js\/admin\.js\?v=615-perf/);
   assert.ok(sw.includes('{ url: "./assets/js/guide-exercice.js", revision: "guide-exercice-tp6-v615" }'));
-  assert.ok(sw.includes('{ url: "./admin.html", revision: "admin-labo3-mobile-v632", refreshIfCached: true }'));
-  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "guide-exercice-liste-v621" }'));
+  assert.ok(sw.includes('{ url: "./admin.html", revision: "retrait-mission-cinema-v633", refreshIfCached: true }'));
+  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "retrait-mission-cinema-v633", refreshIfCached: true }'));
   assert.ok(sw.includes('"./assets/js/guide-exercice.js"'), 'le module est livré hors ligne');
   assert.ok(sw.includes('"./assets/guide-exercice-catalogue.json"'), 'le catalogue aussi');
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
