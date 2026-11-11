@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-10T19:53:43Z",
+  "generatedAt": "2026-11-11T06:34:37Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 790,
-  "totalBytes": 1129357409,
+  "totalBytes": 1129357531,
   "files": [
     {
       "path": "404.html",
@@ -3952,8 +3952,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 107249,
-      "gitSha": "f2806a2526bd8c880eb9cff1f9ee39a6d0f313d1"
+      "bytes": 107371,
+      "gitSha": "6e49ba0618c90b6009d8a79d5f6d9d8fee33fc8c"
     }
   ]
 }
