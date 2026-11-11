@@ -561,9 +561,9 @@
       id: "sql-serie7-capsule",
       matiere: "sql", nomMatiere: "SQL", badgeClasse: "badge-sql", couleur: "#34d399", reserve4si: true,
       titre: "SQL Série 7 — GROUP BY, HAVING et sous-requêtes",
-      dureeTexte: "17:53",
-      srcPrincipal: "assets/videos/sql-serie7-groupby-having-sous-requetes-v3.mp4",
-      srcSecours: "assets/videos/sql-serie7-groupby-having-sous-requetes-v3.mp4",
+      dureeTexte: "23:16",
+      srcPrincipal: "assets/videos/sql-serie7-groupby-having-sous-requetes-v6.mp4",
+      srcSecours: "assets/videos/sql-serie7-groupby-having-sous-requetes-v6.mp4",
       urlCours: "cours/sql.html#videos",
       codeApercu: "SELECT ... GROUP BY ... HAVING ...;"
     },

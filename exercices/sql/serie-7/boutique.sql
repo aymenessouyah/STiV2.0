@@ -110,19 +110,10 @@ HAVING SUM(v.quantite * v.prix_unitaire) > 500;
 
 
 -- ----------------------------------------------------------------------------
--- 5. PARTIE E : REQUÊTES AVEC SOUS-REQUÊTES
+-- 5. PARTIE E : SOUS-REQUÊTES NON CORRÉLÉES DANS WHERE
 -- ----------------------------------------------------------------------------
 
--- E1 : Sous-requête dans le SELECT (Affiche tous les vendeurs, y compris Walid avec NULL)
-
-SELECT nom,
-       (SELECT SUM(quantite * prix_unitaire) 
-        FROM VENTE 
-        WHERE VENTE.id_vendeur = VENDEUR.id_vendeur) AS ca
-FROM VENDEUR;
-
--- E2 : Sous-requête avec IN (Mission 3)
-
+-- E1
 SELECT nom
 FROM VENDEUR
 WHERE id_vendeur IN (
@@ -132,29 +123,7 @@ WHERE id_vendeur IN (
     HAVING SUM(quantite * prix_unitaire) > 700
 );
 
--- E2 bis : Sous-requête dans le FROM (Affiche le CA)
-
-SELECT ve.nom, t.ca
-FROM VENDEUR ve,
-     (SELECT id_vendeur, SUM(quantite * prix_unitaire) AS ca
-      FROM VENTE
-      GROUP BY id_vendeur) t
-WHERE ve.id_vendeur = t.id_vendeur
-  AND t.ca > 700;
-
--- E3 : Mission 5 avec sous-requête dans le FROM
-
-SELECT ve.nom, t.ca
-FROM VENDEUR ve,
-     (SELECT id_vendeur, SUM(quantite * prix_unitaire) AS ca
-      FROM VENTE
-      WHERE prix_unitaire >= 40
-      GROUP BY id_vendeur) t
-WHERE ve.id_vendeur = t.id_vendeur
-  AND t.ca > 500;
-
--- Mission 4 avec IN (Polyvalents)
-
+-- E2
 SELECT nom
 FROM VENDEUR
 WHERE id_vendeur IN (
@@ -164,26 +133,38 @@ WHERE id_vendeur IN (
     HAVING COUNT(DISTINCT categorie) >= 3
 );
 
--- Bonus : NOT IN (Vendeurs sans aucune vente)
+-- E3
+SELECT nom
+FROM VENDEUR
+WHERE id_vendeur IN (
+    SELECT id_vendeur
+    FROM VENTE
+    WHERE prix_unitaire >= 40
+    GROUP BY id_vendeur
+    HAVING SUM(quantite * prix_unitaire) > 500
+);
 
+-- E4 : prix supérieur à la moyenne
+SELECT article, prix_unitaire
+FROM VENTE
+WHERE prix_unitaire > (
+    SELECT AVG(prix_unitaire)
+    FROM VENTE
+);
+
+-- Bonus : vendeurs sans vente
 SELECT nom
 FROM VENDEUR
 WHERE id_vendeur NOT IN (
-    SELECT id_vendeur 
-    FROM VENTE
-    WHERE id_vendeur IS NOT NULL
+    SELECT id_vendeur FROM VENTE
 );
 
--- Pour aller plus loin : Vendeurs au-dessus de la moyenne
-
-SELECT id_vendeur, SUM(quantite * prix_unitaire) AS ca
+-- Pour aller plus loin : prix maximal
+SELECT article, prix_unitaire
 FROM VENTE
-GROUP BY id_vendeur
-HAVING SUM(quantite * prix_unitaire) > (
-    SELECT SUM(quantite * prix_unitaire) / COUNT(DISTINCT id_vendeur)
-    FROM VENTE
+WHERE prix_unitaire = (
+    SELECT MAX(prix_unitaire) FROM VENTE
 );
-
 
 -- ----------------------------------------------------------------------------
 -- 6. PARTIE F : CORRECTIONS DES ERREURS
@@ -222,12 +203,13 @@ WHERE id_vendeur IN (
     HAVING SUM(quantite * prix_unitaire) > 700
 );
 
--- e) Correction : Ajout de l'alias 't' à la table temporaire et résolution des ambiguïtés
+-- e) Correction : remplacer = par IN pour une liste de plusieurs identifiants
 
-SELECT ve.nom, t.ca
-FROM VENDEUR ve,
-     (SELECT id_vendeur, SUM(quantite * prix_unitaire) AS ca
-      FROM VENTE 
-      GROUP BY id_vendeur) t
-WHERE ve.id_vendeur = t.id_vendeur 
-  AND t.ca > 700;
+SELECT nom
+FROM VENDEUR
+WHERE id_vendeur IN (
+    SELECT id_vendeur
+    FROM VENTE
+    GROUP BY id_vendeur
+    HAVING SUM(quantite * prix_unitaire) > 700
+);

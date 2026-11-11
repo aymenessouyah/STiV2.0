@@ -1,0 +1,90 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Série 7 SQL : le gérant de la boutique, jointures, GROUP BY et sous-requêtes."><title>Corrigé Série 7 SQL — STI V2.0</title><link rel="stylesheet" href="style.css"></head><body><table class="header-table"><tr><td>Lycée Rafèha<br>Prof : Aymen Essouyah</td><td>Corrigé Série 7 SQL<br>Base de données Boutique</td><td>Classe<br>4<sup>ème</sup> SI</td></tr></table><div class="title-container"><div class="db-logo">SQL</div><h1>Corrigé Série 7 SQL — Le gérant de la boutique : les vendeurs</h1></div><nav class="actions" aria-label="Ressources"><a href="Fiche_SQL_Boutique_Jointure_SousRequetes.pdf" download>📄 Télécharger la fiche PDF</a><a href="Corrigé_SQL_Boutique_Jointure_SousRequetes.pdf" download>📄 Télécharger le corrigé PDF</a><a href="boutique.sql" download>🗄️ Script SQL</a><a href="enonce.html">← Énoncé</a></nav><h2>Partie A : résultat attendu</h2><div class="scroll"><table class="data-table"><thead><tr><th>Vendeur</th><th>Nombre de ventes</th><th>CA total</th></tr></thead><tbody><tr><td>Sana</td><td>4</td><td>1045</td></tr><tr><td>Karim</td><td>4</td><td>766</td></tr><tr><td>Lina</td><td>4</td><td>620</td></tr><tr><td>Walid</td><td>0</td><td>0</td></tr></tbody></table></div><p>Vérification : 1045 + 766 + 620 = 2431.</p><h2>Partie B : WHERE ou HAVING ?</h2><p>a) W · b) H · c) W · d) H. Une condition sur une ligne va dans WHERE ; une condition sur un total ou un nombre va dans HAVING.</p><h2>Partie C : le film du tableau</h2><div class="scroll"><table class="data-table"><thead><tr><th>Étape</th><th>Résultat</th></tr></thead><tbody><tr><td>1</td><td>48 combinaisons (4 × 12)</td></tr><tr><td>2</td><td>12 lignes : Walid disparaît</td></tr><tr><td>3</td><td>8 lignes après filtre</td></tr><tr><td>4</td><td>3 groupes</td></tr><tr><td>5</td><td>1 groupe</td></tr><tr><td>6</td><td>Sana : 795</td></tr></tbody></table></div><p>Après le filtre : Sana 795, Karim 520, Lina 590. Seul Sana dépasse 700.</p><div class="req-card"><h2>Requête de la partie C</h2><pre>SELECT ve.nom, SUM(v.quantite * v.prix_unitaire) AS ca
+FROM VENDEUR ve, VENTE v
+WHERE ve.id_vendeur = v.id_vendeur
+  AND v.prix_unitaire &gt;= 30
+GROUP BY ve.id_vendeur, ve.nom
+HAVING SUM(v.quantite * v.prix_unitaire) &gt; 700;</pre><div class="why-box">WHERE filtre les ventes avant GROUP BY ; HAVING filtre le CA des groupes.</div></div><div class="req-card"><h2>Partie D — Mission 1</h2><pre>SELECT v.article, v.categorie, ve.nom
+FROM VENTE v, VENDEUR ve
+WHERE v.id_vendeur = ve.id_vendeur;</pre><div class="why-box">12 lignes. Walid ne figure pas dans la jointure : il n’a aucune vente.</div></div><div class="req-card"><h2>Partie D — Mission 2</h2><pre>SELECT ve.nom, SUM(v.quantite * v.prix_unitaire) AS ca
+FROM VENDEUR ve, VENTE v
+WHERE ve.id_vendeur = v.id_vendeur
+GROUP BY ve.id_vendeur, ve.nom;</pre><div class="why-box">Sana 1045 · Karim 766 · Lina 620. La jointure interne exclut Walid.</div></div><div class="req-card"><h2>Partie D — Mission 3</h2><pre>SELECT ve.nom, SUM(v.quantite * v.prix_unitaire) AS ca
+FROM VENDEUR ve, VENTE v
+WHERE ve.id_vendeur = v.id_vendeur
+GROUP BY ve.id_vendeur, ve.nom
+HAVING SUM(v.quantite * v.prix_unitaire) &gt; 700;</pre><div class="why-box">Sana 1045 · Karim 766. HAVING filtre les totaux.</div></div><div class="req-card"><h2>Partie D — Mission 4</h2><pre>SELECT ve.nom, COUNT(DISTINCT v.categorie) AS nb_rayons
+FROM VENDEUR ve, VENTE v
+WHERE ve.id_vendeur = v.id_vendeur
+GROUP BY ve.id_vendeur, ve.nom
+HAVING COUNT(DISTINCT v.categorie) &gt;= 3;</pre><div class="why-box">Karim 3 · Lina 3. DISTINCT compte les catégories différentes.</div></div><div class="req-card"><h2>Partie D — Mission 5</h2><pre>SELECT ve.nom, SUM(v.quantite * v.prix_unitaire) AS ca
+FROM VENDEUR ve, VENTE v
+WHERE ve.id_vendeur = v.id_vendeur
+  AND v.prix_unitaire &gt;= 40
+GROUP BY ve.id_vendeur, ve.nom
+HAVING SUM(v.quantite * v.prix_unitaire) &gt; 500;</pre><div class="why-box">Sana 795 · Lina 590. Karim tombe à 240 après le filtre sur les prix.</div></div><div class="req-card"><h2>Partie E — E1 — Sous-requête dans SELECT</h2><pre>SELECT nom,
+       (SELECT SUM(quantite * prix_unitaire)
+        FROM VENTE
+        WHERE VENTE.id_vendeur = VENDEUR.id_vendeur) AS ca
+FROM VENDEUR;</pre><div class="why-box">Sana 1045 · Karim 766 · Lina 620 · Walid NULL. SUM sur aucune ligne renvoie NULL ; COALESCE permettrait d’afficher 0.</div></div><div class="req-card"><h2>Partie E — E2 — Sous-requête avec IN</h2><pre>SELECT nom
+FROM VENDEUR
+WHERE id_vendeur IN (
+    SELECT id_vendeur
+    FROM VENTE
+    GROUP BY id_vendeur
+    HAVING SUM(quantite * prix_unitaire) &gt; 700
+);</pre><div class="why-box">Sana et Karim. La sous-requête renvoie les identifiants 1 et 2, pas le CA.</div></div><div class="req-card"><h2>Partie E — E2 bis — Sous-requête dans FROM</h2><pre>SELECT ve.nom, t.ca
+FROM VENDEUR ve,
+     (SELECT id_vendeur, SUM(quantite * prix_unitaire) AS ca
+      FROM VENTE
+      GROUP BY id_vendeur) t
+WHERE ve.id_vendeur = t.id_vendeur
+  AND t.ca &gt; 700;</pre><div class="why-box">Sana 1045 · Karim 766. Le CA calculé est une colonne de la table temporaire.</div></div><div class="req-card"><h2>Partie E — E3 — Mission 5 dans FROM</h2><pre>SELECT ve.nom, t.ca
+FROM VENDEUR ve,
+     (SELECT id_vendeur, SUM(quantite * prix_unitaire) AS ca
+      FROM VENTE
+      WHERE prix_unitaire &gt;= 40
+      GROUP BY id_vendeur) t
+WHERE ve.id_vendeur = t.id_vendeur
+  AND t.ca &gt; 500;</pre><div class="why-box">Sana 795 · Lina 590. Le filtre intérieur précède le calcul du CA.</div></div><div class="req-card"><h2>Partie E — Mission 4 avec IN</h2><pre>SELECT nom
+FROM VENDEUR
+WHERE id_vendeur IN (
+    SELECT id_vendeur
+    FROM VENTE
+    GROUP BY id_vendeur
+    HAVING COUNT(DISTINCT categorie) &gt;= 3
+);</pre><div class="why-box">Karim et Lina.</div></div><div class="req-card"><h2>Partie E — Bonus — Vendeurs sans vente</h2><pre>SELECT nom
+FROM VENDEUR
+WHERE id_vendeur NOT IN (
+    SELECT id_vendeur
+    FROM VENTE
+    WHERE id_vendeur IS NOT NULL
+);</pre><div class="why-box">Walid. On exclut les identifiants NULL de la sous-requête : sinon NOT IN peut ne renvoyer aucun résultat.</div></div><div class="req-card"><h2>Partie E — Pour aller plus loin — Au-dessus de la moyenne</h2><pre>SELECT id_vendeur, SUM(quantite * prix_unitaire) AS ca
+FROM VENTE
+GROUP BY id_vendeur
+HAVING SUM(quantite * prix_unitaire) &gt; (
+    SELECT SUM(quantite * prix_unitaire) / COUNT(DISTINCT id_vendeur)
+    FROM VENTE
+);</pre><div class="why-box">La moyenne des vendeurs ayant vendu est 2431 / 3 ≈ 810,33 ; seul Sana la dépasse.</div></div><div class="req-card"><h2>Partie F — Correction a</h2><pre>SELECT ve.nom, SUM(v.quantite * v.prix_unitaire) AS ca
+FROM VENDEUR ve, VENTE v
+WHERE ve.id_vendeur = v.id_vendeur
+GROUP BY ve.id_vendeur, ve.nom;</pre><div class="why-box">Ajouter la condition de jointure pour éviter le produit cartésien.</div></div><div class="req-card"><h2>Partie F — Correction b</h2><pre>SELECT ve.nom, SUM(v.quantite * v.prix_unitaire) AS ca
+FROM VENDEUR ve, VENTE v
+WHERE ve.id_vendeur = v.id_vendeur
+GROUP BY ve.id_vendeur, ve.nom
+HAVING SUM(v.quantite * v.prix_unitaire) &gt; 700;</pre><div class="why-box">Déplacer la condition sur SUM dans HAVING, après GROUP BY.</div></div><div class="req-card"><h2>Partie F — Correction c</h2><pre>SELECT ve.nom, SUM(v.quantite * v.prix_unitaire) AS ca
+FROM VENDEUR ve, VENTE v
+WHERE ve.id_vendeur = v.id_vendeur
+GROUP BY ve.id_vendeur, ve.nom;</pre><div class="why-box">Retirer categorie du SELECT ou l’ajouter au GROUP BY pour obtenir un total par vendeur et catégorie.</div></div><div class="req-card"><h2>Partie F — Correction d</h2><pre>SELECT nom
+FROM VENDEUR
+WHERE id_vendeur IN (
+    SELECT id_vendeur
+    FROM VENTE
+    GROUP BY id_vendeur
+    HAVING SUM(quantite * prix_unitaire) &gt; 700
+);</pre><div class="why-box">IN attend une seule colonne : retirer nom de la sous-requête.</div></div><div class="req-card"><h2>Partie F — Correction e</h2><pre>SELECT ve.nom, t.ca
+FROM VENDEUR ve,
+     (SELECT id_vendeur, SUM(quantite * prix_unitaire) AS ca
+      FROM VENTE
+      GROUP BY id_vendeur) t
+WHERE ve.id_vendeur = t.id_vendeur
+  AND t.ca &gt; 700;</pre><div class="why-box">Donner un alias à la table temporaire et qualifier les colonnes ambiguës.</div></div><div class="footer-page">4ème SI — Lycée Rafèha | Série 7 SQL — Boutique</div><script>window.__APP_OK = true;</script><link rel="stylesheet" href="../../../assets/css/protection.css?v=227"><script src="../../../assets/js/protection.js?v=227" defer></script><script src="../../../assets/js/supabase-umd.js" defer></script><script src="../../../assets/js/config.js?v=425" defer></script><script src="../../../assets/js/acces.js?v=453" defer></script><script src="../../../assets/js/sync-progressions.js" defer></script><script src="../../../assets/js/guide-exercice.js?v=614" defer></script></body></html>

@@ -245,7 +245,7 @@
         }
       },
       "sous_requete": {
-        "sql": "SELECT nom,\n       (SELECT SUM(quantite * prix_unitaire) \n        FROM VENTE \n        WHERE VENTE.id_vendeur = VENDEUR.id_vendeur) AS ca\nFROM VENDEUR;",
+        "sql": "SELECT nom,\n       (SELECT SUM(quantite * prix_unitaire)\n        FROM VENTE\n        WHERE VENTE.id_vendeur = VENDEUR.id_vendeur) AS ca\nFROM VENDEUR;",
         "resultat": {
           "colonnes": [
             "nom",
