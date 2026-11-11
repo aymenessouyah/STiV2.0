@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-11T14:26:16Z",
+  "generatedAt": "2026-11-11T14:44:18Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 790,
-  "totalBytes": 1133431876,
+  "totalBytes": 1135335834,
   "files": [
     {
       "path": "404.html",
@@ -1166,9 +1166,9 @@
       "gitSha": "c44d1f80c468cd1e31fc123b4c6001df552453c9"
     },
     {
-      "path": "assets/subtitles/sql-serie7-group-by-having-fr.vtt",
-      "bytes": 6128,
-      "gitSha": "85ab239562c9811d86e38950aa2cfb9707b226f2"
+      "path": "assets/subtitles/sql-serie7-having-groupby-sous-requetes-v2-fr.vtt",
+      "bytes": 7192,
+      "gitSha": "56dd9a5c4d59436aaec0021f4375a638540e731e"
     },
     {
       "path": "assets/subtitles/tp-train-serie6-fr.vtt",
@@ -1346,9 +1346,9 @@
       "gitSha": "6b1142870ded1e6a69f56d1686de747b92b9ee7d"
     },
     {
-      "path": "assets/videos/sql-serie7-group-by-having.mp4",
-      "bytes": 4749225,
-      "gitSha": "5ec16eb1ec66b5389b0f1461045001b8bcb20b06"
+      "path": "assets/videos/sql-serie7-having-groupby-sous-requetes-v2.mp4",
+      "bytes": 6651956,
+      "gitSha": "8b6681a44c1b2dc5ed8363e8a5be108d363b373f"
     },
     {
       "path": "assets/videos/sql-tp6-mission-cinema.mp4",
@@ -1477,8 +1477,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 147367,
-      "gitSha": "6235147f63d862a8f57f053b25cf3cf029d532fc"
+      "bytes": 147504,
+      "gitSha": "603bec24ae96e965c1dcc72c5f46220292c9abea"
     },
     {
       "path": "cours/systemes-technologies-internet.html",
@@ -3952,8 +3952,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 108521,
-      "gitSha": "8c0ba7d7d5ea60694c6b91e428b0a0f94198e717"
+      "bytes": 108547,
+      "gitSha": "03dc8c1afef13ab3434de9c36ff619bf34188437"
     }
   ]
 }
