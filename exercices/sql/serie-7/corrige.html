@@ -21,50 +21,42 @@ FROM VENDEUR ve, VENTE v
 WHERE ve.id_vendeur = v.id_vendeur
   AND v.prix_unitaire &gt;= 40
 GROUP BY ve.id_vendeur, ve.nom
-HAVING SUM(v.quantite * v.prix_unitaire) &gt; 500;</pre><div class="why-box">Sana 795 · Lina 590. Karim tombe à 240 après le filtre sur les prix.</div></div><div class="req-card"><h2>Partie E — E1 — Sous-requête dans SELECT</h2><pre>SELECT nom,
-       (SELECT SUM(quantite * prix_unitaire) 
-        FROM VENTE 
-        WHERE VENTE.id_vendeur = VENDEUR.id_vendeur) AS ca
-FROM VENDEUR;</pre><div class="why-box">Sana 1045 · Karim 766 · Lina 620 · Walid NULL. SUM sur aucune ligne renvoie NULL ; COALESCE permettrait d’afficher 0.</div></div><div class="req-card"><h2>Partie E — E2 — Sous-requête avec IN</h2><pre>SELECT nom
+HAVING SUM(v.quantite * v.prix_unitaire) &gt; 500;</pre><div class="why-box">Sana 795 · Lina 590. Karim tombe à 240 après le filtre sur les prix.</div></div><div class="req-card"><h2>Partie E — E1</h2><pre>SELECT nom
 FROM VENDEUR
 WHERE id_vendeur IN (
     SELECT id_vendeur
     FROM VENTE
     GROUP BY id_vendeur
     HAVING SUM(quantite * prix_unitaire) &gt; 700
-);</pre><div class="why-box">Sana et Karim. La sous-requête renvoie les identifiants 1 et 2, pas le CA.</div></div><div class="req-card"><h2>Partie E — E2 bis — Sous-requête dans FROM</h2><pre>SELECT ve.nom, t.ca
-FROM VENDEUR ve,
-     (SELECT id_vendeur, SUM(quantite * prix_unitaire) AS ca
-      FROM VENTE
-      GROUP BY id_vendeur) t
-WHERE ve.id_vendeur = t.id_vendeur
-  AND t.ca &gt; 700;</pre><div class="why-box">Sana 1045 · Karim 766. Le CA calculé est une colonne de la table temporaire.</div></div><div class="req-card"><h2>Partie E — E3 — Mission 5 dans FROM</h2><pre>SELECT ve.nom, t.ca
-FROM VENDEUR ve,
-     (SELECT id_vendeur, SUM(quantite * prix_unitaire) AS ca
-      FROM VENTE
-      WHERE prix_unitaire &gt;= 40
-      GROUP BY id_vendeur) t
-WHERE ve.id_vendeur = t.id_vendeur
-  AND t.ca &gt; 500;</pre><div class="why-box">Sana 795 · Lina 590. Le filtre intérieur précède le calcul du CA.</div></div><div class="req-card"><h2>Partie E — Mission 4 avec IN</h2><pre>SELECT nom
+);</pre><div class="why-box">Identifiants intérieurs : 1 et 2. Résultat : Sana, Karim. La requête extérieure n’affiche pas le CA.</div></div><div class="req-card"><h2>Partie E — E2</h2><pre>SELECT nom
 FROM VENDEUR
 WHERE id_vendeur IN (
     SELECT id_vendeur
     FROM VENTE
     GROUP BY id_vendeur
     HAVING COUNT(DISTINCT categorie) &gt;= 3
-);</pre><div class="why-box">Karim et Lina.</div></div><div class="req-card"><h2>Partie E — Bonus — Vendeurs sans vente</h2><pre>SELECT nom
+);</pre><div class="why-box">Identifiants intérieurs : 2 et 3. Résultat : Karim et Lina.</div></div><div class="req-card"><h2>Partie E — E3</h2><pre>SELECT nom
+FROM VENDEUR
+WHERE id_vendeur IN (
+    SELECT id_vendeur
+    FROM VENTE
+    WHERE prix_unitaire &gt;= 40
+    GROUP BY id_vendeur
+    HAVING SUM(quantite * prix_unitaire) &gt; 500
+);</pre><div class="why-box">Identifiants intérieurs : 1 et 3. Résultat : Sana et Lina. WHERE filtre les lignes, HAVING filtre les groupes.</div></div><div class="req-card"><h2>Partie E — E4 — Prix supérieur à la moyenne</h2><pre>SELECT article, prix_unitaire
+FROM VENTE
+WHERE prix_unitaire &gt; (
+    SELECT AVG(prix_unitaire)
+    FROM VENTE
+);</pre><div class="why-box">La boîte intérieure renvoie 718 / 12 ≈ 59,83. Résultat : Jean 60, Robe 90, Baskets 100, Bottines 120 et Parfum 150.</div></div><div class="req-card"><h2>Partie E — Bonus — Vendeurs sans vente</h2><pre>SELECT nom
 FROM VENDEUR
 WHERE id_vendeur NOT IN (
-    SELECT id_vendeur 
-    FROM VENTE
-    WHERE id_vendeur IS NOT NULL
-);</pre><div class="why-box">Walid. On exclut les identifiants NULL de la sous-requête : sinon NOT IN peut ne renvoyer aucun résultat.</div></div><div class="req-card"><h2>Partie E — Pour aller plus loin — Au-dessus de la moyenne</h2><pre>SELECT id_vendeur, SUM(quantite * prix_unitaire) AS ca
+    SELECT id_vendeur FROM VENTE
+);</pre><div class="why-box">Résultat : Walid. Attention : si la liste contient NULL, NOT IN peut ne renvoyer aucun résultat ; aucune vente de ces données n’a un identifiant vendeur NULL.</div></div><div class="req-card"><h2>Partie E — Pour aller plus loin — La vente la plus chère</h2><pre>SELECT article, prix_unitaire
 FROM VENTE
-GROUP BY id_vendeur
-HAVING SUM(quantite * prix_unitaire) &gt; (
-    SELECT SUM(quantite * prix_unitaire) / COUNT(DISTINCT id_vendeur)
-    FROM VENTE
-);</pre><div class="why-box">La moyenne des vendeurs ayant vendu est 2431 / 3 ≈ 810,33 ; seul Sana la dépasse.</div></div><div class="req-card"><h2>Partie F — Correction a</h2><pre>SELECT ve.nom, SUM(v.quantite * v.prix_unitaire) AS ca
+WHERE prix_unitaire = (
+    SELECT MAX(prix_unitaire) FROM VENTE
+);</pre><div class="why-box">MAX renvoie 150. Résultat : Parfum 150.</div></div><div class="req-card"><h2>Partie F — Correction a</h2><pre>SELECT ve.nom, SUM(v.quantite * v.prix_unitaire) AS ca
 FROM VENDEUR ve, VENTE v
 WHERE ve.id_vendeur = v.id_vendeur
 GROUP BY ve.id_vendeur, ve.nom;</pre><div class="why-box">Ajouter la condition de jointure pour éviter le produit cartésien.</div></div><div class="req-card"><h2>Partie F — Correction b</h2><pre>SELECT ve.nom, SUM(v.quantite * v.prix_unitaire) AS ca
@@ -81,10 +73,11 @@ WHERE id_vendeur IN (
     FROM VENTE
     GROUP BY id_vendeur
     HAVING SUM(quantite * prix_unitaire) &gt; 700
-);</pre><div class="why-box">IN attend une seule colonne : retirer nom de la sous-requête.</div></div><div class="req-card"><h2>Partie F — Correction e</h2><pre>SELECT ve.nom, t.ca
-FROM VENDEUR ve,
-     (SELECT id_vendeur, SUM(quantite * prix_unitaire) AS ca
-      FROM VENTE 
-      GROUP BY id_vendeur) t
-WHERE ve.id_vendeur = t.id_vendeur 
-  AND t.ca &gt; 700;</pre><div class="why-box">Donner un alias à la table temporaire et qualifier les colonnes ambiguës.</div></div><div class="footer-page">4ème SI — Lycée Rafèha | Série 7 SQL — Boutique</div><script>window.__APP_OK = true;</script><link rel="stylesheet" href="../../../assets/css/protection.css?v=227"><script src="../../../assets/js/protection.js?v=227" defer></script><script src="../../../assets/js/supabase-umd.js" defer></script><script src="../../../assets/js/config.js?v=425" defer></script><script src="../../../assets/js/acces.js?v=453" defer></script><script src="../../../assets/js/sync-progressions.js" defer></script><script src="../../../assets/js/guide-exercice.js?v=614" defer></script></body></html>
+);</pre><div class="why-box">IN attend une seule colonne : retirer nom de la sous-requête.</div></div><div class="req-card"><h2>Partie F — Correction e</h2><pre>SELECT nom
+FROM VENDEUR
+WHERE id_vendeur IN (
+    SELECT id_vendeur
+    FROM VENTE
+    GROUP BY id_vendeur
+    HAVING SUM(quantite * prix_unitaire) &gt; 700
+);</pre><div class="why-box">La sous-requête renvoie deux identifiants : utiliser IN plutôt que =.</div></div><div class="footer-page">4ème SI — Lycée Rafèha | Série 7 SQL — Boutique</div><script>window.__APP_OK = true;</script><link rel="stylesheet" href="../../../assets/css/protection.css?v=227"><script src="../../../assets/js/protection.js?v=227" defer></script><script src="../../../assets/js/supabase-umd.js" defer></script><script src="../../../assets/js/config.js?v=425" defer></script><script src="../../../assets/js/acces.js?v=453" defer></script><script src="../../../assets/js/sync-progressions.js" defer></script><script src="../../../assets/js/guide-exercice.js?v=614" defer></script></body></html>

@@ -5,7 +5,7 @@ from pathlib import Path
 import html, json, re, sqlite3
 ROOT=Path(__file__).resolve().parents[2]
 HERE=Path(__file__).resolve().parent
-page=(ROOT/'exercices/sql/serie-7/corrige.html').read_text(encoding='utf-8')
+page=(HERE/'references-v5/corrige.txt').read_text(encoding='utf-8')
 
 def requete(title):
  pattern=r'<h2>'+re.escape(title)+r'</h2><pre>(.*?)</pre>'

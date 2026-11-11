@@ -114,6 +114,7 @@ test('chaque vidéo du catalogue est reconnue, d’où qu’elle vienne', () => 
     ['/assets/videos/css3-cours-v9-sync.mp4', 'css3-cours'],
     ['/assets/videos/css3-cours-v9-sync.mp4?x=1', 'css3-cours'],
     ['/assets/videos/sql-cours-v7.mp4', 'sql-cours'],
+    ['/assets/videos/sql-serie7-groupby-having-sous-requetes-v6.mp4', 'sql-serie7-capsule'],
     ['/assets/videos/sql-serie7-groupby-having-sous-requetes-v3.mp4', 'sql-serie7-capsule'],
     ['/assets/videos/sql-serie7-having-groupby-sous-requetes-v2.mp4', 'sql-serie7-capsule'],
     ['/assets/videos/sql-serie7-group-by-having.mp4', 'sql-serie7-capsule'],
@@ -210,7 +211,7 @@ test('le lot v551 est publié', () => {
   const sw = lire('sw.js');
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "capsule-sql7-v640"/);
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "serie7-corrige-v644"/);
   assert.ok(!sw.split('var UPDATE_FILES = [')[1].split('];')[0].includes('BouclePour-v547.mp4'),
     'les capsules restent hors du delta automatique');
 });
