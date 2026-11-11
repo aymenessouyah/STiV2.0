@@ -121,7 +121,7 @@ test('v583 : le repli hors-ligne de la roue reflète le manifeste et le Service 
     './assets/js/analytique.js': 'tp6-capsule-v616',
     './assets/js/admin-couverture.js': 'couverture-v583',
     './assets/js/roue-couverture.js': 'tp6-capsule-v616',
-    './admin.html': 'guide-exercice-mount-v623'
+    './admin.html': 'admin-mobile-v631'
   };
   for (const [url, revision] of Object.entries(revisionsAttendues)) {
     const ligne = sw.split('\n').find((l) => l.includes('url: "' + url + '"'));
