@@ -78,6 +78,6 @@ test('v605 — la publication avance et le service worker reverra admin.js', () 
   assert.match(sw, /var PUBLIEE_LE = "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z";/);
   assert.match(sw, /v605-compteurs-expliques-20261101/);
   /* v606 : la version publiée avance, mais la révision d’admin.js reste celle de v605. */
-  assert.match(sw, /\{ url: "\.\/assets\/js\/admin\.js", revision: "retrait-mission-cinema-v633", refreshIfCached: true \}/);
-  assert.match(sw, /\{ url: "\.\/admin\.html", revision: "retrait-mission-cinema-v633", refreshIfCached: true \}/);
+  assert.match(sw, /\{ url: "\.\/assets\/js\/admin\.js", revision: "capsule-sql7-v638", refreshIfCached: true \}/);
+  assert.match(sw, /\{ url: "\.\/admin\.html", revision: "tp6-exercices-v634", refreshIfCached: true \}/);
 });
