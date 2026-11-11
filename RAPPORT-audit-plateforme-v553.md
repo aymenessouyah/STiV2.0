@@ -1,6 +1,6 @@
 # Rapport d’audit de la plateforme — v553
 
-**Date** : 2026-11-11 · **Pages auditées** : 143 · **Liens vérifiés** : 1643 · **Questions de quiz** : 660
+**Date** : 2026-11-07 · **Pages auditées** : 142 · **Liens vérifiés** : 1641 · **Questions de quiz** : 660
 
 | Constats | Nombre |
 |---|---|
@@ -13,64 +13,64 @@
 
 | Question | Verdict | Ce qui a été mesuré |
 |---|---|---|
-| Fluidité | ✅ conforme | preload des vidéos, animations sur transform/opacity, écouteurs passifs, « réduire les animations » — Les 36 vidéos des pages attendent un clic (preload metadata/none) · Les 12 animations du thème restent sur transform/opacity · Les 19 écouteurs de défilement sont passifs · prefers-reduced-motion respecté dans le thème et dans la grille des capsules |
+| Fluidité | ✅ conforme | preload des vidéos, animations sur transform/opacity, écouteurs passifs, « réduire les animations » — Les 40 vidéos des pages attendent un clic (preload metadata/none) · Les 12 animations du thème restent sur transform/opacity · Les 19 écouteurs de défilement sont passifs · prefers-reduced-motion respecté dans le thème et dans la grille des capsules |
 | Rapidité | ✅ conforme (réserves mineures) | poids des pages, scripts bloquants, cache hors-ligne, images différées — 51 page(s) dépassent 1,5 Mo de code · 8 script(s) bloquant(s) dans l’en-tête (petits fichiers, ordre imposé) |
-| Sécurité | ✅ conforme | secrets, RLS, administration, liens _blank, CSP — RLS active sur les 10 tables créées par les migrations · Aucune clé de service (service_role) dans les pages ni les scripts · Aucun eval / new Function hors bac à sable · Tous les liens _blank sont isolés (rel=noopener) · Content-Security-Policy déclarée sur 88/143 pages · admin.js vérifie la session et l’adresse de l’administrateur avant d’afficher quoi que ce soit · Seule la clé publique (sb_publishable_) est exposée côté client |
-| Accès aux cours, vidéos et exercices | ✅ conforme | liens, ancres, vidéos du catalogue, menu — Tous les liens et ancres locaux existent (1643 vérifiés) · Les 26 vidéos du catalogue sont livrées (940 Mo de médias) · 19 pages de cours et 76 pages d’exercices joignables |
+| Sécurité | ✅ conforme | secrets, RLS, administration, liens _blank, CSP — RLS active sur les 10 tables créées par les migrations · Aucune clé de service (service_role) dans les pages ni les scripts · Aucun eval / new Function hors bac à sable · Tous les liens _blank sont isolés (rel=noopener) · Content-Security-Policy déclarée sur 88/142 pages · admin.js vérifie la session et l’adresse de l’administrateur avant d’afficher quoi que ce soit · Seule la clé publique (sb_publishable_) est exposée côté client |
+| Accès aux cours, vidéos et exercices | ✅ conforme | liens, ancres, vidéos du catalogue, menu — Tous les liens et ancres locaux existent (1641 vérifiés) · Les 28 vidéos du catalogue sont livrées (1023 Mo de médias) · 19 pages de cours et 73 pages d’exercices joignables |
 | Quiz : tirage aléatoire à chaque entrée | ✅ conforme | mélange des questions et de la place de la bonne réponse — Les 6 quiz tirent questions et réponses à chaque partie |
 | XP : synchronisation entre appareils | ✅ conforme | file locale, envoi idempotent, maximum conservé — Scores et réponses passent par une file locale puis un envoi idempotent |
 | Quiz conformes aux annexes | ✅ conforme | vocabulaire des énoncés et des bonnes réponses — Quiz ↔ annexes : 91 % du vocabulaire vient directement de l’annexe, 98 % avec le cours |
-| Souplesse en mode mobile | ✅ conforme | viewport, navigation, cibles tactiles, points de rupture — Les 143 pages déclarent un viewport adapté · Menu mobile accessible (aria-expanded) et 34 points de rupture dans le thème |
+| Souplesse en mode mobile | ✅ conforme | viewport, navigation, cibles tactiles, points de rupture — Les 142 pages déclarent un viewport adapté · Menu mobile accessible (aria-expanded) et 34 points de rupture dans le thème |
 
 | Axe | Constat | Niveau | Détail |
 |---|---|---|---|
-| Accès | Tous les liens et ancres locaux existent (1643 vérifiés) | ✅ ok |  |
-| Accès | Les 26 vidéos du catalogue sont livrées (940 Mo de médias) | ✅ ok |  |
-| Accès | 19 pages de cours et 76 pages d’exercices joignables | ✅ ok |  |
+| Accès | Tous les liens et ancres locaux existent (1641 vérifiés) | ✅ ok |  |
+| Accès | Les 28 vidéos du catalogue sont livrées (1023 Mo de médias) | ✅ ok |  |
+| Accès | 19 pages de cours et 73 pages d’exercices joignables | ✅ ok |  |
 | Quiz | Les 6 quiz tirent questions et réponses à chaque partie | ✅ ok | 6 s’appuient sur le module commun STIQuizAlea (crypto.getRandomValues). Redirection ignorée : pp.html. |
 | XP | Scores et réponses passent par une file locale puis un envoi idempotent | ✅ ok |  |
 | Annexes | Quiz ↔ annexes : 91 % du vocabulaire vient directement de l’annexe, 98 % avec le cours | ✅ ok | HTML5 : 126 questions · 92 % dans l’annexe, 92 % avec le cours<br>CSS3 : 137 questions · 87 % dans l’annexe, 98 % avec le cours<br>JAVASCRIPT : 63 questions · 96 % dans l’annexe, 100 % avec le cours<br>SQL : 86 questions · 88 % dans l’annexe, 99 % avec le cours<br>PHP : 82 questions · 94 % dans l’annexe, 98 % avec le cours<br>Seuls écarts (énoncé + bonne réponse) : html5 : alternatives, html5 : picture, html5 : alternatifs, css3 : alternance, css3 : diaires, sql : adddate, php : debut, php : gorienne |
-| Mobile | Les 143 pages déclarent un viewport adapté | ✅ ok |  |
+| Mobile | Les 142 pages déclarent un viewport adapté | ✅ ok |  |
 | Mobile | Menu mobile accessible (aria-expanded) et 34 points de rupture dans le thème | ✅ ok |  |
-| Fluidité | Les 36 vidéos des pages attendent un clic (preload metadata/none) | ✅ ok |  |
+| Fluidité | Les 40 vidéos des pages attendent un clic (preload metadata/none) | ✅ ok |  |
 | Fluidité | Les 12 animations du thème restent sur transform/opacity | ✅ ok |  |
 | Fluidité | Les 19 écouteurs de défilement sont passifs | ✅ ok |  |
 | Fluidité | prefers-reduced-motion respecté dans le thème et dans la grille des capsules | ✅ ok |  |
-| Rapidité | 51 page(s) dépassent 1,5 Mo de code | ℹ️ mineur | Positionnement-animee/index.html — 1657 Ko<br>admin.html — 2123 Ko<br>bac-pratique.html — 1625 Ko<br>cours/PHP-recap.html — 1629 Ko<br>cours/Recap-JavaScript-STI.html — 1693 Ko<br>cours/annexe-fleuriste-html5.html — 1672 Ko<br>cours/courscss3.html — 1758 Ko<br>cours/courshtml5.html — 2108 Ko<br>cours/coursphp.html — 1663 Ko<br>cours/css3.html — 2180 Ko<br>cours/fiche-revision-html5.html — 1730 Ko<br>cours/html5.html — 2155 Ko |
+| Rapidité | 51 page(s) dépassent 1,5 Mo de code | ℹ️ mineur | Positionnement-animee/index.html — 1659 Ko<br>admin.html — 2098 Ko<br>bac-pratique.html — 1627 Ko<br>cours/PHP-recap.html — 1631 Ko<br>cours/Recap-JavaScript-STI.html — 1696 Ko<br>cours/annexe-fleuriste-html5.html — 1674 Ko<br>cours/courscss3.html — 1760 Ko<br>cours/courshtml5.html — 2110 Ko<br>cours/coursphp.html — 1665 Ko<br>cours/css3.html — 2187 Ko<br>cours/fiche-revision-html5.html — 1732 Ko<br>cours/html5.html — 2158 Ko |
 | Rapidité | 8 script(s) bloquant(s) dans l’en-tête (petits fichiers, ordre imposé) | ℹ️ mineur | dashboard.html → assets/js/config.js?v=479<br>index.html → assets/js/config.js?v=479<br>quiz/pp.html → ../assets/js/retour-quiz.js<br>quiz/systemes-internet.html → ../assets/js/quiz-systemes-boot.js?v=580<br>quiz/tableaux.html → ../assets/js/quiz-tableaux-boot.js?v=456<br>revision-erreurs.html → assets/js/config.js?v=476<br>revision-erreurs.html → assets/js/supabase-umd.js<br>revision-erreurs.html → assets/js/quiz-sync.js?v=460 |
-| Rapidité | Service worker prêt : 784 fichiers décrits hors-ligne (v582-sti-atelier-v386) | ✅ ok |  |
-| Rapidité | Chargement différé des images : 125/211 (59 %) | ✅ ok |  |
+| Rapidité | Service worker prêt : 781 fichiers décrits hors-ligne (v582-sti-atelier-v386) | ✅ ok |  |
+| Rapidité | Chargement différé des images : 126/211 (60 %) | ✅ ok |  |
 | Sécurité | RLS active sur les 10 tables créées par les migrations | ✅ ok |  |
 | Sécurité | Aucune clé de service (service_role) dans les pages ni les scripts | ✅ ok |  |
 | Sécurité | Aucun eval / new Function hors bac à sable | ✅ ok |  |
 | Sécurité | Tous les liens _blank sont isolés (rel=noopener) | ✅ ok |  |
-| Sécurité | Content-Security-Policy déclarée sur 88/143 pages | ✅ ok |  |
+| Sécurité | Content-Security-Policy déclarée sur 88/142 pages | ✅ ok |  |
 | Sécurité | admin.js vérifie la session et l’adresse de l’administrateur avant d’afficher quoi que ce soit | ✅ ok |  |
 | Sécurité | Seule la clé publique (sb_publishable_) est exposée côté client | ✅ ok |  |
 | Accessibilité | Page(s) sans h1 (15) | ℹ️ mineur | Positionnement-animee/index.html, cssanimee/index.html, exercices/html-css/activite-html-css/Act1/page1.html, exercices/html-css/emploi-temps/emploidutemps.html, exercices/html-css/tp-transitions-animations/exercice2.html, exercices/php/debogage-php-bac.html, exercices/php/trace-fetch-php.html, exercices/sql/atelier_sql_3_fenetres.html, projets/carte-bancaire/cb.html, projets/fleurs/index.html, projets/fleurs/inscription.html, projets/sti0/Sondage.html, projets/sti0/Statistiques.html, projets/sti0/sondage.html, projets/sti0/statistiques.html |
-| Accessibilité | Champ(s) sans étiquette (back-office et formulaires de démonstration) (29) | ℹ️ mineur | admin.html (77), cours/PHP-recap.html (25), cours/courscss3.html (38), cours/courshtml5.html (1), cours/css3.html (48), cours/datalist.html (4), cours/html5.html (14), cours/javascript.html (27), cours/php-recap.html (25), cours/php.html (37), cours/sql-contraintes.html (9), cours/sql.html (59), exercices/html-css/tp-formulaire-tableau-autre/index.html (2), exercices/javascript/TP Train/Enonce_TP_TrainTN_JavaScript.html (8), exercices/javascript/TP Train/Ressource_eleve_TrainTN.html (8) |
-| Accessibilité | Page(s) sans lien d’évitement (122) | ℹ️ mineur | 404.html, admin.html, bac-pratique.html, carte-visite.html, cours/PHP-recap.html, cours/Recap-JavaScript-STI.html, cours/annexe-fleuriste-html5.html, cours/courscss3.html, cours/courshtml5.html, cours/coursphp.html, cours/datalist.html, cours/fiche-revision-html5.html, cours/php-recap.html, cours/sql-bases-ldd-lmd-lcd.html, cours/sql-contraintes.html |
+| Accessibilité | Champ(s) sans étiquette (back-office et formulaires de démonstration) (29) | ℹ️ mineur | admin.html (77), cours/PHP-recap.html (25), cours/courscss3.html (38), cours/courshtml5.html (1), cours/css3.html (47), cours/datalist.html (4), cours/html5.html (14), cours/javascript.html (27), cours/php-recap.html (25), cours/php.html (37), cours/sql-contraintes.html (9), cours/sql.html (60), exercices/html-css/tp-formulaire-tableau-autre/index.html (2), exercices/javascript/TP Train/Enonce_TP_TrainTN_JavaScript.html (8), exercices/javascript/TP Train/Ressource_eleve_TrainTN.html (8) |
+| Accessibilité | Page(s) sans lien d’évitement (121) | ℹ️ mineur | 404.html, admin.html, bac-pratique.html, carte-visite.html, cours/PHP-recap.html, cours/Recap-JavaScript-STI.html, cours/annexe-fleuriste-html5.html, cours/courscss3.html, cours/courshtml5.html, cours/coursphp.html, cours/datalist.html, cours/fiche-revision-html5.html, cours/php-recap.html, cours/sql-bases-ldd-lmd-lcd.html, cours/sql-contraintes.html |
 
 ## Chiffres relevés
 
-- **liens** : 1643
-- **videos** : 231
-- **poidsVideos** : 985775296
-- **catalogue** : 26
-- **exercices** : 76
+- **liens** : 1641
+- **videos** : 238
+- **poidsVideos** : 1072813125
+- **catalogue** : 28
+- **exercices** : 73
 - **cours** : 19
 - **quiz** : 6
 - **tables** : 10
 - **banque** : 660
 - **annexes** : jetons = 365 · tauxAnnexe = 91 · tauxSources = 98 · horsSources = 8
 - **medias** : 34
-- **videosHtml** : 36
+- **videosHtml** : 40
 - **keyframes** : 12
 - **keyframesDisposition** : 0
 - **ecouteursDefilement** : 19
 - **pagesLourdes** : 51
-- **offline** : 784
-- **images** : imgTotal = 211 · lazyTotal = 125
+- **offline** : 781
+- **images** : imgTotal = 211 · lazyTotal = 126
 - **csp** : 88
 
 ## Comment relancer
