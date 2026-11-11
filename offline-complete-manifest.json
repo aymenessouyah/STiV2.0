@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-10T07:44:02Z",
+  "generatedAt": "2026-11-10T11:13:26Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 790,
-  "totalBytes": 1129358664,
+  "totalBytes": 1129359882,
   "files": [
     {
       "path": "404.html",
@@ -67,8 +67,8 @@
     },
     {
       "path": "admin.html",
-      "bytes": 365606,
-      "gitSha": "b6f4422c4fc308b0736d9de9fcda128cabf0bd23"
+      "bytes": 366155,
+      "gitSha": "4b63fa33aa0673de683de86c4098aa25fee2f9f7"
     },
     {
       "path": "assets/audio/cours-sti-ch1.mp3",
@@ -172,8 +172,8 @@
     },
     {
       "path": "assets/css/admin-saas.css",
-      "bytes": 130003,
-      "gitSha": "56f75438efba37fae87f59a75ef5513751c69c7d"
+      "bytes": 130018,
+      "gitSha": "4f576b7fdcfb331a7700a874543f8fe0a0b46067"
     },
     {
       "path": "assets/css/admin-v19.css",
@@ -717,8 +717,8 @@
     },
     {
       "path": "assets/js/admin-labo3.js",
-      "bytes": 17216,
-      "gitSha": "02e2dd9e06d26cb91851a8510ccbd6dab9d3805b"
+      "bytes": 17811,
+      "gitSha": "cdc1601955e7c2542801a6c7e40cb234156f53d1"
     },
     {
       "path": "assets/js/admin-mdp.js",
@@ -3952,8 +3952,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 107430,
-      "gitSha": "58bf9b271de7ab53761676579121b7bdc0178683"
+      "bytes": 107489,
+      "gitSha": "e30df2ec77054125ec7017440afca2c34a4271ce"
     }
   ]
 }

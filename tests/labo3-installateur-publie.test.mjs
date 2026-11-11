@@ -141,3 +141,32 @@ test('panneau : le lien reste désactivé tant qu’aucune release n’est véri
   // Aucun lien de téléchargement codé en dur : l’URL vient de la release vérifiée.
   assert.doesNotMatch(html, /releases\/download\/labo3-windows\//);
 });
+
+test('empreinte issue du digest GitHub lorsque la notice est vide et les fichiers bloqués par CORS', async () => {
+  const appels = [];
+  const r = await charger().verifierPublication({ depot: DEPOT, fetch: async url => {
+    appels.push(url);
+    if (!url.startsWith('https://api.github.com/')) throw new Error('CORS');
+    return reponseJson(release([
+      { name: 'STI-Labo3-Installation.exe', digest: `sha256:${SHA}`, browser_download_url: BASE + 'STI-Labo3-Installation.exe' },
+      { name: 'SHA256SUMS.txt', browser_download_url: BASE + 'SHA256SUMS.txt' }
+    ]));
+  }});
+  assert.equal(r.publie, true);
+  assert.equal(r.sha256, SHA);
+  assert.equal(appels.length, 1);
+});
+
+test('réponse JSON invalide ou erreur HTTP des empreintes : résultat explicite, sans promesse rejetée', async () => {
+  const api = charger();
+  const invalide = await api.verifierPublication({ depot: DEPOT, fetch: async () => ({ok: true, status: 200, json: async () => { throw new Error('JSON invalide'); }}) });
+  assert.equal(invalide.publie, false);
+  assert.match(invalide.raison, /réponse de la release illisible/);
+  const http = await api.verifierPublication({ depot: DEPOT, fetch: async url => url.startsWith('https://api.github.com/')
+    ? reponseJson(release([
+      { name: 'STI-Labo3-Installation.exe', browser_download_url: BASE + 'STI-Labo3-Installation.exe' },
+      { name: 'SHA256SUMS.txt', browser_download_url: BASE + 'SHA256SUMS.txt' }
+    ])) : { ok: false, status: 503, text: async () => `${SHA}  STI-Labo3-Installation.exe` } });
+  assert.equal(http.publie, false);
+  assert.match(http.raison, /HTTP 503/);
+});
