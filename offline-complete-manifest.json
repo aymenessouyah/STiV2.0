@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-10T12:40:00Z",
+  "generatedAt": "2026-11-11T13:59:44Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 786,
-  "totalBytes": 1098749875,
+  "totalFiles": 788,
+  "totalBytes": 1103506142,
   "files": [
     {
       "path": "404.html",
@@ -1161,6 +1161,11 @@
       "gitSha": "c44d1f80c468cd1e31fc123b4c6001df552453c9"
     },
     {
+      "path": "assets/subtitles/sql-serie7-group-by-having-fr.vtt",
+      "bytes": 6128,
+      "gitSha": "85ab239562c9811d86e38950aa2cfb9707b226f2"
+    },
+    {
       "path": "assets/subtitles/tp-train-serie6-fr.vtt",
       "bytes": 9145,
       "gitSha": "e5993b7deb1238ec160b4a4dc5e06e15e4f0743e"
@@ -1336,6 +1341,11 @@
       "gitSha": "6b1142870ded1e6a69f56d1686de747b92b9ee7d"
     },
     {
+      "path": "assets/videos/sql-serie7-group-by-having.mp4",
+      "bytes": 4749225,
+      "gitSha": "5ec16eb1ec66b5389b0f1461045001b8bcb20b06"
+    },
+    {
       "path": "assets/videos/tp-display-float-position.mp4",
       "bytes": 10922910,
       "gitSha": "95ce7d971df06420b6698f249fa7ce9b36933298"
@@ -1457,8 +1467,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 145867,
-      "gitSha": "b2f44c001449f73fc4038f051bf4634384da531b"
+      "bytes": 146673,
+      "gitSha": "17565640f87a203eac51f497dbe28c47ce202f89"
     },
     {
       "path": "cours/systemes-technologies-internet.html",
@@ -3932,8 +3942,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 108278,
-      "gitSha": "ac866cddcf73bf78566bf63a797714d7d6dbddf9"
+      "bytes": 108386,
+      "gitSha": "7b278078934ef9a3a469c9ad1bb62649c518020f"
     }
   ]
 }
