@@ -1,0 +1,419 @@
+{
+  "source": "exercices/sql/serie-7/Corrigé_SQL_Boutique_Jointure_SousRequetes.pdf",
+  "representation": [
+    "VENDEUR(id_vendeur, nom)",
+    "VENTE(id, article, categorie, quantite, prix_unitaire, id_vendeur)",
+    "VENTE.id_vendeur → VENDEUR.id_vendeur"
+  ],
+  "tables": {
+    "VENDEUR": {
+      "colonnes": [
+        "id_vendeur",
+        "nom"
+      ],
+      "lignes": [
+        [
+          1,
+          "Sana"
+        ],
+        [
+          2,
+          "Karim"
+        ],
+        [
+          3,
+          "Lina"
+        ],
+        [
+          4,
+          "Walid"
+        ]
+      ]
+    },
+    "VENTE": {
+      "colonnes": [
+        "id",
+        "article",
+        "categorie",
+        "quantite",
+        "prix_unitaire",
+        "id_vendeur"
+      ],
+      "lignes": [
+        [
+          1,
+          "T-shirt",
+          "Vêtements",
+          10,
+          25,
+          1
+        ],
+        [
+          2,
+          "Jean",
+          "Vêtements",
+          4,
+          60,
+          2
+        ],
+        [
+          3,
+          "Robe",
+          "Vêtements",
+          3,
+          90,
+          1
+        ],
+        [
+          4,
+          "Sac",
+          "Accessoires",
+          5,
+          40,
+          3
+        ],
+        [
+          5,
+          "Ceinture",
+          "Accessoires",
+          6,
+          20,
+          2
+        ],
+        [
+          6,
+          "Écharpe",
+          "Accessoires",
+          2,
+          15,
+          3
+        ],
+        [
+          7,
+          "Baskets",
+          "Chaussures",
+          3,
+          100,
+          1
+        ],
+        [
+          8,
+          "Sandales",
+          "Chaussures",
+          8,
+          35,
+          2
+        ],
+        [
+          9,
+          "Bottines",
+          "Chaussures",
+          2,
+          120,
+          3
+        ],
+        [
+          10,
+          "Casquette",
+          "Accessoires",
+          7,
+          18,
+          2
+        ],
+        [
+          11,
+          "Chemise",
+          "Vêtements",
+          5,
+          45,
+          1
+        ],
+        [
+          12,
+          "Parfum",
+          "Parfumerie",
+          1,
+          150,
+          3
+        ]
+      ]
+    }
+  },
+  "missions": [
+    {
+      "titre": "Mission 1 — Le registre",
+      "enonce": "Afficher, pour chaque vente, l’article, sa catégorie et le nom du vendeur.",
+      "jointure": {
+        "sql": "SELECT v.article, v.categorie, ve.nom\nFROM VENTE v, VENDEUR ve\nWHERE v.id_vendeur = ve.id_vendeur;",
+        "resultat": {
+          "colonnes": [
+            "article",
+            "categorie",
+            "nom"
+          ],
+          "lignes": [
+            [
+              "T-shirt",
+              "Vêtements",
+              "Sana"
+            ],
+            [
+              "Jean",
+              "Vêtements",
+              "Karim"
+            ],
+            [
+              "Robe",
+              "Vêtements",
+              "Sana"
+            ],
+            [
+              "Sac",
+              "Accessoires",
+              "Lina"
+            ],
+            [
+              "Ceinture",
+              "Accessoires",
+              "Karim"
+            ],
+            [
+              "Écharpe",
+              "Accessoires",
+              "Lina"
+            ],
+            [
+              "Baskets",
+              "Chaussures",
+              "Sana"
+            ],
+            [
+              "Sandales",
+              "Chaussures",
+              "Karim"
+            ],
+            [
+              "Bottines",
+              "Chaussures",
+              "Lina"
+            ],
+            [
+              "Casquette",
+              "Accessoires",
+              "Karim"
+            ],
+            [
+              "Chemise",
+              "Vêtements",
+              "Sana"
+            ],
+            [
+              "Parfum",
+              "Parfumerie",
+              "Lina"
+            ]
+          ]
+        }
+      },
+      "sous_requete": null,
+      "remarque": "Aucune solution par sous-requête n’est proposée dans la partie E du corrigé."
+    },
+    {
+      "titre": "Mission 2 — Le classement",
+      "enonce": "Afficher le CA de chaque vendeur avec son nom.",
+      "jointure": {
+        "sql": "SELECT ve.nom, SUM(v.quantite * v.prix_unitaire) AS ca\nFROM VENDEUR ve, VENTE v\nWHERE ve.id_vendeur = v.id_vendeur\nGROUP BY ve.id_vendeur, ve.nom;",
+        "resultat": {
+          "colonnes": [
+            "nom",
+            "ca"
+          ],
+          "lignes": [
+            [
+              "Sana",
+              1045
+            ],
+            [
+              "Karim",
+              766
+            ],
+            [
+              "Lina",
+              620
+            ]
+          ]
+        }
+      },
+      "sous_requete": {
+        "sql": "SELECT nom,\n       (SELECT SUM(quantite * prix_unitaire) \n        FROM VENTE \n        WHERE VENTE.id_vendeur = VENDEUR.id_vendeur) AS ca\nFROM VENDEUR;",
+        "resultat": {
+          "colonnes": [
+            "nom",
+            "ca"
+          ],
+          "lignes": [
+            [
+              "Sana",
+              1045
+            ],
+            [
+              "Karim",
+              766
+            ],
+            [
+              "Lina",
+              620
+            ],
+            [
+              "Walid",
+              null
+            ]
+          ]
+        }
+      },
+      "remarque": "DIFFÉRENTS : la jointure exclut Walid ; la sous-requête affiche Walid avec NULL."
+    },
+    {
+      "titre": "Mission 3 — Les vendeurs performants",
+      "enonce": "Afficher les vendeurs dont le CA dépasse 700.",
+      "jointure": {
+        "sql": "SELECT ve.nom, SUM(v.quantite * v.prix_unitaire) AS ca\nFROM VENDEUR ve, VENTE v\nWHERE ve.id_vendeur = v.id_vendeur\nGROUP BY ve.id_vendeur, ve.nom\nHAVING SUM(v.quantite * v.prix_unitaire) > 700;",
+        "resultat": {
+          "colonnes": [
+            "nom",
+            "ca"
+          ],
+          "lignes": [
+            [
+              "Sana",
+              1045
+            ],
+            [
+              "Karim",
+              766
+            ]
+          ]
+        }
+      },
+      "sous_requete": {
+        "sql": "SELECT nom\nFROM VENDEUR\nWHERE id_vendeur IN (\n    SELECT id_vendeur\n    FROM VENTE\n    GROUP BY id_vendeur\n    HAVING SUM(quantite * prix_unitaire) > 700\n);",
+        "resultat": {
+          "colonnes": [
+            "nom"
+          ],
+          "lignes": [
+            [
+              "Sana"
+            ],
+            [
+              "Karim"
+            ]
+          ]
+        }
+      },
+      "remarque": "Mêmes vendeurs, colonnes différentes : IN affiche les noms mais pas le CA.",
+      "autre_sous_requete": {
+        "sql": "SELECT ve.nom, t.ca\nFROM VENDEUR ve,\n     (SELECT id_vendeur, SUM(quantite * prix_unitaire) AS ca\n      FROM VENTE\n      GROUP BY id_vendeur) t\nWHERE ve.id_vendeur = t.id_vendeur\n  AND t.ca > 700;",
+        "resultat": {
+          "colonnes": [
+            "nom",
+            "ca"
+          ],
+          "lignes": [
+            [
+              "Sana",
+              1045
+            ],
+            [
+              "Karim",
+              766
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "titre": "Mission 4 — Les polyvalents",
+      "enonce": "Afficher les vendeurs qui ont vendu dans au moins 3 catégories différentes.",
+      "jointure": {
+        "sql": "SELECT ve.nom, COUNT(DISTINCT v.categorie) AS nb_rayons\nFROM VENDEUR ve, VENTE v\nWHERE ve.id_vendeur = v.id_vendeur\nGROUP BY ve.id_vendeur, ve.nom\nHAVING COUNT(DISTINCT v.categorie) >= 3;",
+        "resultat": {
+          "colonnes": [
+            "nom",
+            "nb_rayons"
+          ],
+          "lignes": [
+            [
+              "Karim",
+              3
+            ],
+            [
+              "Lina",
+              3
+            ]
+          ]
+        }
+      },
+      "sous_requete": {
+        "sql": "SELECT nom\nFROM VENDEUR\nWHERE id_vendeur IN (\n    SELECT id_vendeur\n    FROM VENTE\n    GROUP BY id_vendeur\n    HAVING COUNT(DISTINCT categorie) >= 3\n);",
+        "resultat": {
+          "colonnes": [
+            "nom"
+          ],
+          "lignes": [
+            [
+              "Karim"
+            ],
+            [
+              "Lina"
+            ]
+          ]
+        }
+      },
+      "remarque": "Mêmes vendeurs, colonnes différentes : IN n’affiche pas le nombre de catégories."
+    },
+    {
+      "titre": "Mission 5 — Le tri du vendeur",
+      "enonce": "Ignorer les articles de prix inférieur à 40 et afficher les vendeurs dont le CA dépasse 500.",
+      "jointure": {
+        "sql": "SELECT ve.nom, SUM(v.quantite * v.prix_unitaire) AS ca\nFROM VENDEUR ve, VENTE v\nWHERE ve.id_vendeur = v.id_vendeur\n  AND v.prix_unitaire >= 40\nGROUP BY ve.id_vendeur, ve.nom\nHAVING SUM(v.quantite * v.prix_unitaire) > 500;",
+        "resultat": {
+          "colonnes": [
+            "nom",
+            "ca"
+          ],
+          "lignes": [
+            [
+              "Sana",
+              795
+            ],
+            [
+              "Lina",
+              590
+            ]
+          ]
+        }
+      },
+      "sous_requete": {
+        "sql": "SELECT ve.nom, t.ca\nFROM VENDEUR ve,\n     (SELECT id_vendeur, SUM(quantite * prix_unitaire) AS ca\n      FROM VENTE\n      WHERE prix_unitaire >= 40\n      GROUP BY id_vendeur) t\nWHERE ve.id_vendeur = t.id_vendeur\n  AND t.ca > 500;",
+        "resultat": {
+          "colonnes": [
+            "nom",
+            "ca"
+          ],
+          "lignes": [
+            [
+              "Sana",
+              795
+            ],
+            [
+              "Lina",
+              590
+            ]
+          ]
+        }
+      },
+      "remarque": "Résultats identiques ; le WHERE intérieur filtre les ventes avant le calcul du CA."
+    }
+  ]
+}
