@@ -558,6 +558,17 @@
       codeApercu: "SELECT ... WHERE ...;"
     },
     {
+      id: "sql-serie7-capsule",
+      matiere: "sql", nomMatiere: "SQL", badgeClasse: "badge-sql", couleur: "#34d399", reserve4si: true,
+      titre: "SQL Série 7 — GROUP BY, HAVING et sous-requêtes",
+      dureeTexte: "06:12",
+      srcPrincipal: "assets/videos/sql-serie7-having-groupby-sous-requetes-v2.mp4",
+      srcSecours: "assets/videos/sql-serie7-having-groupby-sous-requetes-v2.mp4",
+      sousTitres: "assets/subtitles/sql-serie7-having-groupby-sous-requetes-v2-fr.vtt",
+      urlCours: "cours/sql.html#videos",
+      codeApercu: "SELECT ... GROUP BY ... HAVING ...;"
+    },
+    {
       /* v618 : correction détaillée TP6, narration pas à pas des 70 questions. */
       id: "sql-tp6-mission-cinema",
       matiere: "sql", nomMatiere: "SQL", badgeClasse: "badge-sql", couleur: "#34d399", reserve4si: true,
@@ -1108,7 +1119,7 @@
   /* v550 : les capsules pédagogiques portent un liseré propre et chaque carte
      reçoit un effet de survol différent. L'indice est tiré de l'identifiant :
      stable d'un chargement à l'autre. */
-  var CAPSULES_VIDEO = { "boucle-pour": true, "console-variables": true, "php-variables": true, "fonctions-chaine": true, "date-js": true, "php-chaines": true, "sql-tp6-mission-cinema": true };
+  var CAPSULES_VIDEO = { "boucle-pour": true, "console-variables": true, "php-variables": true, "fonctions-chaine": true, "date-js": true, "php-chaines": true, "sql-tp6-mission-cinema": true, "sql-serie7-capsule": true };
   function estCapsuleVideo(v) {
     var cle = String((v && v.id) || "");
     if (CAPSULES_VIDEO[cle]) return true;

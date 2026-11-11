@@ -6191,6 +6191,7 @@
     "video:sql-serie4": "SQL Série 4",
     "video:sql-serie4-2": "SQL Série 4.2 (GestLocation)",
     "video:sql-serie5": "SQL Série 5",
+    "video:sql-serie7-capsule": "SQL Série 7 — GROUP BY et HAVING",
     "video:sql-tp6-mission-cinema": "TP6 SQL — Mission cinéma",
     "video:sql-serie6": "SQL Série 6",
     "video:sql-guide-requete": "Guide Requête SQL",
@@ -6268,6 +6269,7 @@
     { key: "video:php-synthese", label: "Synthèse PHP", niveau: "4si" },
     { key: "video:php-guichet", label: "Guichet PHP/MySQLi", niveau: "4si" },
     { key: "video:sql-serie4", label: "SQL Série 4 (jointures)", niveau: "4si" },
+    { key: "video:sql-serie7-capsule", label: "SQL Série 7 — GROUP BY et HAVING", niveau: "4si" },
     { key: "video:sql-serie5", label: "SQL Série 5 (dates)", niveau: "4si" },
     { key: "video:sql-tp6-mission-cinema", label: "TP6 — Mission cinéma (correction)", niveau: "4si" },
   ];
@@ -6324,7 +6326,7 @@
       pm["audio:php-guichet"] = pm["audio:guichet-etapes"];
     }
     var ok4 = estProfil4SIAdmin(p);
-    /* v590 : le bilan ne compte QUE les capsules de la vitrine (27 au total,
+    /* v590 : le bilan ne compte QUE les capsules de la vitrine (28 au total,
        20 en 3ᵉ SI). Les vidéos des pages de cours (séries SQL 1 à 3 et 6,
        Explore Tunisie) restent suivies par le panneau « Vues des vidéos », mais
        elles ne font plus partie du travail attendu : le dénominateur reste donc

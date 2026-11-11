@@ -25,6 +25,7 @@
     'sql-initiation': ['sql','Construire une requête SQL'],
     'sql-serie4': ['sql','Série 4 SQL'],
     'sql-serie5': ['sql','Série 5 SQL'],
+    'sql-serie7-capsule': ['sql','Capsule SQL Série 7 — GROUP BY, HAVING et sous-requêtes'],
     'sql-tp6-mission-cinema': ['sql','Je fais tout le SQL — TP6 Mission cinéma'],
     'php-cours': ['php','Cours PHP'],
     'php-synthese': ['php','Synthèse PHP : gestion des élèves'],
@@ -40,7 +41,7 @@
     return s;
   }
   function autorise(slug) {
-    return !(/^php-/.test(slug) || /^sql-serie[45]$/.test(slug) || slug === 'sql-tp6-mission-cinema') ||
+    return !(/^php-/.test(slug) || /^sql-serie[45]$/.test(slug) || slug === 'sql-tp6-mission-cinema' || slug === 'sql-serie7-capsule') ||
       document.documentElement.classList.contains('sti-4si-autorise');
   }
   function sauvegarder(terminee) {

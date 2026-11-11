@@ -137,14 +137,14 @@ function dureeMp4(path) {
   } finally { closeSync(fd); }
 }
 
-test('catalogue : fichiers réels, 27 entrées distinctes, durées MP4 et restrictions', () => {
+test('catalogue : fichiers réels, 28 entrées distinctes, durées MP4 et restrictions', () => {
   const js = lire('assets/js/app.js');
   const texte = js.split('var CATALOGUE_VIDEOS = ')[1].split('\n  ];')[0] + '\n  ]';
   const catalogue = vm.runInNewContext('(' + texte + ')');
-  assert.equal(catalogue.length, 27);
+  assert.equal(catalogue.length, 28);
   assert.equal(new Set(catalogue.map(v => v.id)).size, catalogue.length);
   const comptes = {}; for (const v of catalogue) comptes[v.matiere] = (comptes[v.matiere] || 0) + 1;
-  assert.deepEqual(comptes, { sti:1, html5:4, css3:4, javascript:8, sql:5, php:5 });
+  assert.deepEqual(comptes, { sti:1, html5:4, css3:4, javascript:8, sql:6, php:5 });
   assert.ok(catalogue.some(v => v.id === 'tp-evenements-liens'
     && v.matieres.join() === 'html5,css3'
     && v.srcPrincipal === 'assets/videos/tp-evenements-liens-v2.mp4'
@@ -184,14 +184,14 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
   }
   assert.doesNotMatch(delta, /"\.\/[^"\n]+\.(?:mp4|mp3|pdf|wasm)"/i);
   for (const chemin of ['assets/css/cours.css','assets/js/app.js','assets/js/cours-matieres.js','cours/html5.html','cours/css3.html','cours/javascript.html','cours/sql.html','cours/php.html']) {
-    const revision = chemin === 'assets/js/app.js' ? 'retour-capsule-sql-v636'
+    const revision = chemin === 'assets/js/app.js' ? 'capsule-sql7-v638'
       : chemin === 'assets/css/cours.css' ? 'retrait-fond-cours-v508'
       : chemin === 'cours/css3.html' ? 'retrait-explore-float-v629'
       : chemin === 'cours/html5.html' ? 'retrait-explore-float-v629'
       : chemin === 'cours/javascript.html' ? 'cours-sti-v595'
       : chemin === 'cours/php.html' ? 'cours-sti-v595'
       /* v563 : cours/sql.html reçoit la convention d'écriture d'un schéma. */
-      : chemin === 'cours/sql.html' ? 'retour-capsule-sql-v636'
+      : chemin === 'cours/sql.html' ? 'capsule-sql7-v638'
       : chemin.startsWith('cours/') ? 'retrait-fond-cours-v508' : 'progression-chapitres-v492';
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${revision}"`), `révision de ${chemin}`);
   }
@@ -258,7 +258,7 @@ test('commandes d’administration : scripts et fonctions de la barre PC inchang
      v615 : la section prend ses couleurs dans la palette (lisible en mode ardoise)
      et son bandeau récapitulatif s'affiche ; empreinte réactualisée. */
   /* v596 : TOTAL_PAGES_SITE_ADMIN passe à 150 (repli hors manifeste). */
-  assert.equal(sha('assets/js/admin.js'), '966b1f1529fd8de1c0f4a568550ceeb73c12c06ae0f10c12017db41361a2f77d');
+  assert.equal(sha('assets/js/admin.js'), 'a1f3e23842252e0a736a0fb796cd59915503c54fba67afb732d3f5e3e906c0b5');
   assert.equal(sha('assets/js/rayonsx-surligneur.js'), '1b7fe2067629766ef4043fa3060199b71124d8486e36d92aaac0b45bd861847c');
   const protection = lire('assets/js/protection.js');
   const debut = protection.indexOf('  function estAppareilPC()');
@@ -456,7 +456,7 @@ test('v513 : les totaux de vidéos de l’accueil suivent le catalogue', () => {
   const compter = (cle) => catalogue.filter((v) => ((v.matieres || [v.matiere]).indexOf(cle) !== -1)).length;
   const total = catalogue.length;
   /* Une seule source de vérité : 28 entrées depuis l’ajout de la capsule SQL TP6, dont le cours STI. */
-  assert.equal(total, 27);
+  assert.equal(total, 28);
   assert.ok(index.includes(`data-video-filter="all">Toutes (${total})</button>`), 'pastille « Toutes »');
   assert.match(index, new RegExp(`id="videosTotalNombre">${total}</span>`));
   /* Les pastilles par matière, les cartes de cours et le pied de page disent la même chose. */
