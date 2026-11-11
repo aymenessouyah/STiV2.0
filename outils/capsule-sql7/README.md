@@ -39,3 +39,9 @@ Pour reconstruire l'aperçu complet, exécuter d'abord `python3 outils/capsule-s
 Pour reconstruire : installer `pypdf`, `Pillow` et `imageio-ffmpeg`, puis exécuter `preparer-v6.py`, `rendu-comparaisons-v6.py` et `render-v6.py` dans cet ordre. Les sorties temporaires `base-v6.mp4` et `missions-v6.mp4` sont produites par le second script. Vérification : `node --test tests/capsule-sql7-corrige-v6.test.mjs`.
 
 Cette version provisoire et les PDF rectifiés sont liés au site. La première partie est reprise de l'aperçu v5 : les coupures audio vers 12:40 et 13:21 restent à contrôler à l'écoute, les sous-titres complets et l'affichage simultané des tables et résultats sur tous les plans restent à finaliser.
+
+## Montage v7 — quatre extraits insérés
+
+`assets/videos/sql-serie7-groupby-having-sous-requetes-v7.mp4` conserve la v6 avant et après 13:34 et insère à ce point, dans l’ordre, `sous_req1.mp4`, `sous_req2.mp4`, `sous_req3.mp4` et `sous_req4.mp4`. Ces quatre sources proviennent de `main` (commit 5d396e5). Les repères du lecteur sont répartis autour des insertions et de la suite décalée. La vidéo est réencodée en 1080p H.264/AAC.
+
+La v6 reste disponible comme source. Les réserves de la v6 sur les coupures audio et les sous-titres restent valables ; les extraits ajoutés n'ont pas été revus intégralement sur le fond pédagogique.
