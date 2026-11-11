@@ -4,14 +4,14 @@ import { existsSync, readFileSync } from 'node:fs';
 import vm from 'node:vm';
 
 const lire = path => readFileSync(path, 'utf8');
-const modulePaths = ['index.html', 'exercices/series-exercices.html', 'assets/js/app.js',
-  'assets/js/admin-vues-videos.js', 'assets/js/admin.js', 'assets/js/protection.js',
+const modulePaths = ['exercices/series-exercices.html',
   'assets/js/visionneuse-exercices.js', 'assets/data/nouveautes.json', 'assets/guide-exercice-catalogue.json'];
 
-test('la mission et toutes ses vidéos restent retirées, seul le TP écrit revient dans le cours SQL', () => {
+test('la page Mission cinéma reste retirée, le TP et sa capsule sont restaurés', () => {
   assert.equal(existsSync('mission-cinema'), false);
   assert.ok(existsSync('exercices/sql/TP6-Mission-cinema-enonce.html'));
   assert.ok(existsSync('exercices/sql/Corrige_TD_SQL_Cinema.pdf'));
+  assert.ok(existsSync('assets/videos/sql-tp6-mission-cinema.mp4'));
   assert.match(lire('cours/sql.html').split('<section id="exercices"')[1].split('<section id="annexes"')[0], /TP6-Mission-cinema-enonce\.html/);
   for (const path of modulePaths) assert.doesNotMatch(lire(path), /mission-cinema|sql-tp6-mission-cinema|TD_SQL_Cinema/i, path);
   assert.match(lire('cours/sql.html'), /Série 7 · Le gérant de la boutique/);

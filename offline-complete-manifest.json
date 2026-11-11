@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-11T13:59:44Z",
+  "generatedAt": "2026-11-11T14:26:16Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 788,
-  "totalBytes": 1103506142,
+  "totalFiles": 790,
+  "totalBytes": 1133431876,
   "files": [
     {
       "path": "404.html",
@@ -63,7 +63,7 @@
     {
       "path": "README.md",
       "bytes": 72386,
-      "gitSha": "da6e9a366ee1cd9cfff69297fe5f414892f71dff"
+      "gitSha": "4a2e5a351eefb73e04498e260e77737e204d4b8a"
     },
     {
       "path": "admin.html",
@@ -581,6 +581,11 @@
       "gitSha": "fad732391a58a385a966d884a0caea87542c70f1"
     },
     {
+      "path": "assets/images/je-fais-tout-sql-poster.jpg",
+      "bytes": 72397,
+      "gitSha": "bd5cc1ffc194a7b434bd325d6ca020d09398b153"
+    },
+    {
       "path": "assets/images/lycee_logo.png",
       "bytes": 73499,
       "gitSha": "b887a583bee0da2879967655b78a38ce382cfea7"
@@ -732,13 +737,13 @@
     },
     {
       "path": "assets/js/admin-vues-videos.js",
-      "bytes": 33442,
-      "gitSha": "045099480c7e2d63466c8b6c53967da302cd7dfd"
+      "bytes": 33556,
+      "gitSha": "f9e122229ccb7bf8a6e90f187b1e00fe91749180"
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 823119,
-      "gitSha": "173cabb51cf40b8bc594234102a87c0b493a9df7"
+      "bytes": 823293,
+      "gitSha": "de84583e0899bec20907d0f0a472c28a8074d588"
     },
     {
       "path": "assets/js/analytique.js",
@@ -747,8 +752,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 138244,
-      "gitSha": "5b66513676206297583a5458c7780f00d4dcf85b"
+      "bytes": 139115,
+      "gitSha": "6fa31f16ce79744a9e89635af86976dce83cc4f0"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -842,8 +847,8 @@
     },
     {
       "path": "assets/js/lecteur-commun.js",
-      "bytes": 14642,
-      "gitSha": "5cd5b58a3565d663914b349fe4405b3116dc7a3d"
+      "bytes": 14764,
+      "gitSha": "425213888b8661f509cb739f92987b825f2c29c7"
     },
     {
       "path": "assets/js/mobile-nav.js",
@@ -902,8 +907,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 252874,
-      "gitSha": "9aa3f484ce938cc8d7f72e87c78c74775e12c7d0"
+      "bytes": 253695,
+      "gitSha": "958c319da352396969a6658aeb10bfea7ed17f54"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -1346,6 +1351,11 @@
       "gitSha": "5ec16eb1ec66b5389b0f1461045001b8bcb20b06"
     },
     {
+      "path": "assets/videos/sql-tp6-mission-cinema.mp4",
+      "bytes": 29850406,
+      "gitSha": "b1b280cf594fb5a4596e21a3c7e8f31f3af21825"
+    },
+    {
       "path": "assets/videos/tp-display-float-position.mp4",
       "bytes": 10922910,
       "gitSha": "95ce7d971df06420b6698f249fa7ce9b36933298"
@@ -1467,8 +1477,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 146673,
-      "gitSha": "17565640f87a203eac51f497dbe28c47ce202f89"
+      "bytes": 147367,
+      "gitSha": "6235147f63d862a8f57f053b25cf3cf029d532fc"
     },
     {
       "path": "cours/systemes-technologies-internet.html",
@@ -3333,7 +3343,7 @@
     {
       "path": "index.html",
       "bytes": 65714,
-      "gitSha": "e51320ceda38b7ee2795845886850eea480ce409"
+      "gitSha": "e76c9229a3d764e9387a9c88fcf25f97e7f57554"
     },
     {
       "path": "livre-smart.html",
@@ -3942,8 +3952,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 108386,
-      "gitSha": "7b278078934ef9a3a469c9ad1bb62649c518020f"
+      "bytes": 108521,
+      "gitSha": "8c0ba7d7d5ea60694c6b91e428b0a0f94198e717"
     }
   ]
 }
