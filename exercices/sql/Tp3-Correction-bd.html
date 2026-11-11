@@ -301,13 +301,6 @@
         <div class="db-logo">SQL</div>
         <h1>Corrigé Série 3 : LMD — Regroupement (GROUP BY) & Agrégation</h1>
       </div>
-      <button
-        type="button"
-        class="btn-video-serie"
-        onclick="ouvrirVideoCorrigeeSerie()"
-      >
-        🎥 Vidéo Corrigé — Création BD, Insertion & Requêtes Série 3
-      </button>
     </div>
 
     <h2>I. Création de la base de données « bdtp5 » et des tables (CREATE DATABASE / CREATE TABLE)</h2>
@@ -658,26 +651,6 @@ ORDER BY M.LibelleMat ASC, EV.Note DESC;</pre>
     <div class="footer-page">
       4ème SI - Lycée Rafeha | Corrigé Série 3 BD (Group By)
     </div>
-
-    <script>
-      function ouvrirVideoCorrigeeSerie() {
-        var titre = '🎥 Série 3 SQL (Group By) — Création BD, Insertion & Corrigé complet';
-        var cle = 'sql-serie3';
-        try {
-          if (
-            window.parent &&
-            window.parent !== window &&
-            typeof window.parent.ouvrirVideoPasAPasSTI === "function"
-          ) {
-            window.parent.ouvrirVideoPasAPasSTI(cle, titre);
-            return;
-          }
-        } catch (e) {}
-        if (typeof window.ouvrirVideoPasAPasSTI === "function") {
-          window.ouvrirVideoPasAPasSTI(cle, titre);
-        }
-      }
-    </script>
   <!-- 🔒 Protection du contenu STI -->
 <link rel="stylesheet" href="../../assets/css/protection.css?v=227" />
 <script src="../../assets/js/protection.js?v=227" defer></script>

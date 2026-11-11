@@ -299,13 +299,6 @@
         <div class="db-logo">SQL</div>
         <h1>Corrigé Série 1 : Langage de Définition de Données (LDD)</h1>
       </div>
-      <button
-        type="button"
-        class="btn-video-serie"
-        onclick="ouvrirVideoCorrigeeSerie()"
-      >
-        🎥 Vidéo Corrigé — Création BD, Insertion & Requêtes LDD
-      </button>
     </div>
 
     <h2>I. Création des bases de données et des tables (LDD)</h2>
@@ -602,26 +595,6 @@ DROP DATABASE Gestion_Location;</pre>
     <div class="footer-page">
       3/4ème SI - Lycée Rafeha | Corrigé Série 1 BD (LDD)
     </div>
-
-    <script>
-      function ouvrirVideoCorrigeeSerie() {
-        var titre = '🎥 Série 1 SQL (LDD) — Création BD, Insertion & Corrigé complet';
-        var cle = 'sql-serie1';
-        try {
-          if (
-            window.parent &&
-            window.parent !== window &&
-            typeof window.parent.ouvrirVideoPasAPasSTI === "function"
-          ) {
-            window.parent.ouvrirVideoPasAPasSTI(cle, titre);
-            return;
-          }
-        } catch (e) {}
-        if (typeof window.ouvrirVideoPasAPasSTI === "function") {
-          window.ouvrirVideoPasAPasSTI(cle, titre);
-        }
-      }
-    </script>
   <!-- 🔒 Protection du contenu STI -->
 <link rel="stylesheet" href="../../assets/css/protection.css?v=227" />
 <script src="../../assets/js/protection.js?v=227" defer></script>

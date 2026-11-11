@@ -301,13 +301,6 @@
         <div class="db-logo">SQL</div>
         <h1>Corrigé Série 2 : LMD — Jointures, Sous-requêtes & Group By</h1>
       </div>
-      <button
-        type="button"
-        class="btn-video-serie"
-        onclick="ouvrirVideoCorrigeeSerie()"
-      >
-        🎥 Vidéo Corrigé — Création BD, Insertion & Requêtes Série 2
-      </button>
     </div>
 
     <h2>I. Création des bases de données et des tables (CREATE DATABASE / CREATE TABLE)</h2>
@@ -791,26 +784,6 @@ WHERE MgEtu >= (SELECT AVG(MgEtu) FROM MGETU);</pre>
     <div class="footer-page">
       4ème SI - Lycée Rafeha | Corrigé Série 2 BD (LMD)
     </div>
-
-    <script>
-      function ouvrirVideoCorrigeeSerie() {
-        var titre = '🎥 Série 2 SQL (LMD) — Création BD, Insertion & Corrigé complet';
-        var cle = 'sql-serie2';
-        try {
-          if (
-            window.parent &&
-            window.parent !== window &&
-            typeof window.parent.ouvrirVideoPasAPasSTI === "function"
-          ) {
-            window.parent.ouvrirVideoPasAPasSTI(cle, titre);
-            return;
-          }
-        } catch (e) {}
-        if (typeof window.ouvrirVideoPasAPasSTI === "function") {
-          window.ouvrirVideoPasAPasSTI(cle, titre);
-        }
-      }
-    </script>
   <!-- 🔒 Protection du contenu STI -->
 <link rel="stylesheet" href="../../assets/css/protection.css?v=227" />
 <script src="../../assets/js/protection.js?v=227" defer></script>
