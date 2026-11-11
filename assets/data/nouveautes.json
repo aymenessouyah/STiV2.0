@@ -1,15 +1,5 @@
 [
   {
-    "version": "v616",
-    "date": "2026-11-04",
-    "categorie": "SQL & capsules vidéo",
-    "icone": "🎬",
-    "titre": "TP6 Mission cinéma : la correction est intégrée aux capsules SQL",
-    "resume": "La correction vidéo du TP6 est maintenant dans le catalogue vidéo principal, avec l’étiquette dorée et le liseré des capsules. La page de correction conserve les sept rappels de cours, un pour chaque partie, ainsi que le PDF. Le suivi de visionnage et les statistiques sont intégrés comme vidéo SQL réservée à la 4ᵉ SI.",
-    "lien": "mission-cinema/correction-video.html",
-    "libelleLien": "Voir la capsule de correction"
-  },
-  {
     "version": "v595",
     "date": "2026-10-31",
     "categorie": "Exercices",

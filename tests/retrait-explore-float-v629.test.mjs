@@ -17,9 +17,9 @@ test('vidéo Float supprimée sans supprimer les corrigés et la vidéo Flex', (
 });
 test('v629 actualise les pages et retire le fichier du hors ligne', () => {
   const sw = read('sw.js'), manifest = JSON.parse(read('offline-complete-manifest.json'));
-  assert.match(sw, /VERSION_PUBLIEE = "v632"/);
+  assert.match(sw, /VERSION_PUBLIEE = "v633"/);
   for (const path of pages) {
-    assert.ok(sw.includes(`url: "./${path}", revision: "retrait-explore-float-v629"`), path);
+    assert.ok(sw.includes(`url: "./${path}", revision: "${path === "exercices/series-exercices.html" ? "retrait-mission-cinema-v633" : "retrait-explore-float-v629"}"`), path);
     const bytes = readFileSync(path);
     const hash = createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
     assert.equal(manifest.files.find(x => x.path === path)?.gitSha, hash, path);

@@ -32,9 +32,9 @@ const pagesGit = execFileSync('git', ['ls-files', '-z', '*.html'], { cwd: root, 
 test('v583 : le manifeste de couverture décrit exactement les pages réelles du site', () => {
   assert.equal(manifeste.gen, 'v583');
   assert.equal(manifeste.n, manifeste.pages.length, 'n doit être calculé, pas recopié');
-  /* v597 : 154 pages HTML hors tests/ ; la galerie des projets ajoute la
+  /* v597 : 155 pages HTML hors tests/ ; la galerie des projets ajoute la
      sienne aux 150 de v596 (145 + les cinq ateliers « Systèmes »). */
-  assert.equal(manifeste.n, 154, '154 pages HTML hors tests/ au 31/10/2026');
+  assert.equal(manifeste.n, 155, '155 pages HTML hors tests/ au 31/10/2026');
   assert.deepEqual([...manifeste.pages].sort(), pagesGit, 'le manifeste doit être la liste exacte de git ls-files');
   assert.equal(new Set(manifeste.pages).size, manifeste.pages.length, 'aucun doublon de chemin exact');
 });
@@ -61,7 +61,7 @@ test('v583 : le générateur détecte un manifeste périmé', () => {
     cwd: root,
     encoding: 'utf8'
   });
-  assert.match(sortie, /à jour \(154 pages\)/);
+  assert.match(sortie, /à jour \(155 pages\)/);
   /* L'ancien générateur n'est plus qu'un relais : il ne doit plus produire de liste. */
   assert.match(read('tools/pages-couverture.py'), /DÉPRÉCIÉ/);
 });
@@ -70,14 +70,14 @@ test('v583 : le tableau de bord et l’analytique lisent le manifeste, sans « 1
   const adminJs = read('assets/js/admin.js');
   const anaJs = read('assets/js/analytique.js');
 
-  assert.match(adminJs, /var TOTAL_PAGES_SITE_ADMIN = 154;/);
+  assert.match(adminJs, /var TOTAL_PAGES_SITE_ADMIN = 155;/);
   assert.match(adminJs, /chargerTotalPagesSiteAdmin\(\)/);
   assert.match(adminJs, /fetch\("assets\/pages-couverture\.json", \{ cache: "no-cache" \}\)/);
   assert.doesNotMatch(adminJs, /"\/124/, 'plus aucun libellé /124 dans le tableau de bord');
   assert.doesNotMatch(adminJs, /totalPagesSite: 124/);
   assert.match(adminJs, /totalPagesSite: TOTAL_PAGES_SITE_ADMIN/);
 
-  assert.match(anaJs, /var TOTAL_PAGES_SITE = 154;/);
+  assert.match(anaJs, /var TOTAL_PAGES_SITE = 155;/);
   assert.match(anaJs, /chargerTotalPagesSite\(\)/);
   assert.match(anaJs, /fetch\("assets\/pages-couverture\.json", \{ cache: "no-cache" \}\)/);
   assert.doesNotMatch(anaJs, /var TOTAL_PAGES_SITE = 124;/);
@@ -91,14 +91,14 @@ test('v583 : le tableau de bord et l’analytique lisent le manifeste, sans « 1
 
 test('v583 : les libellés affichés suivent le même nombre', () => {
   const adminHtml = read('admin.html');
-  assert.match(adminHtml, /couverture sur <b>154 pages<\/b>/);
-  assert.match(adminHtml, /Couverture 154 pages/);
+  assert.match(adminHtml, /couverture sur <b>155 pages<\/b>/);
+  assert.match(adminHtml, /Couverture 155 pages/);
   assert.doesNotMatch(adminHtml, /couverture sur <b>124 pages<\/b>/);
 
   const readme = read('README.md');
-  assert.match(readme, /couverture sur \*\*154 pages\*\*/);
-  assert.match(readme, /Anneau de couverture sur \*\*154 pages\*\*/);
-  assert.match(readme, /taux réel d'exploration des \*\*154 pages\*\*/);
+  assert.match(readme, /couverture sur \*\*155 pages\*\*/);
+  assert.match(readme, /Anneau de couverture sur \*\*155 pages\*\*/);
+  assert.match(readme, /taux réel d'exploration des \*\*155 pages\*\*/);
 });
 
 test('v583 : le repli hors-ligne de la roue reflète le manifeste et le Service Worker suit', () => {
@@ -116,12 +116,12 @@ test('v583 : le repli hors-ligne de la roue reflète le manifeste et le Service 
   /* v592 : admin.js repart au lot « connexions-gz-v592 » (lecture des archives .gz),
      les autres fichiers du décompte restent au lot v583. */
   const revisionsAttendues = {
-    './assets/pages-couverture.json': 'tp6-capsule-v616',
-    './assets/js/admin.js': 'guide-exercice-liste-v621',
-    './assets/js/analytique.js': 'tp6-capsule-v616',
+    './assets/pages-couverture.json': 'retrait-mission-cinema-v633',
+    './assets/js/admin.js': 'retrait-mission-cinema-v633',
+    './assets/js/analytique.js': 'retrait-mission-cinema-v633',
     './assets/js/admin-couverture.js': 'couverture-v583',
-    './assets/js/roue-couverture.js': 'tp6-capsule-v616',
-    './admin.html': 'admin-labo3-mobile-v632'
+    './assets/js/roue-couverture.js': 'retrait-mission-cinema-v633',
+    './admin.html': 'retrait-mission-cinema-v633'
   };
   for (const [url, revision] of Object.entries(revisionsAttendues)) {
     const ligne = sw.split('\n').find((l) => l.includes('url: "' + url + '"'));

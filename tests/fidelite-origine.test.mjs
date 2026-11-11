@@ -77,7 +77,7 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
        autorise l’API du dépôt ; empreinte réactualisée, rien d’autre n’a bougé. */
     /* v623 : admin.html monte le « Guide exercice » quel que soit le chemin
        d’ouverture (onglet dédié ou « Tout déplier »), et son cache-buster
-       admin.js reste servi sous la révision guide-exercice-liste-v621.
+       admin.js reste servi sous la révision retrait-mission-cinema-v633.
        L’empreinte est réactualisée : la page a bien changé, le reste du socle
        (accès, roue, Cote) est inchangé. */
     /* Labo 3 : le panneau est ramené à trois gestes (télécharger l'installateur
@@ -85,7 +85,7 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
        restreint — relevé des postes, paire de clés Ed25519, signature, workflow —
        est replié dans un <details> optionnel. Empreinte réactualisée : seul ce
        bloc a bougé, le reste du socle est inchangé. */
-    'admin.html': '4b491a493f3bfcdf2f74144fd01c15b8d089296163e2cc9717d6a3158de9fa52',
+    'admin.html': '61ff7992963696f9ee3f3735b5b35cafa9e3bfd3c8e1bcbe04ebba75893e67dd',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };
@@ -137,14 +137,14 @@ function dureeMp4(path) {
   } finally { closeSync(fd); }
 }
 
-test('catalogue : fichiers réels, 27 entrées distinctes, durées MP4 et restrictions', () => {
+test('catalogue : fichiers réels, 26 entrées distinctes, durées MP4 et restrictions', () => {
   const js = lire('assets/js/app.js');
   const texte = js.split('var CATALOGUE_VIDEOS = ')[1].split('\n  ];')[0] + '\n  ]';
   const catalogue = vm.runInNewContext('(' + texte + ')');
-  assert.equal(catalogue.length, 27);
+  assert.equal(catalogue.length, 26);
   assert.equal(new Set(catalogue.map(v => v.id)).size, catalogue.length);
   const comptes = {}; for (const v of catalogue) comptes[v.matiere] = (comptes[v.matiere] || 0) + 1;
-  assert.deepEqual(comptes, { sti:1, html5:4, css3:4, javascript:8, sql:5, php:5 });
+  assert.deepEqual(comptes, { sti:1, html5:4, css3:4, javascript:8, sql:4, php:5 });
   assert.ok(catalogue.some(v => v.id === 'tp-evenements-liens'
     && v.matieres.join() === 'html5,css3'
     && v.srcPrincipal === 'assets/videos/tp-evenements-liens-v2.mp4'
@@ -184,14 +184,14 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
   }
   assert.doesNotMatch(delta, /"\.\/[^"\n]+\.(?:mp4|mp3|pdf|wasm)"/i);
   for (const chemin of ['assets/css/cours.css','assets/js/app.js','assets/js/cours-matieres.js','cours/html5.html','cours/css3.html','cours/javascript.html','cours/sql.html','cours/php.html']) {
-    const revision = chemin === 'assets/js/app.js' ? 'retrait-display-v628'
+    const revision = chemin === 'assets/js/app.js' ? 'retrait-mission-cinema-v633'
       : chemin === 'assets/css/cours.css' ? 'retrait-fond-cours-v508'
       : chemin === 'cours/css3.html' ? 'retrait-explore-float-v629'
       : chemin === 'cours/html5.html' ? 'retrait-explore-float-v629'
       : chemin === 'cours/javascript.html' ? 'cours-sti-v595'
       : chemin === 'cours/php.html' ? 'cours-sti-v595'
       /* v563 : cours/sql.html reçoit la convention d'écriture d'un schéma. */
-      : chemin === 'cours/sql.html' ? 'serie7-sql-v627'
+      : chemin === 'cours/sql.html' ? 'retrait-mission-cinema-v633'
       : chemin.startsWith('cours/') ? 'retrait-fond-cours-v508' : 'progression-chapitres-v492';
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${revision}"`), `révision de ${chemin}`);
   }
@@ -258,7 +258,7 @@ test('commandes d’administration : scripts et fonctions de la barre PC inchang
      v615 : la section prend ses couleurs dans la palette (lisible en mode ardoise)
      et son bandeau récapitulatif s'affiche ; empreinte réactualisée. */
   /* v596 : TOTAL_PAGES_SITE_ADMIN passe à 150 (repli hors manifeste). */
-  assert.equal(sha('assets/js/admin.js'), 'b8f5b7b3599e29eac6679703ebb44bdd02ccc3bb132fc26ef54813ad4a808ce2');
+  assert.equal(sha('assets/js/admin.js'), '853bbd2e59dd09b16043b6f2690df32114026cf3dc6436acb1b31db36cb84dac');
   assert.equal(sha('assets/js/rayonsx-surligneur.js'), '1b7fe2067629766ef4043fa3060199b71124d8486e36d92aaac0b45bd861847c');
   const protection = lire('assets/js/protection.js');
   const debut = protection.indexOf('  function estAppareilPC()');
@@ -277,14 +277,14 @@ test('banques et données JSON d’origine conservées ; retour de quiz ajouté 
     /* v583 : pages-couverture.json n'est plus une liste de 124 entrées à casse
        minuscules : 145 pages réelles, casse exacte, n calculé. */
     /* v595 : entrée des quatre ateliers d'exercices « Systèmes » (ajout en tête). */
-    'assets/data/nouveautes.json': '0f8383aa87ac06c56abe2e1d117938197d8b02e002810db1b5a011152184447c',
+    'assets/data/nouveautes.json': '583fb1f447c54aabe02e8145318bc98696e54b52c148ec1f78cf337365177ae1',
     'assets/data/quiz-banque.json': '04a76ac1dd25d0b3817f44e8edd518fd944ea8275f9a450024ecf572800860a5',
     'assets/data/smart-book-2026.json': '2d2b3ddcf1d6b345c82de99eac119ab5be301c1e7ebfdaa577c19b2c88196a68',
     /* v573 : édition 2026 du manuel 3ème SI — 81 pages, la partie « Systèmes,
        technologies et Internet » (p. 5 à 13) précède les 53 fiches. */
     'assets/data/smart-book-3si-2026.json': 'fc31d42ecaa3eaa0e7b9253de98ae1e50261d6d6f4f4bacc33aaf56375f7b0ab',
         /* v597 : 154 pages réelles (145 + cinq ateliers « Systèmes » + galerie). */
-    'assets/pages-couverture.json': 'ad574f4be9cbde512e91973eb384fc2436227d7739a479065a7768a92a832e66',
+    'assets/pages-couverture.json': 'e7cf9defa1e5547604c0ac9cf0bf5181cb9c7da9a62bea6f9677c0cc6d728835',
     'manifest.webmanifest': '9803f124c0bb3736f3749ffcf9f0ffd63930a6a2a23e6cafeccfde0d61892e1f'
   };
   for (const [chemin, empreinte] of Object.entries(json)) {
@@ -456,7 +456,7 @@ test('v513 : les totaux de vidéos de l’accueil suivent le catalogue', () => {
   const compter = (cle) => catalogue.filter((v) => ((v.matieres || [v.matiere]).indexOf(cle) !== -1)).length;
   const total = catalogue.length;
   /* Une seule source de vérité : 28 entrées depuis l’ajout de la capsule SQL TP6, dont le cours STI. */
-  assert.equal(total, 27);
+  assert.equal(total, 26);
   assert.ok(index.includes(`data-video-filter="all">Toutes (${total})</button>`), 'pastille « Toutes »');
   assert.match(index, new RegExp(`id="videosTotalNombre">${total}</span>`));
   /* Les pastilles par matière, les cartes de cours et le pied de page disent la même chose. */

@@ -71,16 +71,16 @@ test('le module compile et s’exporte même hors du tableau de bord', () => {
   for (const nom of ['catalogue', 'analyser', 'pourcentageMedia', 'vuesDeLEntree', 'charger', 'rendre']) {
     assert.equal(typeof api[nom], 'function', nom);
   }
-  assert.equal(api.catalogue().length, 34, 'catalogue complet (28 capsules + 6 médias de cours)');
+  assert.equal(api.catalogue().length, 33, 'catalogue complet (28 capsules + 6 médias de cours)');
 });
 
 /* ───────────────────────── 2. le catalogue suit la vitrine de l’accueil ───────────────────────── */
 
-test('le catalogue du coin reprend les 28 capsules publiques de app.js, sans doublon', () => {
+test('le catalogue du coin reprend les 26 capsules publiques de app.js, sans doublon', () => {
   const app = lire('assets/js/app.js');
   const bloc = app.slice(app.indexOf('var CATALOGUE_VIDEOS = ['), app.indexOf('\n  ];', app.indexOf('var CATALOGUE_VIDEOS = [')));
   const idsVitrine = [...bloc.matchAll(/id:\s*"([^"]+)"/g)].map((m) => m[1]);
-  assert.equal(idsVitrine.length, 28, 'vingt-huit capsules sur l’accueil');
+  assert.equal(idsVitrine.length, 26, 'vingt-six capsules sur l’accueil');
   const fenetre = chargerModule(lire(MODULE));
   const catalogue = fenetre.STI_VUES_VIDEOS.catalogue();
   const ids = catalogue.map((v) => v.id);
@@ -462,19 +462,19 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
      v557 : admin.html repart à son tour (cache-buster admin.js en ?v=557-perf) :
      deux fichiers restent au lot v531. */
   assert.equal((sw.match(new RegExp('revision: "' + REV + '"', 'g')) || []).length, 2, 'deux fichiers restent au lot v531');
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "tp6-detail-v618"/, 'le lecteur repart au lot v545');
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "retrait-mission-cinema-v633"/, 'le lecteur repart au lot v545');
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   for (const chemin of ['assets/js/reconnexion-profil.js',
     'assets/js/reprendre.js']) {
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${REV}"`), chemin);
   }
-  assert.ok(delta.includes('url: "./admin.html", revision: "admin-labo3-mobile-v632"'),
+  assert.ok(delta.includes('url: "./admin.html", revision: "retrait-mission-cinema-v633"'),
     'la page d’administration repart au lot v585 (Smart Book 3SI à 81 pages)');
   /* v613 : le coin des vues porte désormais sa propre révision (comptage en base). */
-  assert.ok(delta.includes('url: "./assets/js/admin-vues-videos.js", revision: "tp6-capsule-v616"'),
+  assert.ok(delta.includes('url: "./assets/js/admin-vues-videos.js", revision: "retrait-mission-cinema-v633"'),
     'le coin des vues suit la v613 (inchangé en v614)');
   assert.match(delta, /url: "\.\/assets\/js\/sync-progressions\.js", revision: "pastille-sync-v534"/);
-  assert.match(delta, /url: "\.\/offline-complete-manifest\.json", revision: "admin-labo3-mobile-v632"/);
+  assert.match(delta, /url: "\.\/offline-complete-manifest\.json", revision: "retrait-mission-cinema-v633"/);
   /* Budget du delta préservé : le module entre dans la liste, une annexe figée en sort. */
   const urls = [...delta.matchAll(/url:\s*"([^"]+)"/g)].map((m) => m[1]);
   assert.equal(new Set(urls).size, urls.length, 'aucun doublon');
