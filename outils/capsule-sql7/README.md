@@ -21,3 +21,13 @@ Installer Python 3, Pillow et imageio-ffmpeg, puis exécuter `python3 outils/cap
 Pour le recréer : `python3 outils/capsule-sql7/render-v4.py` avec Pillow et imageio-ffmpeg. Le script extrait la vidéo v3 du commit `cfe853de7e0c83d7e0fd4be80919f1f22a20bce3`, puis utilise les neuf prises dans `voix-v3/`. `node --test tests/capsule-sql7-v4-apercu.test.mjs` vérifie les quatre requêtes sur les données du TP.
 
 **À terminer** : la main est un repère mobile, pas une véritable écriture progressive de chaque texte. Le cours original reste en basse résolution agrandie. La devise dans la narration originale n'a pas été vérifiée à l'écoute et le remplacement visuel reste à affiner. La synchronisation et les sous-titres complets restent à réaliser et à vérifier. La v4 ne doit pas être présentée comme terminée.
+
+## Travail v5 — comparaison des missions D et E
+
+`apercu-comparaisons-v5.mp4` est un aperçu autonome, non raccordé au cours : représentation textuelle et données de la base, puis missions 1 à 5 en trois colonnes. Les requêtes sont extraites du corrigé HTML et leurs résultats sont exécutés sur `boutique.sql` par `preparer-v5.py`, qui génère `storyboard-v5.json`. `rendu-comparaisons-v5.py` utilise ce storyboard et les prises dans `voix-v5/` pour produire l'aperçu. Vérifier avec `node --test tests/capsule-sql7-comparaisons-v5.test.mjs`.
+
+`apercu-complet-v5.mp4` est un montage de travail de 22 min 06 : il conserve la voix originale du cours, masque la mention « Vidéo 8 - Formation », corrige visuellement la ligne HAVING et emploie la même nouvelle voix pour la suite. Il place la représentation de la base avant la suite et les missions avant « À retenir ». Des repères visuels distinguent notamment les parties intérieure et extérieure de la sous-requête.
+
+**À vérifier avant remplacement du site** : les coupures audio approximatives autour de 12:40 et 13:21 doivent être contrôlées à l’écoute pour s'assurer qu’elles retirent effectivement « euros » sans couper les explications ; les masquages, les repères et la synchronisation doivent être revus sur toute la durée. Les sous-titres complets restent à créer. Les tables et résultats n'apparaissent pas encore ensemble sur tous les plans de requêtes.
+
+Pour reconstruire l'aperçu complet, exécuter d'abord `python3 outils/capsule-sql7/preparer-v5.py` puis `python3 outils/capsule-sql7/rendu-comparaisons-v5.py`, puis `python3 outils/capsule-sql7/render-v5.py`. Les fichiers intermédiaires `base-v5.mp4` et `missions-v5.mp4` sont générés par le deuxième script.

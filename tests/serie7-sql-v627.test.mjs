@@ -19,7 +19,7 @@ test('la série 7 est accessible dans les deux catalogues SQL', () => {
 });
 
 test('la v627 actualise les pages appelantes sans précharger les PDF', () => {
-  assert.match(sw, /VERSION_PUBLIEE = "v641"/);
+  assert.match(sw, /VERSION_PUBLIEE = "v642"/);
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   for (const path of ['cours/sql.html', 'exercices/series-exercices.html']) {
     assert.ok(delta.includes(`{ url: "./${path}", revision: "${path === 'cours/sql.html' ? 'capsule-sql7-v640' : 'retrait-mission-cinema-v633'}", refreshIfCached: true }`));
