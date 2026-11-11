@@ -13,3 +13,11 @@ Installer Python 3, Pillow et imageio-ffmpeg, puis exécuter `python3 outils/cap
 `assets/videos/sql-serie7-groupby-having-sous-requetes-v3.mp4` est la version provisoire liée au site, à finaliser. Elle reprend la source historique `assets/videos/GroupBy-Having.mp4` du commit `6d4bb1c` (640 × 360, agrandie en 1920 × 1080), suivie d'une nouvelle séquence narrée. Refaire la maquette avec `python3 outils/capsule-sql7/render-v3.py`, après installation de Pillow et imageio-ffmpeg ; les prises sont dans `voix-v3/` et le commit source doit être disponible dans l'historique Git.
 
 **À finaliser** : contrôler à l'écoute la narration originale et la mention de la devise, corriger le masquage et l'alignement de « Dinars », et réaliser les animations au marqueur et les comparaisons demandées. Les sous-titres ne sont pas encore créés pour cette maquette. L'agrandissement ne rétablit pas les détails absents de la source basse résolution.
+
+## Aperçu v4 — en cours de réalisation
+
+`outils/capsule-sql7/apercu-v4.mp4` conserve le générique et le cours de la v3, puis reprend la séquence finale avec une main au marqueur mobile et une comparaison côte à côte des deux résultats. La comparaison distingue les colonnes différentes des mêmes vendeurs retenus. Cet aperçu n'est pas relié au site.
+
+Pour le recréer : `python3 outils/capsule-sql7/render-v4.py` avec Pillow et imageio-ffmpeg. Le script extrait la vidéo v3 du commit `cfe853de7e0c83d7e0fd4be80919f1f22a20bce3`, puis utilise les neuf prises dans `voix-v3/`. `node --test tests/capsule-sql7-v4-apercu.test.mjs` vérifie les quatre requêtes sur les données du TP.
+
+**À terminer** : la main est un repère mobile, pas une véritable écriture progressive de chaque texte. Le cours original reste en basse résolution agrandie. La devise dans la narration originale n'a pas été vérifiée à l'écoute et le remplacement visuel reste à affiner. La synchronisation et les sous-titres complets restent à réaliser et à vérifier. La v4 ne doit pas être présentée comme terminée.

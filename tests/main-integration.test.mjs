@@ -60,8 +60,8 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
   assert.equal(revisions.get('./assets/js/app.js'), 'capsule-sql7-v640');
   assert.equal(revisions.get('./index.html'), 'capsule-sql7-v638');
-  assert.equal(revisions.get('./offline-complete-manifest.json'), 'capsule-sql7-v640');
-  assert.equal(revisions.get('./README.md'), 'capsule-sql7-v640');
+  assert.equal(revisions.get('./offline-complete-manifest.json'), 'apercu-sql7-v641');
+  assert.equal(revisions.get('./README.md'), 'apercu-sql7-v641');
   /* v585 : le tableau de bord annonce le Smart Book 3ᵉ SI à 81 pages ; le drapeau reste au lot v503. */
   assert.equal(revisions.get('./dashboard.html'), 'flamme-regularite-v611');
   assert.equal(revisions.get('./assets/images/drapeau-tunisie.svg'), 'accueil-lycee-v503');
