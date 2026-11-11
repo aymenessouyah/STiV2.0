@@ -134,5 +134,5 @@ test('panneau : aucune clé stockée ni envoyée, lien du workflow déduit du d�
   assert.match(html, /cocher <code>publier<\/code>/, 'la case publier est expliquée');
   assert.match(html, /ne demande ni ne manipule aucun jeton/, 'l’absence de jeton est dite explicitement');
   assert.match(html, /openssl genpkey -algorithm ed25519/, 'une voie sans navigateur est proposée');
-  assert.match(html, /admin-labo3\.js\?v=4/);
+  assert.match(html, /admin-labo3\.js\?v=5/);
 });

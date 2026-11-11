@@ -210,13 +210,13 @@ test('v613 — le coin « Vues des vidéos » complète les élèves absents de 
 test('v613 — publication : version, cache-busters et révisions', () => {
   /* v614 : la publication avance (« Guide exercice ») ; le coin des vues, lui,
      garde son lot. */
-  assert.match(sw, /var VERSION_PUBLIEE = "v631";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v632";/);
   assert.match(sw, /v618-tp6-detail-20261104/);
   assert.match(adminHtml, /assets\/js\/admin\.js\?v=615-perf/);
   assert.match(adminHtml, /assets\/js\/admin-vues-videos\.js\?v=613-perf/);
   assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "guide-exercice-liste-v621" }'));
   assert.ok(sw.includes('{ url: "./assets/js/admin-vues-videos.js", revision: "tp6-capsule-v616" }'));
-  assert.ok(sw.includes('{ url: "./admin.html", revision: "admin-mobile-v631", refreshIfCached: true }'));
+  assert.ok(sw.includes('{ url: "./admin.html", revision: "admin-labo3-mobile-v632", refreshIfCached: true }'));
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);
 });

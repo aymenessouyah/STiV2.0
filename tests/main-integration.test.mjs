@@ -60,7 +60,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
   assert.equal(revisions.get('./assets/js/app.js'), 'retrait-display-v628');
   assert.equal(revisions.get('./index.html'), 'retrait-display-v628');
-  assert.equal(revisions.get('./offline-complete-manifest.json'), 'admin-mobile-v631');
+  assert.equal(revisions.get('./offline-complete-manifest.json'), 'admin-labo3-mobile-v632');
   assert.equal(revisions.get('./README.md'), 'tp6-detail-v618');
   /* v585 : le tableau de bord annonce le Smart Book 3ᵉ SI à 81 pages ; le drapeau reste au lot v503. */
   assert.equal(revisions.get('./dashboard.html'), 'flamme-regularite-v611');
@@ -69,7 +69,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./assets/js/news-perso.js'), 'ruban-vert-v517');
   /* v507 : ruban sans logo et compteurs de vidéos. */
   assert.equal(revisions.get('./assets/css/theme.css'), 'flamme-regularite-v611');
-  assert.equal(revisions.get('./admin.html'), 'admin-mobile-v631');
+  assert.equal(revisions.get('./admin.html'), 'admin-labo3-mobile-v632');
   assert.equal(revisions.get('./assets/js/sante.js'), 'tp-transitions-v512');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */
   assert.equal(revisions.get('./index.html'), 'retrait-display-v628');

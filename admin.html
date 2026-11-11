@@ -2057,7 +2057,15 @@
     })();
   </script>
   <link rel="stylesheet" href="assets/fonts/fonts.css" />
-  <link rel="stylesheet" href="assets/css/admin-saas.css?v=631" />
+  <link rel="stylesheet" href="assets/css/admin-saas.css?v=632" />
+  <!-- Garder le tableau plein écran même si une ancienne feuille est encore
+       présente dans le cache hors ligne ; ne pas modifier les commandes PC. -->
+  <style>
+    @media screen and (max-width: 768px) {
+      html { width: 100vw !important; max-width: 100vw !important; overflow-x: hidden; overflow-x: clip; }
+      html body.cockpit-airbus { width: 100vw !important; min-width: 0; max-width: 100vw !important; zoom: 1 !important; }
+    }
+  </style>
 </head>
 <body class="cockpit-airbus">
 
@@ -2513,7 +2521,7 @@
       <span class="ca-ico"><img src="assets/icons/sti-logo-complet.png" alt="Logo officiel STI v2.0" width="44" height="44" style="object-fit:contain"></span>
       <span class="ca-corps">
         <span class="ca-titre">STI v2.0 version spéciale Labo 3</span>
-        <span class="ca-desc">Préparer le support · nouvel installateur en développement</span>
+        <span class="ca-desc">Préparer le support · téléchargement et paquet</span>
       </span>
     </a>
 
@@ -2547,20 +2555,20 @@
       <h2 id="titre-aide-windows-v316">🪟 STI v2.0 version spéciale Labo 3 — guide et assistance</h2>
       <div class="aide-windows-meta" aria-label="Informations techniques">
         <span>Windows 10/11 x64</span>
-        <span>Nouvel installateur en développement</span>
+        <span>Release vérifiée ci-dessous</span>
         <span>Hors ligne après installation</span>
       </div>
     </div>
     <div class="aide-windows-grille">
       <details><summary>📘 Nouveau guide Windows</summary><div class="aide-windows-contenu">
         <p>Le nouvel installateur « STI v2.0 version spéciale Labo 3 » remplace l’ancien parcours. Aucun mot de passe du compte Labo3 ne sera demandé.</p>
-        <p>Préparer le paquet complet et l’autorisation signée ci-dessous. L’exécutable ne sera proposé qu’après compilation et validation Windows.</p>
+        <p>Préparer le paquet complet et télécharger l’installateur depuis la release vérifiée ci-dessous. L’autorisation signée est réservée au parcours restreint facultatif.</p>
       </div></details>
       <details><summary>🔐 Autorisations des postes</summary><div class="aide-windows-contenu">
         <p>20 postes maximum, autorisation signée vérifiable hors ligne. La clé privée reste chez l’administrateur. Ne jamais la copier sur le support distribué.</p>
       </div></details>
       <details><summary>🛠️ État et assistance</summary><div class="aide-windows-contenu">
-        <p>Ne pas utiliser l’ancien EXE avec les nouveaux paquets. Aucun exécutable validé n’est encore publié. Ne pas désinstaller une version fonctionnelle avant validation du remplacement.</p>
+        <p>Ne pas utiliser l’ancien EXE avec les nouveaux paquets. Vérifier l’empreinte du téléchargement et tester l’installateur sur Windows avant de remplacer une version fonctionnelle.</p>
       </div></details>
     </div>
     <div class="stipack-bloc" id="bloc-labo3-support" aria-labelledby="labo3-titre">
@@ -2570,7 +2578,7 @@
         <li><strong>Télécharger l’installateur.</strong>
           <a class="btn-outil btn-outil-desactive" id="labo3-installateur-lien" aria-disabled="true">Téléchargement indisponible</a>
           <button type="button" class="btn-outil" id="labo3-installateur-verifier">Vérifier la release</button>
-          <span id="labo3-installateur-etat" role="status" aria-live="polite">Vérification en cours…</span>
+          <span id="labo3-installateur-etat" role="status" aria-live="polite" style="min-width:0;max-width:100%;overflow-wrap:anywhere;word-break:break-word">Vérification en cours…</span>
           L’exécutable est publié automatiquement par la CI dans la release <code>labo3-windows</code> dès qu’une modification de l’outil Windows arrive sur <code>main</code> : le lien ci-dessus s’active seul et affiche le SHA-256 à comparer après téléchargement.</li>
         <li><strong>Créer le paquet de la dernière mise à jour.</strong>
           Utiliser <a href="#bloc-stipack">Nouveau stipack</a> ci-dessous avec « Tout le site », puis télécharger le <code>.stipack</code>. Les empreintes des fichiers sont incluses dans le paquet.</li>
@@ -5233,7 +5241,7 @@
 <script src="assets/js/sante.js?v=471" defer></script>
   <script src="assets/js/stipack.js?v=616" defer></script>
   <script src="assets/js/admin-stipack.js?v=616" defer></script>
-  <script src="assets/js/admin-labo3.js?v=4" defer></script>
+  <script src="assets/js/admin-labo3.js?v=5" defer></script>
 <!-- v606 : bouton du ruban « Services ». Il est placé hors écran tant que le
      ruban ne l'a pas adopté ; ensuite, la feuille de style de l'administration le
      remet dans le flux (position: static !important) avec les autres services. -->

@@ -2,7 +2,7 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: '.',
-  testMatch: 'browser-admin-mobile.spec.mjs',
+  testMatch: ['browser-admin-mobile.spec.mjs', 'browser-admin-labo3-mobile.spec.mjs'],
   use: {
     baseURL: 'http://127.0.0.1:4173',
     serviceWorkers: 'block',

@@ -75,7 +75,9 @@
     } catch (erreur) { return { publie: false, raison: 'dépôt injoignable : ' + erreur.message }; }
     if (reponse.status === 404) return { publie: false, raison: 'aucune release « ' + (options.tag || TAG_INSTALLATEUR) + ' » : l’installateur n’a pas encore été compilé avec votre clé publique.' };
     if (!reponse.ok) return { publie: false, raison: 'release illisible (HTTP ' + reponse.status + ')' };
-    var release = await reponse.json();
+    var release;
+    try { release = await reponse.json(); }
+    catch (erreur) { return { publie: false, raison: 'réponse de la release illisible : ' + erreur.message }; }
     var actifs = (release && release.assets) || [];
     var exe = actifs.filter(function (a) { return a && a.name === NOM_EXE; })[0] ||
       actifs.filter(function (a) { return a && /\.exe$/i.test(a.name || ''); })[0];
@@ -94,9 +96,18 @@
        publication la recopie ligne par ligne ; la lecture du fichier ne reste
        qu'un repli, pour les notices antérieures à ce réglage. */
     var empreinte = lireSommes(release.body)[exe.name];
+    /* GitHub fournit également le digest de chaque fichier dans l'API CORS.
+       Il évite de dépendre de l'hôte de téléchargement si la notice est vide. */
+    if (!/^[0-9a-f]{64}$/.test(empreinte || '') && /^sha256:[0-9a-f]{64}$/i.test(exe.digest || '')) {
+      empreinte = exe.digest.slice(7).toLowerCase();
+    }
     if (!/^[0-9a-f]{64}$/.test(empreinte || '')) {
       var texteSommes;
-      try { texteSommes = await (await chercher(sommes.browser_download_url, { cache: 'no-store' })).text(); }
+      try {
+        var reponseSommes = await chercher(sommes.browser_download_url, { cache: 'no-store' });
+        if (!reponseSommes.ok) throw new Error('HTTP ' + reponseSommes.status);
+        texteSommes = await reponseSommes.text();
+      }
       catch (erreur) { return { publie: false, raison: 'empreintes illisibles : ' + erreur.message + ' (notice de release sans somme).' }; }
       empreinte = lireSommes(texteSommes)[exe.name];
     }
