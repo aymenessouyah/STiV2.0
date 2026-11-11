@@ -310,11 +310,11 @@ test('v614 — l’administration écrit le réglage là où les élèves le lis
 test('v614 — publication : version, cache-busters, révisions et hors-ligne', () => {
   /* v615 : la publication avance (lisibilité en mode ardoise) ; le module élève,
      inchangé, garde son propre lot. */
-  assert.match(sw, /var VERSION_PUBLIEE = "v630";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v631";/);
   assert.match(sw, /v618-tp6-detail-20261104/);
   assert.match(adminHtml, /assets\/js\/admin\.js\?v=615-perf/);
   assert.ok(sw.includes('{ url: "./assets/js/guide-exercice.js", revision: "guide-exercice-tp6-v615" }'));
-  assert.ok(sw.includes('{ url: "./admin.html", revision: "guide-exercice-mount-v623" }'));
+  assert.ok(sw.includes('{ url: "./admin.html", revision: "admin-mobile-v631", refreshIfCached: true }'));
   assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "guide-exercice-liste-v621" }'));
   assert.ok(sw.includes('"./assets/js/guide-exercice.js"'), 'le module est livré hors ligne');
   assert.ok(sw.includes('"./assets/guide-exercice-catalogue.json"'), 'le catalogue aussi');

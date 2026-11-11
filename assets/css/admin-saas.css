@@ -4272,3 +4272,17 @@ html.admin-ardoise .tb-badge-photo-attente {
     print-color-adjust: exact !important;
   }
 }
+
+/* v631 : le tableau de bord mobile occupe toute la largeur, même après un
+   ancien mode deux vues. Les tableaux gardent leur défilement local. */
+@media (max-width: 768px) {
+  html { width: 100% !important; max-width: 100% !important; overflow-x: clip; }
+  html body, html body.cockpit-airbus { width: 100%; min-width: 0; max-width: 100% !important; zoom: 1 !important; }
+  .choix-vue-abonnes { display: flex; max-width: 100%; flex-wrap: wrap; border-radius: 18px !important; }
+  .stipack-commandes label { min-width: 0; max-width: 100%; flex-wrap: wrap; }
+  .stipack-commandes select { min-width: 0; max-width: 100%; }
+  .badge-supabase { max-width: 100%; height: auto !important; min-height: 27px; flex-wrap: wrap; row-gap: 2px !important; padding: 3px 11px !important; }
+  .sb-quota-identite, .sb-quota-quantite, #sb-pct-restant { white-space: nowrap; flex: 0 0 auto; }
+  .sb-quota-identite { display: inline-flex; align-items: center; gap: 5px; }
+  .jauge-sb-mini { flex: 0 0 34px; }
+}

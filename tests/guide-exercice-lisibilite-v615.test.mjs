@@ -136,13 +136,13 @@ test('v615 — le bandeau récapitulatif est peint avec la palette, pas en crèm
 /* ── 4. publication ─────────────────────────────────────────────────────── */
 
 test('v615 — publication : version, lot, cache-buster et révisions', () => {
-  assert.match(sw, /var VERSION_PUBLIEE = "v630";/);
-  assert.match(sw, /var PUBLIEE_LE = "2026-11-11T06:34:16Z";/);
-  assert.match(sw, /Historique lots : v630-cache-labo3-20261111, v629-retrait-explore-float-20261110, v628-retrait-video-display-20261110, v627-serie7-sql-20261110, v626-visionneuse-mission-cinema-20261109, v625-tp-css3-3si-20261107, v624-tp6-guide-20261104,/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v631";/);
+  assert.match(sw, /var PUBLIEE_LE = "2026-11-10T07:44:02Z";/);
+  assert.match(sw, /Historique lots : v631-admin-mobile-20261110, v630-cache-labo3-20261111, v629-retrait-explore-float-20261110, v628-retrait-video-display-20261110, v627-serie7-sql-20261110, v626-visionneuse-mission-cinema-20261109, v625-tp-css3-3si-20261107, v624-tp6-guide-20261104,/);
   assert.match(adminHtml, /assets\/js\/admin\.js\?v=615-perf/);
   assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "guide-exercice-liste-v621" }'));
-  assert.ok(sw.includes('{ url: "./admin.html", revision: "guide-exercice-mount-v623" }'));
-  assert.ok(sw.includes('{ url: "./offline-complete-manifest.json", revision: "retrait-explore-float-v629"'));
+  assert.ok(sw.includes('{ url: "./admin.html", revision: "admin-mobile-v631", refreshIfCached: true }'));
+  assert.ok(sw.includes('{ url: "./offline-complete-manifest.json", revision: "admin-mobile-v631"'));
   /* Le module élève et ses pages compagnons ont leur lot dédié. */
   assert.ok(sw.includes('{ url: "./assets/js/guide-exercice.js", revision: "guide-exercice-tp6-v615" }'));
   assert.ok(sw.includes('{ url: "./mission-cinema/correction-video.html", revision: "tp6-guide-v624", refreshIfCached: true }'));

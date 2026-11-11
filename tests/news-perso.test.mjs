@@ -230,7 +230,7 @@ test('v496 : le tableau de bord admin choisit la classe et saisit texte 1, texte
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);
   assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "ruban-vert-v517"/);
   assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "flamme-regularite-v611"/);
-  assert.match(sw, /url: "\.\/admin\.html", revision: "guide-exercice-mount-v623"/);
+  assert.match(sw, /url: "\.\/admin\.html", revision: "admin-mobile-v631"/);
   assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "guide-exercice-liste-v621"/);
   const shell = sw.split('var SHELL = [')[1].split('];')[0];
   assert.ok(shell.includes('"./assets/js/news-perso.js"'), 'le moteur du bandeau est dans le shell hors-ligne');
