@@ -2658,6 +2658,8 @@
 
       window.ouvrirVideoPasAPasSTI = function (slugOuUrl, titreOpt, startSecOpt) {
         var sSlug = String(slugOuUrl || "");
+        // Les vidéos des séries SQL 1 à 3 ont été retirées ; conserver les autres séries.
+        if (/(?:^|\/)sql-serie[123](?:\.mp4)?(?:[?#]|$)/i.test(sSlug)) return;
         /* Fichiers vidéo rattachés au lecteur commun pas à pas. */
         /* v500 : capsule du TP « événements, liens et arrière-plans », commune à HTML5 et CSS3. */
         var estTpEvenements = (sSlug === "tp-evenements-liens" || sSlug.indexOf("tp-evenements-liens") !== -1);

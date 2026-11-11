@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-11T21:10:36Z",
+  "generatedAt": "2026-11-11T21:58:57Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 791,
-  "totalBytes": 1184736047,
+  "totalFiles": 788,
+  "totalBytes": 1169228627,
   "files": [
     {
       "path": "404.html",
@@ -63,7 +63,7 @@
     {
       "path": "README.md",
       "bytes": 72538,
-      "gitSha": "10024aaa8cfa264aedca975704bd85ac584ca1ce"
+      "gitSha": "dc3d24ac56be1ade2e6d1cf456fc169efeb2d726"
     },
     {
       "path": "admin.html",
@@ -907,8 +907,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 254858,
-      "gitSha": "15e6bc01c00bf265f6411501829cae4a89de4898"
+      "bytes": 255035,
+      "gitSha": "707e362c603f85ce236dc1f1908bbc1614ec460c"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -1007,8 +1007,8 @@
     },
     {
       "path": "assets/js/sante.js",
-      "bytes": 10952,
-      "gitSha": "1a06d4de855974ac27335bc98e5f2cbecc168fef"
+      "bytes": 10655,
+      "gitSha": "dfc916dfae0b783a76314736d8297eb5f5795274"
     },
     {
       "path": "assets/js/sauvegarde.js",
@@ -1309,21 +1309,6 @@
       "path": "assets/videos/sql-cours-v7.mp4",
       "bytes": 21415071,
       "gitSha": "7b34acae19d76aade2b67a3ad207b805240912c3"
-    },
-    {
-      "path": "assets/videos/sql-serie1.mp4",
-      "bytes": 5329741,
-      "gitSha": "5d5d28bd4db0b48de53eabd1c451f91772b75151"
-    },
-    {
-      "path": "assets/videos/sql-serie2.mp4",
-      "bytes": 5257352,
-      "gitSha": "f751c2487f0e060996d53a65eed1bd8637a65a57"
-    },
-    {
-      "path": "assets/videos/sql-serie3.mp4",
-      "bytes": 4916681,
-      "gitSha": "0a29d69d49406283539e999d8f68a49f1aefb9cd"
     },
     {
       "path": "assets/videos/sql-serie4.mp4",
@@ -3167,8 +3152,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 102484,
-      "gitSha": "ccd8a7cab13f9f90d594df3d7f40e9c653b5eb38"
+      "bytes": 101231,
+      "gitSha": "10000ac1f4411f8400b9c5cf909efe3301630950"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3227,8 +3212,8 @@
     },
     {
       "path": "exercices/sql/Tp1-Correction-bd.html",
-      "bytes": 29332,
-      "gitSha": "80193f592ed955928504c3b3f40862e398555029"
+      "bytes": 28490,
+      "gitSha": "e9e07738dd559eb0438d9f3b4f9a3fed58cecaaa"
     },
     {
       "path": "exercices/sql/Tp1-bd.html",
@@ -3237,8 +3222,8 @@
     },
     {
       "path": "exercices/sql/Tp2-Correction-bd.html",
-      "bytes": 37761,
-      "gitSha": "6bb41695ca58e66572f0c0b80865361881855cc9"
+      "bytes": 36914,
+      "gitSha": "905f0ef6c9b3274511766d9c7eeeb8912af3b5bd"
     },
     {
       "path": "exercices/sql/Tp2-bd.html",
@@ -3247,8 +3232,8 @@
     },
     {
       "path": "exercices/sql/Tp3-Correction-bd.html",
-      "bytes": 32733,
-      "gitSha": "ea9388697138eba8cbda8284087a954d9fd590ca"
+      "bytes": 31881,
+      "gitSha": "bf482fbc8c978c5a6db9e046045b682ac4d41837"
     },
     {
       "path": "exercices/sql/Tp4-correction-bd.html",
@@ -3957,8 +3942,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 110795,
-      "gitSha": "eb48f2945f293bbfa40295814d7546d93d1a5127"
+      "bytes": 111063,
+      "gitSha": "b39a43f23b97b033d794bbede00e6f3d31e64d5c"
     }
   ]
 }

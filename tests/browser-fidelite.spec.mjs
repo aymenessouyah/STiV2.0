@@ -179,11 +179,11 @@ test('la signature vidéo historique conserve identifiants, titres et position o
     await expect.poll(() => page.locator('#sti-video-modal-player').evaluate(v => v.currentTime), {timeout:15000}).toBeGreaterThanOrEqual(23.5);
     await page.keyboard.press('Escape'); await expect(page.locator('#sti-video-modal-overlay')).toBeHidden();
   }
-  // Les anciennes séries non redéfinies passent au lecteur original.
-  await page.evaluate(() => window.ouvrirVideoPasAPasSTI('sql-serie2', 'Série historique', 10));
-  await expect(page.locator('#sti-video-modal-overlay')).toBeVisible();
-  await expect(page.locator('#sti-video-modal-title')).toContainText('Série historique');
-  await page.locator('#sti-video-modal-close').click();
+  // Les anciennes séries 1 à 3 ne doivent plus ouvrir le lecteur.
+  for (const slug of ['sql-serie1', 'sql-serie2', 'sql-serie3']) {
+    await page.evaluate(s => window.ouvrirVideoPasAPasSTI(s), slug);
+    await expect(page.locator('#sti-video-modal-overlay')).toBeHidden();
+  }
   await page.goto('/cours/javascript.html', { waitUntil:'domcontentloaded' });
   await page.evaluate(() => window.ouvrirVideoPasAPasSTI('javascript-cours','Titre JS',17));
   await expect(page.locator('#sti-video-modal-overlay')).toBeVisible(); await expect(page.locator('#sti-video-modal-title')).toHaveText('Titre JS');

@@ -27,7 +27,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v529 : reconnexion-profil.js fusionne les compteurs de vues par appareil. */
   assert.equal(revisions.get('./assets/js/reconnexion-profil.js'), 'vues-videos-v531');
   /* v625 : la page des séries référence le nouveau TP CSS3 3ème SI. */
-  assert.equal(revisions.get('./exercices/series-exercices.html'), 'retrait-mission-cinema-v633');
+  assert.equal(revisions.get('./exercices/series-exercices.html'), 'retrait-videos-sql-v645');
   assert.equal(revisions.get('./assets/js/cours-html5.js'), 'tp-display-v510');
   assert.equal(revisions.get('./assets/js/cours-css3.js'), 'retrait-display-v628');
   for (const chemin of ['assets/js/cours-javascript.js', 'assets/js/cours-matieres.js']) {
@@ -60,8 +60,8 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
   assert.equal(revisions.get('./assets/js/app.js'), 'serie7-corrige-v644');
   assert.equal(revisions.get('./index.html'), 'capsule-sql7-v638');
-  assert.equal(revisions.get('./offline-complete-manifest.json'), 'serie7-corrige-v644');
-  assert.equal(revisions.get('./README.md'), 'serie7-corrige-v644');
+  assert.equal(revisions.get('./offline-complete-manifest.json'), 'retrait-videos-sql-v645');
+  assert.equal(revisions.get('./README.md'), 'retrait-videos-sql-v645');
   /* v585 : le tableau de bord annonce le Smart Book 3ᵉ SI à 81 pages ; le drapeau reste au lot v503. */
   assert.equal(revisions.get('./dashboard.html'), 'flamme-regularite-v611');
   assert.equal(revisions.get('./assets/images/drapeau-tunisie.svg'), 'accueil-lycee-v503');
@@ -70,7 +70,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v507 : ruban sans logo et compteurs de vidéos. */
   assert.equal(revisions.get('./assets/css/theme.css'), 'flamme-regularite-v611');
   assert.equal(revisions.get('./admin.html'), 'tp6-exercices-v634');
-  assert.equal(revisions.get('./assets/js/sante.js'), 'tp-transitions-v512');
+  assert.equal(revisions.get('./assets/js/sante.js'), 'retrait-videos-sql-v645');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */
   assert.equal(revisions.get('./index.html'), 'capsule-sql7-v638');
   assert.equal(revisions.get('./assets/js/admin.js'), 'capsule-sql7-v638');
@@ -87,7 +87,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v526 : le lecteur commun suit la nouvelle capsule ; les sous-titres restent sur leur lot. */
   assert.equal(revisions.get('./assets/js/lecteur-commun.js'), 'capsule-sql7-v638');
   assert.equal(revisions.get('./assets/subtitles/validation-nom-prenom-js-fr.vtt'), 'video-js-validation-v485');
-  assert.equal(revisions.get('./assets/js/protection.js'), 'serie7-corrige-v644');
+  assert.equal(revisions.get('./assets/js/protection.js'), 'retrait-videos-sql-v645');
   for (const chemin of ['package.json', 'package-lock.json']) {
     assert.equal(revisions.get('./' + chemin), 'xp-operations-v487', chemin);
   }
