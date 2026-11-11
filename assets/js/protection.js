@@ -1623,7 +1623,7 @@
         source = source.split("?")[0].split("#")[0];
         var fichier = source.split("/").pop().toLowerCase().replace(/\.(mp4|webm|ogg|m3u8)$/i, "");
         if (!fichier) return "";
-        if (fichier === "sql-serie7-having-groupby-sous-requetes-v2" || fichier === "sql-serie7-group-by-having") return "sql-serie7-capsule";
+        if (fichier === "sql-serie7-groupby-having-sous-requetes-v3" || fichier === "sql-serie7-having-groupby-sous-requetes-v2" || fichier === "sql-serie7-group-by-having") return "sql-serie7-capsule";
         if (fichier === "td_sql_cinema_corrige" || fichier === "td_sql_cinema_corrige_v2" || fichier === "td_sql_cinema_corrige_v3") return "sql-tp6-mission-cinema";
         var i;
         for (i = 0; i < SLUGS_VIDEO_STI.length; i++) {
@@ -1774,6 +1774,7 @@
           "guichet-etapes": "php-guichet",
           "php-guichet-v10": "php-guichet",
           "sql-cours-v7": "sql-cours",
+          "sql-serie7-groupby-having-sous-requetes-v3": "sql-serie7-capsule",
           "sql-serie7-having-groupby-sous-requetes-v2": "sql-serie7-capsule",
           "sql-serie7-group-by-having": "sql-serie7-capsule",
           "td_sql_cinema_corrige": "sql-tp6-mission-cinema",
@@ -2306,8 +2307,6 @@
           contenu += '<track kind="subtitles" src="' + prefixeAssetsSTI() + 'subtitles/BouclePour-fr-v547.vtt" srclang="fr" label="Français" default />';
         } else if (slugVideo === "console-variables") {
           contenu += '<track kind="subtitles" src="' + prefixeAssetsSTI() + 'subtitles/ConsoleVariables-fr-v548.vtt" srclang="fr" label="Français" default />';
-        } else if (slugVideo === "sql-serie7-capsule") {
-          contenu += '<track kind="subtitles" src="' + prefixeAssetsSTI() + 'subtitles/sql-serie7-having-groupby-sous-requetes-v2-fr.vtt" srclang="fr" label="Français" default />';
         } else if (slugVideo === "php-variables") {
           contenu += '<track kind="subtitles" src="' + prefixeAssetsSTI() + 'subtitles/PhpVariables-fr-v549.vtt" srclang="fr" label="Français" default />';
         }
@@ -2671,7 +2670,7 @@
         /* v526 : correction vidéo du TP Train, Série 6 JavaScript. */
         var estTpTrain = (sSlug === "tp-train-serie6" || sSlug.indexOf("tp-train-serie6") !== -1);
         var estMissionCinema = (sSlug === "sql-tp6-mission-cinema" || sSlug.indexOf("TD_SQL_Cinema_corrige") !== -1 || sSlug.indexOf("td_sql_cinema_corrige") !== -1);
-        var estCapsuleSql7 = (sSlug === "sql-serie7-capsule" || sSlug.indexOf("sql-serie7-having-groupby-sous-requetes-v2") !== -1);
+        var estCapsuleSql7 = (sSlug === "sql-serie7-capsule" || sSlug.indexOf("sql-serie7-having-groupby-sous-requetes-v2") !== -1 || sSlug.indexOf("sql-serie7-groupby-having-sous-requetes-v3") !== -1);
         /* v527 : capsule « Les 37 Défis » — Tableau, Aléas & Captchas, Média. */
         var estDefis37 = (sSlug === "defis37-tableau-aleas-media" || sSlug.indexOf("defis37") !== -1);
         /* Capsule « Les boucles » : Pour, Répéter…jusqu'à, Tant que. */
@@ -2760,7 +2759,7 @@
         } catch (e) {}
         var url = estPhpChaines ? prefixeAssetsSTI() + "videos/PhpChaines-v566.mp4" : estDateJs ? prefixeAssetsSTI() + "videos/DateJS-v565.mp4" : estFonctionsChaine ? prefixeAssetsSTI() + "videos/FonctionsChaine-v564.mp4" : estBouclePour ? prefixeAssetsSTI() + "videos/BouclePour-v547.mp4" : estConsoleVariables ? prefixeAssetsSTI() + "videos/ConsoleVariables-v548.mp4" : estPhpVariables ? prefixeAssetsSTI() + "videos/PhpVariables-v549.mp4" : estDefis37 ? prefixeAssetsSTI() + "videos/defis37-tableau-aleas-media.mp4" : estTpTrain ? prefixeAssetsSTI() + "videos/tp-train-serie6.mp4" : estTpEvenements ? prefixeAssetsSTI() + "videos/tp-evenements-liens-v2.mp4" : estTpFormulaire ? prefixeAssetsSTI() + "videos/tp-formulaire-tableau-autre.mp4" : estTpDisplay ? prefixeAssetsSTI() + "videos/tp-display-float-position.mp4" : estTpTransitions ? prefixeAssetsSTI() + "videos/tp-transitions-animations.mp4" : estJsValidation ? prefixeAssetsSTI() + "videos/validation-nom-prenom-js.mp4" : estCssDisplay ? prefixeAssetsSTI() + "videos/displayanim.mp4" : estPhpSynthese ? prefixeAssetsSTI() + "videos/php-synthese.mp4" : estSqlInit ? resoudreUrlVideoSqlInit() : (estExploreFloat ? resoudreUrlVideoExploreFloat() : (estExploreFlex ? resoudreUrlVideoExploreFlex() : (estSqlSerie6 ? resoudreUrlVideoSqlSerie6() : (estSqlSerie5 ? resoudreUrlVideoSqlSerie5() : (estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estSqlSerie3 ? resoudreUrlVideoSqlSerie3() : (estSqlSerie2 ? resoudreUrlVideoSqlSerie2() : (estSqlSerie1 ? resoudreUrlVideoSqlSerie1() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet())))))))))))))));
         if (estMissionCinema) url = prefixeAssetsSTI() + "videos/sql-tp6-mission-cinema.mp4";
-        if (estCapsuleSql7) url = prefixeAssetsSTI() + "videos/sql-serie7-having-groupby-sous-requetes-v2.mp4";
+        if (estCapsuleSql7) url = prefixeAssetsSTI() + "videos/sql-serie7-groupby-having-sous-requetes-v3.mp4";
         if (estCoursSti) url = prefixeAssetsSTI() + "videos/CoursSystemesInternet-v578.mp4";
         var css3Qualite = "auto";
         if (estCss3) {
