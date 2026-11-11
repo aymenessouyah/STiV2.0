@@ -31,3 +31,11 @@ Pour le recréer : `python3 outils/capsule-sql7/render-v4.py` avec Pillow et ima
 **À vérifier avant remplacement du site** : les coupures audio approximatives autour de 12:40 et 13:21 doivent être contrôlées à l’écoute pour s'assurer qu’elles retirent effectivement « euros » sans couper les explications ; les masquages, les repères et la synchronisation doivent être revus sur toute la durée. Les sous-titres complets restent à créer. Les tables et résultats n'apparaissent pas encore ensemble sur tous les plans de requêtes.
 
 Pour reconstruire l'aperçu complet, exécuter d'abord `python3 outils/capsule-sql7/preparer-v5.py` puis `python3 outils/capsule-sql7/rendu-comparaisons-v5.py`, puis `python3 outils/capsule-sql7/render-v5.py`. Les fichiers intermédiaires `base-v5.mp4` et `missions-v5.mp4` sont générés par le deuxième script.
+
+## Aperçu v6 — corrigé rectifié par l'enseignant
+
+`apercu-complet-v6.mp4` adapte le montage v5 aux deux PDF fournis dans `references-v6/`. La nouvelle partie traite les sous-requêtes **non corrélées dans WHERE** : E1 (CA > 700), E2 (au moins trois catégories), E3 (prix ≥ 40 et CA > 500), E4 (prix supérieur à la moyenne), NOT IN et MAX. Les exemples antérieurs de sous-requête corrélée dans SELECT et de table dérivée dans FROM ne sont pas repris. Pour les missions 1 et 2, le corrigé ne propose pas de solution par sous-requête. Les résultats sont exécutés sur `boutique.sql`, y compris la distinction entre les noms seuls et les noms accompagnés du CA.
+
+Pour reconstruire : installer `pypdf`, `Pillow` et `imageio-ffmpeg`, puis exécuter `preparer-v6.py`, `rendu-comparaisons-v6.py` et `render-v6.py` dans cet ordre. Les sorties temporaires `base-v6.mp4` et `missions-v6.mp4` sont produites par le second script. Vérification : `node --test tests/capsule-sql7-corrige-v6.test.mjs`.
+
+Cet aperçu n'est pas encore lié au site ; les PDF du site n'ont pas été remplacés. La première partie est reprise de l'aperçu v5 : les coupures audio vers 12:40 et 13:21 restent à contrôler à l'écoute, les sous-titres complets et l'affichage simultané des tables et résultats sur tous les plans restent à finaliser.
