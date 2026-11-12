@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-12T00:04:20Z",
+  "generatedAt": "2026-11-12T00:20:21Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 789,
-  "totalBytes": 1259429572,
+  "totalBytes": 1259429587,
   "files": [
     {
       "path": "404.html",
@@ -63,7 +63,7 @@
     {
       "path": "README.md",
       "bytes": 72538,
-      "gitSha": "e7d0d7064a0d4dfb2dd435f6442f6b7f18168754"
+      "gitSha": "54aa54e4d8b1b54cafcf8d91898f327b11caf613"
     },
     {
       "path": "admin.html",
@@ -1462,8 +1462,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 147449,
-      "gitSha": "c855bc513e33dae37e51a55ef1f195c90abc7891"
+      "bytes": 147468,
+      "gitSha": "df17f177817ebd42818ed8ff52092110449fe77e"
     },
     {
       "path": "cours/systemes-technologies-internet.html",
@@ -3947,8 +3947,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 111685,
-      "gitSha": "9014927af47f6a1acb066290f1d936f11ad5d638"
+      "bytes": 111681,
+      "gitSha": "497e2404bf623ad0b6fe83e3ab248bc2b9bd024a"
     }
   ]
 }
