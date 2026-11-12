@@ -7,7 +7,7 @@ const mp4='assets/videos/sql-serie7-groupby-having-sous-requetes-v8.mp4';
 test('capsule série 7 provisoire sans sous-titres obsolètes', () => {
  const html=read('cours/sql.html');
  const section=html.split('<section id="videos"')[1].split('<div class="matiere-video-grid">')[0];
- assert.match(section, /Série 7 · Capsule SQL : HAVING, GROUP BY et sous-requêtes/);
+ assert.match(section, /Group by, Having,Sous requête,Group by vs Ss_req/);
  assert.ok(section.includes('../'+mp4)); assert.doesNotMatch(section, /<track/); assert.match(section, /sous-titres indisponibles/);
  assert.match(section, /preload="none"/);
  assert.ok(statSync(mp4).size > 1000000);

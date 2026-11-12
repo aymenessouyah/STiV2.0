@@ -11,7 +11,10 @@ test('repères v8 : quatre séquences et partie 8 décalée',()=>{
  assert.equal(ch.length,16);
  assert.deepEqual(Array.from(ch.slice(7,12),x=>x.t),[812.5,925.24,1105.41,1419.24,1662.87]);
  assert.deepEqual(Array.from(ch.slice(7,11),x=>x.short),['Sous-requêtes · extrait 1','Sous-requêtes · extrait 2','Sous-requêtes · extrait 3','Sous-requêtes · extrait 4']);
- assert.match(ch[11].short,/Partie 8/);
+ assert.equal(ch[0].short, "Partie 1 : Introduction");
+ assert.equal(ch[0].label, "0:00 · Partie 1 : Introduction");
+ assert.equal(ch[11].short, "Partie 8 : Group by vs sous_requête");
+ assert.equal(ch[11].label, "27:42 · Partie 8 : Group by vs sous_requête");
  for(let i=1;i<ch.length;i++)assert.ok(ch[i].t>ch[i-1].t);
 });
 test('le montage est publié sans téléchargement automatique et reste reconstructible',()=>{

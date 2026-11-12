@@ -6191,7 +6191,7 @@
     "video:sql-serie4": "SQL Série 4",
     "video:sql-serie4-2": "SQL Série 4.2 (GestLocation)",
     "video:sql-serie5": "SQL Série 5",
-    "video:sql-serie7-capsule": "SQL Série 7 — GROUP BY et HAVING",
+    "video:sql-serie7-capsule": "Group by, Having,Sous requête,Group by vs Ss_req",
     "video:sql-tp6-mission-cinema": "TP6 SQL — Mission cinéma",
     "video:sql-serie6": "SQL Série 6",
     "video:sql-guide-requete": "Guide Requête SQL",
@@ -6269,7 +6269,7 @@
     { key: "video:php-synthese", label: "Synthèse PHP", niveau: "4si" },
     { key: "video:php-guichet", label: "Guichet PHP/MySQLi", niveau: "4si" },
     { key: "video:sql-serie4", label: "SQL Série 4 (jointures)", niveau: "4si" },
-    { key: "video:sql-serie7-capsule", label: "SQL Série 7 — GROUP BY et HAVING", niveau: "4si" },
+    { key: "video:sql-serie7-capsule", label: "Group by, Having,Sous requête,Group by vs Ss_req", niveau: "4si" },
     { key: "video:sql-serie5", label: "SQL Série 5 (dates)", niveau: "4si" },
     { key: "video:sql-tp6-mission-cinema", label: "TP6 — Mission cinéma (correction)", niveau: "4si" },
   ];

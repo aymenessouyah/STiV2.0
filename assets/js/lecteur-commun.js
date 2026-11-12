@@ -25,7 +25,7 @@
     'sql-initiation': ['sql','Construire une requête SQL'],
     'sql-serie4': ['sql','Série 4 SQL'],
     'sql-serie5': ['sql','Série 5 SQL'],
-    'sql-serie7-capsule': ['sql','Capsule SQL Série 7 — GROUP BY, HAVING et sous-requêtes'],
+    'sql-serie7-capsule': ['sql','Group by, Having,Sous requête,Group by vs Ss_req'],
     'sql-tp6-mission-cinema': ['sql','Je fais tout le SQL — TP6 Mission cinéma'],
     'php-cours': ['php','Cours PHP'],
     'php-synthese': ['php','Synthèse PHP : gestion des élèves'],

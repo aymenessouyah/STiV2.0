@@ -462,7 +462,7 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
      v557 : admin.html repart à son tour (cache-buster admin.js en ?v=557-perf) :
      deux fichiers restent au lot v531. */
   assert.equal((sw.match(new RegExp('revision: "' + REV + '"', 'g')) || []).length, 2, 'deux fichiers restent au lot v531');
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "capsule-sql7-v646"/, 'le lecteur repart au lot v545');
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "capsule-sql7-v651"/, 'le lecteur repart au lot v545');
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   for (const chemin of ['assets/js/reconnexion-profil.js',
     'assets/js/reprendre.js']) {
@@ -471,10 +471,10 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
   assert.ok(delta.includes('url: "./admin.html", revision: "tp6-exercices-v634"'),
     'la page d’administration repart au lot v585 (Smart Book 3SI à 81 pages)');
   /* v613 : le coin des vues porte désormais sa propre révision (comptage en base). */
-  assert.ok(delta.includes('url: "./assets/js/admin-vues-videos.js", revision: "audit-video-v649"'),
+  assert.ok(delta.includes('url: "./assets/js/admin-vues-videos.js", revision: "capsule-sql7-v651"'),
     'le coin des vues suit la v613 (inchangé en v614)');
   assert.match(delta, /url: "\.\/assets\/js\/sync-progressions\.js", revision: "pastille-sync-v534"/);
-  assert.match(delta, /url: "\.\/offline-complete-manifest\.json", revision: "audit-video-v649"/);
+  assert.match(delta, /url: "\.\/offline-complete-manifest\.json", revision: "capsule-sql7-v651"/);
   /* Budget du delta préservé : le module entre dans la liste, une annexe figée en sort. */
   const urls = [...delta.matchAll(/url:\s*"([^"]+)"/g)].map((m) => m[1]);
   assert.equal(new Set(urls).size, urls.length, 'aucun doublon');
