@@ -1544,7 +1544,7 @@
       ];
       // Repères v8 : quatre extraits, écran-titre et suite déplacée.
       STI_CHAPITRES_MEDIA["sql-serie7-capsule"] = [
-        { t: 0, short: "Partie 1", label: "0:00 · Partie 1" },
+        { t: 0, short: "Partie 1 : Introduction", label: "0:00 · Partie 1 : Introduction" },
         { t: 116.3, short: "Partie 2", label: "1:56 · Partie 2" },
         { t: 232.7, short: "Partie 3", label: "3:52 · Partie 3" },
         { t: 349, short: "Partie 4", label: "5:49 · Partie 4" },
@@ -1555,7 +1555,7 @@
         { t: 925.24, short: "Sous-requêtes · extrait 2", label: "15:25 · Sous-requêtes · extrait 2" },
         { t: 1105.41, short: "Sous-requêtes · extrait 3", label: "18:25 · Sous-requêtes · extrait 3" },
         { t: 1419.24, short: "Sous-requêtes · extrait 4", label: "23:39 · Sous-requêtes · extrait 4" },
-        { t: 1662.87, short: "Partie 8 · Group by vs Sous_requête", label: "27:42 · Partie 8 · Group by vs Sous_requête" },
+        { t: 1662.87, short: "Partie 8 : Group by vs sous_requête", label: "27:42 · Partie 8 : Group by vs sous_requête" },
         { t: 1784.63, short: "Partie 9", label: "29:44 · Partie 9" },
         { t: 1900.97, short: "Partie 10", label: "31:40 · Partie 10" },
         { t: 2017.3, short: "Partie 11", label: "33:37 · Partie 11" },
@@ -2795,7 +2795,7 @@
           url = (css3Qualite === "480" || css3Qualite === "720") ? resoudreUrlVideoCss3Mobile() : resoudreUrlVideoCss3();
         }
         var titre = titreOpt || (estMissionCinema ? "Je fais tout le SQL · TP6 Mission cinéma, correction détaillée" : estBouclePour ? "🎥 Les boucles — Pour, Répéter…jusqu'à, Tant que" : estConsoleVariables ? "🎥 La console, les variables et les types" : estPhpVariables ? "🎥 PHP — Les variables, la portée et les types" : estDefis37 ? "🎥 Les 37 Défis — Tableau, Aléas & Captchas, Média" : estTpTrain ? "🎥 TP Train — correction détaillée (Série 6 JavaScript)" : estTpEvenements ? "🎥 TP — Événements, liens et arrière-plans (HTML5 & CSS3)" : estTpFormulaire ? "🎥 TP — Formulaire, tableau et autres balises (HTML5 & CSS3)" : estTpDisplay ? "🎥 TP — display, float et position (HTML5 & CSS3)" : estTpTransitions ? "🎥 TP — transitions et animations (CSS3)" : estJsValidation ? "🎥 JavaScript — Validation du champ Nom & Prénom (pas à pas)" : estCssDisplay ? "🎥 CSS3 — Display : la démo animée" : estPhpSynthese ? "🎥 PHP — Synthèse : gestion des élèves" : estSqlInit ? VIDEO_SQL_INIT_INFO.title : (estExploreFloat ? VIDEO_EXPLORE_FLOAT_INFO.title : (estExploreFlex ? VIDEO_EXPLORE_FLEX_INFO.title : (estSqlSerie6 ? VIDEO_SQL_SERIE6_INFO.title : (estSqlSerie5 ? VIDEO_SQL_SERIE5_INFO.title : (estSqlSerie4 ? VIDEO_SQL_SERIE4_INFO.title : (estSqlSerie3 ? VIDEO_SQL_SERIE3_INFO.title : (estSqlSerie2 ? VIDEO_SQL_SERIE2_INFO.title : (estSqlSerie1 ? VIDEO_SQL_SERIE1_INFO.title : (estHtml5 ? VIDEO_HTML5_INFO.title : (estCss3 ? VIDEO_CSS3_INFO.title : (estJs ? VIDEO_JS_INFO.title : (estPhpC ? VIDEO_PHP_COURS_INFO.title : (estSql ? VIDEO_SQL_INFO.title : (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title))))))))))))))));
-        if (estCapsuleSql7) titre = titreOpt || "🎥 Capsule SQL Série 7 — GROUP BY, HAVING et sous-requêtes";
+        if (estCapsuleSql7) titre = titreOpt || "🎥 Group by, Having,Sous requête,Group by vs Ss_req";
         if (estCoursSti) titre = titreOpt || "🎥 Cours — Systèmes, technologies et Internet (3ᵉ SI)";
 
         var overlay = document.getElementById("sti-video-modal-overlay");
