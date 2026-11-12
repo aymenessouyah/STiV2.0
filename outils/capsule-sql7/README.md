@@ -45,3 +45,7 @@ Cette version provisoire et les PDF rectifiés sont liés au site. La première 
 `assets/videos/sql-serie7-groupby-having-sous-requetes-v7.mp4` conserve la v6 avant et après 13:34 et insère à ce point, dans l’ordre, `sous_req1.mp4`, `sous_req2.mp4`, `sous_req3.mp4` et `sous_req4.mp4`. Ces quatre sources provenaient du commit `5d396e5` et ont été retirées du dépôt courant après montage. Pour reconstruire la v7, il faut les récupérer depuis cet historique ou fournir de nouveau les fichiers ; le script vérifie leur présence. Les repères du lecteur sont répartis autour des insertions et de la suite décalée. La vidéo est réencodée en 1080p H.264/AAC.
 
 La v6 reste disponible comme source. Les réserves de la v6 sur les coupures audio et les sous-titres restent valables ; les extraits ajoutés n'ont pas été revus intégralement sur le fond pédagogique.
+
+## Montage v8 — transition avant la partie 8
+
+La v8 conserve la v7 et déplace son passage de 13:31 à 13:33 au début de la partie 8. Le reste de 13:33 à 13:34 reste avant les extraits, conformément aux bornes demandées. Un écran noir de 0,5 seconde suit la partie 7 ; après l’extrait 4, un second écran noir de 0,5 seconde précède le titre « Group by vs Sous_requête » affiché 3 secondes, puis le passage déplacé et la suite. Reproduction avec `sh outils/capsule-sql7/montage-v8.sh` et FFmpeg ; les deux pistes sont découpées ensemble. Les réserves audio et sous-titres des versions précédentes restent valables.

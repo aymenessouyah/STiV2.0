@@ -6243,7 +6243,7 @@
     { key: "video:tp-formulaire-tableau-autre", label: "TP Formulaire et tableau", niveau: "tous" },
     { key: "video:tp-display-float-position", label: "TP display, float et position", niveau: "tous" },
     { key: "video:css3-cours", label: "Cours CSS3", niveau: "tous" },
-    { key: "video:css3-display", label: "Display CSS animé", niveau: "tous" },
+    { key: "video:css3-display", label: "Display CSS animé (retirée)", niveau: "tous", horsCatalogue: true, horsBilan: true },
     { key: "video:css-positionnement", label: "CSS Positionnement", niveau: "tous" },
     { key: "video:css-animee", label: "CSS Décoration", niveau: "tous" },
     { key: "video:tp-transitions-animations", label: "TP transitions et animations", niveau: "tous" },

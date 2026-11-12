@@ -5,13 +5,13 @@ import vm from 'node:vm';
 import { spawnSync } from 'node:child_process';
 const lire=p=>readFileSync(p,'utf8');
 const ancien='assets/videos/sql-serie7-group-by-having.mp4';
-const actuel='assets/videos/sql-serie7-groupby-having-sous-requetes-v7.mp4';
+const actuel='assets/videos/sql-serie7-groupby-having-sous-requetes-v8.mp4';
 test('catalogue, lecteur et suivi désignent la nouvelle capsule 4e SI',()=>{
  const js=lire('assets/js/app.js'), bloc=js.split('var CATALOGUE_VIDEOS = ')[1].split('\n  ];')[0]+'\n  ]';
  const cat=vm.runInNewContext('('+bloc+')'), entry=cat.find(v=>v.id==='sql-serie7-capsule');
- assert.ok(entry); assert.equal(entry.reserve4si,true); assert.equal(entry.srcPrincipal,actuel); assert.equal(entry.sousTitres,undefined); assert.equal(entry.dureeTexte,'37:26');
+ assert.ok(entry); assert.equal(entry.reserve4si,true); assert.equal(entry.srcPrincipal,actuel); assert.equal(entry.sousTitres,undefined); assert.equal(entry.dureeTexte,'37:30');
  assert.equal(cat.length,28); assert.equal(cat.filter(v=>v.matiere==='sql').length,6);
- assert.match(lire('assets/js/protection.js'),/if \(estCapsuleSql7\) url = prefixeAssetsSTI\(\) \+ "videos\/sql-serie7-groupby-having-sous-requetes-v7.mp4"/);
+ assert.match(lire('assets/js/protection.js'),/if \(estCapsuleSql7\) url = prefixeAssetsSTI\(\) \+ "videos\/sql-serie7-groupby-having-sous-requetes-v8.mp4"/);
  assert.doesNotMatch(lire('assets/js/protection.js'),/subtitles\/sql-serie7-having-groupby-sous-requetes-v2-fr.vtt/);
  assert.match(lire('assets/js/lecteur-commun.js'),/slug === 'sql-serie7-capsule'/);
  assert.match(lire('assets/js/admin-vues-videos.js'),/sql-serie7-capsule/);
@@ -21,7 +21,7 @@ test('catalogue, lecteur et suivi désignent la nouvelle capsule 4e SI',()=>{
  assert.equal(context.window.resoudreCleMediaDepuisUrlSTI(actuel,'VIDEO'),'video:sql-serie7-capsule');
  assert.equal(context.window.resoudreCleMediaDepuisUrlSTI(ancien,'VIDEO'),'video:sql-serie7-capsule');
  assert.equal(context.window.resoudreCleMediaDepuisUrlSTI('assets/videos/sql-serie7-having-groupby-sous-requetes-v2.mp4','VIDEO'),'video:sql-serie7-capsule');
- assert.match(lire('cours/sql.html'),/Version provisoire \(37 min 26\)/);
+ assert.match(lire('cours/sql.html'),/Version provisoire \(37 min 30\)/);
 });
 test('une ancienne URL vidéo en cache sert la nouvelle vidéo, y compris en Range',async()=>{
  const origin='https://example.test/site/'; const events={}; const store=new Map();

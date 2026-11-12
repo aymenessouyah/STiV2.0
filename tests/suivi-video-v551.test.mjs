@@ -212,7 +212,7 @@ test('le lot v551 est publié', () => {
   const sw = lire('sw.js');
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
   assert.match(sw, /var UPDATE_ID = "v582-journal-connexions"/);
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "capsule-sql7-v646"/);
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "capsule-sql7-v650"/);
   assert.ok(!sw.split('var UPDATE_FILES = [')[1].split('];')[0].includes('BouclePour-v547.mp4'),
     'les capsules restent hors du delta automatique');
 });

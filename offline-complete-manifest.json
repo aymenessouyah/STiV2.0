@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-12T00:20:21Z",
+  "generatedAt": "2026-11-12T06:32:06Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 789,
-  "totalBytes": 1259429587,
+  "totalFiles": 790,
+  "totalBytes": 1344356637,
   "files": [
     {
       "path": "404.html",
@@ -63,7 +63,7 @@
     {
       "path": "README.md",
       "bytes": 72538,
-      "gitSha": "54aa54e4d8b1b54cafcf8d91898f327b11caf613"
+      "gitSha": "f418fd0c2e0b3480c5836972e714e4007c1b033f"
     },
     {
       "path": "admin.html",
@@ -737,13 +737,13 @@
     },
     {
       "path": "assets/js/admin-vues-videos.js",
-      "bytes": 33686,
-      "gitSha": "2975ba4001783c5068f298c44052dd2a4cad41e7"
+      "bytes": 33718,
+      "gitSha": "ba4ad26050828382e2f674bd518dc99b564fc241"
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 823466,
-      "gitSha": "3ba975783148f340a02a5f544dd65db4f05352c2"
+      "bytes": 823515,
+      "gitSha": "cdbc3ae06ef4f2365e034f4fffc1a61852e2ee77"
     },
     {
       "path": "assets/js/analytique.js",
@@ -753,7 +753,7 @@
     {
       "path": "assets/js/app.js",
       "bytes": 139651,
-      "gitSha": "46c1347faab52700716000cc23708cb224e1fbef"
+      "gitSha": "f7643a107b6592068922d797d13bd15e476042f1"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -907,8 +907,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 256667,
-      "gitSha": "1eb79214dc6bb82c7e26819c24ff5647b27bd5bb"
+      "bytes": 256906,
+      "gitSha": "1feab4fb36cd0d1a167097dc4bf3c1d7417ce567"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -1336,6 +1336,11 @@
       "gitSha": "7c25f18518f64230c0d58a2d43d8238c445f44ac"
     },
     {
+      "path": "assets/videos/sql-serie7-groupby-having-sous-requetes-v8.mp4",
+      "bytes": 84926567,
+      "gitSha": "c094bc15f1c15866d979b9f625345693131689c4"
+    },
+    {
       "path": "assets/videos/sql-tp6-mission-cinema.mp4",
       "bytes": 29850406,
       "gitSha": "b1b280cf594fb5a4596e21a3c7e8f31f3af21825"
@@ -1463,7 +1468,7 @@
     {
       "path": "cours/sql.html",
       "bytes": 147468,
-      "gitSha": "df17f177817ebd42818ed8ff52092110449fe77e"
+      "gitSha": "319a8f2a232b62ecf68b62bc6a828f3ea37c5749"
     },
     {
       "path": "cours/systemes-technologies-internet.html",
@@ -3947,8 +3952,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 111681,
-      "gitSha": "497e2404bf623ad0b6fe83e3ab248bc2b9bd024a"
+      "bytes": 111844,
+      "gitSha": "6a9b62bbc64dd7c8812ed9f12fa7ba0ef81d2b47"
     }
   ]
 }

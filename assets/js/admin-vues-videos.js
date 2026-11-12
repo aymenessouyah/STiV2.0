@@ -44,7 +44,7 @@
   var CATALOGUE = [
     { id: "html5-cours", titre: "HTML5 — Structure & formulaires", matiere: "html5", icone: "🧱" },
     { id: "css3-cours", titre: "CSS3 — Sélecteurs, Flexbox", matiere: "css3", icone: "🎨" },
-    { id: "css3-display", titre: "CSS3 — Display animé", matiere: "css3", icone: "🎨" },
+    { id: "css3-display", titre: "CSS3 — Display animé (retirée)", matiere: "css3", icone: "🎨", horsCatalogue: true },
     { id: "css-positionnement", titre: "CSS3 — Positionnement", matiere: "css3", icone: "🎨" },
     { id: "css-animee", titre: "CSS3 — Décoration, ombres", matiere: "css3", icone: "🎨" },
     { id: "javascript-cours", titre: "JavaScript — Récapitulatif", matiere: "javascript", icone: "⚡" },
