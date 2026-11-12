@@ -49,3 +49,7 @@ La v6 reste disponible comme source. Les réserves de la v6 sur les coupures aud
 ## Montage v8 — transition avant la partie 8
 
 La v8 conserve la v7 et déplace son passage de 13:31 à 13:33 au début de la partie 8. Le reste de 13:33 à 13:34 reste avant les extraits, conformément aux bornes demandées. Un écran noir de 0,5 seconde suit la partie 7 ; après l’extrait 4, un second écran noir de 0,5 seconde précède le titre « Group by vs Sous_requête » affiché 3 secondes, puis le passage déplacé et la suite. Reproduction avec `sh outils/capsule-sql7/montage-v8.sh` et FFmpeg ; les deux pistes sont découpées ensemble. Les réserves audio et sous-titres des versions précédentes restent valables.
+
+## Montage v9
+
+À partir de la v8, `masquer-intro-v9.sh` remplace 13:30–13:32 par deux secondes de noir et de silence, et masque le bandeau « Vidéo 21 - Formation » de la carte d’introduction du premier extrait. Les repères restent inchangés.

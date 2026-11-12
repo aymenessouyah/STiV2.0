@@ -18,7 +18,7 @@ test('repères v8 : quatre séquences et partie 8 décalée',()=>{
  for(let i=1;i<ch.length;i++)assert.ok(ch[i].t>ch[i-1].t);
 });
 test('le montage est publié sans téléchargement automatique et reste reconstructible',()=>{
- const path='assets/videos/sql-serie7-groupby-having-sous-requetes-v8.mp4';
+ const path='assets/videos/sql-serie7-groupby-having-sous-requetes-v9.mp4';
  const sw=read('sw.js');assert.ok(sw.split('var OFFLINE_LIST = [')[1].split('];')[0].includes(path));
  assert.ok(!sw.split('var UPDATE_FILES = [')[1].split('];')[0].includes(path));
  const script=read('outils/capsule-sql7/inserer-sous-requetes-v7.sh');
