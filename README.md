@@ -5,7 +5,7 @@ Plateforme éducative interactive et **PWA utilisable hors ligne après mise en 
 > 🌐 **Plateforme en ligne** : https://aymenessouyah.github.io/STiV2.0/
 > 👨‍🏫 **Auteur** : M. Aymen Essouyah — Lycée Rafèha
 > 🏗️ **Architecture** : Frontend statique GitHub Pages + Supabase PostgreSQL (18 tables, dont le journal de connexions, ses copies et les deux tables techniques XP protégées par RLS) + Service Worker incrémental (`sw.js`, cache courant `sti-atelier-v386`, identifiant de publication `v582-journal-connexions` ; l'historique complet des caches est tenu à jour dans `sw.js`)
-> 📌 **Version du code** : **v652** (numéro et date UTC déclarés dans `sw.js` ; `UPDATE_ID` stable `v582-journal-connexions`). La version effective est toujours lue depuis le Service Worker ; la configuration d'accès protégée conserve son socle historique v479 (`sti-atelier-v340`).
+> 📌 **Version du code** : **v653** (numéro et date UTC déclarés dans `sw.js` ; `UPDATE_ID` stable `v582-journal-connexions`). La version effective est toujours lue depuis le Service Worker ; la configuration d'accès protégée conserve son socle historique v479 (`sti-atelier-v340`).
 
 ---
 

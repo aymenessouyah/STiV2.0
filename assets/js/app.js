@@ -562,8 +562,8 @@
       matiere: "sql", nomMatiere: "SQL", badgeClasse: "badge-sql", couleur: "#34d399", reserve4si: true,
       titre: "Group by, Having,Sous requête,Group by vs Ss_req",
       dureeTexte: "37:30",
-      srcPrincipal: "assets/videos/sql-serie7-groupby-having-sous-requetes-v8.mp4",
-      srcSecours: "assets/videos/sql-serie7-groupby-having-sous-requetes-v8.mp4",
+      srcPrincipal: "assets/videos/sql-serie7-groupby-having-sous-requetes-v9.mp4",
+      srcSecours: "assets/videos/sql-serie7-groupby-having-sous-requetes-v9.mp4",
       urlCours: "cours/sql.html#videos",
       codeApercu: "SELECT ... GROUP BY ... HAVING ...;"
     },
