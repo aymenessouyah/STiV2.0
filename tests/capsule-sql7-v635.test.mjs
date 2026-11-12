@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, statSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 const read = p => readFileSync(p, 'utf8');
-const mp4='assets/videos/sql-serie7-groupby-having-sous-requetes-v7.mp4';
+const mp4='assets/videos/sql-serie7-groupby-having-sous-requetes-v8.mp4';
 test('capsule série 7 provisoire sans sous-titres obsolètes', () => {
  const html=read('cours/sql.html');
  const section=html.split('<section id="videos"')[1].split('<div class="matiere-video-grid">')[0];
