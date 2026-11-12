@@ -1542,6 +1542,25 @@
         { t: 580.93, short: "6. Cas limites & accents", label: "09:40 · 6. Cas limites réels, accents (À–ÿ) & espaces" },
         { t: 672.64, short: "7. Livraison & bilan", label: "11:12 · 7. Livraison finale & méthode d'analyse" }
       ];
+      // Repères v7 : parties historiques, quatre insertions, puis suite décalée.
+      STI_CHAPITRES_MEDIA["sql-serie7-capsule"] = [
+        { t: 0, short: "Partie 1", label: "0:00 · Partie 1" },
+        { t: 116.3, short: "Partie 2", label: "1:56 · Partie 2" },
+        { t: 232.7, short: "Partie 3", label: "3:52 · Partie 3" },
+        { t: 349, short: "Partie 4", label: "5:49 · Partie 4" },
+        { t: 465.3, short: "Partie 5", label: "7:45 · Partie 5" },
+        { t: 581.7, short: "Partie 6", label: "9:41 · Partie 6" },
+        { t: 698, short: "Partie 7", label: "11:38 · Partie 7" },
+        { t: 814, short: "Sous-requêtes · extrait 1", label: "13:34 · Sous-requêtes · extrait 1" },
+        { t: 926.74, short: "Sous-requêtes · extrait 2", label: "15:26 · Sous-requêtes · extrait 2" },
+        { t: 1106.91, short: "Sous-requêtes · extrait 3", label: "18:26 · Sous-requêtes · extrait 3" },
+        { t: 1420.74, short: "Sous-requêtes · extrait 4", label: "23:40 · Sous-requêtes · extrait 4" },
+        { t: 1663.97, short: "Partie 8 · suite", label: "27:43 · Partie 8 · suite" },
+        { t: 1780.63, short: "Partie 9", label: "29:40 · Partie 9" },
+        { t: 1896.97, short: "Partie 10", label: "31:36 · Partie 10" },
+        { t: 2013.3, short: "Partie 11", label: "33:33 · Partie 11" },
+        { t: 2129.63, short: "Partie 12", label: "35:29 · Partie 12" },
+      ];
       window.STI_CHAPITRES_MEDIA = STI_CHAPITRES_MEDIA;
 
       /* Le bandeau de chapitres suit la vidéo : le repère actif glisse au centre
@@ -1623,7 +1642,7 @@
         source = source.split("?")[0].split("#")[0];
         var fichier = source.split("/").pop().toLowerCase().replace(/\.(mp4|webm|ogg|m3u8)$/i, "");
         if (!fichier) return "";
-        if (fichier === "sql-serie7-groupby-having-sous-requetes-v6" || fichier === "sql-serie7-groupby-having-sous-requetes-v3" || fichier === "sql-serie7-having-groupby-sous-requetes-v2" || fichier === "sql-serie7-group-by-having") return "sql-serie7-capsule";
+        if (fichier === "sql-serie7-groupby-having-sous-requetes-v7" || fichier === "sql-serie7-groupby-having-sous-requetes-v6" || fichier === "sql-serie7-groupby-having-sous-requetes-v3" || fichier === "sql-serie7-having-groupby-sous-requetes-v2" || fichier === "sql-serie7-group-by-having") return "sql-serie7-capsule";
         if (fichier === "td_sql_cinema_corrige" || fichier === "td_sql_cinema_corrige_v2" || fichier === "td_sql_cinema_corrige_v3") return "sql-tp6-mission-cinema";
         var i;
         for (i = 0; i < SLUGS_VIDEO_STI.length; i++) {
@@ -1774,6 +1793,7 @@
           "guichet-etapes": "php-guichet",
           "php-guichet-v10": "php-guichet",
           "sql-cours-v7": "sql-cours",
+          "sql-serie7-groupby-having-sous-requetes-v7": "sql-serie7-capsule",
           "sql-serie7-groupby-having-sous-requetes-v6": "sql-serie7-capsule",
           "sql-serie7-groupby-having-sous-requetes-v3": "sql-serie7-capsule",
           "sql-serie7-having-groupby-sous-requetes-v2": "sql-serie7-capsule",
@@ -2673,7 +2693,7 @@
         /* v526 : correction vidéo du TP Train, Série 6 JavaScript. */
         var estTpTrain = (sSlug === "tp-train-serie6" || sSlug.indexOf("tp-train-serie6") !== -1);
         var estMissionCinema = (sSlug === "sql-tp6-mission-cinema" || sSlug.indexOf("TD_SQL_Cinema_corrige") !== -1 || sSlug.indexOf("td_sql_cinema_corrige") !== -1);
-        var estCapsuleSql7 = (sSlug === "sql-serie7-capsule" || sSlug.indexOf("sql-serie7-having-groupby-sous-requetes-v2") !== -1 || sSlug.indexOf("sql-serie7-groupby-having-sous-requetes-v3") !== -1 || sSlug.indexOf("sql-serie7-groupby-having-sous-requetes-v6") !== -1);
+        var estCapsuleSql7 = (sSlug === "sql-serie7-capsule" || sSlug.indexOf("sql-serie7-having-groupby-sous-requetes-v2") !== -1 || sSlug.indexOf("sql-serie7-groupby-having-sous-requetes-v3") !== -1 || sSlug.indexOf("sql-serie7-groupby-having-sous-requetes-v6") !== -1 || sSlug.indexOf("sql-serie7-groupby-having-sous-requetes-v7") !== -1);
         /* v527 : capsule « Les 37 Défis » — Tableau, Aléas & Captchas, Média. */
         var estDefis37 = (sSlug === "defis37-tableau-aleas-media" || sSlug.indexOf("defis37") !== -1);
         /* Capsule « Les boucles » : Pour, Répéter…jusqu'à, Tant que. */
@@ -2762,7 +2782,7 @@
         } catch (e) {}
         var url = estPhpChaines ? prefixeAssetsSTI() + "videos/PhpChaines-v566.mp4" : estDateJs ? prefixeAssetsSTI() + "videos/DateJS-v565.mp4" : estFonctionsChaine ? prefixeAssetsSTI() + "videos/FonctionsChaine-v564.mp4" : estBouclePour ? prefixeAssetsSTI() + "videos/BouclePour-v547.mp4" : estConsoleVariables ? prefixeAssetsSTI() + "videos/ConsoleVariables-v548.mp4" : estPhpVariables ? prefixeAssetsSTI() + "videos/PhpVariables-v549.mp4" : estDefis37 ? prefixeAssetsSTI() + "videos/defis37-tableau-aleas-media.mp4" : estTpTrain ? prefixeAssetsSTI() + "videos/tp-train-serie6.mp4" : estTpEvenements ? prefixeAssetsSTI() + "videos/tp-evenements-liens-v2.mp4" : estTpFormulaire ? prefixeAssetsSTI() + "videos/tp-formulaire-tableau-autre.mp4" : estTpDisplay ? prefixeAssetsSTI() + "videos/tp-display-float-position.mp4" : estTpTransitions ? prefixeAssetsSTI() + "videos/tp-transitions-animations.mp4" : estJsValidation ? prefixeAssetsSTI() + "videos/validation-nom-prenom-js.mp4" : estCssDisplay ? prefixeAssetsSTI() + "videos/displayanim.mp4" : estPhpSynthese ? prefixeAssetsSTI() + "videos/php-synthese.mp4" : estSqlInit ? resoudreUrlVideoSqlInit() : (estExploreFloat ? resoudreUrlVideoExploreFloat() : (estExploreFlex ? resoudreUrlVideoExploreFlex() : (estSqlSerie6 ? resoudreUrlVideoSqlSerie6() : (estSqlSerie5 ? resoudreUrlVideoSqlSerie5() : (estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estSqlSerie3 ? resoudreUrlVideoSqlSerie3() : (estSqlSerie2 ? resoudreUrlVideoSqlSerie2() : (estSqlSerie1 ? resoudreUrlVideoSqlSerie1() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet())))))))))))))));
         if (estMissionCinema) url = prefixeAssetsSTI() + "videos/sql-tp6-mission-cinema.mp4";
-        if (estCapsuleSql7) url = prefixeAssetsSTI() + "videos/sql-serie7-groupby-having-sous-requetes-v6.mp4";
+        if (estCapsuleSql7) url = prefixeAssetsSTI() + "videos/sql-serie7-groupby-having-sous-requetes-v7.mp4";
         if (estCoursSti) url = prefixeAssetsSTI() + "videos/CoursSystemesInternet-v578.mp4";
         var css3Qualite = "auto";
         if (estCss3) {

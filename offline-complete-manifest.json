@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-11T21:58:57Z",
+  "generatedAt": "2026-11-11T23:52:01Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 788,
-  "totalBytes": 1169228627,
+  "totalFiles": 789,
+  "totalBytes": 1259429105,
   "files": [
     {
       "path": "404.html",
@@ -63,7 +63,7 @@
     {
       "path": "README.md",
       "bytes": 72538,
-      "gitSha": "dc3d24ac56be1ade2e6d1cf456fc169efeb2d726"
+      "gitSha": "01c0ddc2ad846dd785bf8069a2099e5aedf16721"
     },
     {
       "path": "admin.html",
@@ -753,7 +753,7 @@
     {
       "path": "assets/js/app.js",
       "bytes": 139651,
-      "gitSha": "56bb4f42c6d593ebda49bf208a3089db336b6fb4"
+      "gitSha": "46c1347faab52700716000cc23708cb224e1fbef"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -907,8 +907,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 255035,
-      "gitSha": "707e362c603f85ce236dc1f1908bbc1614ec460c"
+      "bytes": 256667,
+      "gitSha": "1eb79214dc6bb82c7e26819c24ff5647b27bd5bb"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -1331,6 +1331,11 @@
       "gitSha": "6bebface759aff47978ee4927c904b367a486c68"
     },
     {
+      "path": "assets/videos/sql-serie7-groupby-having-sous-requetes-v7.mp4",
+      "bytes": 90198696,
+      "gitSha": "7c25f18518f64230c0d58a2d43d8238c445f44ac"
+    },
+    {
       "path": "assets/videos/sql-tp6-mission-cinema.mp4",
       "bytes": 29850406,
       "gitSha": "b1b280cf594fb5a4596e21a3c7e8f31f3af21825"
@@ -1457,8 +1462,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 147454,
-      "gitSha": "14d79e38cd1dc5e6d2b66a5e2530a2e417c76dca"
+      "bytes": 147449,
+      "gitSha": "c855bc513e33dae37e51a55ef1f195c90abc7891"
     },
     {
       "path": "cours/systemes-technologies-internet.html",
@@ -3942,8 +3947,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 111063,
-      "gitSha": "b39a43f23b97b033d794bbede00e6f3d31e64d5c"
+      "bytes": 111218,
+      "gitSha": "4e65f647e60bf9c8c1f72d4d7859777a5987001f"
     }
   ]
 }

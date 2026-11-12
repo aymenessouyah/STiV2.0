@@ -7,7 +7,7 @@ test('la nouvelle capsule est liée depuis les exercices et les vidéos de séri
  const html=read('cours/sql.html');
  const ex=html.split('<section id="exercices"')[1].split('<section id="annexes"')[0];
  assert.match(ex, /href="#capsule-sql-serie7"/);
- assert.match(html,/sql-serie7-groupby-having-sous-requetes-v6\.mp4/);
+ assert.match(html,/sql-serie7-groupby-having-sous-requetes-v7\.mp4/);
  assert.doesNotMatch(html,/sql-serie7-group-by-having\.mp4/);
  const s=read('outils/capsule-sql7/render-v2.py');
  for (const phrase of ['RÉSULTATS IDENTIQUES','RÉSULTATS DIFFÉRENTS','PIÈGE 1','PIÈGE 2','PIÈGE 3','HAVING COUNT(*) = 0','sales_frame','Sous-requête IN','Sous-requête FROM']) assert.ok(s.includes(phrase),phrase);
