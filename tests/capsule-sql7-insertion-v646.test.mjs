@@ -22,3 +22,9 @@ test('le montage est publié sans téléchargement automatique et reste reconstr
  for(let i=1;i<=4;i++)assert.ok(script.includes(`sous_req${i}.mp4`));
  assert.match(script,/trim=end=814/);assert.match(script,/trim=start=814/);
 });
+test('la présentation aux élèves reste pédagogique et signale les limites',()=>{
+ const page=read('cours/sql.html');
+ assert.ok(page.includes('Découvrez GROUP BY, HAVING et les sous-requêtes à travers des exemples et les exercices de la série 7.'));
+ assert.ok(page.includes('certaines coupures audio restent à vérifier ; sous-titres indisponibles.'));
+ assert.ok(!page.includes('quatre séquences insérées à 13 min 34'));
+});
