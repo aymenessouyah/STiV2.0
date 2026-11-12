@@ -42,6 +42,6 @@ Cette version provisoire et les PDF rectifiés sont liés au site. La première 
 
 ## Montage v7 — quatre extraits insérés
 
-`assets/videos/sql-serie7-groupby-having-sous-requetes-v7.mp4` conserve la v6 avant et après 13:34 et insère à ce point, dans l’ordre, `sous_req1.mp4`, `sous_req2.mp4`, `sous_req3.mp4` et `sous_req4.mp4`. Ces quatre sources proviennent de `main` (commit 5d396e5). Les repères du lecteur sont répartis autour des insertions et de la suite décalée. La vidéo est réencodée en 1080p H.264/AAC.
+`assets/videos/sql-serie7-groupby-having-sous-requetes-v7.mp4` conserve la v6 avant et après 13:34 et insère à ce point, dans l’ordre, `sous_req1.mp4`, `sous_req2.mp4`, `sous_req3.mp4` et `sous_req4.mp4`. Ces quatre sources provenaient du commit `5d396e5` et ont été retirées du dépôt courant après montage. Pour reconstruire la v7, il faut les récupérer depuis cet historique ou fournir de nouveau les fichiers ; le script vérifie leur présence. Les repères du lecteur sont répartis autour des insertions et de la suite décalée. La vidéo est réencodée en 1080p H.264/AAC.
 
 La v6 reste disponible comme source. Les réserves de la v6 sur les coupures audio et les sous-titres restent valables ; les extraits ajoutés n'ont pas été revus intégralement sur le fond pédagogique.
