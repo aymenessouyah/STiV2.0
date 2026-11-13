@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-13T16:26:16Z",
+  "generatedAt": "2026-11-13T22:33:46Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 794,
-  "totalBytes": 1428406126,
+  "totalBytes": 1427988701,
   "files": [
     {
       "path": "404.html",
@@ -63,7 +63,7 @@
     {
       "path": "README.md",
       "bytes": 7739,
-      "gitSha": "2941f3f053c8df7905b9db9c560838ff4dbcb8a0"
+      "gitSha": "3a2348567f75c53da0f89d124778076bd28df003"
     },
     {
       "path": "admin.html",
@@ -1472,8 +1472,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 148467,
-      "gitSha": "dbed01608c43f228125f3afac501ee5127d2c2fe"
+      "bytes": 148317,
+      "gitSha": "05495a1b0fd3e733570d0c20772f26b700b2dc79"
     },
     {
       "path": "cours/systemes-technologies-internet.html",
@@ -3167,8 +3167,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 102086,
-      "gitSha": "938f2096b9ae252eeb023a3e7b73f6b302279f58"
+      "bytes": 102017,
+      "gitSha": "272c635a222d36d3bde4c6b1b3884627186409c7"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3301,19 +3301,19 @@
       "gitSha": "83f25c6e2d393adad09c742237af5fce4380ed27"
     },
     {
-      "path": "exercices/sql/serie-8/corrige-serie8-restaurant.pdf",
-      "bytes": 354225,
-      "gitSha": "bd2572f025df6c6e72e26ddd85da20ced6211151"
+      "path": "exercices/sql/serie-8/corrige-serie8-restaurant-v2.pdf",
+      "bytes": 116105,
+      "gitSha": "7b259a1481de18ac158c28c3bc7c2812347f197d"
     },
     {
-      "path": "exercices/sql/serie-8/enonce-serie8-restaurant.pdf",
-      "bytes": 255281,
-      "gitSha": "71b7345c18b9ceb454532f51cdc06a60a0ae9edd"
+      "path": "exercices/sql/serie-8/enonce-serie8-restaurant-v2.pdf",
+      "bytes": 75738,
+      "gitSha": "3854da0930081e46780fcec84c8b32c37a8738bd"
     },
     {
       "path": "exercices/sql/serie-8/restaurant.sql",
-      "bytes": 1609,
-      "gitSha": "36a8f7d820a0f64876f5dcda1d81d07dee2f2c18"
+      "bytes": 1527,
+      "gitSha": "245d2aea3efb03e65fc6ad9b6c202734c66bb2e3"
     },
     {
       "path": "exercices/sql/sql-construire-requete-guide-texte.mp4",
@@ -3972,8 +3972,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 112170,
-      "gitSha": "a6f656790df9eed389c43f2a5e3394c4e499a52f"
+      "bytes": 112709,
+      "gitSha": "e3dabe8110fa2215838954a3809b1175ad08cb71"
     }
   ]
 }

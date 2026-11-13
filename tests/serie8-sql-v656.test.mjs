@@ -6,7 +6,7 @@ import { spawnSync } from 'node:child_process';
 
 const lire = p => readFileSync(p, 'utf8');
 const dossier = 'exercices/sql/serie-8/';
-const fichiers = ['enonce-serie8-restaurant.pdf', 'corrige-serie8-restaurant.pdf', 'restaurant.sql'];
+const fichiers = ['enonce-serie8-restaurant-v2.pdf', 'corrige-serie8-restaurant-v2.pdf', 'restaurant.sql'];
 
 test('la série 8 est présente dans les deux catalogues sans vidéo', () => {
   const cours = lire('cours/sql.html');
@@ -17,7 +17,7 @@ test('la série 8 est présente dans les deux catalogues sans vidéo', () => {
   for (const f of fichiers) for (const element of [article, carte]) assert.ok(element.includes('../' + dossier + f), f);
   assert.match(article, /data-exercise="serie8"/);
   for (const element of [article, carte]) assert.doesNotMatch(element, /data-video|ouvrirVideo|<video|\.mp4/i);
-  assert.match(article, /dates.*ne sont pas fournies/);
+  assert.doesNotMatch(article, /dates.*ne sont pas fournies/);
 });
 
 test('fichiers hors ligne et empreintes cohérentes sans préchargement de PDF', () => {
@@ -27,7 +27,8 @@ test('fichiers hors ligne et empreintes cohérentes sans préchargement de PDF',
   for (const f of fichiers) {
     const chemin = dossier + f; const bytes = readFileSync(chemin);
     assert.ok(offline.includes(`"./${chemin}"`));
-    assert.ok(!delta.includes(chemin));
+    if (f.endsWith(".pdf")) assert.ok(!delta.includes(chemin));
+    else assert.ok(delta.includes(chemin));
     const item = manifest.files.find(x => x.path === chemin);
     assert.equal(item?.bytes, bytes.length);
     assert.equal(item?.gitSha, createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex'));
@@ -35,8 +36,8 @@ test('fichiers hors ligne et empreintes cohérentes sans préchargement de PDF',
   }
 });
 
-test('le script crée les données de l’énoncé sans inventer de dates', () => {
-  const python = `import sqlite3\nfrom pathlib import Path\nc=sqlite3.connect(':memory:')\nc.executescript(Path('exercices/sql/serie-8/restaurant.sql').read_text())\nassert c.execute('SELECT COUNT(*), COUNT(date_embauche) FROM SERVEUR').fetchone()==(4,0)\nassert c.execute('SELECT COUNT(*), COUNT(date_cmd), SUM(prix*qte) FROM COMMANDE').fetchone()==(12,0,375)\nassert c.execute(\"SELECT nom FROM SERVEUR WHERE num NOT IN (SELECT numserveur FROM COMMANDE)\").fetchone()==('Nour',)\nassert c.execute(\"SELECT categorie, SUM(prix*qte) FROM COMMANDE GROUP BY categorie ORDER BY categorie\").fetchall()==[('Boisson',64),('Dessert',51),('Entrée',48),('Plat',212)]`;
+test('le script crée les données de l’énoncé avec les dates fournies', () => {
+  const python = `import sqlite3\nfrom pathlib import Path\nc=sqlite3.connect(':memory:')\nc.executescript(Path('exercices/sql/serie-8/restaurant.sql').read_text())\nassert c.execute('SELECT COUNT(*), COUNT(date_embauche) FROM SERVEUR').fetchone()==(4,4)\nassert c.execute('SELECT COUNT(*), COUNT(date_cmd), SUM(prix*qte) FROM COMMANDE').fetchone()==(12,12,375)\nassert c.execute(\"SELECT date_cmd FROM COMMANDE WHERE num=12\").fetchone()==('2027-04-14',)\nassert c.execute(\"SELECT date_embauche FROM SERVEUR WHERE num=3\").fetchone()==('2019-02-15',)\nassert c.execute(\"SELECT nom FROM SERVEUR WHERE num NOT IN (SELECT numserveur FROM COMMANDE)\").fetchone()==('Nour',)\nassert c.execute(\"SELECT categorie, SUM(prix*qte) FROM COMMANDE GROUP BY categorie ORDER BY categorie\").fetchall()==[('Boisson',64),('Dessert',51),('Entrée',48),('Plat',212)]`;
   const p = spawnSync('python3', ['-c', python], { encoding: 'utf8' });
   assert.equal(p.status, 0, p.stderr);
 });
