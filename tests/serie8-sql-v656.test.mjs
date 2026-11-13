@@ -6,7 +6,7 @@ import { spawnSync } from 'node:child_process';
 
 const lire = p => readFileSync(p, 'utf8');
 const dossier = 'exercices/sql/serie-8/';
-const fichiers = ['enonce-serie8-restaurant-v2.pdf', 'corrige-serie8-restaurant-v2.pdf', 'restaurant.sql'];
+const fichiers = ['enonce-serie8-restaurant-v3.pdf', 'corrige-serie8-restaurant-v2.pdf', 'restaurant.sql'];
 
 test('la série 8 est présente dans les deux catalogues sans vidéo', () => {
   const cours = lire('cours/sql.html');
