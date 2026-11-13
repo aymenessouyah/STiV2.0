@@ -226,6 +226,8 @@
   function intercepterLiens(e) {
     var a = e.target && e.target.closest && e.target.closest('a[href]');
     if (!a || e.defaultPrevented || (e.button !== 0 && e.button !== 1) || a.hasAttribute('download')) return;
+    // Ces PDF s'ouvrent directement sur mobile : certains navigateurs ne savent pas les afficher en iframe.
+    if (a.hasAttribute('data-pdf-natif-mobile') && (pdfNonLisible() || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent))) return;
     if (a.closest('[hidden],[inert]') || (a.closest('.sti-4si-only') && !document.documentElement.classList.contains('sti-4si-autorise'))) return;
     var url; try { url = new URL(a.href, document.baseURI); } catch (err) { return; }
     if (url.origin !== global.location.origin) return;

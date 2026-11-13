@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-13T22:38:08Z",
+  "generatedAt": "2026-11-13T22:59:05Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 794,
-  "totalBytes": 1427988356,
+  "totalBytes": 1427987538,
   "files": [
     {
       "path": "404.html",
@@ -63,7 +63,7 @@
     {
       "path": "README.md",
       "bytes": 7739,
-      "gitSha": "f363af8367906cd512eaa20505c5c52b46cbef30"
+      "gitSha": "9b675932c26f9e53f501cd27b22c02874a380dc6"
     },
     {
       "path": "admin.html",
@@ -1067,8 +1067,8 @@
     },
     {
       "path": "assets/js/visionneuse-exercices.js",
-      "bytes": 22513,
-      "gitSha": "65fff76d59bc0ca51cf6fd510e2eeb4fc39550c1"
+      "bytes": 22757,
+      "gitSha": "db9cf3a44d14a642c6319852e29f4b74511dd3ac"
     },
     {
       "path": "assets/js/xp-plancher.js",
@@ -1472,8 +1472,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 148317,
-      "gitSha": "c48de097a95b54a5a3986a4c05173f586c8279b8"
+      "bytes": 148361,
+      "gitSha": "5b0a0c70b2f7621f706a9debf25985d21ed6e9c9"
     },
     {
       "path": "cours/systemes-technologies-internet.html",
@@ -3167,8 +3167,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 102017,
-      "gitSha": "312fc60bbfbb53c14ec7637e416dd67c4b9e5f76"
+      "bytes": 102061,
+      "gitSha": "accb54f64bffa285681480412d31822d2a69ba5f"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3301,14 +3301,14 @@
       "gitSha": "83f25c6e2d393adad09c742237af5fce4380ed27"
     },
     {
-      "path": "exercices/sql/serie-8/corrige-serie8-restaurant-v2.pdf",
-      "bytes": 116105,
-      "gitSha": "7b259a1481de18ac158c28c3bc7c2812347f197d"
+      "path": "exercices/sql/serie-8/corrige-serie8-restaurant-v3.pdf",
+      "bytes": 114626,
+      "gitSha": "e61bda9546a743e39b15be7658fc4b0fe2e69a6c"
     },
     {
-      "path": "exercices/sql/serie-8/enonce-serie8-restaurant-v3.pdf",
-      "bytes": 75222,
-      "gitSha": "ef0a463baf2f6123c0f0c8f3d191589467040c26"
+      "path": "exercices/sql/serie-8/enonce-serie8-restaurant-v4.pdf",
+      "bytes": 75219,
+      "gitSha": "9e3297f9ed789880d5cd20e0f57cf7954a37ef67"
     },
     {
       "path": "exercices/sql/serie-8/restaurant.sql",
@@ -3972,8 +3972,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 112880,
-      "gitSha": "a57433623b32709a08aa833a035735dca12ef541"
+      "bytes": 113212,
+      "gitSha": "1ab40a3ec2d6466ab961dd092213a1d9aa937586"
     }
   ]
 }
