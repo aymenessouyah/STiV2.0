@@ -4,7 +4,7 @@ Une plateforme d’apprentissage pour les élèves de **3ᵉ et 4ᵉ Sciences de
 
 **[Accéder à la plateforme](https://aymenessouyah.github.io/STiV2.0/)** · Auteur : **M. Aymen Essouyah**, Lycée Raféha
 
-> **Publication : v654** — l’identité et la date UTC de la version effectivement servie sont définies dans [`sw.js`](sw.js). Certaines fonctionnalités et ressources sont réservées aux 4ᵉ SI ou aux comptes autorisés.
+> **Publication : v655** — l’identité et la date UTC de la version effectivement servie sont définies dans [`sw.js`](sw.js). Certaines fonctionnalités et ressources sont réservées aux 4ᵉ SI ou aux comptes autorisés.
 
 ## Pour les élèves
 

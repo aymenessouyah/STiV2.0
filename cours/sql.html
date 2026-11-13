@@ -338,8 +338,9 @@ CREATE TABLE Location (
             <strong>À retenir :</strong> la clé primaire répond à la question
             « <em>qui est cette ligne ?</em> » ; la clé étrangère répond à
             « <em>à quelle ligne de l'autre table est-elle rattachée ?</em> ».
-            Une clé étrangère a toujours le <b>même type</b> que la clé primaire
-            qu'elle référence.
+            La clé étrangère doit avoir un type de données compatible avec la clé
+            référencée dans la table mère. En pratique, on utilise généralement
+            exactement le même type et les mêmes attributs.
           </div>
         </div>
 
