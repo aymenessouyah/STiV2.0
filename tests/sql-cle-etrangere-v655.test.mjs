@@ -14,7 +14,7 @@ test('la note SQL précise la compatibilité de type de la clé étrangère', ()
 
 test('la page corrigée est actualisée dans le service worker et son manifeste', () => {
   const sw = readFileSync('sw.js', 'utf8');
-  assert.ok(sw.includes('url: "./cours/sql.html", revision: "serie8-sql-v658"'));
+  assert.ok(sw.includes('url: "./cours/sql.html", revision: "serie8-pdf-v659"'));
   const manifest = JSON.parse(readFileSync('offline-complete-manifest.json', 'utf8'));
   assert.ok(manifest.files.some(f => f.path === 'cours/sql.html'));
 });
