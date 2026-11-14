@@ -91,12 +91,22 @@ def main() -> int:
     if nouveaux:
         print("ajoutés :", ", ".join(nouveaux))
 
+    sw = open(os.path.join(RACINE, "sw.js"), encoding="utf-8").read()
+    versions = re.findall(r'var\s+VERSION_PUBLIEE\s*=\s*"(v\d+)"\s*;', sw)
+    if len(versions) != 1:
+        print("VERSION_PUBLIEE introuvable ou ambiguë dans sw.js")
+        return 4
     if args.verifier:
+        if (ancien.get("versionPubliee") != versions[0] or
+                ancien.get("files") != fichiers or ancien.get("totalFiles") != len(fichiers) or
+                ancien.get("totalBytes") != total):
+            print("manifeste périmé ou empreintes incorrectes : le régénérer")
+            return 5
         return 0
-
     maintenant = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     manifeste = {
         "version": VERSION,
+        "versionPubliee": versions[0],
         "generatedAt": maintenant,
         "scope": PORTEE,
         "totalFiles": len(fichiers),

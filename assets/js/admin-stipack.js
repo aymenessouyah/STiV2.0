@@ -167,14 +167,19 @@
     var reponse = await fetch(window.STIStipack.MANIFESTE_HORS_LIGNE + '?stipack=' + Date.now(), { cache: 'no-cache' });
     if (!reponse.ok) throw new Error('liste des fichiers illisible (HTTP ' + reponse.status + ')');
     var manifeste = await reponse.json();
-    var fichiers = (manifeste.files || [])
+    if (!Array.isArray(manifeste.files) || !manifeste.files.length ||
+        manifeste.totalFiles !== manifeste.files.length ||
+        manifeste.files.some(function (f) { return !f || typeof f.path !== 'string' || !f.path; })) {
+      throw new Error('liste de secours vide ou invalide');
+    }
+    var fichiers = manifeste.files
       .map(function (f) { return { chemin: f.path, octets: f.bytes || 0 }; })
       .filter(function (f) { return f.chemin; })
       .sort(function (a, b) { return a.chemin < b.chemin ? -1 : a.chemin > b.chemin ? 1 : 0; });
     return {
       source: 'manifeste',
       fichiers: fichiers,
-      version: manifeste.version || null,
+      version: manifeste.versionPubliee || null,
       date: manifeste.generatedAt || null,
       commit: null,
       commitCourt: null

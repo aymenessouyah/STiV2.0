@@ -18,6 +18,15 @@
 
 Les deux écrivent la même structure, vérifiable par le même `--verifier`.
 
+Si l'API GitHub est inaccessible (par exemple HTTP 403), le panneau utilise le
+manifeste hors ligne uniquement si son champ `versionPubliee` correspond à la
+version lue dans `sw.js`. Une version absente ou différente, ou une liste vide
+ou invalide, interrompt la fabrication. L'ancienne propriété `version` du
+manifeste est un identifiant de cache, pas un numéro de publication. L'accord
+des versions ne prouve pas que chaque fichier téléchargé correspond à la
+dernière révision du dépôt ; il faut aussi vérifier le déploiement et le paquet.
+
+
 ### Le bouton du tableau de bord
 
 Dans « 🪟 STI v2.0 version spéciale Labo 3 — guide et assistance », le bloc
