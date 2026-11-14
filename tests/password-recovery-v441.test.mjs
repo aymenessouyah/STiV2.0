@@ -3508,10 +3508,10 @@ test('v466 : invitation PWA unique, compatible avec les anciennes visites et lâ€
   assert.match(configJs, /beforeinstallprompt/);
   assert.ok(Array.isArray(manifestJson.related_applications) && manifestJson.related_applications.length >= 1);
   assert.match(indexHtml, /id="pwaInvitation"[^>]*hidden/);
-  assert.match(appJs, /invitationInstallationDejaVue\(\)/);
-  assert.match(appJs, /beforeinstallprompt/);
-  assert.match(appJs, /sti:pwa-installee/);
-  assert.match(appJs, /Partager puis/);
+  const installJs = read('assets/js/installation-mobile.js');
+  assert.match(installJs, /beforeinstallprompt/);
+  assert.match(installJs, /sti:pwa-installee/);
+  assert.match(installJs, /Partager puis/);
 
   function creerProfil(stockageInitial) {
     const data = new Map(Object.entries(stockageInitial || {}));

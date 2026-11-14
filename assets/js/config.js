@@ -554,7 +554,6 @@ window.STI_AUTH = {
 
     function pwaEstInstalleeGlobale() {
       if (modeAutonomeActif()) {
-        marquerInstalleeGlobale();
         return true;
       }
       try {
@@ -579,10 +578,16 @@ window.STI_AUTH = {
     if (typeof window.addEventListener === "function") {
       window.addEventListener("beforeinstallprompt", function (ev) {
         if (ev && typeof ev.preventDefault === "function") ev.preventDefault();
-        if (pwaEstInstalleeGlobale()) {
+        if (modeAutonomeActif()) {
           window.__stiDeferredInstallPrompt = null;
           return;
         }
+        // Le navigateur propose une installation : une ancienne marque locale peut
+        // provenir d'une application désinstallée. Le signal natif fait foi.
+        try {
+          localStorage.removeItem("sti-pwa-installed");
+          localStorage.removeItem("sti-pwa-installee");
+        } catch (eL) {}
         window.__stiDeferredInstallPrompt = ev;
       });
       window.addEventListener("appinstalled", function () {

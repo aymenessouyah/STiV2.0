@@ -337,6 +337,12 @@
   .champ { position: relative; display: block; }
   .champ .ico { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 15px; opacity: .85; pointer-events: none; }
   .champ input { padding-left: 41px; }
+  .portail-installation { margin: 12px 0; padding: 12px; border: 1px solid #64b7c7; border-radius: 12px; background: #e4f7fa; color: #123b48; font: 600 13px/1.45 system-ui,sans-serif; }
+  .portail-installation[hidden], .portail-installation__ouvrir[hidden] { display: none; }
+  .portail-installation__actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .portail-installation button, .portail-installation__ouvrir { padding: 8px 12px; border: 1px solid #237f92; border-radius: 8px; background: #fff; color: #123b48; cursor: pointer; font: 700 13px system-ui,sans-serif; }
+  .portail-installation__ouvrir { margin: 4px 0 10px; }
+  .portail-installation p { margin: 8px 0 0; }
   ::selection { background: color-mix(in srgb, var(--accent) 30%, transparent); }
   @media (max-width: 480px) {
     .carte { padding: 24px 18px 20px; border-radius: 20px; }
@@ -356,6 +362,16 @@
       </div>
       <p>Espace réservé aux abonnés — connectez-vous pour continuer.</p>
     </div>
+
+    <aside id="pwaInvitation" class="portail-installation" data-install-entry="portal" aria-label="Installer l’application" hidden>
+      <strong>📲 Installer la plateforme sur votre appareil</strong>
+      <div class="portail-installation__actions">
+        <button type="button" id="pwaInvitationInstaller">Installer</button>
+        <button type="button" id="pwaInvitationFermer">Plus tard</button>
+      </div>
+      <p id="pwaInvitationAide" role="status" hidden></p>
+    </aside>
+    <button type="button" id="installBtn" class="portail-installation__ouvrir" hidden>📲 Installer la plateforme</button>
 
     <div class="onglets" role="tablist">
       <button id="tab-connexion" class="actif" type="button">🔐 Connexion</button>
@@ -509,6 +525,7 @@
 
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=425"></script>
+<script src="assets/js/installation-mobile.js?v=665" defer></script>
 <script>
   /* ================= Tagline STI : effet machine à écrire (dactylo) identique à index.html ================= */
   (function () {

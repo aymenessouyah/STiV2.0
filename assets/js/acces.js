@@ -286,12 +286,11 @@
               stiBipV371 = null;
               window.__stiDeferredInstallPrompt = null;
               stiPanPremiereSession = false;
-              if (ch && ch.outcome === "accepted") {
-                marquerPwaInstalleeAcces();
-              } else {
+              // L'acceptation lance l'installation ; seul appinstalled la confirme.
+              if (!ch || ch.outcome !== "accepted") {
                 try { localStorage.setItem("sti-pwa-refus", "1"); } catch (er) {}
-                try { window.__stiMajBoutonInstaller(); } catch (er2) {}
               }
+              try { window.__stiMajBoutonInstaller(); } catch (er2) {}
             });
           }
         } catch (er3) {}

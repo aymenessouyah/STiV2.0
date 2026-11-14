@@ -13,7 +13,7 @@ test.beforeEach(async ({ context }) => {
   });
 });
 
-test('installation PWA : invitation mobile unique et aide iPhone sans prompt natif', async ({ page }) => {
+test('installation PWA : aide iPhone et fermeture valable pour la session', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 844 });
   await page.addInitScript(() => {
     Object.defineProperty(navigator, 'userAgent', { value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Safari/604.1' });
@@ -24,10 +24,10 @@ test('installation PWA : invitation mobile unique et aide iPhone sans prompt nat
   await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
   await page.locator('#pwaInvitationInstaller').click();
   await expect(page.locator('#pwaInvitationAide')).toContainText('Partager');
-  await expect.poll(() => page.evaluate(() => window.STIProfil.chargerProfil().invitationInstallationVue)).toBe(true);
+  await page.locator('#pwaInvitationFermer').click();
   await page.reload({ waitUntil: 'domcontentloaded' });
   await expect(page.locator('#pwaInvitation')).toBeHidden();
-  await expect(page.locator('#installBtn')).toBeHidden();
+  await expect(page.locator('#installBtn')).toHaveJSProperty('hidden', false);
 });
 
 test('installation PWA : une acceptation masque immédiatement l’invitation et persiste', async ({ page }) => {
@@ -43,17 +43,19 @@ test('installation PWA : une acceptation masque immédiatement l’invitation et
   await page.locator('#pwaInvitationInstaller').click();
   await expect.poll(() => page.evaluate(() => window.__testPwaPrompted)).toBe(true);
   await expect(page.locator('#pwaInvitation')).toBeHidden();
+  await expect.poll(() => page.evaluate(() => window.__stiPwaEstInstallee())).toBe(false);
+  await page.evaluate(() => window.dispatchEvent(new Event('appinstalled')));
   await expect.poll(() => page.evaluate(() => window.__stiPwaEstInstallee())).toBe(true);
   await page.reload({ waitUntil: 'domcontentloaded' });
   await expect(page.locator('#pwaInvitation')).toBeHidden();
 });
 
-test('installation PWA : une invitation déjà vue avant la refonte ne réapparaît pas', async ({ page }) => {
+test('installation PWA : une ancienne invitation vue ne masque pas la proposition', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.addInitScript(() => localStorage.setItem('sti-pwa-bulle-vue', '1'));
   await page.goto('/index.html', { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('#pwaInvitation')).toBeHidden();
-  await expect.poll(() => page.evaluate(() => window.STIProfil.invitationInstallationDejaVue())).toBe(true);
+  await expect(page.locator('#pwaInvitation')).toBeVisible();
+  await expect(page.locator('#installBtn')).toHaveJSProperty('hidden', false);
 });
 
 test('accueil : suivi média v479 et profil fonctionnent ensemble sans double protection', async ({ page }) => {
