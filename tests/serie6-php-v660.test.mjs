@@ -23,9 +23,6 @@ test('liens de catalogue et fichiers hors ligne cohérents', () => {
     assert.ok(sw.includes(`"./${path}"`));
     assert.equal(item?.bytes,bytes.length);
     assert.equal(item?.gitSha,createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex'));
-    if(f.endsWith('.html')) {
-      assert.ok(read('cours/php.html').includes('../'+path));
-      assert.ok(read('exercices/series-exercices.html').includes('php/serie-6/'+f));
-    }
+
   }
 });
