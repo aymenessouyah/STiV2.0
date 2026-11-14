@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-14T09:15:55Z",
+  "generatedAt": "2026-11-14T12:17:16Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 799,
-  "totalBytes": 1429577049,
+  "totalBytes": 1429164304,
   "files": [
     {
       "path": "404.html",
@@ -1453,7 +1453,7 @@
     {
       "path": "cours/php.html",
       "bytes": 206475,
-      "gitSha": "565576a5478924de6f3bed9fb9c24766fc549ab7"
+      "gitSha": "97c4bbf0b1504a225a3c015282db5e9d1a633156"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -3146,9 +3146,9 @@
       "gitSha": "541cfeb2181aecc8417a3c72a6e4f35ef915696a"
     },
     {
-      "path": "exercices/php/serie-6/corrige-serie6-php-v2.pdf",
-      "bytes": 755705,
-      "gitSha": "d58eddc6a60825e3f8bcb3ff08edb1661dce8e4f"
+      "path": "exercices/php/serie-6/corrige-serie6-php-v3.pdf",
+      "bytes": 553256,
+      "gitSha": "daac87a9b5cb85166b6e042239d2f4df1a509573"
     },
     {
       "path": "exercices/php/serie-6/corrige.html",
@@ -3156,9 +3156,9 @@
       "gitSha": "e4e784a6904b292dfeb1b09883cba31920faa176"
     },
     {
-      "path": "exercices/php/serie-6/enonce-serie6-php-v2.pdf",
-      "bytes": 714452,
-      "gitSha": "d5741a627c265b11a1263bdc99721991b4efae1c"
+      "path": "exercices/php/serie-6/enonce-serie6-php-v3.pdf",
+      "bytes": 504176,
+      "gitSha": "a5be61d5ea15b4f96c63439d01f51ebfec57093c"
     },
     {
       "path": "exercices/php/serie-6/enonce.html",
@@ -3193,7 +3193,7 @@
     {
       "path": "exercices/series-exercices.html",
       "bytes": 102679,
-      "gitSha": "ae6b223d5f01a3b497e6eca5130d319ac19c9187"
+      "gitSha": "6fd92ed07de64ae71582566c283d966345f2544e"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3997,8 +3997,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 113461,
-      "gitSha": "02a31ece6576df85fae9c597e41c643d1bd90028"
+      "bytes": 113441,
+      "gitSha": "c95bcd61961036160b2f8b77cf89a51412c15f10"
     }
   ]
 }
