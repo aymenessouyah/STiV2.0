@@ -512,6 +512,20 @@
    "matiere": "systemes",
    "correction": true,
    "video": true
+  },
+  {
+   "chemin": "exercices/php/serie-6/enonce.html",
+   "titre": "PHP Série 6 — Fiche et énoncé",
+   "matiere": "php",
+   "correction": true,
+   "video": false
+  },
+  {
+   "chemin": "exercices/php/serie-6/corrige.html",
+   "titre": "PHP Série 6 — Corrigé",
+   "matiere": "php",
+   "correction": true,
+   "video": false
   }
  ]
 }

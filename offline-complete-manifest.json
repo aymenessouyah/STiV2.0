@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-13T22:59:05Z",
+  "generatedAt": "2026-11-14T08:43:01Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 794,
-  "totalBytes": 1427987538,
+  "totalFiles": 797,
+  "totalBytes": 1428106655,
   "files": [
     {
       "path": "404.html",
@@ -68,7 +68,7 @@
     {
       "path": "admin.html",
       "bytes": 366155,
-      "gitSha": "02e0e93bfaf90eeb5fdd49192bc79009e4fb606a"
+      "gitSha": "bb5e575b8648c86496ab21c79dc264d0ce1dbd5b"
     },
     {
       "path": "assets/audio/cours-sti-ch1.mp3",
@@ -477,8 +477,8 @@
     },
     {
       "path": "assets/guide-exercice-catalogue.json",
-      "bytes": 14670,
-      "gitSha": "1658f0ae76d59b99eddcefa856132bb876b99d1e"
+      "bytes": 15004,
+      "gitSha": "457c3fa00837f777636e1ca44634293147616c9e"
     },
     {
       "path": "assets/icons/STI_by_AE.ico",
@@ -743,7 +743,7 @@
     {
       "path": "assets/js/admin.js",
       "bytes": 823543,
-      "gitSha": "48573a63454c3bb213a6f7fc6c4d2fec0dc8ce63"
+      "gitSha": "21c1fca7377c4ea0465c5272ad5a24bfcd503fd9"
     },
     {
       "path": "assets/js/analytique.js",
@@ -1077,8 +1077,8 @@
     },
     {
       "path": "assets/pages-couverture.json",
-      "bytes": 6466,
-      "gitSha": "3372f10162999ccf3472f6a8855c64991938ae46"
+      "bytes": 6541,
+      "gitSha": "3e392e155aa9e08e1a7d924e5915e18569c56776"
     },
     {
       "path": "assets/streams/css3-v302/css3-1080p.m3u8",
@@ -1452,8 +1452,8 @@
     },
     {
       "path": "cours/php.html",
-      "bytes": 205880,
-      "gitSha": "e90243796258bb0d5b7a60f1c57de1d77221d618"
+      "bytes": 206385,
+      "gitSha": "82928faa63aab36ec430d32af4dd4d89c34f1fca"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -3146,6 +3146,21 @@
       "gitSha": "541cfeb2181aecc8417a3c72a6e4f35ef915696a"
     },
     {
+      "path": "exercices/php/serie-6/corrige.html",
+      "bytes": 81170,
+      "gitSha": "e4e784a6904b292dfeb1b09883cba31920faa176"
+    },
+    {
+      "path": "exercices/php/serie-6/enonce.html",
+      "bytes": 35481,
+      "gitSha": "e102ea8f5dca8e75f221254253187ac1912979d3"
+    },
+    {
+      "path": "exercices/php/serie-6/style.css",
+      "bytes": 832,
+      "gitSha": "c5798daa4948e7c5edc33bb7f1db7d33f18b7a48"
+    },
+    {
       "path": "exercices/php/sondage-parcours-pas-a-pas.html",
       "bytes": 39806,
       "gitSha": "b5315678b231f55fd4692090b666a31eb7301925"
@@ -3167,8 +3182,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 102061,
-      "gitSha": "accb54f64bffa285681480412d31822d2a69ba5f"
+      "bytes": 102677,
+      "gitSha": "fc04c2c8977d227dd692251965913fd81c9eea5a"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3972,8 +3987,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 113212,
-      "gitSha": "1ab40a3ec2d6466ab961dd092213a1d9aa937586"
+      "bytes": 113316,
+      "gitSha": "c5dc7384dc5cf985235378d02fa047ba27edadfc"
     }
   ]
 }

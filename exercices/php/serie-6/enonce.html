@@ -1,0 +1,794 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Série 6 PHP procédural : fiche et exercices corrigés pour la 4e SI."><title>Énoncé Série 6 PHP — STI V2.0</title><link rel="stylesheet" href="style.css"></head><body><main><header><p>Lycée Rafèha · 4ᵉ SI · Aymen Essouyah</p><h1>Série 6 PHP — Énoncé</h1><p>Fiche et exercices de PHP procédural</p></header><nav aria-label="Ressources"><a href="corrige.html">Voir le corrigé</a><a href="../../../documents/annexes/annexe-php.pdf.html">Annexe officielle PHP</a><a href="../../sql/serie-8/restaurant.sql" download>Base Dar Zitouna (SQL)</a><button type="button" onclick="window.print()">Imprimer / PDF</button></nav><p class="info">Les exemples MySQLi nécessitent un serveur PHP et une base de test. Les résultats de dates utilisent les dates de référence indiquées.</p><h2>Fiche de révision et compléments</h2><pre class="document">FICHE DE RÉVISION — PHP PROCÉDURAL
+
+1. Variables et constantes : $x = 2.3; define(&quot;TVA&quot;, 0.19); echo $x . &quot; / &quot; . TVA;
+gettype($x) donne le type ; settype($x, &quot;integer&quot;) modifie la variable. is_string, is_array, is_float (is_double, is_real), is_int (is_integer, is_long) testent son type. isset teste l&#x27;existence d&#x27;une valeur non nulle, unset supprime la variable. (int), (float) et (string) convertissent une valeur. include insère un fichier ; require est adapté à une configuration indispensable ; die arrête le script avec un message.
+
+2. Chaînes : les indices commencent à zéro. substr extrait, trim supprime les espaces aux extrémités, strlen compte les octets, str_replace remplace, chr et ord convertissent caractère ASCII et code, strpos cherche une position (comparer strictement à false), strcmp compare et strcasecmp compare en ignorant la casse. strrev inverse les octets ; strtolower et strtoupper modifient la casse ASCII. Pour des caractères accentués, les fonctions sur octets ne suffisent pas nécessairement. Concaténer avec le point ; parcourir les caractères avec for pour séparer ou assembler des éléments.
+
+3. Tableaux : $t = [12, 8, 15]; $s = [&quot;nom&quot; =&gt; &quot;Rim&quot;, &quot;age&quot; =&gt; 17]; count et sizeof comptent les éléments. sort et rsort trient les valeurs et réindexent ; ksort et krsort trient les clés en conservant les associations. Pour un tableau associatif : reset($s); while (key($s) !== null) { echo key($s) . current($s); next($s); }. current et pos lisent la valeur, key lit la clé ; reset, end, next, prev déplacent le pointeur.
+
+4. Formulaires et contrôles : GET transmet les champs dans l&#x27;URL ; POST les transmet dans le corps de la requête. Contrôler isset et la validité avant de traiter ; les boutons radio d&#x27;un même groupe partagent un name. if / else, switch, for et while structurent les traitements. Échapper les valeurs affichées dans une page HTML avec htmlspecialchars.
+
+5. MySQLi procédural : mysqli_connect ouvre la connexion ; mysqli_select_db choisit la base ; mysqli_query exécute la requête. Pour SELECT, mysqli_num_rows compte les résultats et mysqli_fetch_array ou mysqli_fetch_row lit une ligne à la fois. Pour une modification, mysqli_affected_rows indique le nombre de lignes modifiées ; mysqli_insert_id donne l&#x27;identifiant généré par la dernière insertion ; mysqli_error décrit une erreur. En application réelle, utiliser des requêtes préparées pour les données utilisateur, ne pas exposer les erreurs ni les identifiants de connexion.
+
+6. Dates : date formate un timestamp ; time fournit l&#x27;instant courant ; getdate donne ses composantes ; checkdate vérifie mois, jour, année ; mktime construit un timestamp local ; strtotime interprète une date textuelle et peut renvoyer false. Fixer le fuseau avec date_default_timezone_set(&quot;Africa/Tunis&quot;). Les résultats dépendent de la date et du fuseau.
+
+COMPLÉMENTS — APPLICATION DE L&#x27;ANNEXE
+A. Prédire les types et les valeurs : $x = &quot;12.5&quot;; afficher gettype($x), puis convertir $x en entier et afficher sa valeur et is_int($x).
+B. Pour $s = &quot;  Bac SI  &quot;, afficher la longueur après trim, les trois premiers caractères, remplacer SI par Info, puis comparer &quot;BAC&quot; et &quot;bac&quot; avec strcasecmp. Donner chr(65) et ord(&quot;A&quot;).
+C. Avec $t = [&quot;b&quot; =&gt; 2, &quot;a&quot; =&gt; 1], trier les clés dans l&#x27;ordre croissant, puis afficher clé et valeur à l&#x27;aide du pointeur. Afficher aussi le nombre d&#x27;éléments.
+D. Vérifier le 29 février 2024 avec checkdate, puis créer le timestamp de midi le 25 décembre 2026 à Tunis avec mktime et l&#x27;afficher en Y-m-d H:i. Obtenir le tableau des composantes avec getdate.
+E. Écrire les étapes de connexion MySQLi, sélection de base, exécution d&#x27;un SELECT, comptage et lecture des lignes. Indiquer comment obtenir les lignes modifiées, l&#x27;identifiant généré et le message d&#x27;erreur après une requête.
+</pre><h2>Exercices du document fourni</h2><pre class="document">
+     Série d&#x27;exercices : PHP procédural
+
+ echo – chaînes – define – include – die – GET / POST – conversion – tableaux – dates –
+                            boutons radio – MySQLi
+
+           4ème SI – Lycée Rafèha – Enseignant : Aymen Essouyah
+
+
+ Consignes
+   • Utiliser PHP procédural et les fonctions MySQLi pour la connexion et les requêtes.
+   • Les noms de fichiers et de champs de formulaire (name) sont imposés : ils permettent de comparer votre
+   programme au jeu d&#x27;essai. Sauf indication contraire, le formulaire et son traitement sont dans le même
+     fichier.
+   • Les programmes se testent avec un serveur (XAMPP / WAMP) : fichier dans htdocs, adresse
+    http://localhost/dossier/fichier.php.
+   • Les exercices avec la base de données utilisent la base Dar Zitouna (annexe) et un fichier config.php à
+    créer une fois et à inclure avec require.
+   • Dans les jeux d&#x27;essai, la date du jour supposée est le 13 novembre 2026.
+   • Un cadre « Réponse » est à remplir sur la feuille ; « Fichier à produire » signifie : écrire le programme sur
+     l&#x27;ordinateur.
+
+
+Partie 1 – echo, variables et chaînes (&#x27; et &quot;)
+
+
+Exercice 1.1 – Prédire l&#x27;affichage (guillemets simples et doubles)
+
+Écrire exactement ce que le navigateur affiche (une ligne par &lt;br&gt;).
+
+ &lt;?php
+ $nom = &quot;Rim&quot;;
+ $age = 17;
+ echo &#x27;Nom : $nom&lt;br&gt;&#x27;;
+ echo &quot;Nom : $nom&lt;br&gt;&quot;;
+ echo &quot;Dans un an : &quot; . ($age + 1) . &quot; ans&lt;br&gt;&quot;;
+ echo &quot;Prix : \$5 ou 5 DT&lt;br&gt;&quot;;
+ echo &#x27;L\&#x27;été&lt;br&gt;&#x27;;
+ echo $nom . $age . &quot;&lt;br&gt;&quot;;
+ echo $nom, $age + 3;
+ ?&gt;
+
+
+ Réponse :
+
+
+Exercice 1.2 – Corriger les erreurs
+
+Ce script contient cinq erreurs (syntaxe, guillemets, opérateur, variable). Les repérer, les expliquer,
+puis réécrire le script corrigé. Il doit afficher : le message de bienvenue, l&#x27;âge, un champ de saisie
+pré-rempli et le total.
+
+ &lt;?php
+ nom = &quot;Sami&quot;
+ $age = &quot;17&quot;;
+ echo &quot;Bonjour $nom&lt;br&gt;&quot;;
+ echo &quot;Vous avez &quot; + $age + &quot; ans&lt;br&gt;&quot;;
+ echo &quot;&lt;input type=&quot;text&quot; name=&quot;nom&quot; value=&quot;$nom&quot;&gt;&lt;br&gt;&quot;;
+ echo &#x27;Total : &#x27; . $prix . &#x27; DT&#x27;;
+ ?&gt;
+
+
+ Réponse :
+
+
+Exercice 1.3 – Écrire du HTML avec echo
+
+Avec $nom = &quot;Sami&quot;; et $prix = 12.5;, écrire deux versions de l&#x27;instruction echo qui produisent
+exactement la ligne HTML suivante : version A avec des guillemets simples pour PHP, version B avec
+des guillemets doubles pour PHP.
+
+ &lt;a href=&quot;fiche.php?nom=Sami&amp;prix=12.5&quot; class=&quot;lien&quot;&gt;Sami&lt;/a&gt;
+
+
+ Réponse :
+
+
+Exercice 1.4 – Fonctions sur les chaînes
+
+Avec $s = &quot; dar zitouna &quot;;, écrire le code qui affiche, chacun sur une ligne :
+ a) la chaîne sans les espaces de début et de fin, entre crochets : [dar zitouna]
+
+ b) son nombre de caractères (après suppression des espaces)
+
+ c) chaque mot avec une majuscule, puis tout en majuscules
+
+ d) la chaîne où chaque o est remplacé par 0
+
+ e) ses 3 premières lettres, puis la position du mot zit
+
+ f) le 2e mot et le nombre de mots
+
+ Réponse :
+
+
+Partie 2 – define, include et die
+
+
+Exercice 2.1 – Constantes et TVA
+
+Écrire tva.php : définir avec define les constantes TVA (0.19), DEVISE (&quot;DT&quot;) et RESTAURANT (&quot;Dar
+Zitouna&quot;). À partir du tableau associatif $plats = [&quot;Couscous&quot; =&gt; 22, &quot;Poisson&quot; =&gt; 28, &quot;Lablabi&quot; =&gt;
+9]; (prix hors taxe), afficher le nom du restaurant puis, pour chaque plat, le prix HT, la TVA et le prix
+TTC avec 2 décimales. Pourquoi echo &quot;TVA&quot;; n&#x27;affiche-t-il pas 0.19 ?
+
+Fichier à produire : tva.php
+
+Affichage obtenu
+
+ Dar Zitouna
+ Couscous : HT 22.00 DT, TVA 4.18, TTC 26.18 DT
+ Poisson : HT 28.00 DT, TVA 5.32, TTC 33.32 DT
+ Lablabi : HT 9.00 DT, TVA 1.71, TTC 10.71 DT
+
+
+Exercice 2.2 – Organiser un site avec include et require
+
+Créer quatre fichiers : config.php (constantes RESTAURANT et ANNEE, valant 2026), entete.php (titre du
+restaurant et menu avec deux liens : Accueil, Contact), pied.php (copyright avec l&#x27;année) et
+accueil.php qui les assemble. Justifier le choix de require ou include pour chaque fichier.
+
+Fichier à produire : accueil.php
+
+Affichage obtenu
+
+ &lt;html&gt;&lt;body&gt;
+ &lt;h1&gt;Dar Zitouna&lt;/h1&gt;
+ &lt;a href=&quot;accueil.php&quot;&gt;Accueil&lt;/a&gt; | &lt;a href=&quot;contact.php&quot;&gt;Contact&lt;/a&gt;
+ &lt;hr&gt;
+ &lt;p&gt;Bienvenue dans notre restaurant.&lt;/p&gt;
+ &lt;hr&gt;
+ &lt;p&gt;&amp;copy; 2026 Dar Zitouna&lt;/p&gt;
+ &lt;/body&gt;&lt;/html&gt;
+
+
+Exercice 2.3 – Arrêter le script avec die
+
+Écrire fiche.php qui reçoit un numéro num dans l&#x27;adresse et utilise le tableau $serveurs = [1 =&gt; &quot;Sami&quot;,
+2 =&gt; &quot;Rim&quot;, 3 =&gt; &quot;Karim&quot;, 4 =&gt; &quot;Nour&quot;];. Utiliser die pour : numéro absent (« Numéro manquant »),
+numéro non numérique (« Numéro invalide »), numéro absent du tableau (« Serveur inconnu »). Sinon
+afficher « Serveur n°3 : Karim ».
+
+Fichier à produire : fiche.php
+
+Jeu d&#x27;essai « fiche.php?num=3 » – données envoyées : num = 3
+
+ Serveur n°3 : Karim
+
+Partie 3 – GET et POST
+
+
+Exercice 3.1 – Vrai ou faux ?
+
+Répondre par V ou F et corriger les affirmations fausses.
+ a) $_POST[&quot;nom&quot;] lit le champ dont l&#x27;attribut id vaut nom.
+
+ b) Avec method=&quot;get&quot;, les données du formulaire apparaissent dans l&#x27;adresse de la page.
+
+ c) Un formulaire de connexion doit utiliser la méthode GET.
+
+ d) Un bouton radio non coché est envoyé avec une valeur vide.
+
+ e) Les valeurs de $_POST sont toujours de type chaîne.
+
+ f) isset($_POST[&quot;valider&quot;]) permet de savoir si le formulaire a été soumis (le bouton a un name).
+
+ g) On peut lire $_GET[&quot;x&quot;] sans le tester : au pire la valeur est vide.
+
+ h) include &quot;a.php&quot;; arrête le script si a.php est absent.
+
+ Réponse :
+
+
+Exercice 3.2 – Inscription d&#x27;un serveur (POST)
+
+Écrire inscription.php (formulaire et traitement dans le même fichier, méthode POST) avec : nom et
+prenom (texte), salle (liste déroulante : Terrasse, Salon) et le bouton inscrire. Après envoi : si un des
+deux champs est vide (utiliser trim et empty), afficher « Nom et prénom obligatoires. » ; sinon afficher «
+Bienvenue Prénom NOM, vous travaillerez en salle X. » (prénom avec majuscule initiale, nom en
+majuscules).
+
+Fichier à produire : inscription.php
+
+Jeu d&#x27;essai « champs remplis » – données envoyées : nom = ben salah, prenom = AYA, salle =
+Salon, inscrire = ok
+
+ Bienvenue Aya BEN SALAH, vous travaillerez en salle Salon.
+
+
+Exercice 3.3 – Menu et fiche d&#x27;un plat (liens GET et include)
+
+Écrire trois fichiers : donnees.php (tableau $menu : 3 plats avec clés numériques 1, 2, 3 et, pour chacun,
+nom, prix, categorie : Salade tunisienne 6 DT Entrée, Couscous à l&#x27;agneau 22 DT Plat, Makroudh 5 DT
+Dessert) ; menu.php qui inclut donnees.php et affiche chaque plat sous forme de lien plat.php?num=... ;
+plat.php qui affiche la fiche du plat demandé (nom, catégorie, prix) ou « Plat introuvable » (avec die) si
+le numéro est absent ou inconnu.
+
+Fichier à produire : menu.php, plat.php, donnees.php
+
+Jeu d&#x27;essai « menu.php »
+
+ &lt;a href=&#x27;plat.php?num=1&#x27;&gt;Salade tunisienne&lt;/a&gt;&lt;br&gt;&lt;a href=&#x27;plat.php?num=2&#x27;&gt;Couscous à
+ l&#x27;agneau&lt;/a&gt;&lt;br&gt;&lt;a href=&#x27;plat.php?num=3&#x27;&gt;Makroudh&lt;/a&gt;&lt;br&gt;
+
+Jeu d&#x27;essai « clic sur le 2e lien » – données envoyées : num = 2
+
+ Couscous à l&#x27;agneau
+ Catégorie : Plat
+ Prix : 22 DT
+
+
+Exercice 3.4 – Table de multiplication (GET)
+
+Écrire table.php avec un formulaire GET (champ n, bouton go). Après envoi, si n n&#x27;est pas un nombre,
+afficher « Saisir un nombre. » ; sinon convertir n en entier et afficher la table de multiplication de n de 1
+à 10 (7 x 3 = 21). Observer l&#x27;adresse de la page après l&#x27;envoi.
+
+Fichier à produire : table.php
+
+Jeu d&#x27;essai « n = 7 » – données envoyées : n = 7, go = Afficher
+
+ Table de 7 :
+ 7 x 1 = 7
+ 7 x 2 = 14
+ 7 x 3 = 21
+ 7 x 4 = 28
+ 7 x 5 = 35
+ 7 x 6 = 42
+ 7 x 7 = 49
+ 7 x 8 = 56
+ 7 x 9 = 63
+ 7 x 10 = 70
+
+
+Partie 4 – Conversion, conditions et boucles
+
+
+Exercice 4.1 – Prédire les types et les conversions
+
+Écrire ce qu&#x27;affiche chaque var_dump (type et valeur).
+
+ &lt;?php
+ var_dump(&quot;7&quot; + &quot;3&quot;);
+ var_dump(&quot;7&quot; . &quot;3&quot;);
+ var_dump((int)&quot;15 DT&quot;);
+ var_dump((int)4.9);
+ var_dump((bool)&quot;0&quot;);
+ var_dump((bool)&quot;false&quot;);
+ var_dump(&quot;10&quot; == 10);
+ var_dump(&quot;10&quot; === 10);
+ var_dump(is_numeric(&quot;1e3&quot;));
+ ?&gt;
+
+
+ Réponse :
+
+
+Exercice 4.2 – Indice de masse corporelle (POST)
+
+Écrire imc.php : formulaire POST (poids en kg, taille en m, bouton calculer). Vérifier avec is_numeric
+que les deux valeurs sont des nombres strictement positifs (sinon « Saisie incorrecte. »), convertir en
+réel, calculer IMC = poids / (taille × taille) arrondi à 1 décimale et afficher l&#x27;interprétation : moins
+de 18.5 « maigreur », moins de 25 « poids normal », moins de 30 « surpoids », sinon « obésité ».
+
+Fichier à produire : imc.php
+
+Jeu d&#x27;essai « poids 70, taille 1.75 » – données envoyées : poids = 70, taille = 1.75, calculer = ok
+
+ IMC = 22.9 : poids normal
+
+
+Exercice 4.3 – Boucles
+
+Écrire boucles.php qui affiche, avec les boucles demandées : (a) avec for, un triangle de 5 lignes
+d&#x27;étoiles (1 étoile sur la 1re ligne, 2 sur la 2e…, utiliser str_repeat) ; (b) avec while, la somme des
+entiers de 1 à 100 ; (c) avec for, les carrés des nombres de 1 à 10 rangés dans un tableau, puis
+affichés séparés par -.
+
+Fichier à produire : boucles.php
+
+Affichage obtenu
+
+ *
+ **
+ ***
+ ****
+ *****
+ Somme : 5050
+ 1 - 4 - 9 - 16 - 25 - 36 - 49 - 64 - 81 - 100
+
+
+Exercice 4.4 – Listes déroulantes générées par des boucles
+
+Écrire date_naissance.php qui affiche trois listes déroulantes générées uniquement avec des
+boucles : jour (1 à 31), mois (les noms des mois en français, stockés dans un tableau ; la value est le
+numéro du mois), annee (de l&#x27;année actuelle jusqu&#x27;à 1990, en décroissant ; l&#x27;année actuelle est
+présélectionnée avec selected).
+
+Fichier à produire : date_naissance.php
+
+Partie 5 – Tableaux et tableaux associatifs
+
+
+Exercice 5.1 – Prédire l&#x27;affichage
+
+Écrire ce que le navigateur affiche.
+
+ &lt;?php
+ $s = [&quot;nom&quot; =&gt; &quot;Rim&quot;, &quot;age&quot; =&gt; 17, &quot;salle&quot; =&gt; &quot;Salon&quot;];
+ $s[&quot;age&quot;] = $s[&quot;age&quot;] + 1;
+ $s[&quot;tel&quot;] = &quot;71 000 000&quot;;
+ unset($s[&quot;salle&quot;]);
+ reset($s);
+ while (key($s) !== null) {
+     $k = key($s);
+     echo $k . &quot;=&quot; . current($s) . &quot;;&quot;;
+     next($s);
+ }
+ echo count($s);
+ echo isset($s[&quot;salle&quot;]) ? &quot; oui&quot; : &quot; non&quot;;
+ $notes = [12, 8, 15];
+ $notes[] = 10;
+ sort($notes);
+ echo &quot;&lt;br&gt;&quot;;
+ for ($i = 0; $i &lt; count($notes); $i++) {
+     if ($i &gt; 0) { echo &quot;,&quot;; }
+     echo $notes[$i];
+ }
+ echo &quot; &quot; . max($notes) . &quot; &quot; . $notes[1];
+ ?&gt;
+
+
+ Réponse :
+
+
+Exercice 5.2 – Statistiques sur un tableau indexé
+
+Écrire notes.php. Avec $notes = [12, 8, 15, 9.5, 17, 10];, afficher : le nombre de notes, la moyenne
+(2 décimales), la meilleure et la plus faible note, le nombre de notes supérieures ou égales à 10 avec
+une boucle for, la liste triée par ordre décroissant, puis « Admis » si la moyenne est supérieure
+ou égale à 10, « Ajourné » sinon.
+
+Fichier à produire : notes.php
+
+Affichage obtenu
+
+ Nombre : 6
+ Moyenne : 11.92
+ Max : 17 - Min : 8
+ Notes &gt;= 10 : 4
+ Tri décroissant : 17, 15, 12, 10, 9.5, 8
+ Admis
+
+
+Exercice 5.3 – Tableau de tableaux : bulletin d&#x27;une classe
+
+Écrire classe.php avec le tableau $eleves suivant : Aya 14.5, Sami 9, Rim 16, Karim 11.5 (chaque élève
+est un tableau associatif nom / moyenne). Afficher un tableau HTML (nom, moyenne, mention : « Bien » à
+partir de 14, « Passable » à partir de 10, sinon « Insuffisant »), puis la moyenne de la classe, le nom du
+meilleur élève et le nombre d&#x27;élèves admis (moyenne ≥ 10).
+
+Fichier à produire : classe.php
+
+Affichage obtenu
+
+ Aya | 14.5 | Bien
+ Sami | 9 | Insuffisant
+ Rim | 16 | Bien
+ Karim | 11.5 | Passable
+ Moyenne de la classe : 12.75
+ Meilleur élève : Rim
+ Admis : 3
+
+
+Exercice 5.4 – Compter les occurrences (tableau associatif)
+
+Avec la chaîne &quot;tunis,sfax,tunis,sousse,sfax,tunis&quot;, parcourir les caractères pour construire un tableau
+associatif $compte (clé = ville, valeur = nombre d&#x27;occurrences) avec isset. Afficher le
+résultat trié par nom de ville (ksort) avec une majuscule initiale : « Sfax : 2 », « Sousse : 1 », « Tunis : 3
+».
+
+Fichier à produire : villes.php
+
+Affichage obtenu
+
+ Sfax : 2
+ Sousse : 1
+ Tunis : 3
+
+Partie 6 – Les dates
+
+
+Exercice 6.1 – Formats de date
+
+On pose $t = mktime(9, 5, 30, 12, 25, 2026); (vendredi 25 décembre 2026, 9 h 05 min 30 s). (1)
+Écrire le format date() qui affiche : (a) 2026-12-25 ; (b) 25-12-26 ; (c) 9h05 ; (d) Fri, 25 Dec ; (e)
+09:05:30. (2) Prédire l&#x27;affichage du script ci-dessous.
+
+ &lt;?php
+ $t = mktime(9, 5, 30, 12, 25, 2026);
+ echo date(&quot;d/m/Y&quot;, $t) . &quot;&lt;br&gt;&quot;;
+ echo date(&quot;D j M y&quot;, $t) . &quot;&lt;br&gt;&quot;;
+ echo date(&quot;H:m:s&quot;, $t) . &quot;&lt;br&gt;&quot;;
+ echo date(&quot;g:i a&quot;, $t) . &quot;&lt;br&gt;&quot;;
+ echo date(&quot;N w z&quot;, $t) . &quot;&lt;br&gt;&quot;;
+ echo date(&quot;t L&quot;, $t);
+ ?&gt;
+
+
+ Réponse :
+
+
+Exercice 6.2 – La date du jour en français
+
+Écrire aujourdhui.php qui affiche la date du jour sous la forme « Aujourd&#x27;hui : vendredi 13 novembre
+2026 » (jour de la semaine et mois en français, à l&#x27;aide de deux tableaux et de date(&quot;w&quot;), date(&quot;j&quot;),
+date(&quot;n&quot;), date(&quot;Y&quot;)).
+
+Fichier à produire : aujourdhui.php
+
+Jeu d&#x27;essai « exécuté le 13/11/2026 »
+
+ Aujourd&#x27;hui : vendredi 13 novembre 2026
+
+
+Exercice 6.3 – Calcul de l&#x27;âge (formulaire avec bouton radio)
+
+Écrire age.php (POST) : champ naissance (type=&quot;date&quot;), deux boutons radio titre (Monsieur / Madame)
+et le bouton calculer. Si la date ou la civilité manque, afficher « Choisissez une civilité et une date de
+naissance. ». Sinon afficher « Monsieur, vous avez 18 ans (majeur). » (ou « (mineur) ») puis « Prochain
+anniversaire dans N jour(s). ». Attention : l&#x27;âge est la différence des années, moins 1 si l&#x27;anniversaire
+de cette année n&#x27;est pas encore passé.
+
+Fichier à produire : age.php
+
+Jeu d&#x27;essai « au 13/11/2026 : Monsieur, né le 2008-05-12 » – données envoyées : titre = Monsieur,
+naissance = 2008-05-12, calculer = ok
+
+ Monsieur, vous avez 18 ans (majeur).
+ Prochain anniversaire dans 180 jour(s).
+
+
+Exercice 6.4 – Différence entre deux dates
+
+Écrire difference.php (POST) : deux champs d1 et d2 de type date et le bouton calculer. Si une date
+manque : « Deux dates sont nécessaires. » ; si d2 est avant d1 : « La 2e date doit être postérieure à la
+1re. » ; sinon afficher le nombre de jours entre les deux dates, puis le même écart en « semaines et
+jours » (par exemple 42 semaine(s) et 1 jour(s)).
+
+Fichier à produire : difference.php
+
+Jeu d&#x27;essai « 2026-03-05 et 2026-12-25 » – données envoyées : d1 = 2026-03-05, d2 = 2026-12-25,
+calculer = ok
+
+ 295 jour(s) d&#x27;écart.
+ Soit 42 semaine(s) et 1 jour(s).
+
+
+Exercice 6.5 – Date de livraison
+
+Écrire livraison.php (POST) : champs date (date de commande, type date), delai (nombre de jours,
+type number) et bouton calculer. La date de livraison est la date de commande plus delai jours ; si
+elle tombe un dimanche, la livraison est reportée au lundi. Afficher « Livraison le lundi 16/03/2026. »
+(jour de la semaine en français, date au format jj/mm/aaaa).
+
+Fichier à produire : livraison.php
+
+Jeu d&#x27;essai « 2026-03-05 + 10 jours (le 15/03 est un dimanche) » – données envoyées : date =
+2026-03-05, delai = 10, calculer = ok
+
+ Livraison le lundi 16/03/2026.
+
+
+Exercice 6.6 – Calendrier d&#x27;un mois
+
+Écrire mois.php (POST) : liste déroulante mois (noms français, value de 1 à 12), champ annee et bouton
+voir. Si l&#x27;année n&#x27;est pas un nombre, afficher « Année invalide. » ; sinon afficher : le nombre de jours
+du mois, le jour de la semaine du 1er du mois (en français) et si l&#x27;année est bissextile. Exemple : «
+Mars 2026 : 31 jours. Le 1er est un dimanche. Année bissextile : non. »
+
+Fichier à produire : mois.php
+
+Jeu d&#x27;essai « mois = 3, annee = 2026 » – données envoyées : mois = 3, annee = 2026, voir = ok
+
+ Mars 2026 : 31 jours.
+ Le 1er est un dimanche.
+ Année bissextile : non
+
+
+Exercice 6.7 – Changer le format d&#x27;une date
+
+(a) Convertir $fr = &quot;25/12/2026&quot;; en format SQL 2026-12-25 avec substr et concaténation.
+(b) Convertir $sql = &quot;2026-03-05&quot;; en 05/03/2026
+avec date et strtotime. (c) Pourquoi ne peut-on pas écrire strtotime(&quot;25/12/2026&quot;) ? (d) Vérifier avec
+checkdate si &quot;31/02/2026&quot; existe (attention à l&#x27;ordre des arguments).
+
+Fichier à produire : formats_date.php
+
+Partie 7 – Formulaires avec boutons radio
+
+
+Exercice 7.1 – Civilité (boutons radio)
+
+Écrire bonjour.php (POST) : champs prenom et nom (texte), boutons radio civilite (Monsieur / Madame)
+et bouton envoyer. Après envoi, si aucune civilité n&#x27;est cochée ou si un champ est vide : « Veuillez tout
+remplir. » ; sinon « Bonjour Madame Prénom NOM ». Quelle valeur contient $_POST[&quot;civilite&quot;] ? Que
+se passe-t-il si aucun bouton n&#x27;est coché ?
+
+Fichier à produire : bonjour.php
+
+Jeu d&#x27;essai « civilité cochée » – données envoyées : civilite = Madame, prenom = aya, nom = Ben
+Salah, envoyer = ok
+
+ Bonjour Madame Aya BEN SALAH
+
+
+Exercice 7.2 – Calculatrice à boutons radio
+
+Écrire calcul.php (POST) : champs a et b, cinq boutons radio op (+, -, *, /, % pour le reste), bouton
+calculer. Vérifier les saisies avec is_numeric et la présence d&#x27;une opération (sinon « Saisie incorrecte.
+»). Utiliser switch. Pour / et %, afficher « Division par zéro impossible. » si b vaut 0. Les valeurs saisies
+et l&#x27;opération choisie doivent rester affichées après l&#x27;envoi (checked conditionnel). Exemple : « 17 %
+5 = 2 ».
+
+Fichier à produire : calcul.php
+
+Jeu d&#x27;essai « 17 % 5 » – données envoyées : a = 17, b = 5, op = %, calculer = =
+
+ 17 % 5 = 2
+
+
+Exercice 7.3 – QCM de 5 questions (boutons radio)
+
+Écrire qcm.php (POST) : le formulaire est généré par une boucle à partir d&#x27;un tableau $questions
+(chaque question : énoncé, 3 choix, indice de la bonne réponse). Les boutons radio de la question *i*
+s&#x27;appellent q0, q1… et ont pour value l&#x27;indice du choix. Après corriger, afficher « Score : N / 5 » et une
+mention : 5 « Excellent », 3 ou 4 « Bien », sinon « À revoir ». Une question sans réponse compte 0.
+Proposer vos 5 questions sur GET/POST, define, include, die, mysqli.
+
+Fichier à produire : qcm.php
+
+Jeu d&#x27;essai « 4 bonnes réponses, la 5e sans réponse » – données envoyées : q0 = 0, q1 = 1, q2 = 2,
+q3 = 1, corriger = ok
+
+ Score : 4 / 5
+ Bien
+
+
+Exercice 7.4 – Convertisseur de monnaie (radio et constantes)
+
+Écrire convertisseur.php (POST) : champ montant, trois boutons radio sens (dt_eur : DT → EUR, eur_dt :
+EUR → DT, dt_usd : DT → USD), bouton convertir. Définir avec define les constantes DT_EUR (0.30) et
+DT_USD (0.32) (taux fictifs). Afficher le résultat avec 2 décimales, par exemple « 100 → 30.00 EUR ». Le
+montant et le choix doivent rester affichés après l&#x27;envoi.
+
+Fichier à produire : convertisseur.php
+
+Jeu d&#x27;essai « 100 DT → EUR » – données envoyées : montant = 100, sens = dt_eur, convertir = ok
+
+ 100 → 30.00 EUR
+
+
+Exercice 7.5 – Commande au restaurant (radio, quantité et remise)
+
+Écrire commande.php (POST) avec $menu = [1 =&gt; [&quot;Salade tunisienne&quot;, 6], 2 =&gt; [&quot;Couscous à
+l&#x27;agneau&quot;, 22], 3 =&gt; [&quot;Makroudh&quot;, 5]];. Le formulaire contient : des boutons radio plat générés par
+une boucle (value = clé du tableau), un champ qte (nombre, 1 par défaut), deux boutons radio mode (place
+coché par défaut, emporter) et le bouton commander. Après envoi : si un champ est incorrect (qte non
+numérique ou ≤ 0, plat non choisi) « Veuillez remplir tout le formulaire. » ; sinon afficher la ligne « 3 x
+Couscous à l&#x27;agneau = 66 DT », puis, pour emporter, « Remise à emporter (10 %) » et enfin « Total à
+payer : 59.40 DT ».
+
+Fichier à produire : commande.php
+
+Jeu d&#x27;essai « Couscous, 3, à emporter » – données envoyées : plat = 2, qte = 3, mode = emporter,
+commander = ok
+
+ 3 x Couscous à l&#x27;agneau = 66 DT
+ Remise à emporter (10 %)
+ Total à payer : 59.40 DT
+
+Partie 8 – MySQLi procédural (base Dar Zitouna)
+
+
+Exercice 8.1 – Prédire les résultats (num_rows, fetch, affected_rows)
+
+Avec les tables de l&#x27;annexe (SERVEUR, COMMANDE), écrire ce que le navigateur affiche. La base est
+réinitialisée avant le script.
+
+ &lt;?php
+ require &quot;config.php&quot;;
+ $cnx = mysqli_connect(HOTE, UTIL, MDP, BASE) or die(&quot;Connexion impossible&quot;);
+ $res = mysqli_query($cnx, &quot;SELECT nom, salle FROM SERVEUR WHERE salle = &#x27;Salon&#x27;&quot;);
+ echo mysqli_num_rows($res) . &quot;&lt;br&gt;&quot;;
+ $l = mysqli_fetch_row($res);
+ echo $l[0] . &quot;&lt;br&gt;&quot;;
+ $l = mysqli_fetch_array($res);
+ echo $l[&quot;nom&quot;] . &quot; &quot; . $l[&quot;salle&quot;] . &quot;&lt;br&gt;&quot;;
+ var_dump(mysqli_fetch_row($res));
+ $sql = &quot;SELECT plat, prix FROM COMMANDE WHERE categorie = &#x27;Dessert&#x27; ORDER BY prix&quot;;
+ $res = mysqli_query($cnx, $sql);
+ $l = mysqli_fetch_array($res);
+ echo $l[&quot;plat&quot;] . &quot; &quot; . $l[&quot;prix&quot;] . &quot;&lt;br&gt;&quot;;
+ mysqli_query($cnx, &quot;UPDATE COMMANDE SET prix = prix + 1 WHERE categorie = &#x27;Dessert&#x27;&quot;);
+ echo mysqli_affected_rows($cnx) . &quot;&lt;br&gt;&quot;;
+ mysqli_query($cnx, &quot;UPDATE COMMANDE SET qte = 2 WHERE num = 11&quot;);
+ echo mysqli_affected_rows($cnx) . &quot;&lt;br&gt;&quot;;
+ mysqli_query($cnx, &quot;DELETE FROM COMMANDE WHERE categorie = &#x27;Boisson&#x27;&quot;);
+ echo mysqli_affected_rows($cnx);
+ ?&gt;
+
+
+ Réponse :
+
+
+Exercice 8.2 – Liste des serveurs
+
+Écrire serveurs.php : se connecter avec require &quot;config.php&quot; et or die(...), puis afficher dans un
+tableau HTML le numéro, le nom, la salle et la date d&#x27;embauche au format jj/mm/aaaa de chaque
+serveur (mysqli_fetch_row), précédé de « N serveur(s) » (mysqli_num_rows).
+
+Fichier à produire : serveurs.php
+
+Affichage obtenu
+
+ 4 serveur(s)
+ 1 | Sami | Terrasse | 01/01/2022
+ 2 | Rim | Salon | 01/09/2023
+ 3 | Karim | Terrasse | 15/02/2019
+ 4 | Nour | Salon | 10/01/2024
+
+
+Exercice 8.3 – Serveurs d&#x27;une salle (boutons radio générés par la base)
+
+Écrire salles.php (POST). Les boutons radio salle sont générés par une requête SELECT DISTINCT salle
+FROM SERVEUR (avec mysqli_fetch_row). Après envoi (afficher), afficher le nombre de serveurs de la salle
+choisie, puis, pour chacun (avec mysqli_fetch_array), son nom et le nombre de commandes qu&#x27;il a
+prises. Utiliser la requête SELECT nom, (SELECT COUNT(*) FROM COMMANDE WHERE COMMANDE.numserveur =
+SERVEUR.num) AS nb FROM SERVEUR WHERE salle = &#x27;$salle&#x27;. Sans salle choisie : « Choisissez une salle. »
+
+Fichier à produire : salles.php
+
+Jeu d&#x27;essai « salle = Terrasse » – données envoyées : salle = Terrasse, afficher = ok
+
+ 2 serveur(s) en Terrasse
+ Sami : 4 commande(s)
+ Karim : 4 commande(s)
+
+
+Exercice 8.4 – Ajouter un serveur (INSERT et affected_rows)
+
+Écrire ajout_serveur.php (POST) : champs num, nom, boutons radio salle (Terrasse / Salon), champ date
+(type date) et bouton ajouter. Après envoi, si un champ manque ou si num n&#x27;est pas numérique : «
+Veuillez remplir tous les champs. » ; sinon exécuter un INSERT ; si mysqli_query renvoie true et que
+mysqli_affected_rows vaut 1 : « Serveur ajouté. » ; sinon « Échec : ce numéro existe déjà. ». Terminer
+en affichant le nombre total de serveurs (mysqli_num_rows). On suppose que le nom ne contient pas
+d&#x27;apostrophe.
+
+Fichier à produire : ajout_serveur.php
+
+Jeu d&#x27;essai « num 5, Aya, Salon, 2025-09-01 » – données envoyées : num = 5, nom = Aya, salle =
+Salon, date = 2025-09-01, ajouter = ok
+
+ Serveur ajouté.
+ Total : 5 serveur(s)
+
+
+Exercice 8.5 – Modifier ou supprimer une commande (radio + UPDATE / DELETE)
+
+Écrire gestion.php (POST) : champ num (numéro de commande), champ prix (nouveau prix), boutons
+radio action (modifier / supprimer) et bouton valider. Pour modifier : exécuter l&#x27;UPDATE du prix ;
+affected_rows = 1 → « Prix modifié. », 0 → « Aucune modification (numéro inconnu ou même prix). ».
+Pour supprimer : exécuter le DELETE ; 1 → « Commande supprimée. », 0 → « Numéro inconnu. ». Si
+aucune action n&#x27;est choisie ou si num n&#x27;est pas numérique : « Saisie incorrecte. ».
+
+Fichier à produire : gestion.php
+
+Jeu d&#x27;essai « modifier la commande 1, prix 7 » – données envoyées : num = 1, prix = 7, action =
+modifier, valider = ok
+
+ Prix modifié.
+
+
+Exercice 8.6 – Ancienneté des serveurs (dates et base de données)
+
+Écrire anciennete.php : pour chaque serveur (mysqli_fetch_array), afficher « Nom : N an(s) » où N est
+l&#x27;ancienneté en années entières au 1er janvier 2027, calculée en PHP à partir de date_embauche
+(extraire les composantes avec substr), puis « (plus de 5 ans) » si N &gt; 5, sinon « (5 ans ou moins) ».
+
+Fichier à produire : anciennete.php
+
+Affichage obtenu
+
+ Sami : 5 an(s) (5 ans ou moins)
+ Rim : 3 an(s) (5 ans ou moins)
+ Karim : 7 an(s) (plus de 5 ans)
+ Nour : 2 an(s) (5 ans ou moins)
+
+
+Exercice 8.7 – Commandes d&#x27;un mois (liste déroulante et dates SQL)
+
+Écrire commandes_mois.php (POST) : liste déroulante mois (noms français générés par une boucle, value
+de 1 à 12), liste annee (2026, 2027) et bouton voir. Afficher les commandes dont date_cmd est dans le
+mois choisi (MONTH(date_cmd) = $mois AND YEAR(date_cmd) = $annee) dans un tableau (plat, quantité,
+date au format jj/mm/aaaa) puis le chiffre d&#x27;affaires du mois (prix × qte). S&#x27;il n&#x27;y a aucune commande :
+« Aucune commande ce mois-ci. » (mysqli_num_rows).
+
+Fichier à produire : commandes_mois.php
+
+Jeu d&#x27;essai « mars 2026 » – données envoyées : mois = 3, annee = 2026, voir = ok
+
+ Salade tunisienne | 2 | 15/03/2026
+ Brik à l&#x27;oeuf | 5 | 15/03/2026
+ Couscous à l&#x27;agneau | 3 | 22/03/2026
+ Poisson grillé | 2 | 28/03/2026
+ Chiffre d&#x27;affaires de Mars 2026 : 154 DT
+
+
+Annexe – Base de données Dar Zitouna
+
+
+Script de création et d&#x27;insertion (à exécuter dans phpMyAdmin après avoir créé la base darzitouna).
+C&#x27;est la base de la série 8, avec deux colonnes de dates en plus.
+
+ CREATE TABLE SERVEUR (
+  num INT PRIMARY KEY,
+  nom VARCHAR(20),
+  salle VARCHAR(20),
+  date_embauche DATE
+ );
+ CREATE TABLE COMMANDE (
+  num INT PRIMARY KEY,
+  plat VARCHAR(30),
+  categorie VARCHAR(15),
+  prix DECIMAL(5,2),
+  qte INT,
+  numserveur INT,
+  date_cmd DATE,
+  FOREIGN KEY (numserveur) REFERENCES SERVEUR(num)
+ );
+ INSERT INTO SERVEUR VALUES
+  (1,&#x27;Sami&#x27;,&#x27;Terrasse&#x27;,&#x27;2022-01-01&#x27;), (2,&#x27;Rim&#x27;,&#x27;Salon&#x27;,&#x27;2023-09-01&#x27;),
+  (3,&#x27;Karim&#x27;,&#x27;Terrasse&#x27;,&#x27;2019-02-15&#x27;), (4,&#x27;Nour&#x27;,&#x27;Salon&#x27;,&#x27;2024-01-10&#x27;);
+ INSERT INTO COMMANDE VALUES
+  (1,&#x27;Salade tunisienne&#x27;,&#x27;Entrée&#x27;,6,2,1,&#x27;2026-03-15&#x27;),
+  (2,&#x27;Brik à l&#x27;&#x27;oeuf&#x27;,&#x27;Entrée&#x27;,4,5,2,&#x27;2026-03-15&#x27;),
+  (3,&#x27;Couscous à l&#x27;&#x27;agneau&#x27;,&#x27;Plat&#x27;,22,3,1,&#x27;2026-03-22&#x27;),
+  (4,&#x27;Poisson grillé&#x27;,&#x27;Plat&#x27;,28,2,3,&#x27;2026-03-28&#x27;),
+  (5,&#x27;Ojja merguez&#x27;,&#x27;Plat&#x27;,18,4,2,&#x27;2026-04-15&#x27;),
+  (6,&#x27;Makroudh&#x27;,&#x27;Dessert&#x27;,5,6,3,&#x27;2026-06-10&#x27;),
+  (7,&#x27;Assidat zgougou&#x27;,&#x27;Dessert&#x27;,7,3,1,&#x27;2026-11-15&#x27;),
+  (8,&#x27;Thé à la menthe&#x27;,&#x27;Boisson&#x27;,3,8,2,&#x27;2027-01-15&#x27;),
+  (9,&#x27;Jus d&#x27;&#x27;orange&#x27;,&#x27;Boisson&#x27;,4,5,3,&#x27;2027-02-20&#x27;),
+  (10,&#x27;Brik au thon&#x27;,&#x27;Entrée&#x27;,4,4,1,&#x27;2027-03-15&#x27;),
+  (11,&#x27;Lablabi&#x27;,&#x27;Plat&#x27;,9,2,2,&#x27;2027-04-08&#x27;),
+  (12,&#x27;Eau minérale&#x27;,&#x27;Boisson&#x27;,2,10,3,&#x27;2027-04-14&#x27;);
+
+Fichier config.php (à créer et à inclure avec require)
+
+ &lt;?php
+ define(&quot;HOTE&quot;, &quot;localhost&quot;);
+ define(&quot;UTIL&quot;, &quot;root&quot;);
+ define(&quot;MDP&quot;, &quot;&quot;);
+ define(&quot;BASE&quot;, &quot;darzitouna&quot;);
+ mysqli_report(MYSQLI_REPORT_OFF);
+ ?&gt;
+
+mysqli_report(MYSQLI_REPORT_OFF); : depuis PHP 8.1, sans cette ligne une erreur MySQL lève une exception
+au lieu de renvoyer false et or die(...) n&#x27;est jamais exécuté. Adapter UTIL et MDP à votre serveur (en général
+root et un mot de passe vide avec XAMPP).
+
+Enseignant : Aymen Essouyah – Lycée Rafèha – 4ème SI
+</pre></main><script>window.__APP_OK = true;</script><link rel="stylesheet" href="../../../assets/css/protection.css?v=227"><script src="../../../assets/js/protection.js?v=227" defer></script><script src="../../../assets/js/supabase-umd.js" defer></script><script src="../../../assets/js/config.js?v=425" defer></script><script src="../../../assets/js/acces.js?v=453" defer></script><script src="../../../assets/js/sync-progressions.js" defer></script><script src="../../../assets/js/guide-exercice.js?v=614" defer></script></body></html>

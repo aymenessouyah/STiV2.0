@@ -1,6 +1,6 @@
 {
 "gen": "v583",
-"n": 156,
+"n": 158,
 "regle": "toutes les pages HTML du site suivies par Git, hors tests/ (pages de test non livrées)",
 "pages": [
 "404.html",
@@ -80,6 +80,8 @@
 "exercices/php/4STi-dc-6-2025-2026.pdf.html",
 "exercices/php/debogage-php-bac.html",
 "exercices/php/ordre-php-bac.html",
+"exercices/php/serie-6/corrige.html",
+"exercices/php/serie-6/enonce.html",
 "exercices/php/sondage-parcours-pas-a-pas.html",
 "exercices/php/statphpanimee.html",
 "exercices/php/Tp1-Correction-php.html",
