@@ -2578,6 +2578,8 @@
         <li><strong>Télécharger l’installateur.</strong>
           <a class="btn-outil btn-outil-desactive" id="labo3-installateur-lien" aria-disabled="true">Téléchargement indisponible</a>
           <button type="button" class="btn-outil" id="labo3-installateur-verifier">Vérifier la release</button>
+          <a class="btn-outil" href="https://github.com/aymenessouyah/STiV2.0/releases/tag/labo3-windows" target="_blank" rel="noopener noreferrer">Ouvrir la release GitHub (vérification manuelle)</a>
+          <span>Si la vérification automatique est indisponible, téléchargez l’EXE et SHA256SUMS.txt depuis cette page, puis comparez leur SHA-256 avant d’exécuter l’installateur. Dans PowerShell : <code>Get-FileHash .\STI-Labo3-Installation.exe -Algorithm SHA256</code>.</span>
           <span id="labo3-installateur-etat" role="status" aria-live="polite" style="min-width:0;max-width:100%;overflow-wrap:anywhere;word-break:break-word">Vérification en cours…</span>
           L’exécutable est publié automatiquement par la CI dans la release <code>labo3-windows</code> dès qu’une modification de l’outil Windows arrive sur <code>main</code> : le lien ci-dessus s’active seul et affiche le SHA-256 à comparer après téléchargement.</li>
         <li><strong>Créer le paquet de la dernière mise à jour.</strong>
@@ -5239,8 +5241,8 @@
   <script src="assets/js/export-drive.js?v=603" defer></script>
   <script src="assets/js/sauvegarde.js?v=609" defer></script>
 <script src="assets/js/sante.js?v=471" defer></script>
-  <script src="assets/js/stipack.js?v=671" defer></script>
-  <script src="assets/js/admin-stipack.js?v=671" defer></script>
+  <script src="assets/js/stipack.js?v=672" defer></script>
+  <script src="assets/js/admin-stipack.js?v=672" defer></script>
   <script src="assets/js/admin-labo3.js?v=5" defer></script>
 <!-- v606 : bouton du ruban « Services ». Il est placé hors écran tant que le
      ruban ne l'a pas adopté ; ensuite, la feuille de style de l'administration le
