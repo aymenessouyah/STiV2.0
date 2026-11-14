@@ -478,7 +478,10 @@
     if (e.source === 'depot') {
       return { frais: true, motif: 'liste prise sur le dernier commit du dépôt' + (e.commitCourt ? ' (' + e.commitCourt + ')' : '') };
     }
-    if (e.version && e.versionPubliee && e.version !== e.versionPubliee) {
+    if (e.source !== 'manifeste' || !/^v[0-9]+$/.test(e.version || '') || !/^v[0-9]+$/.test(e.versionPubliee || '')) {
+      return { frais: false, motif: 'version publiée ou version de la liste de secours introuvable : fraîcheur invérifiable' };
+    }
+    if (e.version !== e.versionPubliee) {
       return {
         frais: false,
         motif: 'la liste de secours est en ' + e.version + ' alors que le site publie ' + e.versionPubliee +

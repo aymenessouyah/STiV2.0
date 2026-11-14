@@ -8,10 +8,8 @@
      figée du manifeste hors ligne n'est qu'un secours, et son garde-fou de
      fraîcheur refuse une liste en retard sur la version publiée du site.
 
-  2. RIEN DE LA PLATEFORME N'EST TOUCHÉ HORS DU STIPACK. Aucun fichier existant
-     n'est modifié hormis admin.html (le bloc du bouton et l'hôte d'API autorisé
-     par sa CSP) ; sw.js et offline-complete-manifest.json ne portent aucune trace
-     de la fonctionnalité, et les nouveaux fichiers restent autonomes.
+  2. Le manifeste de secours porte la version publiée ; une identité manquante
+     ou différente doit empêcher la fabrication de l'archive.
 
   Le moteur (assets/js/stipack.js) est éprouvé pour lui-même : en-têtes ZIP, CRC32,
   deflate-raw, répertoire central, empreintes et relecture par l'outil du dépôt.
@@ -263,21 +261,20 @@ test('v616 : le guide Windows du tableau de bord porte le bouton « Nouveau stip
   const csp = (ADMIN.match(/Content-Security-Policy" content="([^"]+)"/) || [])[1] || '';
   assert.match(csp, /connect-src[^;]*https:\/\/api\.github\.com/, 'hôte d’API autorisé par la CSP');
 
-  assert.match(ADMIN, /<script src="assets\/js\/stipack\.js\?v=616" defer><\/script>/);
-  assert.match(ADMIN, /<script src="assets\/js\/admin-stipack\.js\?v=616" defer><\/script>/);
+  assert.match(ADMIN, /<script src="assets\/js\/stipack\.js\?v=671" defer><\/script>/);
+  assert.match(ADMIN, /<script src="assets\/js\/admin-stipack\.js\?v=671" defer><\/script>/);
   assert.ok(
-    ADMIN.indexOf('stipack.js?v=616') < ADMIN.indexOf('admin-stipack.js?v=616'),
+    ADMIN.indexOf('stipack.js?v=671') < ADMIN.indexOf('admin-stipack.js?v=671'),
     'le moteur est chargé avant le panneau'
   );
 });
 
 /* ── 2. rien d'autre que le stipack ──────────────────────────────────────── */
 
-test('v616 : la fonctionnalité ne touche ni le service worker ni le manifeste hors ligne', () => {
-  assert.doesNotMatch(SW, /stipack/i, 'sw.js reste intact : aucune révision, aucune entrée de préchargement');
-  assert.doesNotMatch(MANIFESTE_HORS_LIGNE, /stipack\.js|admin-stipack/i, 'le manifeste hors ligne reste intact');
-  assert.match(SW, /var VERSION_PUBLIEE = "v633";/, 'publication du montage TP6 distincte du StiPack');
-  assert.equal(JSON.parse(MANIFESTE_HORS_LIGNE).totalFiles, JSON.parse(MANIFESTE_HORS_LIGNE).files.length);
+test('le manifeste hors ligne porte la même identité de publication que sw.js', () => {
+  const manifest = JSON.parse(MANIFESTE_HORS_LIGNE);
+  assert.equal(manifest.versionPubliee, SW.match(/var VERSION_PUBLIEE = "(v\d+)";/)[1]);
+  assert.equal(manifest.totalFiles, manifest.files.length);
 });
 
 /* ── parcours complet du panneau, dans un navigateur de laboratoire ──────── */
@@ -464,14 +461,15 @@ test('v616 : le paquet fabriqué décrit le DERNIER COMMIT, pas la liste figée'
 test('v616 : dépôt injoignable et liste de secours en retard → aucun paquet', async () => {
   const site = new Map();
   site.set('offline-complete-manifest.json', Buffer.from(JSON.stringify({
-    version: 'v600',
+    version: 'v582-sti-atelier-v386', versionPubliee: 'v600', totalFiles: 1,
     generatedAt: '2026-10-01T10:00:00Z',
     files: [{ path: 'index.html', bytes: 3 }]
   })));
   site.set('sw.js', Buffer.from('var VERSION_PUBLIEE = "v616";\n'));
   site.set('index.html', Buffer.from('abc'));
 
-  const labo = laboratoire(site);
+  const labo = laboratoire(site, base => async chemin => String(chemin).startsWith('https://api.github.com/')
+    ? { ok: false, status: 403 } : base(chemin));
   labo.elements.get('stipack-btn-creer').ecouteurs.click();
 
   await attendre(labo.elements, () => labo.articles.some((a) => a.className === 'stipack-erreur'));
@@ -483,6 +481,42 @@ test('v616 : dépôt injoignable et liste de secours en retard → aucun paquet'
   );
   assert.equal(labo.telechargements.length, 0, 'aucun paquet périmé n’est proposé');
   assert.equal(labo.elements.get('stipack-btn-telecharger').hidden, true);
+});
+
+test('HTTP 403 : la liste de secours alignée permet la fabrication', async () => {
+  const site = new Map();
+  site.set('offline-complete-manifest.json', Buffer.from(JSON.stringify({
+    version: 'v582-sti-atelier-v386', versionPubliee: 'v616', totalFiles: 1,
+    files: [{ path: 'index.html', bytes: 3 }]
+  })));
+  site.set('sw.js', Buffer.from('var VERSION_PUBLIEE = "v616";\n'));
+  site.set('index.html', Buffer.from('abc'));
+  const labo = laboratoire(site, base => async chemin => String(chemin).startsWith('https://api.github.com/')
+    ? { ok: false, status: 403 } : base(chemin));
+  labo.elements.get('stipack-btn-creer').ecouteurs.click();
+  await attendre(labo.elements, () => labo.telechargements.length > 0 || labo.articles.some(a => /Échec/.test(a.textContent)));
+  assert.equal(labo.telechargements.length, 1);
+  assert.ok(labo.articles.some(a => /HTTP 403/.test(a.textContent)));
+  assert.ok(labo.articles.some(a => /liste de secours/.test(a.textContent)));
+});
+
+test('HTTP 403 : absence de version ou manifeste invalide interdit le paquet', async () => {
+  for (const manifeste of [
+    { version: 'v582-sti-atelier-v386', totalFiles: 1, files: [{ path: 'index.html', bytes: 3 }] },
+    { versionPubliee: 'v616', totalFiles: 2, files: [{ path: 'index.html', bytes: 3 }] },
+    { versionPubliee: 'v616', totalFiles: 0, files: [] }
+  ]) {
+    const site = new Map([['offline-complete-manifest.json', Buffer.from(JSON.stringify(manifeste))],
+      ['sw.js', Buffer.from('var VERSION_PUBLIEE = "v616";\n')], ['index.html', Buffer.from('abc')]]);
+    const labo = laboratoire(site, base => async chemin => String(chemin).startsWith('https://api.github.com/')
+      ? { ok: false, status: 403 } : base(chemin));
+    labo.elements.get('stipack-btn-creer').ecouteurs.click();
+    await attendre(labo.elements, () => labo.articles.some(a => /Échec/.test(a.textContent)));
+    assert.ok(labo.articles.some(a => /Échec/.test(a.textContent)));
+    assert.equal(labo.telechargements.length, 0);
+  }
+  assert.equal(S.jugerFraicheur({ source: 'manifeste', version: 'v616' }).frais, false);
+  assert.equal(S.jugerFraicheur({ source: 'manifeste', versionPubliee: 'v616' }).frais, false);
 });
 
 test('v616 : un fichier manquant laisse un message clair et aucun paquet', async () => {
