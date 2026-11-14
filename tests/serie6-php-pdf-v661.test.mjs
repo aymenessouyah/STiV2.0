@@ -8,7 +8,7 @@ const docs=['enonce-serie6-php-v3.pdf','corrige-serie6-php-v4.pdf'];
 test('série 6 PHP dans sa propre boîte de séries, distincte du devoir',()=>{
  const cours=read('cours/php.html');
  const series=cours.split('<div class="matiere-series-grid">')[1].split('<section class="matiere-panel" aria-labelledby="php-autres-exercices">')[0];
- const article=series.match(/<article class="matiere-panel"><h3>Série 6 · PHP procédural<\/h3>[\s\S]*?<\/article>/)?.[0];
+ const article=series.match(/<article class="matiere-panel"><h3>Série 6 de Synthèse PHP<\/h3>[\s\S]*?<\/article>/)?.[0];
  assert.ok(article); assert.match(article,/data-exercise="serie6"/);
  const exos=read('exercices/series-exercices.html');
  const carte=exos.match(/<div class="exo-card">\s*<div class="exo-level">PHP procédural · 4ᵉ SI<\/div>[\s\S]*?<\/div>\s*<\/div>/)?.[0];
