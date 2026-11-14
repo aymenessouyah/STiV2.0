@@ -261,10 +261,10 @@ test('v616 : le guide Windows du tableau de bord porte le bouton « Nouveau stip
   const csp = (ADMIN.match(/Content-Security-Policy" content="([^"]+)"/) || [])[1] || '';
   assert.match(csp, /connect-src[^;]*https:\/\/api\.github\.com/, 'hôte d’API autorisé par la CSP');
 
-  assert.match(ADMIN, /<script src="assets\/js\/stipack\.js\?v=671" defer><\/script>/);
-  assert.match(ADMIN, /<script src="assets\/js\/admin-stipack\.js\?v=671" defer><\/script>/);
+  assert.match(ADMIN, /<script src="assets\/js\/stipack\.js\?v=672" defer><\/script>/);
+  assert.match(ADMIN, /<script src="assets\/js\/admin-stipack\.js\?v=672" defer><\/script>/);
   assert.ok(
-    ADMIN.indexOf('stipack.js?v=671') < ADMIN.indexOf('admin-stipack.js?v=671'),
+    ADMIN.indexOf('stipack.js?v=672') < ADMIN.indexOf('admin-stipack.js?v=672'),
     'le moteur est chargé avant le panneau'
   );
 });
