@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 const read=p=>readFileSync(p,'utf8');
 const dir='exercices/php/serie-6/';
-const docs=['enonce-serie6-php-v3.pdf','corrige-serie6-php-v3.pdf'];
+const docs=['enonce-serie6-php-v3.pdf','corrige-serie6-php-v4.pdf'];
 test('série 6 PHP dans sa propre boîte de séries, distincte du devoir',()=>{
  const cours=read('cours/php.html');
  const series=cours.split('<div class="matiere-series-grid">')[1].split('<section class="matiere-panel" aria-labelledby="php-autres-exercices">')[0];
