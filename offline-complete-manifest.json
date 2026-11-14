@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-14T18:54:19Z",
+  "generatedAt": "2026-11-14T19:02:24Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 802,
-  "totalBytes": 1429751307,
+  "totalBytes": 1429753576,
   "files": [
     {
       "path": "404.html",
@@ -1447,8 +1447,8 @@
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 141761,
-      "gitSha": "999459b4ad6c4b432986386264dc26689a96a8b3"
+      "bytes": 142199,
+      "gitSha": "0edd6144a5eadb0bd807634292e6e5ccadff96dc"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -1457,8 +1457,8 @@
     },
     {
       "path": "cours/php.html",
-      "bytes": 206761,
-      "gitSha": "8da912de59f966a3e258b4fda05b2c642c299273"
+      "bytes": 207199,
+      "gitSha": "a5a51cea1c05225ae4d0e3d322029e430819bd3c"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -1477,8 +1477,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 148361,
-      "gitSha": "5b0a0c70b2f7621f706a9debf25985d21ed6e9c9"
+      "bytes": 149098,
+      "gitSha": "141970925a21cc28f99af8d3337b39ee533d1880"
     },
     {
       "path": "cours/systemes-technologies-internet.html",
@@ -3207,8 +3207,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 103646,
-      "gitSha": "fdc9e6772ce40eec0b0d6a7fc54690293fb76862"
+      "bytes": 104316,
+      "gitSha": "a44ebaa6e202725fc94ad09336a831a5392fb818"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -4012,8 +4012,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 113925,
-      "gitSha": "bb40fe6da65ddc967150f5bd1ef0a604acd42fc1"
+      "bytes": 113911,
+      "gitSha": "ce97a34f1ad22a0d00a2e294628d41fcdbfe0f45"
     }
   ]
 }

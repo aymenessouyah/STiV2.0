@@ -10,9 +10,9 @@ const fichiers = ['enonce-serie8-restaurant-v4.pdf', 'corrige-serie8-restaurant-
 
 test('la série 8 est présente dans les deux catalogues sans vidéo', () => {
   const cours = lire('cours/sql.html');
-  const article = cours.match(/<article class="matiere-panel sti-4si-only"><h3>Série 8[\s\S]*?<\/article>/)?.[0];
+  const article = cours.match(/<article class="matiere-panel sti-4si-only"><span class="badge-synthese-gold">[^<]*<\/span><h3 class="titre-synthese">Série 8[\s\S]*?<\/article>/)?.[0];
   const exos = lire('exercices/series-exercices.html');
-  const carte = exos.match(/<div class="exo-card sti-4si-only">\s*<div class="exo-level">[^\n]*<\/div>\s*<h3>Série 8[\s\S]*?<\/div>\s*<\/div>/)?.[0];
+  const carte = exos.match(/<div class="exo-card sti-4si-only">\s*<span class="badge-synthese-gold">[^<]*<\/span>\s*<div class="exo-level">[^\n]*<\/div>\s*<h3 class="titre-synthese">Série 8[\s\S]*?<\/div>\s*<\/div>/)?.[0];
   assert.ok(article); assert.ok(carte);
   for (const f of fichiers) for (const element of [article, carte]) assert.ok(element.includes('../' + dossier + f), f);
   assert.match(article, /data-exercise="serie8"/);
