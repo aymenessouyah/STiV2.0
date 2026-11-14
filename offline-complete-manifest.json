@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-14T18:40:21Z",
+  "generatedAt": "2026-11-14T18:54:19Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 802,
-  "totalBytes": 1429750417,
+  "totalBytes": 1429751307,
   "files": [
     {
       "path": "404.html",
@@ -1447,8 +1447,8 @@
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 141473,
-      "gitSha": "08e044a524ada23dacf279bfdb341563b9f927f7"
+      "bytes": 141761,
+      "gitSha": "999459b4ad6c4b432986386264dc26689a96a8b3"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -1457,8 +1457,8 @@
     },
     {
       "path": "cours/php.html",
-      "bytes": 206473,
-      "gitSha": "fa3789ea01db93215cb51c6e4b63d8a9d129f9c6"
+      "bytes": 206761,
+      "gitSha": "8da912de59f966a3e258b4fda05b2c642c299273"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -3207,8 +3207,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 103335,
-      "gitSha": "4ea2a039edde19d2050239c15647979430031dfd"
+      "bytes": 103646,
+      "gitSha": "fdc9e6772ce40eec0b0d6a7fc54690293fb76862"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -4012,8 +4012,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 113922,
-      "gitSha": "d03416aa254294c482496268f7aaa963d4052ec3"
+      "bytes": 113925,
+      "gitSha": "bb40fe6da65ddc967150f5bd1ef0a604acd42fc1"
     }
   ]
 }
