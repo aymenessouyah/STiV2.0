@@ -870,6 +870,11 @@
 
 <link rel="stylesheet" href="../assets/css/theme-patrimoine.css">
 <script src="../assets/js/appel-quiz.js" defer></script>
+<style>
+  .titre-synthese { animation: synthese-clignote 2s ease-in-out infinite; }
+  @keyframes synthese-clignote { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
+  @media (prefers-reduced-motion: reduce), print { .titre-synthese { animation: none; } }
+</style>
 </head>
   <body>
 <!-- STI navigation croisée -->
@@ -1371,7 +1376,7 @@
 
           <div class="exo-card">
             <div class="exo-level">Synthèse · 3ᵉ et 4ᵉ SI</div>
-            <h3>Série de Synthèse JavaScript</h3>
+            <h3 class="titre-synthese">Série de Synthèse JavaScript</h3>
             <p>Variables, chaînes, conditions, boucles, tableaux, dates et formulaires.</p>
             <div class="exo-actions">
               <a class="enonce" href="javascript/serie-synthese/enonce-synthese-javascript.pdf" data-pdf-natif-mobile target="_blank" rel="noopener">Énoncé PDF</a>
@@ -1779,7 +1784,7 @@
           </div>
           <div class="exo-card">
             <div class="exo-level">PHP procédural · 4ᵉ SI</div>
-            <h3>Série 6 de Synthèse PHP</h3>
+            <h3 class="titre-synthese">Série 6 de Synthèse PHP</h3>
             <p>Chaînes, tableaux, dates, formulaires et MySQLi avec jeux d’essai et corrigé.</p>
             <div class="exo-actions">
               <a class="enonce" href="php/serie-6/enonce-serie6-php-v3.pdf" data-pdf-natif-mobile target="_blank" rel="noopener">Énoncé PDF</a>

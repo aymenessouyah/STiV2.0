@@ -12,8 +12,8 @@ test('la synthèse suit les séries JavaScript dans les deux catalogues', () => 
     assert.ok(js>=0 && synth>js && defis>synth);
     for(const name of files) assert.ok(content.includes('javascript/serie-synthese/'+name));
   }
-  assert.match(read('cours/php.html'),/<h3>Série 6 de Synthèse PHP<\/h3>/);
-  assert.match(exos,/<h3>Série 6 de Synthèse PHP<\/h3>/);
+  assert.match(read('cours/php.html'),/<h3 class="titre-synthese">Série 6 de Synthèse PHP<\/h3>/);
+  assert.match(exos,/<h3 class="titre-synthese">Série 6 de Synthèse PHP<\/h3>/);
 });
 test('PDF disponibles sur mobile et hors ligne avec empreintes correctes', () => {
  const cours=read('cours/javascript.html'), exos=read('exercices/series-exercices.html');
