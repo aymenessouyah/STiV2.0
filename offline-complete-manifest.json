@@ -1,9 +1,9 @@
 {
   "version": "v582-sti-atelier-v386",
-  "generatedAt": "2026-11-14T12:26:07Z",
+  "generatedAt": "2026-11-14T12:50:06Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 799,
-  "totalBytes": 1429148745,
+  "totalFiles": 800,
+  "totalBytes": 1429150668,
   "files": [
     {
       "path": "404.html",
@@ -702,8 +702,8 @@
     },
     {
       "path": "assets/js/acces.js",
-      "bytes": 972305,
-      "gitSha": "a3ae85c41e1f64997e5b91193187d01e8d7796a3"
+      "bytes": 972322,
+      "gitSha": "a13ccfedac02b26431bc769b36edba3fe5dcdc43"
     },
     {
       "path": "assets/js/admin-couverture.js",
@@ -752,8 +752,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 139649,
-      "gitSha": "88524bbd6b1711a4ed00d0362db68aefd0f2d58f"
+      "bytes": 136273,
+      "gitSha": "15091765d3010cc5e865a0f49063391e383d25c7"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -762,8 +762,8 @@
     },
     {
       "path": "assets/js/config.js",
-      "bytes": 35679,
-      "gitSha": "449e5b57792e026ee1c5e52ffd39e454cda2d4cd"
+      "bytes": 35953,
+      "gitSha": "b370f8577ff4511d39eca62c383a46f239427695"
     },
     {
       "path": "assets/js/cote-ticker.js",
@@ -844,6 +844,11 @@
       "path": "assets/js/guide-exercice.js",
       "bytes": 11416,
       "gitSha": "cbb0452de25a8fb0d38ea326ee9ac24e0bee1567"
+    },
+    {
+      "path": "assets/js/installation-mobile.js",
+      "bytes": 3255,
+      "gitSha": "9919bdc7214b5eb33666e09420bd631a4d7f4499"
     },
     {
       "path": "assets/js/lecteur-commun.js",
@@ -3387,8 +3392,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 65714,
-      "gitSha": "95ca85fc9ead48a6a288a94ca8b7175749299007"
+      "bytes": 65784,
+      "gitSha": "2421b09fe08978efc869abde93491be252637e5a"
     },
     {
       "path": "livre-smart.html",
@@ -3447,8 +3452,8 @@
     },
     {
       "path": "portail.html",
-      "bytes": 32526,
-      "gitSha": "cbfee026d0e1c5b553c638ea4688c433cb9af8b0"
+      "bytes": 33905,
+      "gitSha": "d612a17b57b8ab3350db811e068505c01498508c"
     },
     {
       "path": "projets/carte-bancaire/cb.html",
@@ -3997,8 +4002,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 113457,
-      "gitSha": "08b6b55c3b5e42701e0ed00fc5b36b2bb5c27c7f"
+      "bytes": 113761,
+      "gitSha": "8cb079d765fe24b00ef81d90c59524516c2a10a4"
     }
   ]
 }
