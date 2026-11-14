@@ -871,6 +871,7 @@
 <link rel="stylesheet" href="../assets/css/theme-patrimoine.css">
 <script src="../assets/js/appel-quiz.js" defer></script>
 <style>
+  .badge-synthese-gold { display: block; width: fit-content; max-width: calc(100% - 1rem); box-sizing: border-box; margin: .3rem 0 .6rem .35rem; padding: .35rem .65rem; border: 1px solid #8a6200; border-radius: .45rem; background: #f6d365; color: #352500; font: 700 .75rem/1.25 system-ui, sans-serif; transform: rotate(-3deg); box-shadow: 0 2px 5px #0003; }
   .titre-synthese { animation: synthese-clignote 2s ease-in-out infinite; }
   @keyframes synthese-clignote { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
   @media (prefers-reduced-motion: reduce), print { .titre-synthese { animation: none; } }
@@ -1375,6 +1376,7 @@
           </div>
 
           <div class="exo-card">
+            <span class="badge-synthese-gold">Ceci c’est la synthèse en théorique</span>
             <div class="exo-level">Synthèse · 3ᵉ et 4ᵉ SI</div>
             <h3 class="titre-synthese">Série de Synthèse JavaScript</h3>
             <p>Variables, chaînes, conditions, boucles, tableaux, dates et formulaires.</p>
@@ -1664,8 +1666,9 @@
             </div>
           </div>
           <div class="exo-card sti-4si-only">
+            <span class="badge-synthese-gold">Ceci c’est la synthèse en théorique</span>
             <div class="exo-level">Avancé · 🎓 SQL · 4<sup>e</sup> SI</div>
-            <h3>Série 8 — Le directeur du restaurant Dar Zitouna</h3>
+            <h3 class="titre-synthese">Série 8 Synthèse · Le directeur du restaurant Dar Zitouna.</h3>
             <p>GROUP BY, HAVING, jointures, sous-requêtes et fonctions de dates.</p>
             <div class="exo-actions" style="flex-wrap:wrap;">
               <a class="enonce" href="../exercices/sql/serie-8/enonce-serie8-restaurant-v4.pdf" data-pdf-natif-mobile target="_blank" rel="noopener">Énoncé PDF</a>
@@ -1783,6 +1786,7 @@
             </div>
           </div>
           <div class="exo-card">
+            <span class="badge-synthese-gold">Ceci c’est la synthèse en théorique</span>
             <div class="exo-level">PHP procédural · 4ᵉ SI</div>
             <h3 class="titre-synthese">Série 6 de Synthèse PHP</h3>
             <p>Chaînes, tableaux, dates, formulaires et MySQLi avec jeux d’essai et corrigé.</p>
