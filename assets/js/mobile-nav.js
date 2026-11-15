@@ -336,6 +336,7 @@
   ];
   var OUTILS = [
     ["Exercices", "exercices/series-exercices.html", "📝"],
+    ["Synthèse", "index.html#series-synthese", "📚"],
     ["Bac pratique", "bac-pratique.html", "🧪"],
     ["Les 25 pièges du Bac", "pieges-bac.html", "⚠️"],
     ["10 fonctions JavaScript", "outils-js-bac.html", "🧩"],
@@ -464,6 +465,16 @@
       if (vf) {
         var puce = doc.querySelector('[data-video-filter="' + vf + '"]');
         if (puce && typeof puce.click === "function") puce.click();
+      }
+      if (hash === "series-synthese") {
+        /* La recherche ou une catégorie peuvent masquer la carte cible. */
+        var champRecherche = doc.getElementById("moduleSearch");
+        if (champRecherche && champRecherche.value) {
+          champRecherche.value = "";
+          champRecherche.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+        var toutVoir = doc.querySelector('[data-filter="all"]');
+        if (toutVoir) toutVoir.click();
       }
       if (hash) {
         var el = doc.getElementById(hash) || doc.querySelector('[name="' + hash + '"]');
