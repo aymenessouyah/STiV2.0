@@ -1,10 +1,10 @@
 {
   "version": "v582-sti-atelier-v386",
-  "versionPubliee": "v674",
-  "generatedAt": "2026-11-15T20:06:19Z",
+  "versionPubliee": "v675",
+  "generatedAt": "2026-11-15T20:46:47Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 806,
-  "totalBytes": 1430592187,
+  "totalBytes": 1430592764,
   "files": [
     {
       "path": "404.html",
@@ -764,7 +764,7 @@
     {
       "path": "assets/js/config.js",
       "bytes": 35953,
-      "gitSha": "b370f8577ff4511d39eca62c383a46f239427695"
+      "gitSha": "08f0f700c2a356fc23bb12d59ee1a1399d4260e0"
     },
     {
       "path": "assets/js/cote-ticker.js",
@@ -858,8 +858,8 @@
     },
     {
       "path": "assets/js/mobile-nav.js",
-      "bytes": 43792,
-      "gitSha": "72639b6a21164b1b8ac1423c8278b61710bd07c0"
+      "bytes": 44324,
+      "gitSha": "03538b71bd6acf7f7ccbba2ece58441011d3848a"
     },
     {
       "path": "assets/js/modules/admin-labo-devices.js",
@@ -4033,8 +4033,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 115422,
-      "gitSha": "e3d7de02fb2c89d7eb3bf03db9d4624c1a911487"
+      "bytes": 115467,
+      "gitSha": "79b2df829bff6d66f3d8209ad5a86484ceba6511"
     }
   ]
 }
