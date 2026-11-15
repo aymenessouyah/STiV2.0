@@ -1,10 +1,10 @@
 {
   "version": "v582-sti-atelier-v386",
-  "versionPubliee": "v672",
-  "generatedAt": "2026-11-14T19:35:07Z",
+  "versionPubliee": "v673",
+  "generatedAt": "2026-11-15T19:48:32Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 802,
-  "totalBytes": 1429766558,
+  "totalFiles": 806,
+  "totalBytes": 1430588917,
   "files": [
     {
       "path": "404.html",
@@ -1478,8 +1478,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 149098,
-      "gitSha": "141970925a21cc28f99af8d3337b39ee533d1880"
+      "bytes": 150456,
+      "gitSha": "060bdffdee3ee084f2e74e7b9a12407baa03eec8"
     },
     {
       "path": "cours/systemes-technologies-internet.html",
@@ -3208,8 +3208,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 104316,
-      "gitSha": "a44ebaa6e202725fc94ad09336a831a5392fb818"
+      "bytes": 105942,
+      "gitSha": "f8ad8d24f6b682230d6d2c34c4c3cc3868ca2430"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3370,6 +3370,26 @@
       "path": "exercices/sql/sql.html",
       "bytes": 21312,
       "gitSha": "8d6807c026ffb48816166c607f576745af17c773"
+    },
+    {
+      "path": "exercices/sql/synthese-2-zoo/corrige.pdf",
+      "bytes": 176248,
+      "gitSha": "c04aec2d83c887e509f620829b1ba479aef86953"
+    },
+    {
+      "path": "exercices/sql/synthese-2-zoo/enonce.pdf",
+      "bytes": 217541,
+      "gitSha": "76f177c35257a3fc34986b8cc509025582bd4db6"
+    },
+    {
+      "path": "exercices/sql/synthese-3-club-sportif/corrige.pdf",
+      "bytes": 200009,
+      "gitSha": "076c3bce62efe10fb940fc3dec60e8b6a360a640"
+    },
+    {
+      "path": "exercices/sql/synthese-3-club-sportif/enonce.pdf",
+      "bytes": 225371,
+      "gitSha": "f73978fc8ff7bee3137b94fa9a0196105cc1d4ae"
     },
     {
       "path": "exercices/systemes/atelier-1-systemes-exploitation.html",
@@ -4013,8 +4033,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 115226,
-      "gitSha": "842d726de882410f1744c75674758bb505574747"
+      "bytes": 115432,
+      "gitSha": "58685209154a0415d4d3d8ed59f010df771304d9"
     }
   ]
 }
