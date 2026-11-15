@@ -1591,7 +1591,7 @@
       /* Filtrage des cartes cours, outils et quiz */
       document.querySelectorAll("[data-filter-item]").forEach(function (carte) {
         var cats = (carte.getAttribute("data-filter-item") || "").split(/\s+/);
-        if (cats.indexOf("php") !== -1 && !ok4) {
+        if (cats.indexOf("php") !== -1 && !ok4 && !carte.hasAttribute("data-mixed-levels")) {
           carte.classList.add("filter-hidden");
           return;
         }
