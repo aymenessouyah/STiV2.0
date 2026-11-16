@@ -336,7 +336,7 @@
   ];
   var OUTILS = [
     ["Exercices", "exercices/series-exercices.html", "📝"],
-    ["Synthèse", "index.html#series-synthese", "📚"],
+    ["Synthèse et Bac", "index.html#series-synthese", "📚"],
     ["Bac pratique", "bac-pratique.html", "🧪"],
     ["Les 25 pièges du Bac", "pieges-bac.html", "⚠️"],
     ["10 fonctions JavaScript", "outils-js-bac.html", "🧩"],
