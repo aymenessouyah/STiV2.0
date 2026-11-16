@@ -117,14 +117,14 @@ test('le lien Vidéos conserve le préfixe de déploiement depuis un cours', asy
 });
 
 for (const classe of ['3SI 1', '4SI 1']) {
-  test(`Synthèse dans le volet mobile rejoint la carte depuis l’accueil et un cours (${classe})`, async ({ page }) => {
+  test(`Synthèse et Bac dans le volet mobile rejoint la carte depuis l’accueil et un cours (${classe})`, async ({ page }) => {
     await preparer(page, classe);
     await page.goto('/index.html', { waitUntil: 'domcontentloaded' });
     const carte = page.locator('#series-synthese');
     await page.locator('#moduleSearch').fill('xyz introuvable');
     await expect(carte).toBeHidden();
     await page.locator('#sti-bnav-plus').click();
-    const lien = page.locator('#sti-bnav-sheet').getByRole('link', { name: 'Synthèse', exact: true });
+    const lien = page.locator('#sti-bnav-sheet').getByRole('link', { name: 'Synthèse et Bac', exact: true });
     await expect(lien).toHaveAttribute('href', /\/index\.html#series-synthese$/);
     await page.evaluate(() => { window.__testSynthese = true; });
     await lien.click();
@@ -138,7 +138,7 @@ for (const classe of ['3SI 1', '4SI 1']) {
 
     await page.goto('/cours/html5.html', { waitUntil: 'domcontentloaded' });
     await page.locator('#sti-bnav-plus').click();
-    await page.locator('#sti-bnav-sheet').getByRole('link', { name: 'Synthèse', exact: true }).click();
+    await page.locator('#sti-bnav-sheet').getByRole('link', { name: 'Synthèse et Bac', exact: true }).click();
     await expect(page).toHaveURL(/\/index\.html#series-synthese$/);
     await expect(page.locator('#series-synthese')).toBeVisible();
     await expect(page.locator('#series-synthese')).toBeInViewport({ ratio: 0.01 });
