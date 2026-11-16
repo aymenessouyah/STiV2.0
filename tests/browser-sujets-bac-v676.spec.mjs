@@ -17,7 +17,8 @@ for (const classe of ['3SI 1','4SI 1']) test(`sujets bac et exercices sur mobile
  for(const id of ['javascript','bdd','php']) {const cards=page.locator(`#${id} .exo-card`).filter({hasText:'Style Bac STI 2024'});if(classe.startsWith('3')) await expect(cards).toBeHidden();else await expect(cards).toBeVisible();}
  for(const sujet of ['javascript','sql','php']) {
   await page.goto(`/cours/${sujet}.html#exercices`,{waitUntil:'domcontentloaded'});
-  const group=page.locator('[aria-label="Sujets bac et sujets similaires"]');
-  if(classe.startsWith('3')) await expect(group).toBeHidden();else {await expect(group).toBeVisible();await expect(group.locator('a')).toHaveCount(4);}
+  const cards=page.locator('[data-sujet-bac]');
+  await expect(cards).toHaveCount(2);
+  for(const card of await cards.all()) { if(classe.startsWith('3')) await expect(card).toBeHidden(); else {await expect(card).toBeVisible();await expect(card.locator('a')).toHaveCount(2);} }
  }
 });
