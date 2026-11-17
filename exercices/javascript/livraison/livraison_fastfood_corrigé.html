@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Suivi du livreur : du fast-food vers le client</title>
+    <style>
+      /* ============================================================
+   CSS strictement conforme à l'annexe (A.Essouyah)
+   ============================================================ */
+      * {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        color: #111111;
+      }
+      body {
+        background-color: #ffffff;
+        padding: 12px;
+      }
+
+      h1 {
+        font-size: 20px;
+        margin-bottom: 4px;
+      }
+      .sub {
+        color: #555555;
+        margin-bottom: 12px;
+      }
+
+      .wrap {
+        width: 100%;
+        max-width: 1000px;
+        margin: 0 auto;
+        overflow: hidden;
+      }
+      .col-gauche {
+        width: 56%;
+        float: left;
+      }
+      .col-droite {
+        width: 40%;
+        float: right;
+      }
+
+      .card {
+        background-color: #f2f2f2;
+        border: 1px solid #888888;
+        border-radius: 10px;
+        padding: 1%;
+        margin-bottom: 12px;
+        overflow: hidden;
+      }
+      .card h2 {
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
+
+      #carte {
+        position: relative;
+        width: 100%;
+        height: 250px;
+        background-color: #fafafa;
+        border: 2px solid #111111;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 10px;
+      }
+
+      .route {
+        position: absolute;
+        background-color: #c4c4c4;
+        border: 1px solid #888888;
+      }
+      .route.h {
+        left: 8%;
+        width: 82%;
+        top: 80%;
+        height: 6%;
+      }
+      .route.v {
+        left: 90%;
+        top: 18%;
+        height: 62%;
+        width: 4.5%;
+      }
+
+      .lieu {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        font-size: 32px;
+      }
+      .lieu small {
+        display: block;
+        font-size: 10px;
+        font-weight: bold;
+        background-color: #ffffff;
+        border: 1px solid #111111;
+        border-radius: 4px;
+        padding: 1px 4px;
+        margin-top: 2px;
+      }
+      #resto {
+        left: 8%;
+        top: 80%;
+      }
+      #client {
+        left: 90%;
+        top: 18%;
+      }
+
+      /* La moto : retournée pour regarder vers la droite */
+      #liv {
+        position: absolute;
+        transform: translate(-50%, -50%) scaleX(-1);
+        font-size: 35px;
+        z-index: 3;
+      }
+
+      /* Le texte sous la moto : remis dans le bon sens */
+      #liv span {
+        display: block;
+        font-size: 10px;
+        font-weight: bold;
+        text-align: center;
+        background-color: #111111;
+        color: #ffffff;
+        border-radius: 4px;
+        padding: 0 4px;
+        transform: scaleX(-1);
+      }
+
+      #videoFastFood {
+        width: 100%;
+        height: 150px;
+        border: 2px solid #111111;
+        border-radius: 8px;
+        display: none;
+        margin-top: 10px;
+      }
+      #msgFin {
+        width: 100%;
+        height: 150px;
+        background-color: #111111;
+        color: #ffffff;
+        display: none;
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+        padding-top: 55px;
+        border: 2px solid #111111;
+        border-radius: 8px;
+        margin-top: 10px;
+      }
+
+      .etapes {
+        width: 100%;
+        overflow: hidden;
+      }
+      .etape {
+        width: 29%;
+        float: left;
+        margin-right: 3%;
+        border: 2px dashed #888888;
+        border-radius: 8px;
+        padding: 6px;
+        text-align: center;
+        font-size: 13px;
+        color: #555555;
+        margin-bottom: 10px;
+      }
+
+      .barre {
+        height: 14px;
+        border: 2px solid #111111;
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: #ffffff;
+        clear: both;
+      }
+      #prog {
+        height: 100%;
+        width: 0%;
+        background-color: #111111;
+      }
+
+      fieldset {
+        border: 1px solid #888888;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        padding: 8px;
+      }
+      legend {
+        font-weight: bold;
+        font-size: 14px;
+      }
+      label.liv {
+        display: block;
+        padding: 3px 0;
+      }
+
+      button {
+        font-size: 14px;
+        padding: 8px 12px;
+        border: 2px solid #111111;
+        border-radius: 8px;
+        background-color: #ffffff;
+        color: #111111;
+        cursor: pointer;
+      }
+      button.prim {
+        background-color: #111111;
+        color: #ffffff;
+        font-weight: bold;
+      }
+      button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      .btns {
+        margin-top: 6px;
+        overflow: hidden;
+      }
+      .btns button {
+        float: left;
+        margin-right: 6px;
+        margin-bottom: 6px;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 13px;
+        margin-bottom: 8px;
+      }
+      th,
+      td {
+        border: 1px solid #888888;
+        padding: 4px 6px;
+        text-align: right;
+      }
+      th {
+        background-color: #ffffff;
+        font-weight: bold;
+      }
+      td.infos-titre {
+        text-align: left;
+        color: #555555;
+        width: 40%;
+      }
+      td.infos-valeur {
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body onload="initialiser()" onkeydown="gererClavier()">
+    <h1>🛵 Du fast-food Rafèha vers le client</h1>
+    <p class="sub">Choisissez un livreur, puis cliquez sur "Avancer" ou utilisez les flèches du clavier (↑ ou →).</p>
+
+    <div class="wrap">
+      <div class="col-gauche">
+        <div class="card">
+          <!-- Le schéma de base (toujours visible) -->
+          <div id="carte">
+            <div class="route h"></div>
+            <div class="route v"></div>
+            <div class="lieu" id="resto">🍔<small>Fast-food Rafèha</small></div>
+            <div class="lieu" id="client">🏠<small>Client</small></div>
+            <div id="liv" style="display: none">🛵<span id="livnom"></span></div>
+          </div>
+
+          <!-- La vidéo (en dessous du schéma) -->
+          <video id="videoFastFood" muted>
+            <source src="ressources/fast_food_rafeha.mp4" type="video/mp4" />
+          </video>
+
+          <!-- Le message de fin (en dessous du schéma) -->
+          <div id="msgFin">Commande livrée !</div>
+
+          <div class="etapes">
+            <div class="etape" id="e1">1. Vers le fast-food<br /><small>statut E</small></div>
+            <div class="etape" id="e2">2. En livraison<br /><small>statut L</small></div>
+            <div class="etape" id="e3">3. Livrée<br /><small>statut T</small></div>
+          </div>
+
+          <div class="barre"><div id="prog"></div></div>
+        </div>
+      </div>
+
+      <div class="col-droite">
+        <div class="card">
+          <h2>Commande n° 510</h2>
+          <fieldset id="choix"><legend>Livreurs</legend></fieldset>
+
+          <div class="btns">
+            <button class="prim" id="go" onclick="demarrer()">Affecter</button>
+            <button id="avancer" onclick="avancer()" disabled>Avancer</button>
+            <button id="reset" onclick="initialiser()">Réinitialiser</button>
+          </div>
+          <p id="msg" style="min-height: 20px; margin-top: 8px; font-size: 14px"></p>
+        </div>
+
+        <div class="card">
+          <h2>État en direct</h2>
+          <table>
+            <tr>
+              <td class="infos-titre">Livreur</td>
+              <td class="infos-valeur" id="i-liv">–</td>
+            </tr>
+            <tr>
+              <td class="infos-titre">Phase</td>
+              <td class="infos-valeur" id="i-phase">–</td>
+            </tr>
+            <tr>
+              <td class="infos-titre">Position</td>
+              <td class="infos-valeur" id="i-pos">–</td>
+            </tr>
+            <tr>
+              <td class="infos-titre">Statut</td>
+              <td class="infos-valeur" id="i-stat">–</td>
+            </tr>
+            <tr>
+              <td class="infos-titre">Dispo</td>
+              <td class="infos-valeur" id="i-dispo">–</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Son 1 : démarrage de la moto -->
+    <audio id="sonDepart">
+      <source src="ressources/Depart_moto.wav" type="audio/wav" />
+    </audio>
+
+    <!-- Son 2 : scooter qui passe (en boucle) -->
+    <audio id="sonScooter" loop>
+      <source src="ressources/Moto_Scooter_qui_passe.wav" type="audio/wav" />
+    </audio>
+
+    <script>
+      /* ============================================================
+   Simulation JS - Trajet de gauche à droite sur la route
+   ============================================================ */
+
+      // --- Données globales (3 livreurs) ---
+      let livId = [1, 2, 3];
+      let livNom = ["Sami", "Rim", "Walid"];
+      let livDispo = [1, 1, 0]; // Walid (3) est occupé au départ
+
+      // --- État de la simulation ---
+      // Indices : 0=actif, 1=pct, 2=phase, 3=idLivreur
+      let etat = [false, 0, 1, 0];
+
+      // --- 1. Initialisation ---
+      function initialiser() {
+        livId = [1, 2, 3];
+        livNom = ["Sami", "Rim", "Walid"];
+        livDispo = [1, 1, 0];
+
+        etat[0] = false;
+        etat[1] = 0;
+        etat[2] = 1;
+        etat[3] = 0;
+
+        // Arrêt des sons et de la vidéo
+        document.getElementById("sonDepart").pause();
+        document.getElementById("sonScooter").pause();
+        document.getElementById("videoFastFood").pause();
+
+        // Masquage de la vidéo et du message de fin
+        document.getElementById("videoFastFood").style.display = "none";
+        document.getElementById("msgFin").style.display = "none";
+
+        // Masquage du livreur et remise à zéro de sa position (sur la route à 80%)
+        let e = document.getElementById("liv");
+        e.style.display = "none";
+        e.style.left = "8%";
+        e.style.top = "80%";
+        document.getElementById("livnom").textContent = "";
+
+        document.getElementById("prog").style.width = "0%";
+
+        // Remise à zéro des étapes
+        document.getElementById("e1").style.border = "2px dashed #888888";
+        document.getElementById("e1").style.color = "#555555";
+        document.getElementById("e1").style.fontWeight = "normal";
+        document.getElementById("e1").innerHTML = "1. Vers le fast-food<br><small>statut E</small>";
+
+        document.getElementById("e2").style.border = "2px dashed #888888";
+        document.getElementById("e2").style.color = "#555555";
+        document.getElementById("e2").style.fontWeight = "normal";
+        document.getElementById("e2").innerHTML = "2. En livraison<br><small>statut L</small>";
+
+        document.getElementById("e3").style.border = "2px dashed #888888";
+        document.getElementById("e3").style.color = "#555555";
+        document.getElementById("e3").style.fontWeight = "normal";
+        document.getElementById("e3").innerHTML = "3. Livrée<br><small>statut T</small>";
+
+        document.getElementById("msg").textContent = "";
+
+        document.getElementById("go").disabled = false;
+        document.getElementById("avancer").disabled = true;
+
+        document.getElementById("i-liv").textContent = "–";
+        document.getElementById("i-phase").textContent = "–";
+        document.getElementById("i-pos").textContent = "–";
+        document.getElementById("i-stat").textContent = "–";
+        document.getElementById("i-dispo").textContent = "–";
+
+        afficherListe();
+      }
+
+      // --- 2. Affichage de la liste des livreurs ---
+      function afficherListe() {
+        let html = "<legend>Livreurs</legend>";
+        for (let i = 0; i < livId.length; i++) {
+          let disabled = "";
+          if (livDispo[i] == 0) {
+            disabled = "disabled";
+          }
+
+          let checked = "";
+          if (etat[3] == livId[i]) {
+            checked = "checked";
+          }
+
+          html +=
+            '<label class="liv"><input type="radio" name="livreur" value="' +
+            livId[i] +
+            '" ' +
+            checked +
+            " " +
+            disabled +
+            "> " +
+            livNom[i] +
+            " (dispo: " +
+            livDispo[i] +
+            ")</label>";
+        }
+        document.getElementById("choix").innerHTML = html;
+      }
+
+      // --- 3. Démarrer la livraison ---
+      function demarrer() {
+        let radios = document.getElementsByName("livreur");
+        let choix = null;
+        for (let i = 0; i < radios.length; i++) {
+          if (radios[i].checked) {
+            choix = radios[i];
+            break;
+          }
+        }
+        if (choix == null) {
+          document.getElementById("msg").textContent = "Veuillez choisir un livreur.";
+          return;
+        }
+
+        let idChoisi = parseInt(choix.value);
+        for (let i = 0; i < livId.length; i++) {
+          if (livId[i] == idChoisi) {
+            livDispo[i] = 0;
+            etat[3] = idChoisi;
+            break;
+          }
+        }
+
+        etat[0] = true;
+        etat[1] = 0;
+        etat[2] = 1;
+
+        // Affichage du livreur au départ (sur la route à 80%)
+        let e = document.getElementById("liv");
+        e.style.display = "block";
+        e.style.left = "8%";
+        e.style.top = "80%";
+        document.getElementById("livnom").textContent = livNom[etat[3] - 1];
+
+        // Affichage et lancement de la vidéo
+        document.getElementById("msgFin").style.display = "none";
+        let video = document.getElementById("videoFastFood");
+        video.style.display = "block";
+        video.play();
+
+        document.getElementById("go").disabled = true;
+        document.getElementById("avancer").disabled = false;
+
+        // Étape 1 active
+        document.getElementById("e1").style.border = "3px solid #111111";
+        document.getElementById("e1").style.color = "#111111";
+        document.getElementById("e1").style.fontWeight = "bold";
+
+        // 🔊 Son 1 : démarrage de la moto
+        document.getElementById("sonDepart").play();
+
+        afficherListe();
+        majInfos();
+      }
+
+      // --- 4. Avancer d'un pas (de GAUCHE à DROITE) ---
+      function avancer() {
+        if (!etat[0]) {
+          return;
+        }
+
+        document.getElementById("sonDepart").pause();
+
+        etat[1] += 10;
+        if (etat[1] > 100) {
+          etat[1] = 100;
+        }
+
+        let pct = etat[1];
+        let x = 0;
+        let y = 0;
+
+        // --- CALCUL DU TRAJET EN L ---
+        if (pct <= 50) {
+          // Phase 1 : Ligne horizontale (de gauche à droite)
+          // x va de 8% à 90%
+          x = 8 + (90 - 8) * (pct / 50);
+          y = 80;
+        } else {
+          // Phase 2 : Ligne verticale (de bas en haut)
+          // x reste à 90%, y va de 80% à 18%
+          x = 90;
+          y = 80 - (80 - 18) * ((pct - 50) / 50);
+        }
+
+        // Mise à jour de la position
+        document.getElementById("liv").style.left = x + "%";
+        document.getElementById("liv").style.top = y + "%";
+        document.getElementById("prog").style.width = pct + "%";
+
+        // 🔊 Relance de la vidéo
+        let video = document.getElementById("videoFastFood");
+        video.play();
+
+        // 🔊 Son 2
+        if (etat[1] == 10) {
+          document.getElementById("sonScooter").play();
+        }
+
+        // Changement de phase visuel à 50%
+        if (pct >= 50 && etat[2] == 1) {
+          etat[2] = 2;
+          document.getElementById("e1").style.border = "2px solid #111111";
+          document.getElementById("e1").innerHTML = "✔ 1. Vers le fast-food<br><small>statut E</small>";
+
+          document.getElementById("e2").style.border = "3px solid #111111";
+          document.getElementById("e2").style.color = "#111111";
+          document.getElementById("e2").style.fontWeight = "bold";
+        }
+
+        // Fin de la livraison à 100%
+        if (pct >= 100) {
+          etat[0] = false;
+          etat[2] = 3;
+
+          document.getElementById("e2").style.border = "2px solid #111111";
+          document.getElementById("e2").innerHTML = "✔ 2. En livraison<br><small>statut L</small>";
+
+          document.getElementById("e3").style.border = "3px solid #111111";
+          document.getElementById("e3").style.color = "#111111";
+          document.getElementById("e3").style.fontWeight = "bold";
+          document.getElementById("e3").innerHTML = "✔ 3. Livrée<br><small>statut T</small>";
+
+          document.getElementById("sonScooter").pause();
+          video.pause();
+          video.style.display = "none";
+
+          document.getElementById("msgFin").style.display = "block";
+
+          document.getElementById("msg").textContent = "Livraison terminée !";
+          document.getElementById("avancer").disabled = true;
+          document.getElementById("go").disabled = false;
+
+          for (let i = 0; i < livId.length; i++) {
+            if (livId[i] == etat[3]) {
+              livDispo[i] = 1;
+              break;
+            }
+          }
+          afficherListe();
+        }
+
+        majInfos();
+      }
+
+      // --- 5. Gestion du clavier ---
+      function gererClavier() {
+        if (!etat[0]) {
+          return;
+        }
+
+        if (window.event.key == "ArrowUp" || window.event.key == "ArrowRight") {
+          avancer();
+        }
+      }
+
+      // --- 6. Mise à jour des infos ---
+      function majInfos() {
+        let phaseTxt = "Terminé";
+        if (etat[2] == 1) {
+          phaseTxt = "A (vers le fast-food)";
+        } else if (etat[2] == 2) {
+          phaseTxt = "B (vers le client)";
+        }
+
+        let statTxt = "T";
+        if (etat[2] == 1) {
+          statTxt = "E";
+        } else if (etat[2] == 2) {
+          statTxt = "L";
+        }
+
+        let dispo = 0;
+        if (etat[2] == 3) {
+          dispo = 1;
+        }
+
+        document.getElementById("i-liv").textContent = livNom[etat[3] - 1];
+        document.getElementById("i-phase").textContent = phaseTxt;
+        document.getElementById("i-stat").textContent = statTxt;
+        document.getElementById("i-pos").textContent = "Avancement : " + etat[1] + "%";
+        document.getElementById("i-dispo").textContent = dispo;
+      }
+    </script>
+  </body>
+</html>

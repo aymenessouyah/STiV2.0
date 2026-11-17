@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Suivi du livreur : du fast-food vers le client</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body onload="initialiser()" onkeydown="gererClavier()">
+    <h1>🛵 Du fast-food Rafèha vers le client</h1>
+    <p class="sub">Choisissez un livreur, puis cliquez sur "Avancer" ou utilisez les flèches du clavier (↑ ou →).</p>
+
+    <div class="wrap">
+      <div class="col-gauche">
+        <div class="card">
+          <!-- Le schéma de base (toujours visible) -->
+          <div id="carte">
+            <div class="route h"></div>
+            <div class="route v"></div>
+            <div class="lieu" id="resto">🍔<small>Fast-food Rafèha</small></div>
+            <div class="lieu" id="client">🏠<small>Client</small></div>
+            <div id="liv" style="display: none">🛵<span id="livnom"></span></div>
+          </div>
+
+          <!-- La vidéo (en dessous du schéma) -->
+          <video id="videoFastFood" muted>
+            <source src="ressources/fast_food_rafeha.mp4" type="video/mp4" />
+          </video>
+
+          <!-- Le message de fin (en dessous du schéma) -->
+          <div id="msgFin">Commande livrée !</div>
+
+          <div class="etapes">
+            <div class="etape" id="e1">1. Vers le fast-food<br /><small>statut E</small></div>
+            <div class="etape" id="e2">2. En livraison<br /><small>statut L</small></div>
+            <div class="etape" id="e3">3. Livrée<br /><small>statut T</small></div>
+          </div>
+
+          <div class="barre"><div id="prog"></div></div>
+        </div>
+      </div>
+
+      <div class="col-droite">
+        <div class="card">
+          <h2>Commande n° 510</h2>
+          <fieldset id="choix"><legend>Livreurs</legend></fieldset>
+
+          <div class="btns">
+            <button class="prim" id="go" onclick="demarrer()">Affecter</button>
+            <button id="avancer" onclick="avancer()" disabled>Avancer</button>
+            <button id="reset" onclick="initialiser()">Réinitialiser</button>
+          </div>
+          <p id="msg" style="min-height: 20px; margin-top: 8px; font-size: 14px"></p>
+        </div>
+
+        <div class="card">
+          <h2>État en direct</h2>
+          <table>
+            <tr>
+              <td class="infos-titre">Livreur</td>
+              <td class="infos-valeur" id="i-liv">–</td>
+            </tr>
+            <tr>
+              <td class="infos-titre">Phase</td>
+              <td class="infos-valeur" id="i-phase">–</td>
+            </tr>
+            <tr>
+              <td class="infos-titre">Position</td>
+              <td class="infos-valeur" id="i-pos">–</td>
+            </tr>
+            <tr>
+              <td class="infos-titre">Statut</td>
+              <td class="infos-valeur" id="i-stat">–</td>
+            </tr>
+            <tr>
+              <td class="infos-titre">Dispo</td>
+              <td class="infos-valeur" id="i-dispo">–</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Son 1 : démarrage de la moto -->
+    <audio id="sonDepart">
+      <source src="ressources/Depart_moto.wav" type="audio/wav" />
+    </audio>
+
+    <!-- Son 2 : scooter qui passe (en boucle) -->
+    <audio id="sonScooter" loop>
+      <source src="ressources/Moto_Scooter_qui_passe.wav" type="audio/wav" />
+    </audio>
+
+    <script src="script.js"></script>
+  </body>
+</html>
