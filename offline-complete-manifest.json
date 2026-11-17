@@ -1,10 +1,10 @@
 {
   "version": "v582-sti-atelier-v386",
-  "versionPubliee": "v678",
-  "generatedAt": "2026-11-16T13:38:45Z",
+  "versionPubliee": "v679",
+  "generatedAt": "2026-11-17T22:01:58Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 810,
-  "totalBytes": 1431427450,
+  "totalFiles": 812,
+  "totalBytes": 1438691940,
   "files": [
     {
       "path": "404.html",
@@ -1448,8 +1448,8 @@
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 143557,
-      "gitSha": "05edb29c9cecbb8ceed3b3d51bf6f19f626db433"
+      "bytes": 144259,
+      "gitSha": "f47b0e161251804359619f4b5e77f59ff4089923"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -3052,6 +3052,16 @@
       "gitSha": "cda363afd7882cdcef2754ee1bfb2f9dd0c8db84"
     },
     {
+      "path": "exercices/javascript/livraison/livraison_fastfood_énoncé.pdf",
+      "bytes": 272162,
+      "gitSha": "a045741c0a0a6135eb36c1f4d944107cced2ee23"
+    },
+    {
+      "path": "exercices/javascript/livraison/ressources-livraison.zip",
+      "bytes": 6990135,
+      "gitSha": "393f069e76d6cd2b73fdda371b0edad74b3b9a60"
+    },
+    {
       "path": "exercices/javascript/serie-synthese/corrige-synthese-javascript.pdf",
       "bytes": 350536,
       "gitSha": "9ea31ef0627ff972aa5332ea851fd8018f4e04e8"
@@ -3208,8 +3218,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 109544,
-      "gitSha": "8dcc8aabb11a0434b2728abda2edf57dbc88c076"
+      "bytes": 110315,
+      "gitSha": "a27aadd1efccd51819f040e18df8c3d39ffae6ce"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3443,8 +3453,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 70453,
-      "gitSha": "f923ada50422b0a36f2caaeed19a1c4993df7f4c"
+      "bytes": 70747,
+      "gitSha": "8f10e6a6a61c0fc078c9bc395859e45dcef3d5aa"
     },
     {
       "path": "livre-smart.html",
@@ -4053,8 +4063,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 116115,
-      "gitSha": "8b97906832cd383c3f142973239da38c9d51f053"
+      "bytes": 116541,
+      "gitSha": "3b398e6aed1be3150de2b17e2cb79bd77b08ad35"
     }
   ]
 }
