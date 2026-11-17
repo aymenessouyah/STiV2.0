@@ -9,3 +9,10 @@ for(const classe of ['3SI 1','4SI 1'])test(`livraison synthèse disponible (${cl
  }
  await page.goto('/index.html#series-synthese',{waitUntil:'domcontentloaded'});const detail=page.locator('#series-synthese details').filter({hasText:'JavaScript'});await detail.locator('summary').click();await expect(detail.getByText('Livraison fast-food')).toBeVisible();
 });
+test('le corrigé fourni initialise et fait avancer la livraison',async({page})=>{
+ await page.goto('/exercices/javascript/livraison/livraison_fastfood_corrig%C3%A9.html',{waitUntil:'load'});
+ await expect(page.locator('input[name="livreur"]')).toHaveCount(3);
+ await page.locator('input[name="livreur"]').first().check();
+ await page.locator('#go').click();await expect(page.locator('#avancer')).toBeEnabled();
+ await page.locator('#avancer').click();await expect(page.locator('#prog')).not.toHaveCSS('width','0px');
+});

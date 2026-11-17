@@ -5,7 +5,7 @@ import {execFileSync} from 'node:child_process';
 const read=p=>readFileSync(p,'utf8');
 test('la synthèse Livraison figure dans les trois vues et les ressources correspondent aux originaux',()=>{
  for(const file of ['index.html','cours/javascript.html','exercices/series-exercices.html']) {
-  const html=read(file);assert.ok(html.includes('livraison_fastfood_énoncé.pdf'),file);assert.ok(html.includes('ressources-livraison.zip'),file);
+  const html=read(file);assert.ok(html.includes('livraison_fastfood_énoncé.pdf'),file);assert.ok(html.includes('ressources-livraison.zip'),file);assert.ok(html.includes('livraison_fastfood_corrigé.html'),file);assert.ok(html.includes('script_corrige.js'),file);
  }
  for(const file of ['cours/javascript.html','exercices/series-exercices.html']){
   const html=read(file);const card=html.slice(html.indexOf('id="synthese-livraison"'));assert.match(card,/badge-synthese-gold/);assert.match(card,/titre-synthese/);
@@ -18,5 +18,5 @@ with ZipFile(p/'ressources-livraison.zip') as z:
  assert set(z.namelist())==set(expected)
  for name in expected: assert z.read(name)==(p/name).read_bytes(), name
 `]);
- const manifest=JSON.parse(read('offline-complete-manifest.json'));for(const name of ['livraison_fastfood_énoncé.pdf','ressources-livraison.zip'])assert.ok(manifest.files.some(f=>f.path.endsWith('livraison/'+name)));
+ const manifest=JSON.parse(read('offline-complete-manifest.json'));for(const name of ['livraison_fastfood_énoncé.pdf','ressources-livraison.zip','livraison_fastfood_corrigé.html','script_corrige.js','ressources/Depart_moto.wav','ressources/Moto_Scooter_qui_passe.wav','ressources/fast_food_rafeha.mp4'])assert.ok(manifest.files.some(f=>f.path.endsWith('livraison/'+name)));
 });

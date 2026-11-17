@@ -1,10 +1,10 @@
 {
   "version": "v582-sti-atelier-v386",
-  "versionPubliee": "v679",
-  "generatedAt": "2026-11-17T22:01:58Z",
+  "versionPubliee": "v680",
+  "generatedAt": "2026-11-17T22:15:26Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 812,
-  "totalBytes": 1438691940,
+  "totalFiles": 817,
+  "totalBytes": 1446634403,
   "files": [
     {
       "path": "404.html",
@@ -1448,8 +1448,8 @@
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 144259,
-      "gitSha": "f47b0e161251804359619f4b5e77f59ff4089923"
+      "bytes": 144512,
+      "gitSha": "7373b4472fcbf1d9f4ff0c7b626bcdfd8ece6fbe"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -3052,6 +3052,11 @@
       "gitSha": "cda363afd7882cdcef2754ee1bfb2f9dd0c8db84"
     },
     {
+      "path": "exercices/javascript/livraison/livraison_fastfood_corrigé.html",
+      "bytes": 18459,
+      "gitSha": "097bc08cf26e8311e405478bc6e444fec17519c2"
+    },
+    {
       "path": "exercices/javascript/livraison/livraison_fastfood_énoncé.pdf",
       "bytes": 272162,
       "gitSha": "a045741c0a0a6135eb36c1f4d944107cced2ee23"
@@ -3060,6 +3065,26 @@
       "path": "exercices/javascript/livraison/ressources-livraison.zip",
       "bytes": 6990135,
       "gitSha": "393f069e76d6cd2b73fdda371b0edad74b3b9a60"
+    },
+    {
+      "path": "exercices/javascript/livraison/ressources/Depart_moto.wav",
+      "bytes": 4552170,
+      "gitSha": "e569cc2f2ebe1b60e28dbea8df4bd8291c720974"
+    },
+    {
+      "path": "exercices/javascript/livraison/ressources/Moto_Scooter_qui_passe.wav",
+      "bytes": 501604,
+      "gitSha": "7de0333407fdf495d69ef497a9e83ddab08cca17"
+    },
+    {
+      "path": "exercices/javascript/livraison/ressources/fast_food_rafeha.mp4",
+      "bytes": 2859933,
+      "gitSha": "a68e12520ffab1980af70daab98b352b113a3155"
+    },
+    {
+      "path": "exercices/javascript/livraison/script_corrige.js",
+      "bytes": 8569,
+      "gitSha": "6041b83252abf76118c69dbedeab25a964f1a9dc"
     },
     {
       "path": "exercices/javascript/serie-synthese/corrige-synthese-javascript.pdf",
@@ -3218,8 +3243,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 110315,
-      "gitSha": "a27aadd1efccd51819f040e18df8c3d39ffae6ce"
+      "bytes": 110562,
+      "gitSha": "8df337afac2da012df7f912a5e2041b0b0ba1717"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3453,8 +3478,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 70747,
-      "gitSha": "8f10e6a6a61c0fc078c9bc395859e45dcef3d5aa"
+      "bytes": 70960,
+      "gitSha": "0d3096309eec1eaa9f21b292e5f8ea0dcc416966"
     },
     {
       "path": "livre-smart.html",
@@ -4063,8 +4088,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 116541,
-      "gitSha": "3b398e6aed1be3150de2b17e2cb79bd77b08ad35"
+      "bytes": 117556,
+      "gitSha": "cf1c59b18fb6847cfbd055c3963a7a489da3c4d5"
     }
   ]
 }
