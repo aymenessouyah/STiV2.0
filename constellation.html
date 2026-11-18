@@ -8,10 +8,11 @@
   <title>Constellation des matières · STI V2.0</title>
   <link rel="icon" href="assets/icons/STI_by_AE.ico">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="assets/css/constellation.css?v=681">
+  <link rel="stylesheet" href="assets/css/constellation.css?v=682">
   <script src="assets/js/config.js?v=681"></script>
   <script defer src="assets/js/supabase-umd.js"></script>
   <script defer src="assets/js/acces.js?v=479"></script>
+  <script defer src="assets/js/constellation-animation.js?v=682"></script>
 </head>
 <body>
   <a class="skip" href="#projets">Aller à la liste des projets</a>
@@ -35,22 +36,23 @@
         <div class="legend" aria-label="Matières de la constellation">
           <span><i class="html-dot"></i>HTML</span><span><i class="css-dot"></i>CSS</span><span><i class="js-dot"></i>JavaScript</span><span class="sti-4si-only"><i class="sql-dot"></i>SQL</span><span class="sti-4si-only"><i class="php-dot"></i>PHP</span>
         </div>
+        <div class="animation-controls" id="animation-controls" hidden><span>✦ Les matières se rencontrent au fil du tracé.</span><div><button type="button" id="animation-pause" aria-pressed="false">Ⅱ Mettre en pause</button><button type="button" id="animation-rejouer">↻ Rejouer</button></div></div>
         <div class="map-caption">LES LIGNES REPRÉSENTENT LES MATIÈRES <span>↓</span></div>
         <svg class="star-map" viewBox="0 0 400 380" role="group" aria-label="Deux projets relient HTML, CSS et JavaScript">
           <defs><filter id="glow"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-          <path class="line html-line" d="M65 4 C65 60 72 88 200 135 C80 180 65 203 65 240 C65 268 100 287 200 322 C115 352 70 369 65 380"/>
-          <path class="line css-line" d="M130 4 C130 60 132 92 200 135 C135 180 130 208 130 240 C130 274 149 294 200 322 C156 344 135 363 130 380"/>
-          <path class="line js-line" d="M200 4 C200 60 195 90 200 135 C206 174 200 205 200 240 C200 271 195 295 200 322 C205 345 200 364 200 380"/>
-          <g class="sti-4si-only"><path class="line sql-line faint" d="M280 4 C280 120 280 230 280 380"/><path class="line php-line faint" d="M350 4 C350 120 350 230 350 380"/></g>
+          <path pathLength="1" class="line html-line" d="M65 4 C65 60 72 88 200 135 C80 180 65 203 65 240 C65 268 100 287 200 322 C115 352 70 369 65 380"/>
+          <path pathLength="1" class="line css-line" d="M130 4 C130 60 132 92 200 135 C135 180 130 208 130 240 C130 274 149 294 200 322 C156 344 135 363 130 380"/>
+          <path pathLength="1" class="line js-line" d="M200 4 C200 60 195 90 200 135 C206 174 200 205 200 240 C200 271 195 295 200 322 C205 345 200 364 200 380"/>
+          <g class="sti-4si-only"><path pathLength="1" class="line sql-line faint" d="M280 4 C280 120 280 230 280 380"/><path pathLength="1" class="line php-line faint" d="M350 4 C350 120 350 230 350 380"/></g>
           <a href="#livraison" aria-label="Découvrir Livraison fast-food"><rect x="180" y="113" width="150" height="44" fill="transparent"/><circle class="halo" cx="200" cy="135" r="19"/><circle class="node" cx="200" cy="135" r="6"/><text class="node-label" x="216" y="131">Livraison</text><text class="node-sub" x="216" y="148">HTML · CSS · JS</text></a>
           <a href="#carte-bancaire" aria-label="Découvrir Carte bancaire animée"><rect x="180" y="300" width="150" height="44" fill="transparent"/><circle class="halo" cx="200" cy="322" r="19"/><circle class="node" cx="200" cy="322" r="6"/><text class="node-label" x="216" y="318">Carte bancaire</text><text class="node-sub" x="216" y="335">HTML · CSS · JS</text></a>
         </svg>
         <svg class="star-map sti-4si-only" viewBox="0 0 400 360" role="group" aria-label="Deux sujets de 4e SI relient HTML, CSS, JavaScript, SQL et PHP">
-          <path class="line html-line" d="M65 0 C65 40 80 67 200 100 C83 133 65 167 65 180 C65 210 80 230 200 270 C80 308 65 330 65 360"/>
-          <path class="line css-line" d="M130 0 C130 40 140 70 200 100 C140 133 130 165 130 180 C130 210 140 240 200 270 C140 300 130 330 130 360"/>
-          <path class="line js-line" d="M200 0 C200 50 195 70 200 100 C205 140 200 165 200 180 C200 215 195 240 200 270 C205 300 200 330 200 360"/>
-          <path class="line sql-line" d="M280 0 C280 40 260 70 200 100 C260 135 280 160 280 180 C280 210 260 240 200 270 C260 300 280 330 280 360"/>
-          <path class="line php-line" d="M350 0 C350 40 325 70 200 100 C325 135 350 160 350 180 C350 210 325 240 200 270 C325 305 350 330 350 360"/>
+          <path pathLength="1" class="line html-line" d="M65 0 C65 40 80 67 200 100 C83 133 65 167 65 180 C65 210 80 230 200 270 C80 308 65 330 65 360"/>
+          <path pathLength="1" class="line css-line" d="M130 0 C130 40 140 70 200 100 C140 133 130 165 130 180 C130 210 140 240 200 270 C140 300 130 330 130 360"/>
+          <path pathLength="1" class="line js-line" d="M200 0 C200 50 195 70 200 100 C205 140 200 165 200 180 C200 215 195 240 200 270 C205 300 200 330 200 360"/>
+          <path pathLength="1" class="line sql-line" d="M280 0 C280 40 260 70 200 100 C260 135 280 160 280 180 C280 210 260 240 200 270 C260 300 280 330 280 360"/>
+          <path pathLength="1" class="line php-line" d="M350 0 C350 40 325 70 200 100 C325 135 350 160 350 180 C350 210 325 240 200 270 C325 305 350 330 350 360"/>
           <a href="#web-bd" aria-label="Découvrir Web et bases de données"><rect x="180" y="78" width="150" height="44" fill="transparent"/><circle class="halo" cx="200" cy="100" r="19"/><circle class="node" cx="200" cy="100" r="6"/><text class="node-label" x="216" y="95">Web &amp; BD</text><text class="node-sub" x="216" y="112">SUJET · 4ᵉ SI</text></a>
           <a href="#style-bac" aria-label="Découvrir Style Bac STI 2024"><rect x="180" y="248" width="150" height="44" fill="transparent"/><circle class="halo" cx="200" cy="270" r="19"/><circle class="node" cx="200" cy="270" r="6"/><text class="node-label" x="216" y="265">Style Bac 2024</text><text class="node-sub" x="216" y="282">SUJET · 4ᵉ SI</text></a>
         </svg>

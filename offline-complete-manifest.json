@@ -1,10 +1,10 @@
 {
   "version": "v582-sti-atelier-v386",
-  "versionPubliee": "v681",
-  "generatedAt": "2026-11-18T09:12:33Z",
+  "versionPubliee": "v682",
+  "generatedAt": "2026-11-18T09:25:04Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 819,
-  "totalBytes": 1446651483,
+  "totalFiles": 820,
+  "totalBytes": 1446657704,
   "files": [
     {
       "path": "404.html",
@@ -208,8 +208,8 @@
     },
     {
       "path": "assets/css/constellation.css",
-      "bytes": 6775,
-      "gitSha": "4b66b6335942c968a3a094b7a07891f5bd02de86"
+      "bytes": 8982,
+      "gitSha": "1e54e85d12803e2720ba9fe419bc2563bc9d895d"
     },
     {
       "path": "assets/css/cours-css3.css",
@@ -770,6 +770,11 @@
       "path": "assets/js/config.js",
       "bytes": 35953,
       "gitSha": "aa16d5768cc509dce2f00189f9243e103dcc4f63"
+    },
+    {
+      "path": "assets/js/constellation-animation.js",
+      "bytes": 3298,
+      "gitSha": "abebf25033e347421fbfcd66affd2344fe1dc10b"
     },
     {
       "path": "assets/js/cote-ticker.js",
@@ -1403,8 +1408,8 @@
     },
     {
       "path": "constellation.html",
-      "bytes": 9440,
-      "gitSha": "df8fd3908b2f19cd6f1e8a03e89778eac4c8bb36"
+      "bytes": 9974,
+      "gitSha": "c0acfdcc3583f8833125662f426cd5d7724e03eb"
     },
     {
       "path": "cours/PHP-recap.html",
@@ -4098,8 +4103,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 117794,
-      "gitSha": "808d8f4759604f98bf9ecacb8c94768adbb66bcb"
+      "bytes": 117976,
+      "gitSha": "3df793518beaa3db9429007fe74996e0aacaee3f"
     }
   ]
 }
