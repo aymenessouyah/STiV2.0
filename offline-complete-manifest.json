@@ -1,10 +1,10 @@
 {
   "version": "v582-sti-atelier-v386",
-  "versionPubliee": "v680",
-  "generatedAt": "2026-11-17T22:15:26Z",
+  "versionPubliee": "v681",
+  "generatedAt": "2026-11-18T09:12:33Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 817,
-  "totalBytes": 1446634403,
+  "totalFiles": 819,
+  "totalBytes": 1446651483,
   "files": [
     {
       "path": "404.html",
@@ -205,6 +205,11 @@
       "path": "assets/css/capsules-vedettes.css",
       "bytes": 15892,
       "gitSha": "e0bb6bd19e02ae07e8a7000efa26b257c01f1909"
+    },
+    {
+      "path": "assets/css/constellation.css",
+      "bytes": 6775,
+      "gitSha": "4b66b6335942c968a3a094b7a07891f5bd02de86"
     },
     {
       "path": "assets/css/cours-css3.css",
@@ -764,7 +769,7 @@
     {
       "path": "assets/js/config.js",
       "bytes": 35953,
-      "gitSha": "65412b82d9992fb79fdff94353368b2d05506d05"
+      "gitSha": "aa16d5768cc509dce2f00189f9243e103dcc4f63"
     },
     {
       "path": "assets/js/cote-ticker.js",
@@ -858,8 +863,8 @@
     },
     {
       "path": "assets/js/mobile-nav.js",
-      "bytes": 44331,
-      "gitSha": "ed355d07f5954512fc93e8ae4edcdc0705e21a66"
+      "bytes": 44383,
+      "gitSha": "b75ad41cc6831d037644f2475d8cf3cfb4050629"
     },
     {
       "path": "assets/js/modules/admin-labo-devices.js",
@@ -1395,6 +1400,11 @@
       "path": "carte-visite.html",
       "bytes": 27152,
       "gitSha": "49b7ec62c2f377f5d89e3b94e3afb8fee6d76d9a"
+    },
+    {
+      "path": "constellation.html",
+      "bytes": 9440,
+      "gitSha": "df8fd3908b2f19cd6f1e8a03e89778eac4c8bb36"
     },
     {
       "path": "cours/PHP-recap.html",
@@ -3478,8 +3488,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 70960,
-      "gitSha": "0d3096309eec1eaa9f21b292e5f8ea0dcc416966"
+      "bytes": 71535,
+      "gitSha": "6dc03c022101cd70a11117438a5c35bfc9d40703"
     },
     {
       "path": "livre-smart.html",
@@ -4088,8 +4098,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 117556,
-      "gitSha": "cf1c59b18fb6847cfbd055c3963a7a489da3c4d5"
+      "bytes": 117794,
+      "gitSha": "808d8f4759604f98bf9ecacb8c94768adbb66bcb"
     }
   ]
 }

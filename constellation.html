@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090e1d">
+  <meta name="description" content="Explorez les liens entre HTML, CSS, JavaScript, SQL et PHP à travers les projets et sujets de la plateforme.">
+  <title>Constellation des matières · STI V2.0</title>
+  <link rel="icon" href="assets/icons/STI_by_AE.ico">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="assets/css/constellation.css?v=681">
+  <script src="assets/js/config.js?v=681"></script>
+  <script defer src="assets/js/supabase-umd.js"></script>
+  <script defer src="assets/js/acces.js?v=479"></script>
+</head>
+<body>
+  <a class="skip" href="#projets">Aller à la liste des projets</a>
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="STI V2.0, retour à l’accueil"><span class="brand-mark">✳</span><span>STI <b>V2.0</b><small>LE WEB DE A À Z</small></span></a>
+    <a class="back" href="index.html#outils-bac">← <span>Retour aux ateliers</span></a>
+  </header>
+  <main>
+    <section class="hero wrap" aria-labelledby="titre">
+      <div class="eyebrow"><span></span> EXPLORER AUTREMENT <span class="divider">/</span> STI V2.0</div>
+      <h1 id="titre">Les matières<br>se <em>rencontrent.</em></h1>
+      <p>Un projet n’appartient jamais à une seule matière. Suis les lignes pour découvrir comment elles travaillent ensemble.</p>
+      <a class="hero-link" href="#carte">Explorer la constellation <span aria-hidden="true">↓</span></a>
+      <div class="hero-side" aria-hidden="true"><span>01 / CONNEXIONS</span><i></i> UNE AUTRE FAÇON DE VOIR LE WEB</div>
+    </section>
+
+    <section class="map-section wrap" id="carte" aria-labelledby="titre-carte">
+      <div class="section-heading"><div><span class="eyebrow">LA CARTE</span><h2 id="titre-carte">Une idée, plusieurs savoirs.</h2><p>Chaque point relie des matières à un projet. Touche un point pour découvrir les ressources.</p></div><a href="#projets">Voir la liste complète ↘</a></div>
+      <div class="map-shell">
+        <div class="map-meta"><span><i class="status-dot"></i> CARTE DES CONNEXIONS</span><span>PROJETS · SUJETS</span></div>
+        <div class="legend" aria-label="Matières de la constellation">
+          <span><i class="html-dot"></i>HTML</span><span><i class="css-dot"></i>CSS</span><span><i class="js-dot"></i>JavaScript</span><span class="sti-4si-only"><i class="sql-dot"></i>SQL</span><span class="sti-4si-only"><i class="php-dot"></i>PHP</span>
+        </div>
+        <div class="map-caption">LES LIGNES REPRÉSENTENT LES MATIÈRES <span>↓</span></div>
+        <svg class="star-map" viewBox="0 0 400 380" role="group" aria-label="Deux projets relient HTML, CSS et JavaScript">
+          <defs><filter id="glow"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+          <path class="line html-line" d="M65 4 C65 60 72 88 200 135 C80 180 65 203 65 240 C65 268 100 287 200 322 C115 352 70 369 65 380"/>
+          <path class="line css-line" d="M130 4 C130 60 132 92 200 135 C135 180 130 208 130 240 C130 274 149 294 200 322 C156 344 135 363 130 380"/>
+          <path class="line js-line" d="M200 4 C200 60 195 90 200 135 C206 174 200 205 200 240 C200 271 195 295 200 322 C205 345 200 364 200 380"/>
+          <g class="sti-4si-only"><path class="line sql-line faint" d="M280 4 C280 120 280 230 280 380"/><path class="line php-line faint" d="M350 4 C350 120 350 230 350 380"/></g>
+          <a href="#livraison" aria-label="Découvrir Livraison fast-food"><rect x="180" y="113" width="150" height="44" fill="transparent"/><circle class="halo" cx="200" cy="135" r="19"/><circle class="node" cx="200" cy="135" r="6"/><text class="node-label" x="216" y="131">Livraison</text><text class="node-sub" x="216" y="148">HTML · CSS · JS</text></a>
+          <a href="#carte-bancaire" aria-label="Découvrir Carte bancaire animée"><rect x="180" y="300" width="150" height="44" fill="transparent"/><circle class="halo" cx="200" cy="322" r="19"/><circle class="node" cx="200" cy="322" r="6"/><text class="node-label" x="216" y="318">Carte bancaire</text><text class="node-sub" x="216" y="335">HTML · CSS · JS</text></a>
+        </svg>
+        <svg class="star-map sti-4si-only" viewBox="0 0 400 360" role="group" aria-label="Deux sujets de 4e SI relient HTML, CSS, JavaScript, SQL et PHP">
+          <path class="line html-line" d="M65 0 C65 40 80 67 200 100 C83 133 65 167 65 180 C65 210 80 230 200 270 C80 308 65 330 65 360"/>
+          <path class="line css-line" d="M130 0 C130 40 140 70 200 100 C140 133 130 165 130 180 C130 210 140 240 200 270 C140 300 130 330 130 360"/>
+          <path class="line js-line" d="M200 0 C200 50 195 70 200 100 C205 140 200 165 200 180 C200 215 195 240 200 270 C205 300 200 330 200 360"/>
+          <path class="line sql-line" d="M280 0 C280 40 260 70 200 100 C260 135 280 160 280 180 C280 210 260 240 200 270 C260 300 280 330 280 360"/>
+          <path class="line php-line" d="M350 0 C350 40 325 70 200 100 C325 135 350 160 350 180 C350 210 325 240 200 270 C325 305 350 330 350 360"/>
+          <a href="#web-bd" aria-label="Découvrir Web et bases de données"><rect x="180" y="78" width="150" height="44" fill="transparent"/><circle class="halo" cx="200" cy="100" r="19"/><circle class="node" cx="200" cy="100" r="6"/><text class="node-label" x="216" y="95">Web &amp; BD</text><text class="node-sub" x="216" y="112">SUJET · 4ᵉ SI</text></a>
+          <a href="#style-bac" aria-label="Découvrir Style Bac STI 2024"><rect x="180" y="248" width="150" height="44" fill="transparent"/><circle class="halo" cx="200" cy="270" r="19"/><circle class="node" cx="200" cy="270" r="6"/><text class="node-label" x="216" y="265">Style Bac 2024</text><text class="node-sub" x="216" y="282">SUJET · 4ᵉ SI</text></a>
+        </svg>
+        <p class="map-foot">✦ &nbsp; Une connexion indique les matières présentes dans un sujet, pas un niveau de maîtrise.</p>
+      </div>
+    </section>
+
+    <section class="projects wrap" id="projets" aria-labelledby="titre-projets">
+      <div class="section-heading"><div><span class="eyebrow">LES RENCONTRES</span><h2 id="titre-projets">Au croisement des matières.</h2><p>Explore chaque projet et retrouve ses documents en un endroit.</p></div><span class="section-number">02 / PROJETS</span></div>
+      <div class="project-grid">
+        <article class="project-card" id="livraison"><div class="card-top"><span>PROJET DE SYNTHÈSE</span><span>01 ↗</span></div><h3>Livraison<br>fast-food</h3><p>Un livreur avance sur un trajet : la page donne la structure, le style dessine la carte et le script anime la livraison.</p><div class="tags"><span>HTML</span><span>CSS</span><span>JavaScript</span></div><div class="card-links"><a href="exercices/javascript/livraison/livraison_fastfood_énoncé.pdf" data-pdf-natif-mobile target="_blank" rel="noopener">Énoncé ↗</a><a href="exercices/javascript/livraison/ressources-livraison.zip" download>Ressources ↓</a><a href="exercices/javascript/livraison/livraison_fastfood_corrigé.html" target="_blank" rel="noopener">Corrigé ↗</a></div></article>
+        <article class="project-card" id="carte-bancaire"><div class="card-top"><span>PROJET GUIDÉ</span><span>02 ↗</span></div><h3>Carte bancaire<br>animée</h3><p>Construis une carte et son formulaire : HTML structure, CSS anime et JavaScript contrôle les interactions.</p><div class="tags"><span>HTML</span><span>CSS</span><span>JavaScript</span></div><div class="card-links"><a href="projets/carte-bancaire/enonce-tp-carte-bancaire.html">Énoncé ↗</a><a href="projets/carte-bancaire/cb.html">Corrigé ↗</a></div></article>
+        <article class="project-card sti-4si-only" id="web-bd"><div class="card-top"><span>SUJET SIMILAIRE BAC · 4ᵉ SI</span><span>03 ↗</span></div><h3>Web et bases<br>de données</h3><p>Du formulaire au traitement : interface HTML/CSS, contrôle JavaScript, traitement PHP et requêtes SQL.</p><div class="tags"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>SQL</span><span>PHP</span></div><div class="card-links"><a href="exercices/sujets-bac/web-bd-enonce.pdf" data-pdf-natif-mobile target="_blank" rel="noopener">Énoncé ↗</a><a href="exercices/sujets-bac/web-bd-corrige.pdf" data-pdf-natif-mobile target="_blank" rel="noopener">Corrigé ↗</a></div></article>
+        <article class="project-card sti-4si-only" id="style-bac"><div class="card-top"><span>SUJET SIMILAIRE BAC · 4ᵉ SI</span><span>04 ↗</span></div><h3>Style Bac<br>STI 2024</h3><p>Un sujet transversal qui rassemble des questions Web et des exercices autour des bases de données.</p><div class="tags"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>SQL</span><span>PHP</span></div><div class="card-links"><a href="exercices/sujets-bac/style-bac-2024-enonce.pdf" data-pdf-natif-mobile target="_blank" rel="noopener">Énoncé ↗</a><a href="exercices/sujets-bac/style-bac-2024-corrige.pdf" data-pdf-natif-mobile target="_blank" rel="noopener">Corrigé ↗</a></div></article>
+      </div>
+    </section>
+  </main>
+  <footer class="wrap footer"><span>STI V2.0 <b>✳</b> Lycée Raféha</span><a href="index.html#outils-bac">Retour aux ateliers ↑</a></footer>
+</body>
+</html>
