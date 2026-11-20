@@ -30,5 +30,5 @@ test('compteur SQL : seuls les TP ouverts comptent en 3SI',async({page})=>{
 test('compteur PHP inchangé',async({page})=>{
  await preparer(page,'4SI 1');await page.goto('/cours/php.html#exercices',{waitUntil:'domcontentloaded'});
  await expect(page.locator('#exercices')).toBeVisible();
- await expect(page.locator('#exoProgressText')).toHaveText('0 / 6 exercices faits');
+ await expect(page.locator('#exoProgressText')).toHaveText('0 / 9 exercices faits');
 });

@@ -107,7 +107,7 @@ test('PHP : synthèses dans le cours, cinq séries et dix liens originaux en bul
     await page.keyboard.press('Escape'); await expect(corr).toBeFocused();
   }
   const carte=page.locator('#exercices article.matiere-panel').filter({hasText:'Série 3 ·'});
-  await carte.locator('[data-exercise]').check(); await expect(page.locator('#exoProgressText')).toHaveText('1 / 5 exercices faits');
+  await carte.locator('[data-exercise]').check(); await expect(page.locator('#exoProgressText')).toHaveText('1 / 9 exercices faits');
   await page.reload({waitUntil:'domcontentloaded'}); await expect(page.locator('[data-exercise="serie3"]')).toBeChecked();
 });
 

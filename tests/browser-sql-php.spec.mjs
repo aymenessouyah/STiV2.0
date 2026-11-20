@@ -107,7 +107,7 @@ test('PHP : quiz original, vidéo, chapitres synchronisés et reprise du profil'
   const bonnes=[0,2,1,0,1,2,1,2,1,2];for(let i=0;i<bonnes.length;i++)await page.locator(`input[name="synthq${i+1}"][value="${bonnes[i]}"]`).check();
   await page.locator('#btnCorrigerQuiz').click();await expect(page.locator('#scoreQuiz')).toContainText('10 / 10');
   expect((await page.evaluate(()=>window.STIProfil.chargerProfil().quiz)).at(-1)).toMatchObject({score:10,total:10,matiere:'PHP — Quiz de synthèse'});
-  await page.locator('[data-course-tab="exercices"]').click();await page.locator('[data-exercise="serie1"]').check();await expect(page.locator('#exoProgressText')).toHaveText('1 / 5 exercices faits');
+  await page.locator('[data-course-tab="exercices"]').click();await page.locator('[data-exercise="serie1"]').check();await expect(page.locator('#exoProgressText')).toHaveText('1 / 9 exercices faits');
   await page.locator('[data-course-tab="cours"]').click();
   await page.locator('#featuredVideo').evaluate(v=>v.load());await page.waitForFunction(()=>document.querySelector('#featuredVideo').readyState>=1);
   await page.locator('#featuredVideo').evaluate(v=>{v.currentTime=25;v.dispatchEvent(new Event('pause'));});

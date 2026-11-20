@@ -145,10 +145,10 @@
     var cases = $$('[data-course-panel="exercices"] [data-exercise]').filter(autoriseElement), count = 0;
     cases.forEach(function (c) { var fait = faits.indexOf(c.dataset.exercise)!==-1; if (synchroniserCases === true) c.checked = fait; if(fait) count++; });
     var totalExo = cases.length, faitsExo = count;
-    if (matiere === 'sql') {
-      /* SQL : le total compte les cartes de l’onglet (séries, synthèses et sujets bac), soit 12 en 4ᵉ SI ;
-         une carte est faite quand toutes ses cases sont cochées. */
-      var cartes = $$('[data-course-panel="exercices"] article').filter(function (a) { return autoriseElement(a) && $('[data-exercise]', a); });
+    /* Le total compte les cartes de l’onglet (séries, synthèses et sujets bac) :
+       une carte est faite quand toutes ses cases sont cochées. */
+    var cartes = $$('[data-course-panel="exercices"] article').filter(function (a) { return autoriseElement(a) && $('[data-exercise]', a); });
+    if (cartes.length) {
       totalExo = cartes.length;
       faitsExo = cartes.filter(function (a) { return $$('[data-exercise]', a).every(function (c) { return faits.indexOf(c.dataset.exercise) !== -1; }); }).length;
     }

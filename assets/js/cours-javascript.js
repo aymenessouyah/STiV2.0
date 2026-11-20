@@ -163,8 +163,10 @@
   }
   function actualiserExercices() {
     var p = profil(), faits = p && p.exercicesFaits ? p.exercicesFaits.javascript || [] : [];
-    var total = $$('[data-exo-check]').length, nombre = 0;
-    $$('[data-exo-check]').forEach(function (c) {
+    var autorise4si = document.documentElement.classList.contains('sti-4si-autorise');
+    var casesExo = $$('[data-exo-check]').filter(function (c) { return autorise4si || !c.closest('.sti-4si-only'); });
+    var total = casesExo.length, nombre = 0;
+    casesExo.forEach(function (c) {
       c.checked = faits.indexOf(c.dataset.exoCheck) !== -1; if (c.checked) nombre++;
       var article = c.closest('[data-exercise]'); if (article) article.classList.toggle('is-done', c.checked);
     });
