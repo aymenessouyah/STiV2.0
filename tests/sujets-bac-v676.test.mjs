@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const read = p => readFileSync(p,'utf8');
-const slugs=['style-bac-2024','web-bd'];
+const slugs=['style-bac-2024','web-bd','suivi-livreur'];
 test('les deux sujets et leurs corrigés sont présents dans chaque rubrique et hors ligne',()=>{
   const sw=read('sw.js'),manifest=JSON.parse(read('offline-complete-manifest.json'));
   for(const slug of slugs) for(const kind of ['enonce','corrige']) {

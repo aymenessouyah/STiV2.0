@@ -1,10 +1,10 @@
 {
   "version": "v582-sti-atelier-v386",
-  "versionPubliee": "v683",
-  "generatedAt": "2026-11-20T16:16:50Z",
+  "versionPubliee": "v684",
+  "generatedAt": "2026-11-20T16:42:00Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 820,
-  "totalBytes": 1446657450,
+  "totalFiles": 822,
+  "totalBytes": 1447177654,
   "files": [
     {
       "path": "404.html",
@@ -1463,8 +1463,8 @@
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 144512,
-      "gitSha": "7373b4472fcbf1d9f4ff0c7b626bcdfd8ece6fbe"
+      "bytes": 145023,
+      "gitSha": "4c861df24e1f375e48e59811dff432e329b710c8"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -1473,8 +1473,8 @@
     },
     {
       "path": "cours/php.html",
-      "bytes": 208555,
-      "gitSha": "90d51b6a1872b4e88fdbf4a1a438e79be77a6608"
+      "bytes": 209065,
+      "gitSha": "21d771678102264a7d62779ca070d696bfaf1cae"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -1493,8 +1493,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 151812,
-      "gitSha": "cc293f071c17d560116c02a07761fd5aad0f27d1"
+      "bytes": 152322,
+      "gitSha": "a00c454873b5bba68fd6b47e8524117b6665684b"
     },
     {
       "path": "cours/systemes-technologies-internet.html",
@@ -3258,8 +3258,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 110562,
-      "gitSha": "8df337afac2da012df7f912a5e2041b0b0ba1717"
+      "bytes": 112197,
+      "gitSha": "26910c85e0cb3733fab0fa8d855c332b1f96e7cd"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3452,6 +3452,16 @@
       "gitSha": "7566685b8e5b02a0068db18005d158c92e10f634"
     },
     {
+      "path": "exercices/sujets-bac/suivi-livreur-corrige.pdf",
+      "bytes": 153760,
+      "gitSha": "d92a099e986b0f4a329acbb7576a2e6406496a0e"
+    },
+    {
+      "path": "exercices/sujets-bac/suivi-livreur-enonce.pdf",
+      "bytes": 362612,
+      "gitSha": "405baafbb69af2bfe776c7e5ff037a232311f4f5"
+    },
+    {
       "path": "exercices/sujets-bac/web-bd-corrige.pdf",
       "bytes": 166341,
       "gitSha": "c542e5c7eccaed754e519a2faccb17e62c52d233"
@@ -3493,8 +3503,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 71535,
-      "gitSha": "6dc03c022101cd70a11117438a5c35bfc9d40703"
+      "bytes": 71865,
+      "gitSha": "a9abde8b26f762c312a13fb6c291a3d49b56a6c9"
     },
     {
       "path": "livre-smart.html",
@@ -4103,8 +4113,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 117976,
-      "gitSha": "04ac07d0bb04190d5802a8f3f148be4efb9dcf1a"
+      "bytes": 118312,
+      "gitSha": "b6667ca9c5d2bfcf7f1c9b2676a2db854c85c868"
     }
   ]
 }
