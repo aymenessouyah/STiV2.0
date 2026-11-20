@@ -1,10 +1,10 @@
 {
   "version": "v582-sti-atelier-v386",
-  "versionPubliee": "v684",
-  "generatedAt": "2026-11-20T16:42:00Z",
+  "versionPubliee": "v685",
+  "generatedAt": "2026-11-20T16:58:02Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 822,
-  "totalBytes": 1447177654,
+  "totalBytes": 1447178745,
   "files": [
     {
       "path": "404.html",
@@ -798,8 +798,8 @@
     },
     {
       "path": "assets/js/cours-matieres.js",
-      "bytes": 48651,
-      "gitSha": "d399b0f6aee8c27fa85df738c20674fc95ccdd54"
+      "bytes": 49254,
+      "gitSha": "dba7f199a0d4dffd5b5ab133356fc2c685b6914b"
     },
     {
       "path": "assets/js/cours-media-reperes.js",
@@ -1493,8 +1493,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 152322,
-      "gitSha": "a00c454873b5bba68fd6b47e8524117b6665684b"
+      "bytes": 152820,
+      "gitSha": "f84aac9258a5b4aa594482bfe9d272cbbd88d1bd"
     },
     {
       "path": "cours/systemes-technologies-internet.html",
@@ -4113,8 +4113,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 118312,
-      "gitSha": "b6667ca9c5d2bfcf7f1c9b2676a2db854c85c868"
+      "bytes": 118302,
+      "gitSha": "4ed5a4111f7f8ba45d06e3bbda164c81f1420e1a"
     }
   ]
 }

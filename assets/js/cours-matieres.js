@@ -144,8 +144,16 @@
     id('courseRing').style.strokeDashoffset = String(100.53*(1-pct/100));
     var cases = $$('[data-course-panel="exercices"] [data-exercise]').filter(autoriseElement), count = 0;
     cases.forEach(function (c) { var fait = faits.indexOf(c.dataset.exercise)!==-1; if (synchroniserCases === true) c.checked = fait; if(fait) count++; });
-    id('exoProgressText').textContent = count+' / '+cases.length+' exercices faits'; id('tabExoCount').textContent = count+'/'+cases.length;
-    id('exoProgressFill').style.width = (cases.length ? count/cases.length*100 : 0)+'%';
+    var totalExo = cases.length, faitsExo = count;
+    if (matiere === 'sql') {
+      /* SQL : le total compte les cartes de l’onglet (séries, synthèses et sujets bac), soit 12 en 4ᵉ SI ;
+         une carte est faite quand toutes ses cases sont cochées. */
+      var cartes = $$('[data-course-panel="exercices"] article').filter(function (a) { return autoriseElement(a) && $('[data-exercise]', a); });
+      totalExo = cartes.length;
+      faitsExo = cartes.filter(function (a) { return $$('[data-exercise]', a).every(function (c) { return faits.indexOf(c.dataset.exercise) !== -1; }); }).length;
+    }
+    id('exoProgressText').textContent = faitsExo+' / '+totalExo+' exercices faits'; id('tabExoCount').textContent = faitsExo+'/'+totalExo;
+    id('exoProgressFill').style.width = (totalExo ? faitsExo/totalExo*100 : 0)+'%';
     var vus = p && p.videos && p.videos.vues || [];
     $$('[data-video-state]').forEach(function (el) { var vu = vus.indexOf(el.dataset.videoState)!==-1; el.textContent = vu ? '✓ Vue' : 'À découvrir'; el.classList.toggle('is-viewed',vu); });
   }
