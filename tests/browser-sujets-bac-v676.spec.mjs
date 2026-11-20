@@ -8,9 +8,9 @@ for (const classe of ['3SI 1','4SI 1']) test(`sujets bac et exercices sur mobile
  await preparer(page,classe);await page.goto('/index.html#outils-bac',{waitUntil:'domcontentloaded'});
  const card=page.locator('#sujets-bac-similaires');
  if(classe.startsWith('3')) {await expect(card).toBeHidden();} else {
-  await expect(card).toBeVisible();await expect(card.locator('summary')).toHaveCount(2);
+  await expect(card).toBeVisible();await expect(card.locator('summary')).toHaveCount(3);
   for(const summary of await card.locator('summary').all()) await summary.click();
-  await expect(card.locator('a')).toHaveCount(4);
+  await expect(card.locator('a')).toHaveCount(6);
   for(const href of await card.locator('a').evaluateAll(els=>els.map(x=>x.getAttribute('href')))) {const res=await request.get('/'+href);expect(res.status()).toBe(200);expect((await res.body()).subarray(0,5).toString()).toBe('%PDF-');}
  }
  await page.goto('/exercices/series-exercices.html',{waitUntil:'domcontentloaded'});
@@ -18,7 +18,7 @@ for (const classe of ['3SI 1','4SI 1']) test(`sujets bac et exercices sur mobile
  for(const sujet of ['javascript','sql','php']) {
   await page.goto(`/cours/${sujet}.html#exercices`,{waitUntil:'domcontentloaded'});
   const cards=page.locator('[data-sujet-bac]');
-  await expect(cards).toHaveCount(2);
+  await expect(cards).toHaveCount(3);
   for(const card of await cards.all()) { if(classe.startsWith('3')) await expect(card).toBeHidden(); else {await expect(card).toBeVisible();await expect(card.locator('a')).toHaveCount(2);} }
  }
 });
