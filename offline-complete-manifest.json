@@ -1,10 +1,10 @@
 {
   "version": "v582-sti-atelier-v386",
-  "versionPubliee": "v682",
-  "generatedAt": "2026-11-18T09:25:04Z",
+  "versionPubliee": "v683",
+  "generatedAt": "2026-11-20T16:16:50Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 820,
-  "totalBytes": 1446657704,
+  "totalBytes": 1446657450,
   "files": [
     {
       "path": "404.html",
@@ -3438,8 +3438,8 @@
     },
     {
       "path": "exercices/sql/synthese-3-club-sportif/enonce.pdf",
-      "bytes": 225371,
-      "gitSha": "f73978fc8ff7bee3137b94fa9a0196105cc1d4ae"
+      "bytes": 225117,
+      "gitSha": "21c5b1af4ac289861910664ec773f58391294138"
     },
     {
       "path": "exercices/sujets-bac/style-bac-2024-corrige.pdf",
@@ -4104,7 +4104,7 @@
     {
       "path": "sw.js",
       "bytes": 117976,
-      "gitSha": "3df793518beaa3db9429007fe74996e0aacaee3f"
+      "gitSha": "04ac07d0bb04190d5802a8f3f148be4efb9dcf1a"
     }
   ]
 }
