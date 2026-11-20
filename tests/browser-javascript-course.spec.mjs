@@ -38,7 +38,7 @@ test('la fiche, les détails Math/String et les 27 corrigés restent disponibles
   await premierCode.locator('[data-copy-code]').click();
   await expect(premierCode.locator('[data-copy-code]')).toHaveText('✓ Copié');
   expect(await page.evaluate(() => window.__copieTest)).toBe(attendu);
-  await expect(page.locator('[data-exo-check]')).toHaveCount(27);
+  await expect(page.locator('[data-exo-check]')).toHaveCount(42);
   await expect(page.locator('#sec9')).toContainText('Chaînes de caractères');
   await expect(page.locator('#sec11')).toContainText('Objet Date');
   await page.locator('[aria-controls="m-abs"]').click();
@@ -51,10 +51,10 @@ test('la fiche, les détails Math/String et les 27 corrigés restent disponibles
   await page.locator('#exo-js-1 summary').click();
   await expect(page.locator('#exo-js-1 .js-exercise__solution')).toContainText('Le plus grand est');
   await page.locator('#exo-js-1 input').check();
-  await expect(page.locator('#exoProgressText')).toHaveText('1 / 27 exercices faits');
+  await expect(page.locator('#exoProgressText')).toHaveText('1 / 39 exercices faits');
   await page.reload({ waitUntil: 'domcontentloaded' });
   await expect(page.locator('#exo-js-1 input')).toBeChecked();
-  await expect(page.locator('#exoProgressText')).toHaveText('1 / 27 exercices faits');
+  await expect(page.locator('#exoProgressText')).toHaveText('1 / 39 exercices faits');
   await expect(page.locator('.js-series-card')).toHaveCount(9);
   await expect(page.locator('a[href="../exercices/javascript/Tp4-js.html"]')).toHaveCount(1);
   expect(erreurs).toEqual([]);

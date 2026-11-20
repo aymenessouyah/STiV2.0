@@ -1,10 +1,10 @@
 {
   "version": "v582-sti-atelier-v386",
-  "versionPubliee": "v684",
-  "generatedAt": "2026-11-20T16:42:00Z",
+  "versionPubliee": "v686",
+  "generatedAt": "2026-11-20T17:11:51Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 822,
-  "totalBytes": 1447177654,
+  "totalBytes": 1447182129,
   "files": [
     {
       "path": "404.html",
@@ -793,13 +793,13 @@
     },
     {
       "path": "assets/js/cours-javascript.js",
-      "bytes": 42959,
-      "gitSha": "b495b85ff8f0d25f194d4340e6c10b229f3cbb55"
+      "bytes": 43137,
+      "gitSha": "f34eb0e3ef06746215f77f3a85ba0195d6ea9145"
     },
     {
       "path": "assets/js/cours-matieres.js",
-      "bytes": 48651,
-      "gitSha": "d399b0f6aee8c27fa85df738c20674fc95ccdd54"
+      "bytes": 49218,
+      "gitSha": "fb7669b9481f7c13ab7d64ee5ee361faa7a09054"
     },
     {
       "path": "assets/js/cours-media-reperes.js",
@@ -1443,8 +1443,8 @@
     },
     {
       "path": "cours/css3.html",
-      "bytes": 212345,
-      "gitSha": "4fe2ed0b506db5073f4c2070a05f78439ba89c27"
+      "bytes": 212939,
+      "gitSha": "b2f09d6c167d99a880eec38920dac2d5ba6b22a4"
     },
     {
       "path": "cours/datalist.html",
@@ -1458,13 +1458,13 @@
     },
     {
       "path": "cours/html5.html",
-      "bytes": 207563,
-      "gitSha": "707ca6a2726a704ad54564008975c655b928f011"
+      "bytes": 208311,
+      "gitSha": "05434677cc5e119e7d3592e9dcdda28bb8ad48a6"
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 145023,
-      "gitSha": "4c861df24e1f375e48e59811dff432e329b710c8"
+      "bytes": 146632,
+      "gitSha": "083a4a513d52ce71519b22e929e7f9aae3ea57ab"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -1473,8 +1473,8 @@
     },
     {
       "path": "cours/php.html",
-      "bytes": 209065,
-      "gitSha": "21d771678102264a7d62779ca070d696bfaf1cae"
+      "bytes": 209362,
+      "gitSha": "0816bdfce7781ccd533b161dcbfed9c50b7c3904"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -1493,8 +1493,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 152322,
-      "gitSha": "a00c454873b5bba68fd6b47e8524117b6665684b"
+      "bytes": 152820,
+      "gitSha": "f84aac9258a5b4aa594482bfe9d272cbbd88d1bd"
     },
     {
       "path": "cours/systemes-technologies-internet.html",
@@ -4113,8 +4113,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 118312,
-      "gitSha": "b6667ca9c5d2bfcf7f1c9b2676a2db854c85c868"
+      "bytes": 118296,
+      "gitSha": "d559efa38a732bdbd5e7a9af1f80c986cacf2b91"
     }
   ]
 }
