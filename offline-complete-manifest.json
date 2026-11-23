@@ -1,10 +1,10 @@
 {
   "version": "v582-sti-atelier-v386",
-  "versionPubliee": "v688",
-  "generatedAt": "2026-11-23T06:14:49Z",
+  "versionPubliee": "v690",
+  "generatedAt": "2026-11-23T16:01:34Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 824,
-  "totalBytes": 1447322163,
+  "totalFiles": 825,
+  "totalBytes": 1447322292,
   "files": [
     {
       "path": "404.html",
@@ -1463,8 +1463,8 @@
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 147824,
-      "gitSha": "1c49c9c64543c7e960fe07aa7186a52cebe0d55a"
+      "bytes": 147928,
+      "gitSha": "d5d2de5e866464eba103302fbdec679a84cc6b2e"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -1473,8 +1473,8 @@
     },
     {
       "path": "cours/php.html",
-      "bytes": 210538,
-      "gitSha": "6dff10606d03612b0352cdb2efbdbb04f5f6f734"
+      "bytes": 210642,
+      "gitSha": "702334e573a7324ac198d0b8f606d030f6885df4"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -1493,8 +1493,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 153996,
-      "gitSha": "678326fd215c14ab1ffdbc0a055f41cdd758f9bd"
+      "bytes": 154100,
+      "gitSha": "1b34d45a71358268ccc8d183aeab2397dad97117"
     },
     {
       "path": "cours/systemes-technologies-internet.html",
@@ -3258,8 +3258,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 114361,
-      "gitSha": "d546e8db1c421ec34a2051b507482cfaa3bbc9ad"
+      "bytes": 114610,
+      "gitSha": "1946bb533b687e776981b3beb12885ff6307165c"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3447,9 +3447,14 @@
       "gitSha": "04f2d6fbba69cc003ec4b3994733e758e82df65d"
     },
     {
-      "path": "exercices/sujets-bac/TP_Biblio_Ressources.zip",
-      "bytes": 12855,
-      "gitSha": "8cb2a923638444423a87179347f1e18303b1701a"
+      "path": "exercices/sujets-bac/TP_Biblio_Ressources.rar",
+      "bytes": 5893,
+      "gitSha": "1bb46da42b43620011bcee959bc16db2ecd40f0f"
+    },
+    {
+      "path": "exercices/sujets-bac/corrigeTP_Biblio.rar",
+      "bytes": 6331,
+      "gitSha": "992fa0259a7c40fd9a79f184215ae0754c2d1e8e"
     },
     {
       "path": "exercices/sujets-bac/style-bac-2024-corrige.pdf",
@@ -3513,8 +3518,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 72858,
-      "gitSha": "1158c7fa587a730a6a175cd9561868aedfe40bd4"
+      "bytes": 72939,
+      "gitSha": "0d524c8a4a452a8a02ef94b3e8b62d5cfcdf316a"
     },
     {
       "path": "livre-smart.html",
@@ -4123,8 +4128,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 118696,
-      "gitSha": "226c048508fbe9454cd0be73e8c697bc829cdf38"
+      "bytes": 118814,
+      "gitSha": "0513b892124bef05cc32dee1dc54f27a060573b3"
     }
   ]
 }
