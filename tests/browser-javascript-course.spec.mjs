@@ -38,7 +38,7 @@ test('la fiche, les détails Math/String et les 27 corrigés restent disponibles
   await premierCode.locator('[data-copy-code]').click();
   await expect(premierCode.locator('[data-copy-code]')).toHaveText('✓ Copié');
   expect(await page.evaluate(() => window.__copieTest)).toBe(attendu);
-  await expect(page.locator('[data-exo-check]')).toHaveCount(42);
+  await expect(page.locator('[data-exo-check]')).toHaveCount(43);
   await expect(page.locator('#sec9')).toContainText('Chaînes de caractères');
   await expect(page.locator('#sec11')).toContainText('Objet Date');
   await page.locator('[aria-controls="m-abs"]').click();
