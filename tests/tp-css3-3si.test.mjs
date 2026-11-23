@@ -45,9 +45,9 @@ test('TP CSS3 3ème SI — intégré aux exercices du cours avec une progression
   assert.match(card, /data-exo-check="exo-tp-css3-transform"/);
   assert.match(card, /TP CSS3 — Transform, Filtres, Transitions et Animations/);
   assert.match(card, new RegExp(`\\.\\./${folder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/index\\.html`));
-  assert.match(course, /0 \/ 13 exercices faits/);
+  assert.match(course, /0 \/ 14 exercices faits/);
   const ids = [...course.matchAll(/<article\b[^>]*class="exo-card-full[^>]*data-exo-id="([^"]+)"/g)].map((m) => m[1]);
-  assert.equal(ids.length, 13, 'chaque carte TP ou exercice du panneau est cochable');
+  assert.equal(ids.length, 14, 'chaque carte TP ou exercice du panneau est cochable');
   assert.equal(new Set(ids).size, ids.length, 'chaque exercice a un identifiant de progression unique');
 });
 
@@ -64,7 +64,7 @@ test('TP CSS3 3ème SI — présent dans la page des séries et le Guide exercic
 
 test('TP CSS3 3ème SI — les nouvelles pages et les révisions sont livrées hors-ligne', () => {
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
-  assert.ok(delta.includes('{ url: "./cours/css3.html", revision: "compteurs-cours-v686", refreshIfCached: true }'));
+  assert.ok(delta.includes('{ url: "./cours/css3.html", revision: "club-web-v692", refreshIfCached: true }'));
   assert.match(delta, /\{ url: "\.\/exercices\/series-exercices\.html", revision: "[^"]+", refreshIfCached: true \}/);
   assert.ok(delta.includes('{ url: "./assets/guide-exercice-catalogue.json", revision: "tp-css3-3si-v625", refreshIfCached: true }'));
   assert.ok(delta.includes(`./${tpPath}`));

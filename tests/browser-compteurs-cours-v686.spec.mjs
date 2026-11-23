@@ -23,14 +23,16 @@ test('JavaScript : les sujets bac ne comptent pas en 3SI',async({page})=>{
  await expect(page.locator('#exoProgressText')).toHaveText('0 / 39 exercices faits');
  await expect(page.locator('[data-exo-check="exo-js-suivi-livreur"]')).toBeHidden();
 });
-test('HTML5 : 18 exercices ; CSS3 : 13 exercices',async({page})=>{
+test('HTML5 : 19 exercices ; CSS3 : 14 exercices',async({page})=>{
  await preparer(page,'3SI 1');await page.goto('/cours/html5.html#exercices',{waitUntil:'domcontentloaded'});
- await expect(page.locator('#exoGlobalCounter')).toHaveText('0 / 18 exercices faits');
- await expect(page.locator('#tabExoCount')).toHaveText('0/18');
+ await expect(page.locator('#exoGlobalCounter')).toHaveText('0 / 19 exercices faits');
+ await expect(page.locator('#tabExoCount')).toHaveText('0/19');
  await page.locator('[data-exo-check="exo-tp-evenements"]').check();
- await expect(page.locator('#exoGlobalCounter')).toHaveText('1 / 18 exercices faits');
+ await expect(page.locator('#exoGlobalCounter')).toHaveText('1 / 19 exercices faits');
+ await page.locator('[data-exo-check="exo-club-web"]').check();
+ await expect(page.locator('#exoGlobalCounter')).toHaveText('2 / 19 exercices faits');
  await page.goto('/cours/css3.html#exercices',{waitUntil:'domcontentloaded'});
- await expect(page.locator('#exoProgressText')).toHaveText('0 / 13 exercices faits');
+ await expect(page.locator('#exoProgressText')).toHaveText('0 / 14 exercices faits');
  await page.locator('[data-exo-check="exo-tp-transitions"]').check();
- await expect(page.locator('#exoProgressText')).toHaveText('1 / 13 exercices faits');
+ await expect(page.locator('#exoProgressText')).toHaveText('1 / 14 exercices faits');
 });
