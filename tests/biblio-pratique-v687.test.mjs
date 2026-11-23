@@ -36,6 +36,11 @@ test('le TP Bibliothèque porte la catégorie Similaire Bac Pratique, badge oran
   assert.ok(bloc.includes('TP_Biblio_Pratique_2h_Eleve.pdf'),id);
   assert.ok(bloc.includes('Bibliothèque du lycée'),id);
  }
+ /* La catégorie a sa propre boîte sur l’accueil, hors de la bulle des sujets théoriques. */
+ const accueil=read('index.html');
+ assert.ok(accueil.includes('id="similaire-bac-pratique"'));
+ const bulle=accueil.split('id="sujets-bac-similaires"')[1].split('</article>')[0];
+ assert.ok(!bulle.includes('TP_Biblio'), 'le TP pratique ne doit plus être dans la bulle des sujets');
  /* La nouvelle catégorie reste distincte des sujets bac théoriques. */
  assert.match(read('cours/sql.html'),/data-exercise="tp-biblio"/);
  assert.match(read('cours/php.html'),/data-exercise="tp-biblio"/);
