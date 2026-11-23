@@ -13,5 +13,5 @@ test('la bulle sous outils Bac regroupe les synthèses et des liens locaux valid
  }
  assert.match(card,/<details class="sti-4si-only">\s*<summary>SQL/);
  assert.match(card,/<details class="sti-4si-only">\s*<summary>PHP/);
- assert.match(read('sw.js'),/url: "\.\/index\.html", revision: "suivi-livreur-v684"/);
+ assert.match(read('sw.js'),/url: "\.\/index\.html", revision: "biblio-pratique-v687"/);
 });

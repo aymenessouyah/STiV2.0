@@ -1,10 +1,10 @@
 {
   "version": "v582-sti-atelier-v386",
-  "versionPubliee": "v686",
-  "generatedAt": "2026-11-20T17:11:51Z",
+  "versionPubliee": "v687",
+  "generatedAt": "2026-11-23T04:58:46Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 822,
-  "totalBytes": 1447182129,
+  "totalFiles": 824,
+  "totalBytes": 1447322138,
   "files": [
     {
       "path": "404.html",
@@ -1463,8 +1463,8 @@
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 146632,
-      "gitSha": "083a4a513d52ce71519b22e929e7f9aae3ea57ab"
+      "bytes": 147826,
+      "gitSha": "1086b2f363383f2ac101396d8b21185f70d160c0"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -1473,8 +1473,8 @@
     },
     {
       "path": "cours/php.html",
-      "bytes": 209362,
-      "gitSha": "0816bdfce7781ccd533b161dcbfed9c50b7c3904"
+      "bytes": 210540,
+      "gitSha": "52a966505ac5bbb4a4bad4e71d6d9c59a9d6bb9a"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -1493,8 +1493,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 152820,
-      "gitSha": "f84aac9258a5b4aa594482bfe9d272cbbd88d1bd"
+      "bytes": 153998,
+      "gitSha": "075956c13672fcee45b32aeec827ce26fee29eaf"
     },
     {
       "path": "cours/systemes-technologies-internet.html",
@@ -3258,8 +3258,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 112197,
-      "gitSha": "26910c85e0cb3733fab0fa8d855c332b1f96e7cd"
+      "bytes": 114363,
+      "gitSha": "d7065507a7bd0b968f8540fec95cd5962b0f6c8e"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3442,6 +3442,16 @@
       "gitSha": "21c5b1af4ac289861910664ec773f58391294138"
     },
     {
+      "path": "exercices/sujets-bac/TP_Biblio_Pratique_2h_Eleve.pdf",
+      "bytes": 120078,
+      "gitSha": "04f2d6fbba69cc003ec4b3994733e758e82df65d"
+    },
+    {
+      "path": "exercices/sujets-bac/TP_Biblio_Ressources.zip",
+      "bytes": 12855,
+      "gitSha": "8cb2a923638444423a87179347f1e18303b1701a"
+    },
+    {
       "path": "exercices/sujets-bac/style-bac-2024-corrige.pdf",
       "bytes": 126162,
       "gitSha": "95b0a3f0e1d6889516e673cb8755cd9ac3a18450"
@@ -3503,8 +3513,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 71865,
-      "gitSha": "a9abde8b26f762c312a13fb6c291a3d49b56a6c9"
+      "bytes": 72860,
+      "gitSha": "db8af4261696591895d90150ea2f682c1496d0d4"
     },
     {
       "path": "livre-smart.html",
@@ -4113,8 +4123,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 118296,
-      "gitSha": "d559efa38a732bdbd5e7a9af1f80c986cacf2b91"
+      "bytes": 118661,
+      "gitSha": "9d7949a5c5de6765fb0b49dfdd5f234f6689e8f4"
     }
   ]
 }
