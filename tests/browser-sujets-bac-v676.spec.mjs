@@ -10,8 +10,8 @@ for (const classe of ['3SI 1','4SI 1']) test(`sujets bac et exercices sur mobile
  if(classe.startsWith('3')) {await expect(card).toBeHidden();} else {
   await expect(card).toBeVisible();await expect(card.locator('summary')).toHaveCount(4);
   for(const summary of await card.locator('summary').all()) await summary.click();
-  await expect(card.locator('a')).toHaveCount(8);
-  for(const href of await card.locator('a').evaluateAll(els=>els.map(x=>x.getAttribute('href')))) {const res=await request.get('/'+href);expect(res.status()).toBe(200);const corps=await res.body();if(href.endsWith('.zip')) expect(corps.subarray(0,2).toString()).toBe('PK');else expect(corps.subarray(0,5).toString()).toBe('%PDF-');}
+  await expect(card.locator('a')).toHaveCount(9);
+  for(const href of await card.locator('a').evaluateAll(els=>els.map(x=>x.getAttribute('href')))) {const res=await request.get('/'+href);expect(res.status()).toBe(200);const corps=await res.body();if(href.endsWith('.rar')) expect(corps.subarray(0,4).toString()).toBe('Rar!');else expect(corps.subarray(0,5).toString()).toBe('%PDF-');}
  }
  await page.goto('/exercices/series-exercices.html',{waitUntil:'domcontentloaded'});
  for(const id of ['javascript','bdd','php']) {const cards=page.locator(`#${id} .exo-card`).filter({hasText:'Style Bac STI 2024'});if(classe.startsWith('3')) await expect(cards).toBeHidden();else await expect(cards).toBeVisible();}
