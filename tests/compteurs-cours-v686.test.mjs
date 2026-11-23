@@ -18,13 +18,13 @@ test('tous les cours comptent leurs cartes d’exercices, chacune cochable',()=>
  for(const id of ['exo-js-serie1','exo-js-serie6','exo-js-synthese','exo-js-livraison','exo-js-style-bac','exo-js-web-bd','exo-js-suivi-livreur','exo-js-defis37','exo-js-projet1','exo-js-projet3']) assert.ok(js.includes(`data-exo-check="${id}"`),id);
  assert.match(js,/id="exoProgressText">0 \/ 43 exercices faits/);
  assert.match(read('assets/js/cours-javascript.js'),/sti-4si-autorise/);
- /* HTML5 : 18 cartes cochables ; CSS3 : 13 */
+ /* HTML5 : 19 cartes cochables ; CSS3 : 14 */
  const html5=read('cours/html5.html');
- assert.equal([...html5.matchAll(/<article[^>]*>/g)].filter(m=>m[0].includes('exo-card-full')&&m[0].includes('data-exo-id=')).length,18);
- for(const id of ['exo-tp-evenements','exo-tp-formulaire-tableau','exo-tp-display-float','exo-emploi-temps','exo-formulaire-inscription']) assert.ok(html5.includes(`data-exo-id="${id}"`),id);
- assert.match(html5,/id="exoGlobalCounter">0 \/ 18 exercices faits/);
+ assert.equal([...html5.matchAll(/<article[^>]*>/g)].filter(m=>m[0].includes('exo-card-full')&&m[0].includes('data-exo-id=')).length,19);
+ for(const id of ['exo-tp-evenements','exo-tp-formulaire-tableau','exo-tp-display-float','exo-emploi-temps','exo-formulaire-inscription','exo-club-web']) assert.ok(html5.includes(`data-exo-id="${id}"`),id);
+ assert.match(html5,/id="exoGlobalCounter">0 \/ 19 exercices faits/);
  const css3=read('cours/css3.html');
- assert.equal([...css3.matchAll(/<article[^>]*>/g)].filter(m=>m[0].includes('exo-card-full')&&m[0].includes('data-exo-id=')).length,13);
- for(const id of ['exo-tp-evenements','exo-tp-formulaire-tableau','exo-tp-display-float','exo-tp-transitions']) assert.ok(css3.includes(`data-exo-id="${id}"`),id);
- assert.match(css3,/id="exoProgressText">0 \/ 13 exercices faits/);
+ assert.equal([...css3.matchAll(/<article[^>]*>/g)].filter(m=>m[0].includes('exo-card-full')&&m[0].includes('data-exo-id=')).length,14);
+ for(const id of ['exo-tp-evenements','exo-tp-formulaire-tableau','exo-tp-display-float','exo-tp-transitions','exo-club-web']) assert.ok(css3.includes(`data-exo-id="${id}"`),id);
+ assert.match(css3,/id="exoProgressText">0 \/ 14 exercices faits/);
 });
