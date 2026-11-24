@@ -448,8 +448,8 @@
       couleur: "#38bdf8",
       titre: "Club Web animé — correction du mini-projet CSS (Synthèse)",
       dureeTexte: "6:02",
-      srcPrincipal: "assets/videos/capsule-correction-club-web.mp4",
-      srcSecours: "assets/videos/capsule-correction-club-web.mp4",
+      srcPrincipal: "assets/videos/capsule-correction-club-web-v699.mp4",
+      srcSecours: "assets/videos/capsule-correction-club-web-v699.mp4",
       urlCours: "cours/css3.html#videos",
       codeApercu: ".b1:hover { transform: translateX(40px) rotate(30deg); }"
     },
@@ -641,8 +641,8 @@
       titre: "Bibliothèque du lycée — correction de liste.php (TP pratique)",
       dureeTexte: "3:12",
       reserve4si: true,
-      srcPrincipal: "assets/videos/capsule-correction-liste-biblio.mp4",
-      srcSecours: "assets/videos/capsule-correction-liste-biblio.mp4",
+      srcPrincipal: "assets/videos/capsule-correction-liste-biblio-v699.mp4",
+      srcSecours: "assets/videos/capsule-correction-liste-biblio-v699.mp4",
       urlCours: "cours/php.html#videos",
       codeApercu: "$sql = $sql . \" and L.idCateg = \" . (int) $_GET[\"categ\"];"
     }
@@ -1151,7 +1151,7 @@
   /* v550 : les capsules pédagogiques portent un liseré propre et chaque carte
      reçoit un effet de survol différent. L'indice est tiré de l'identifiant :
      stable d'un chargement à l'autre. */
-  var CAPSULES_VIDEO = { "boucle-pour": true, "console-variables": true, "php-variables": true, "fonctions-chaine": true, "date-js": true, "php-chaines": true, "sql-tp6-mission-cinema": true, "sql-serie7-capsule": true };
+  var CAPSULES_VIDEO = { "boucle-pour": true, "console-variables": true, "php-variables": true, "fonctions-chaine": true, "date-js": true, "php-chaines": true, "sql-tp6-mission-cinema": true, "sql-serie7-capsule": true, "capsule-club-web": true, "capsule-biblio-liste": true };
   function estCapsuleVideo(v) {
     var cle = String((v && v.id) || "");
     if (CAPSULES_VIDEO[cle]) return true;
