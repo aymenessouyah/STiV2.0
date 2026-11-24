@@ -5,9 +5,9 @@ import {createHash} from 'node:crypto';
 const read=p=>readFileSync(p,'utf8');
 const base='exercices/html-css/mini_projet_club_web';
 const attendus={
- [`${base}/Mini_Projet_CSS_Club_Web_3SI.pdf`]:'8245121bbb5bc271ea6ac74b8eb2c2943423f2f121b48cae4a35129d00a4708f',
- [`${base}/mini_projet_club_web.rar`]:'f2945555fcc2aef879d401941d9fd71944ff03c00a79ae75606aff2587f7c880',
- [`${base}/corrige_club_web.rar`]:'485fe1125c150ab4e091f7bce2a4e2f07c7fa6cc3a47a3be48e5ebc9bb956119'};
+ [`${base}/Mini_Projet_CSS_Club_Web_3SI.pdf`]:'ae84643d8594f9b5e12b9f05b6387253085939b04419d215b639744eba1eca42',
+ [`${base}/mini_projet_club_web.rar`]:'8c5a0cbc86ef5a4eb50caed240bfd77a1d0997d95882b27b3e8495a4b6081d32',
+ [`${base}/corrige_mini_projet_club_web.rar`]:'9c441ae8a51e7921c319ba5983002eb14379a89dc764c7f6667f8d2cd71dcce9'};
 test('la synthèse HTML5/CSS3 Club Web est valable pour 3e et 4e SI, avec badge doré et titre clignotant',()=>{
  const manifest=JSON.parse(read('offline-complete-manifest.json')),sw=read('sw.js');
  for(const [path,sha] of Object.entries(attendus)){
@@ -17,12 +17,12 @@ test('la synthèse HTML5/CSS3 Club Web est valable pour 3e et 4e SI, avec badge 
   assert.ok(sw.includes(`"./${path}"`));
  }
  assert.equal(readFileSync(`${base}/Mini_Projet_CSS_Club_Web_3SI.pdf`).subarray(0,5).toString(),'%PDF-');
- for(const f of [`${base}/mini_projet_club_web.rar`,`${base}/corrige_club_web.rar`]) assert.equal(readFileSync(f).subarray(0,4).toString(),'Rar!');
+ for(const f of [`${base}/mini_projet_club_web.rar`,`${base}/corrige_mini_projet_club_web.rar`]) assert.equal(readFileSync(f).subarray(0,4).toString(),'Rar!');
  for(const file of ['cours/html5.html','cours/css3.html','exercices/series-exercices.html','index.html']){
   const html=read(file);
   assert.ok(html.includes('Mini_Projet_CSS_Club_Web_3SI.pdf'),file);
   assert.ok(html.includes('mini_projet_club_web.rar'),file);
-  assert.ok(html.includes('corrige_club_web.rar'),file);
+  assert.ok(html.includes('corrige_mini_projet_club_web.rar'),file);
  }
  for(const file of ['cours/html5.html','cours/css3.html']){
   const html=read(file);
