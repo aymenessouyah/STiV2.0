@@ -1,10 +1,10 @@
 {
   "version": "v582-sti-atelier-v386",
-  "versionPubliee": "v694",
-  "generatedAt": "2026-11-24T20:00:40Z",
+  "versionPubliee": "v695",
+  "generatedAt": "2026-11-24T20:36:20Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 829,
-  "totalBytes": 1455636272,
+  "totalFiles": 830,
+  "totalBytes": 1469286771,
   "files": [
     {
       "path": "404.html",
@@ -1267,6 +1267,11 @@
       "gitSha": "3373f8de757b761f371582797410d0e17a36bbde"
     },
     {
+      "path": "assets/videos/capsule-correction-club-web.mp4",
+      "bytes": 13649905,
+      "gitSha": "f639662efdc1f83fd329890b56b6f3c88db67a90"
+    },
+    {
       "path": "assets/videos/capsule-correction-liste-biblio.mp4",
       "bytes": 8076277,
       "gitSha": "20d0c35138e6ae9d4dea5380864084c5a42713da"
@@ -1448,8 +1453,8 @@
     },
     {
       "path": "cours/css3.html",
-      "bytes": 214722,
-      "gitSha": "bc5289eea8d32f1d0fb259262f92e63c4c8a444f"
+      "bytes": 214872,
+      "gitSha": "c6fcc1d60c88677b2d013ffc58484c97386ccfbe"
     },
     {
       "path": "cours/datalist.html",
@@ -1463,8 +1468,8 @@
     },
     {
       "path": "cours/html5.html",
-      "bytes": 210095,
-      "gitSha": "2ea3dfb4428fc87db63dc586d44de618cc2cd6ed"
+      "bytes": 210245,
+      "gitSha": "8e8d9473e27ca9dbe715f97a5facf267929826ed"
     },
     {
       "path": "cours/javascript.html",
@@ -3278,8 +3283,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 115550,
-      "gitSha": "7bbcf5a1e5aaf26a292dd0b43b9c68ec67027c15"
+      "bytes": 115671,
+      "gitSha": "148c5072ce29cd70e7ece3bd8d9c5b684db071f9"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3538,8 +3543,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 73838,
-      "gitSha": "56162c255c02cfc3b16ccd63cb00324463647e09"
+      "bytes": 73952,
+      "gitSha": "56351fa43a8d1b9fe4251a9c27a78361659b1eb1"
     },
     {
       "path": "livre-smart.html",
@@ -4148,8 +4153,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 119495,
-      "gitSha": "05d220ab7454658094b77ee4cf21401041375cbe"
+      "bytes": 119554,
+      "gitSha": "c37158fc612f46b09577cb259e8678428320bbb8"
     }
   ]
 }
