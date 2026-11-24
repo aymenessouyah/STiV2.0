@@ -462,7 +462,7 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
      v557 : admin.html repart à son tour (cache-buster admin.js en ?v=557-perf) :
      deux fichiers restent au lot v531. */
   assert.equal((sw.match(new RegExp('revision: "' + REV + '"', 'g')) || []).length, 2, 'deux fichiers restent au lot v531');
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "capsules-boutons-v698"/, 'le lecteur repart au lot v545');
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "capsules-badges-v699"/, 'le lecteur repart au lot v545');
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   for (const chemin of ['assets/js/reconnexion-profil.js',
     'assets/js/reprendre.js']) {

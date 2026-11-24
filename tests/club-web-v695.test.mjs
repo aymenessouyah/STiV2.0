@@ -41,7 +41,7 @@ test('la synthèse HTML5/CSS3 Club Web est valable pour 3e et 4e SI, avec badge 
 
 test('la capsule vidéo de correction du Club Web est publiée et livrée hors-ligne',()=>{
  const manifest=JSON.parse(read('offline-complete-manifest.json')),sw=read('sw.js');
- const video='assets/videos/capsule-correction-club-web.mp4';
+ const video='assets/videos/capsule-correction-club-web-v699.mp4';
  const b=readFileSync(video);
  assert.equal(b.subarray(4,8).toString(),'ftyp');
  assert.ok(b.length>5_000_000);
@@ -50,5 +50,5 @@ test('la capsule vidéo de correction du Club Web est publiée et livrée hors-l
  for(const file of ['cours/html5.html','cours/css3.html','exercices/series-exercices.html','index.html'])
   assert.ok(read(file).includes(video),file);
  assert.match(read('cours/html5.html'),/Capsule : correction du Club Web/);
- assert.match(sw,/\{ url: "\.\/cours\/css3\.html", revision: "capsules-boutons-v698"/);
+ assert.match(sw,/\{ url: "\.\/cours\/css3\.html", revision: "capsules-badges-v699"/);
 });
