@@ -1,10 +1,10 @@
 {
   "version": "v582-sti-atelier-v386",
-  "versionPubliee": "v693",
-  "generatedAt": "2026-11-24T06:31:15Z",
+  "versionPubliee": "v694",
+  "generatedAt": "2026-11-24T20:00:40Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 828,
-  "totalBytes": 1447559497,
+  "totalFiles": 829,
+  "totalBytes": 1455636272,
   "files": [
     {
       "path": "404.html",
@@ -1267,6 +1267,11 @@
       "gitSha": "3373f8de757b761f371582797410d0e17a36bbde"
     },
     {
+      "path": "assets/videos/capsule-correction-liste-biblio.mp4",
+      "bytes": 8076277,
+      "gitSha": "20d0c35138e6ae9d4dea5380864084c5a42713da"
+    },
+    {
       "path": "assets/videos/css-animee.mp4",
       "bytes": 5193789,
       "gitSha": "7d490193bf841d4ee2c5087b41316674f269d138"
@@ -1473,8 +1478,8 @@
     },
     {
       "path": "cours/php.html",
-      "bytes": 210642,
-      "gitSha": "702334e573a7324ac198d0b8f606d030f6885df4"
+      "bytes": 210802,
+      "gitSha": "d90d02ea8baa44c1d9d1c41c6eee585d34c4ba06"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -3273,8 +3278,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 115415,
-      "gitSha": "b512290a24d24ab4486f9083a84b9e09749a8e4e"
+      "bytes": 115550,
+      "gitSha": "7bbcf5a1e5aaf26a292dd0b43b9c68ec67027c15"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3533,8 +3538,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 73701,
-      "gitSha": "44c0b57a0217d691f54570bdb17059ad8d7bfd52"
+      "bytes": 73838,
+      "gitSha": "56162c255c02cfc3b16ccd63cb00324463647e09"
     },
     {
       "path": "livre-smart.html",
@@ -4143,8 +4148,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 119429,
-      "gitSha": "c5e7ec3bfcb795da5d433d3dbe0eeab612d6dca0"
+      "bytes": 119495,
+      "gitSha": "05d220ab7454658094b77ee4cf21401041375cbe"
     }
   ]
 }
