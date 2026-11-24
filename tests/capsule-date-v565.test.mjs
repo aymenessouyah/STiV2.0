@@ -240,7 +240,7 @@ test('les totaux de l’accueil et du catalogue suivent', () => {
   const liste = catalogue();
   const index = lire('index.html');
   const js = liste.filter((v) => (v.matieres || [v.matiere]).includes('javascript')).length;
-  assert.equal(liste.length, 28, 'vingt-huit capsules');
+  assert.equal(liste.length, 30, 'trente capsules');
   assert.equal(js, 8, 'huit capsules JavaScript');
   assert.ok(index.includes(`data-video-filter="all">Toutes (${liste.length})</button>`));
   assert.ok(index.includes(`<span id="videosTotalNombre">${liste.length}</span>`));

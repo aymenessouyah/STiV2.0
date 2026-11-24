@@ -1,10 +1,10 @@
 {
   "version": "v582-sti-atelier-v386",
-  "versionPubliee": "v695",
-  "generatedAt": "2026-11-24T20:36:20Z",
+  "versionPubliee": "v696",
+  "generatedAt": "2026-11-24T20:50:28Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 830,
-  "totalBytes": 1469286771,
+  "totalBytes": 1471977795,
   "files": [
     {
       "path": "404.html",
@@ -743,13 +743,13 @@
     },
     {
       "path": "assets/js/admin-vues-videos.js",
-      "bytes": 33716,
-      "gitSha": "8224093edcd0db37ccd9e2ae9e2567af6420d739"
+      "bytes": 33937,
+      "gitSha": "947049277fa92201f30501a6282f2221bb257aa6"
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 823543,
-      "gitSha": "21c1fca7377c4ea0465c5272ad5a24bfcd503fd9"
+      "bytes": 823758,
+      "gitSha": "5aca55a6ecf9ae0b9bb41f2718127e897d243f58"
     },
     {
       "path": "assets/js/analytique.js",
@@ -758,8 +758,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 136317,
-      "gitSha": "46c8b9808bdc86f5c34db8ce73080c19872c3a6c"
+      "bytes": 137832,
+      "gitSha": "3dbff024b4f5e49dc83ae1b0a634be518dc81088"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -1268,13 +1268,13 @@
     },
     {
       "path": "assets/videos/capsule-correction-club-web.mp4",
-      "bytes": 13649905,
-      "gitSha": "f639662efdc1f83fd329890b56b6f3c88db67a90"
+      "bytes": 15847541,
+      "gitSha": "3fad4bab1f9c7aea812a16313106f354a266dc07"
     },
     {
       "path": "assets/videos/capsule-correction-liste-biblio.mp4",
-      "bytes": 8076277,
-      "gitSha": "20d0c35138e6ae9d4dea5380864084c5a42713da"
+      "bytes": 8567702,
+      "gitSha": "e9b1aa38b499092bec228d88cf6670a1abdd08eb"
     },
     {
       "path": "assets/videos/css-animee.mp4",
@@ -3544,7 +3544,7 @@
     {
       "path": "index.html",
       "bytes": 73952,
-      "gitSha": "56351fa43a8d1b9fe4251a9c27a78361659b1eb1"
+      "gitSha": "fb830c3b8f81382dfc09e7354e17905188b2b7bd"
     },
     {
       "path": "livre-smart.html",
@@ -4153,8 +4153,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 119554,
-      "gitSha": "c37158fc612f46b09577cb259e8678428320bbb8"
+      "bytes": 119566,
+      "gitSha": "c99d738de4900d67197bd57e3cf60240fd2b7df2"
     }
   ]
 }
