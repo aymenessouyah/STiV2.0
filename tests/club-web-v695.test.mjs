@@ -50,5 +50,5 @@ test('la capsule vidéo de correction du Club Web est publiée et livrée hors-l
  for(const file of ['cours/html5.html','cours/css3.html','exercices/series-exercices.html','index.html'])
   assert.ok(read(file).includes(video),file);
  assert.match(read('cours/html5.html'),/Capsule : correction du Club Web/);
- assert.match(sw,/\{ url: "\.\/cours\/css3\.html", revision: "capsule-club-v695"/);
+ assert.match(sw,/\{ url: "\.\/cours\/css3\.html", revision: "capsules-boutons-v698"/);
 });
