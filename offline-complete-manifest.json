@@ -1,10 +1,10 @@
 {
   "version": "v582-sti-atelier-v386",
-  "versionPubliee": "v696",
-  "generatedAt": "2026-11-24T20:50:28Z",
+  "versionPubliee": "v697",
+  "generatedAt": "2026-11-24T21:15:40Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 830,
-  "totalBytes": 1471977795,
+  "totalBytes": 1486232062,
   "files": [
     {
       "path": "404.html",
@@ -759,7 +759,7 @@
     {
       "path": "assets/js/app.js",
       "bytes": 137832,
-      "gitSha": "3dbff024b4f5e49dc83ae1b0a634be518dc81088"
+      "gitSha": "a06863da3404d36e2d733b2cfa1f7af37d177057"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -1268,13 +1268,13 @@
     },
     {
       "path": "assets/videos/capsule-correction-club-web.mp4",
-      "bytes": 15847541,
-      "gitSha": "3fad4bab1f9c7aea812a16313106f354a266dc07"
+      "bytes": 26925214,
+      "gitSha": "077341c18ffcc47741c776c5a6da13d504d460f8"
     },
     {
       "path": "assets/videos/capsule-correction-liste-biblio.mp4",
-      "bytes": 8567702,
-      "gitSha": "e9b1aa38b499092bec228d88cf6670a1abdd08eb"
+      "bytes": 11744294,
+      "gitSha": "ebc8efd681829f358e3ff7596a5ba73c69243ceb"
     },
     {
       "path": "assets/videos/css-animee.mp4",
@@ -4153,8 +4153,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 119566,
-      "gitSha": "c99d738de4900d67197bd57e3cf60240fd2b7df2"
+      "bytes": 119568,
+      "gitSha": "62992cf888e1e4cfe8b5b3ca394bfd538299dca1"
     }
   ]
 }
