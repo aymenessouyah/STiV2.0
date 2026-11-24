@@ -16,8 +16,8 @@ for (const classe of ['3SI 1','4SI 1']) test(`sujets bac et exercices sur mobile
  const boite=page.locator('#similaire-bac-pratique');
  if(classe.startsWith('3')) {await expect(boite).toBeHidden();} else {
   await expect(boite).toBeVisible();await expect(boite.locator('summary')).toHaveCount(1);await boite.locator('summary').click();
-  await expect(boite.locator('a')).toHaveCount(3);
-  for(const href of await boite.locator('a').evaluateAll(els=>els.map(x=>x.getAttribute('href')))) {const res=await request.get('/'+href);expect(res.status()).toBe(200);const corps=await res.body();if(href.endsWith('.rar')) expect(corps.subarray(0,4).toString()).toBe('Rar!');else expect(corps.subarray(0,5).toString()).toBe('%PDF-');}
+  await expect(boite.locator('a')).toHaveCount(4);
+  for(const href of await boite.locator('a').evaluateAll(els=>els.map(x=>x.getAttribute('href')))) {const res=await request.get('/'+href);expect(res.status()).toBe(200);const corps=await res.body();if(href.endsWith('.rar')) expect(corps.subarray(0,4).toString()).toBe('Rar!');else if(href.endsWith('.mp4')) expect(corps.subarray(4,8).toString()).toBe('ftyp');else expect(corps.subarray(0,5).toString()).toBe('%PDF-');}
  }
  await page.goto('/exercices/series-exercices.html',{waitUntil:'domcontentloaded'});
  for(const id of ['javascript','bdd','php']) {const cards=page.locator(`#${id} .exo-card`).filter({hasText:'Style Bac STI 2024'});if(classe.startsWith('3')) await expect(cards).toBeHidden();else await expect(cards).toBeVisible();}

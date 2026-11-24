@@ -46,3 +46,18 @@ test('le TP Bibliothèque porte la catégorie Similaire Bac Pratique, badge oran
  assert.match(read('cours/php.html'),/data-exercise="tp-biblio"/);
  assert.match(read('cours/javascript.html'),/data-exo-check="exo-js-tp-biblio"/);
 });
+
+test('la capsule vidéo de correction de liste.php est publiée et livrée hors-ligne',()=>{
+ const manifest=JSON.parse(read('offline-complete-manifest.json')),sw=read('sw.js');
+ const video='assets/videos/capsule-correction-liste-biblio.mp4';
+ const b=readFileSync(video);
+ assert.equal(b.subarray(4,8).toString(),'ftyp');
+ assert.ok(b.length>5_000_000);
+ assert.ok(manifest.files.some(f=>f.path===video&&f.bytes===b.length));
+ assert.ok(sw.includes(`"./${video}"`));
+ assert.match(read('cours/php.html'),/Capsule : correction de liste\.php/);
+ assert.match(read('index.html'),/Capsule : correction de liste\.php/);
+ const bloc=read('exercices/series-exercices.html').split('id="php"')[1].split('</section>')[0];
+ assert.ok(bloc.includes(video));
+ assert.match(sw,/\{ url: "\.\/cours\/php\.html", revision: "capsule-liste-v694"/);
+});
