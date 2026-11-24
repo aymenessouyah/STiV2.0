@@ -38,7 +38,7 @@ test('chaque carte de la vidéothèque reçoit son effet et sa couleur', () => {
     'les capsules portent leur classe');
 
   const liste = catalogue();
-  assert.equal(liste.length, 28, 'vingt-huit cartes');
+  assert.equal(liste.length, 30, 'trente cartes');
   assert.ok(liste.every((v) => v.couleur && /^#[0-9a-f]{6}$/i.test(v.couleur)), 'chaque carte a sa couleur');
   const effets = liste.map((v) => effetAttendu(v.id));
   assert.ok(effets.every((e) => e >= 0 && e <= 3), 'quatre effets possibles');
@@ -88,7 +88,7 @@ test('la capsule des boucles appartient à JavaScript et à PHP', () => {
   const index = lire('index.html');
   const compte = (cle) => liste.filter((v) => ((v.matieres || [v.matiere]).indexOf(cle) !== -1)).length;
   assert.equal(compte('javascript'), 8);
-  assert.equal(compte('php'), 6);
+  assert.equal(compte('php'), 7);
   assert.ok(index.includes(`data-video-filter="javascript">JS (${compte('javascript')})</button>`), 'pastille JS');
   assert.ok(index.includes(`data-video-filter="php">PHP (${compte('php')})</button>`), 'pastille PHP');
   assert.ok(index.includes(`data-video-filter="all">Toutes (${liste.length})</button>`), 'pastille « Toutes »');

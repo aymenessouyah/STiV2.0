@@ -228,8 +228,8 @@ test('les totaux de l’accueil et du catalogue suivent', () => {
   const liste = catalogue();
   const index = lire('index.html');
   const php = liste.filter((v) => (v.matieres || [v.matiere]).includes('php')).length;
-  assert.equal(liste.length, 28, 'vingt-huit capsules');
-  assert.equal(php, 6, 'six capsules PHP');
+  assert.equal(liste.length, 30, 'trente capsules');
+  assert.equal(php, 7, 'sept capsules PHP');
   assert.ok(index.includes(`data-video-filter="all">Toutes (${liste.length})</button>`));
   assert.ok(index.includes(`<span id="videosTotalNombre">${liste.length}</span>`));
   assert.ok(index.includes(`data-video-filter="php">PHP (${php})</button>`));

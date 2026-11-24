@@ -72,11 +72,11 @@ test('v589 : le catalogue du tableau de bord couvre toutes les vidéos suivies',
   const admin = catalogueAdmin();
   const vues = catalogueVuesVideos();
 
-  assert.equal(vitrine.length, 28, '28 capsules sur la vitrine');
-  assert.equal(vues.length, 35, 'panneau des vues : 28 capsules + 7 vidéos historiques ou hors vitrine');
-  assert.equal(admin.length, 35, 'l’inventaire du tableau de bord couvre les 35 vidéos suivies');
-  assert.equal(admin.filter((v) => !v.horsBilan).length, 28,
-    'seules les 28 capsules de la vitrine entrent dans le bilan de l’élève');
+  assert.equal(vitrine.length, 30, '30 capsules sur la vitrine');
+  assert.equal(vues.length, 37, 'panneau des vues : 30 capsules + 7 vidéos historiques ou hors vitrine');
+  assert.equal(admin.length, 37, 'l’inventaire du tableau de bord couvre les 37 vidéos suivies');
+  assert.equal(admin.filter((v) => !v.horsBilan).length, 30,
+    'seules les 30 capsules de la vitrine entrent dans le bilan de l’élève');
 
   assert.ok(admin.find(v => v.key === 'video:css3-display').horsBilan, 'vidéo retirée conservée seulement pour l’historique');
   /* Parité avec la vitrine : chaque capsule publique est suivie. */
@@ -91,8 +91,8 @@ test('v589 : le catalogue du tableau de bord couvre toutes les vidéos suivies',
   const quatre = vitrine.filter((v) => v.reserve4si).map((v) => 'video:' + v.id).sort();
   const niveau4 = admin.filter((v) => v.niveau === '4si').map((v) => v.key).sort();
   assert.deepEqual(niveau4, quatre, 'mêmes vidéos réservées à la 4ᵉ SI des deux côtés');
-  assert.equal(admin.filter((v) => v.niveau === 'tous').length, 26);
-  assert.equal(admin.filter((v) => v.niveau === 'tous' && !v.horsBilan).length, 19);
+  assert.equal(admin.filter((v) => v.niveau === 'tous').length, 27);
+  assert.equal(admin.filter((v) => v.niveau === 'tous' && !v.horsBilan).length, 20);
 });
 
 test('v587 : aucune vidéo de décor dans le catalogue ni dans les libellés', () => {
@@ -109,17 +109,17 @@ test('v587 : le total des vidéos ne dépend plus de ce que l’élève a ouvert
 
   /* Rien n'a été ouvert : le total est quand même complet. */
   const vide4 = ctx.window.__stiBilanProgressionMediaUser(eleve4);
-  assert.equal(vide4.totVid, 28, '4ᵉ SI : 20 capsules communes + 8 réservées');
+  assert.equal(vide4.totVid, 30, '4ᵉ SI : 21 capsules communes + 9 réservées');
   const vide3 = ctx.window.__stiBilanProgressionMediaUser(eleve3);
-  assert.equal(vide3.totVid, 19, '3ᵉ SI : les 19 capsules accessibles de la vitrine');
+  assert.equal(vide3.totVid, 20, '3ᵉ SI : les 20 capsules accessibles de la vitrine');
   assert.equal(vide3.nbVidDone, 0);
 
   /* Un élève qui a vu deux capsules garde le même dénominateur. */
   ctx.progMediaParUser['u-4si'] = { 'video:fonctions-chaine': 100, 'video:boucle-pour': 100 };
   const avec4 = ctx.window.__stiBilanProgressionMediaUser(eleve4);
   assert.equal(avec4.nbVidDone, 2);
-  assert.equal(avec4.totVid, 28, 'le total ne bouge pas avec les visionnages');
-  assert.match(avec4.resumeEnteteVid, /^2\/28/);
+  assert.equal(avec4.totVid, 30, 'le total ne bouge pas avec les visionnages');
+  assert.match(avec4.resumeEnteteVid, /^2\/30/);
 });
 
 test('v587 : les vidéos de décor ne sont jamais comptées', () => {
@@ -136,7 +136,7 @@ test('v587 : les vidéos de décor ne sont jamais comptées', () => {
   const bil = ctx.window.__stiBilanProgressionMediaUser(eleve);
   const cles = bil.catVideos.map((v) => v.key);
   assert.equal(bil.nbVidDone, 1, 'seul le cours HTML5 compte');
-  assert.equal(bil.totVid, 28);
+  assert.equal(bil.totVid, 30);
   for (const k of cles) {
     assert.doesNotMatch(k, /^video:drapeau/i, 'aucune vidéo de drapeau dans la liste');
     assert.doesNotMatch(k, /^video:(stivideoofficiel|flower|ambient)$/i);
@@ -159,7 +159,7 @@ test('v589 : les anciennes clés de capsule sont ramenées sur la clé officiell
   assert.ok(!cles.includes('video:php-guichet-v10'));
   assert.ok(bil.listV.includes('Les boucles (✅ 100%)'), 'la boucle Pour reste vue');
   assert.ok(bil.listV.includes('Guichet PHP/MySQLi (⏳ 40%)'), 'le Guichet garde son avancement');
-  assert.equal(bil.totVid, 28, 'aucune vidéo en double : le total ne bouge pas');
+  assert.equal(bil.totVid, 30, 'aucune vidéo en double : le total ne bouge pas');
   assert.equal(bil.nbVidDone, 1);
   assert.equal(bil.nbVidEnCours, 1);
 });
@@ -185,7 +185,7 @@ test('v590 : les vidéos des pages de cours n’entrent pas dans le bilan', () =
     'video:explore-tunisie-flex': 100,
   };
   const bil = ctx.window.__stiBilanProgressionMediaUser(eleve);
-  assert.equal(bil.totVid, 19, '19 capsules en 3ᵉ SI, quoi qu’il ait ouvert');
+  assert.equal(bil.totVid, 20, '20 capsules en 3ᵉ SI, quoi qu’il ait ouvert');
   assert.equal(bil.nbVidDone, 1, 'seul le cours HTML5 (capsule) compte');
   const cles = bil.catVideos.map((v) => v.key);
   for (const k of ['video:sql-serie1', 'video:sql-serie6', 'video:explore-tunisie-flex']) {

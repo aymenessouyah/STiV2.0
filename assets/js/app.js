@@ -438,6 +438,22 @@
       codeApercu: "background: url(image.jpg) center / cover;"
     },
     {
+      /* v696 : capsule de correction du mini-projet Club Web animé (synthèse
+         HTML5 & CSS3, 3ᵉ et 4ᵉ SI) : le code se tape à gauche, la page
+         prend vie à droite. Classée CSS3, matière du mini-projet. */
+      id: "capsule-club-web",
+      matiere: "css3",
+      nomMatiere: "CSS3",
+      badgeClasse: "badge-css",
+      couleur: "#38bdf8",
+      titre: "Club Web animé — correction du mini-projet CSS (Synthèse)",
+      dureeTexte: "3:41",
+      srcPrincipal: "assets/videos/capsule-correction-club-web.mp4",
+      srcSecours: "assets/videos/capsule-correction-club-web.mp4",
+      urlCours: "cours/css3.html#videos",
+      codeApercu: ".b1:hover { transform: translateX(40px) rotate(30deg); }"
+    },
+    {
       /* v500 : TP pas à pas — la même capsule est proposée en HTML5 et en CSS3. */
       id: "tp-evenements-liens",
       matiere: "html5",
@@ -612,6 +628,23 @@
       srcSecours: "assets/videos/php-guichet-v10.mp4",
       urlCours: "cours/php.html#videos",
       codeApercu: "while ($lig = mysqli_fetch_assoc($res)) { ... }"
+    },
+    {
+      /* v696 : capsule de correction de la page liste.php du TP Bibliothèque
+         du lycée (Similaire Bac Pratique, 4ᵉ SI) : requête, filtre GET,
+         transtypage, tableau et compteur, code tapé pas à pas. */
+      id: "capsule-biblio-liste",
+      matiere: "php",
+      nomMatiere: "PHP",
+      badgeClasse: "badge-php",
+      couleur: "#a78bfa",
+      titre: "Bibliothèque du lycée — correction de liste.php (TP pratique)",
+      dureeTexte: "2:53",
+      reserve4si: true,
+      srcPrincipal: "assets/videos/capsule-correction-liste-biblio.mp4",
+      srcSecours: "assets/videos/capsule-correction-liste-biblio.mp4",
+      urlCours: "cours/php.html#videos",
+      codeApercu: "$sql = $sql . \" and L.idCateg = \" . (int) $_GET[\"categ\"];"
     }
   ];
 

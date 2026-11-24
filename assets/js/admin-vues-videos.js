@@ -47,6 +47,7 @@
     { id: "css3-display", titre: "CSS3 — Display animé (retirée)", matiere: "css3", icone: "🎨", horsCatalogue: true },
     { id: "css-positionnement", titre: "CSS3 — Positionnement", matiere: "css3", icone: "🎨" },
     { id: "css-animee", titre: "CSS3 — Décoration, ombres", matiere: "css3", icone: "🎨" },
+    { id: "capsule-club-web", titre: "Club Web animé — correction", matiere: "css3", icone: "🎨" },
     { id: "javascript-cours", titre: "JavaScript — Récapitulatif", matiere: "javascript", icone: "⚡" },
     { id: "validation-nom-prenom-js", titre: "JS — Validation Nom & Prénom", matiere: "javascript", icone: "⚡" },
     { id: "tp-train-serie6", titre: "TP Train — Série 6", matiere: "javascript", icone: "⚡" },
@@ -71,6 +72,7 @@
     { id: "php-cours", titre: "PHP & MySQLi", matiere: "php", icone: "🐘" },
     { id: "php-synthese", titre: "PHP — Synthèse élèves", matiere: "php", icone: "🐘" },
     { id: "php-guichet", titre: "PHP — Application Guichet", matiere: "php", icone: "🐘" },
+    { id: "capsule-biblio-liste", titre: "Bibliothèque — correction liste.php", matiere: "php", icone: "🐘" },
     /* Médias vidéo présents dans les pages de cours (hors vitrine de l'accueil). */
     { id: "sql-serie1", titre: "SQL Série 1 — Création de tables", matiere: "sql", icone: "🗃️", horsCatalogue: true },
     { id: "sql-serie2", titre: "SQL Série 2 — SELECT & filtres", matiere: "sql", icone: "🗃️", horsCatalogue: true },
