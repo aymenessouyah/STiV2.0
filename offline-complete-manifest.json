@@ -1,10 +1,10 @@
 {
   "version": "v582-sti-atelier-v386",
-  "versionPubliee": "v697",
-  "generatedAt": "2026-11-24T21:15:40Z",
+  "versionPubliee": "v698",
+  "generatedAt": "2026-11-24T21:26:26Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 830,
-  "totalBytes": 1486232062,
+  "totalBytes": 1486236224,
   "files": [
     {
       "path": "404.html",
@@ -863,8 +863,8 @@
     },
     {
       "path": "assets/js/lecteur-commun.js",
-      "bytes": 14884,
-      "gitSha": "0580ecf412c04d2222f1c51f80f1db3f24a83fca"
+      "bytes": 15104,
+      "gitSha": "5142f00af74e073999a2fa8aa51452efa658ee3a"
     },
     {
       "path": "assets/js/mobile-nav.js",
@@ -923,8 +923,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 257132,
-      "gitSha": "2623d6980cd2e63896e2fb7824bc149c0d4d3783"
+      "bytes": 260981,
+      "gitSha": "5d867b814e6b0cf40bc1e9dc2401e6a5cd3a872c"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -1453,8 +1453,8 @@
     },
     {
       "path": "cours/css3.html",
-      "bytes": 214872,
-      "gitSha": "c6fcc1d60c88677b2d013ffc58484c97386ccfbe"
+      "bytes": 214876,
+      "gitSha": "af0dc714dbfe38bf3d4cb516f36a8aa3846f1c38"
     },
     {
       "path": "cours/datalist.html",
@@ -1468,8 +1468,8 @@
     },
     {
       "path": "cours/html5.html",
-      "bytes": 210245,
-      "gitSha": "8e8d9473e27ca9dbe715f97a5facf267929826ed"
+      "bytes": 210249,
+      "gitSha": "b6a00d7d13b1971ce4887144b293bf3c8399677c"
     },
     {
       "path": "cours/javascript.html",
@@ -1483,8 +1483,8 @@
     },
     {
       "path": "cours/php.html",
-      "bytes": 210802,
-      "gitSha": "d90d02ea8baa44c1d9d1c41c6eee585d34c4ba06"
+      "bytes": 210810,
+      "gitSha": "89a3426bb7df8cac2234cfa7a92eae8110759936"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -3283,8 +3283,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 115671,
-      "gitSha": "148c5072ce29cd70e7ece3bd8d9c5b684db071f9"
+      "bytes": 115683,
+      "gitSha": "2cd4f984aad0905f83a2b1a715cf06e8f8bfe62e"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3543,8 +3543,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 73952,
-      "gitSha": "fb830c3b8f81382dfc09e7354e17905188b2b7bd"
+      "bytes": 73994,
+      "gitSha": "1580d65fc33032a52faa23806a31058959a2488d"
     },
     {
       "path": "livre-smart.html",
@@ -4153,8 +4153,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 119568,
-      "gitSha": "62992cf888e1e4cfe8b5b3ca394bfd538299dca1"
+      "bytes": 119591,
+      "gitSha": "883c422e4d97d2557aba72d01bbd8d716fd62c00"
     }
   ]
 }

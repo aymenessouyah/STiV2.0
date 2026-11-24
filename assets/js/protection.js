@@ -1532,6 +1532,31 @@
         { t: 818.940, short: "11 · L'heure, la validité et la conversion d'une date", label: "13:39 · 11 · L'heure, la validité et la conversion d'une date" },
         { t: 951.610, short: "12 · Exercices et ce qu'il faut retenir", label: "15:52 · 12 · Exercices et ce qu'il faut retenir" }
       ];
+      /* v698 : chapitres de la capsule Club Web (version ralentie v697 — 6:02).
+         La Partie 5 détaille le formulaire champ par champ, en direct. */
+      STI_CHAPITRES_MEDIA["capsule-club-web"] = [
+        { t: 0, short: "Bienvenue", label: "00:00 · Bienvenue — le mini-projet Club Web animé en 7 parties" },
+        { t: 27.4, short: "1 · transform", label: "00:27 · Partie 1 · transform : translate, rotate, scale, skew" },
+        { t: 57.7, short: "2 · transition", label: "00:58 · Partie 2 · transition et l'effet :hover" },
+        { t: 84.7, short: "3 · filter", label: "01:25 · Partie 3 · filter : grayscale et invert" },
+        { t: 110.9, short: "4 · animation", label: "01:51 · Partie 4 · animation et @keyframes" },
+        { t: 147.2, short: "5 · Formulaire : Identité", label: "02:27 · Partie 5 · Formulaire HTML — Identité : chaque champ apparaît en direct" },
+        { t: 192.1, short: "5 · Formulaire : Informations", label: "03:12 · Partie 5 · Informations : date, time, number, range, color et datalist" },
+        { t: 244.1, short: "5 · Formulaire : Choix", label: "04:04 · Partie 5 · Choix : radio, checkbox, select et optgroup" },
+        { t: 264.7, short: "5 · Message & boutons", label: "04:25 · Partie 5 · Message : textarea, champ disabled, submit, reset et button" },
+        { t: 289.9, short: "6 · Formulaire CSS", label: "04:50 · Partie 6 · Le formulaire en CSS : :hover, :focus, :invalid" },
+        { t: 329.7, short: "7 · Vérification", label: "05:30 · Partie 7 · Vérification : la page Club Web est terminée" }
+      ];
+      /* v698 : chapitres de la capsule Bibliothèque (version ralentie v697 — 3:12). */
+      STI_CHAPITRES_MEDIA["capsule-biblio-liste"] = [
+        { t: 0, short: "Bienvenue", label: "00:00 · Bienvenue — connexion et liens de catégories déjà fournis" },
+        { t: 27.7, short: "1 · La requête", label: "00:28 · Étape 1 · La requête : jointure Livre et Catégorie dans le WHERE" },
+        { t: 48.8, short: "2 · GET & transtypage", label: "00:49 · Étape 2 · Le lien liste.php?categ : envoi GET, $_GET et transtypage (int)" },
+        { t: 110.9, short: "3 · Le tableau", label: "01:51 · Étape 3 · On exécute la requête et on ouvre le tableau" },
+        { t: 129.6, short: "4 · La boucle", label: "02:10 · Étape 4 · La boucle affiche chaque livre ; classe « emprunte »" },
+        { t: 153.6, short: "5 · Le compteur", label: "02:34 · Étape 5 · On ferme le tableau : le compteur mysqli_num_rows" },
+        { t: 167.0, short: "Vérification", label: "02:47 · Vérification : le filtre ?categ=3 ne garde que les livres d'informatique" }
+      ];
       STI_CHAPITRES_MEDIA["validation-nom-prenom-js"] = [
         { t: 0, short: "Générique", label: "00:00 · Générique — Projet secrétariat du lycée" },
         { t: 6.00, short: "1. Besoin réel", label: "00:06 · 1. Besoin réel — Valider Nom & Prénom (2 à 5 mots)" },
@@ -2712,6 +2737,10 @@
         var estPhpChaines = (sSlug === "php-chaines" || sSlug.indexOf("php-chaines") !== -1 || sSlug.indexOf("PhpChaines") !== -1);
         /* v577 : vidéo du cours « Systèmes, technologies et Internet » (3ᵉ SI). */
         var estCoursSti = (sSlug === "cours-sti" || sSlug.indexOf("cours-sti") !== -1 || sSlug.indexOf("CoursSystemesInternet") !== -1);
+        /* v698 : capsule « Club Web animé » — correction du mini-projet, Synthèse HTML5 & CSS3 (3ᵉ et 4ᵉ SI). */
+        var estClubWeb = (sSlug === "capsule-club-web" || sSlug.indexOf("capsule-correction-club-web") !== -1);
+        /* v698 : capsule « Bibliothèque du lycée » — correction de liste.php, TP pratique (4ᵉ SI). */
+        var estBiblioListe = (sSlug === "capsule-biblio-liste" || sSlug.indexOf("capsule-correction-liste-biblio") !== -1);
         var estCssDisplay = (!estJsValidation && !estTpTrain && (sSlug === "css3-display" || sSlug.indexOf("displayanim.mp4") !== -1));
         var estPhpSynthese = (!estJsValidation && !estTpTrain && (sSlug === "php-synthese" || sSlug.indexOf("php-synthese.mp4") !== -1));
         var estSqlInit = (!estTpTrain && sSlug === "sql-initiation" || sSlug.indexOf("sql-initiation") !== -1);
@@ -2732,7 +2761,7 @@
         var estCssDeco = (!estJsValidation && !estTpTrain && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && (sSlug === "css-animee" || sSlug.indexOf("css-animee") !== -1 || (!sSlug && estPageCssDeco)));
         var estCssPos = (!estJsValidation && !estTpTrain && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && (sSlug === "css-positionnement" || sSlug.indexOf("css-positionnement") !== -1 || (!sSlug && estPageCssPos)));
         var estGuichet = (!estJsValidation && !estTpTrain && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && (sSlug === "php-guichet" || sSlug.indexOf("php-guichet") !== -1 || sSlug === "guichet" || (!sSlug && estPageGuichet)));
-        if (!estTpEvenements && !estTpFormulaire && !estTpDisplay && !estTpTransitions && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && !estGuichet && !estCssDisplay && !estPhpSynthese && !estJsValidation && !estTpTrain && !estDefis37 && !estBouclePour && !estConsoleVariables && !estPhpVariables && !estFonctionsChaine && !estDateJs && !estPhpChaines && !estMissionCinema && !estCapsuleSql7) {
+        if (!estTpEvenements && !estTpFormulaire && !estTpDisplay && !estTpTransitions && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && !estGuichet && !estCssDisplay && !estPhpSynthese && !estJsValidation && !estTpTrain && !estDefis37 && !estBouclePour && !estConsoleVariables && !estPhpVariables && !estFonctionsChaine && !estDateJs && !estPhpChaines && !estMissionCinema && !estCapsuleSql7 && !estClubWeb && !estBiblioListe) {
           /* v577 : la vidéo du cours STI n'est pas dans la liste des capsules. */
           if (!estCoursSti) {
             return;
@@ -2772,6 +2801,9 @@
         if (estCapsuleSql7) slugCible = "sql-serie7-capsule";
         /* v577 : la vidéo du cours STI a son propre jeu de chapitres. */
         if (estCoursSti) slugCible = "cours-sti";
+        /* v698 : les deux capsules de correction ont leur propre slug de chapitres. */
+        if (estClubWeb) slugCible = "capsule-club-web";
+        if (estBiblioListe) slugCible = "capsule-biblio-liste";
         try {
           if (
             window.top &&
@@ -2786,6 +2818,8 @@
         if (estMissionCinema) url = prefixeAssetsSTI() + "videos/sql-tp6-mission-cinema.mp4";
         if (estCapsuleSql7) url = prefixeAssetsSTI() + "videos/sql-serie7-groupby-having-sous-requetes-v9.mp4";
         if (estCoursSti) url = prefixeAssetsSTI() + "videos/CoursSystemesInternet-v578.mp4";
+        if (estClubWeb) url = prefixeAssetsSTI() + "videos/capsule-correction-club-web.mp4";
+        if (estBiblioListe) url = prefixeAssetsSTI() + "videos/capsule-correction-liste-biblio.mp4";
         var css3Qualite = "auto";
         if (estCss3) {
           var prefCss3 = "";
@@ -2798,6 +2832,8 @@
         var titre = titreOpt || (estMissionCinema ? "Je fais tout le SQL · TP6 Mission cinéma, correction détaillée" : estBouclePour ? "🎥 Les boucles — Pour, Répéter…jusqu'à, Tant que" : estConsoleVariables ? "🎥 La console, les variables et les types" : estPhpVariables ? "🎥 PHP — Les variables, la portée et les types" : estDefis37 ? "🎥 Les 37 Défis — Tableau, Aléas & Captchas, Média" : estTpTrain ? "🎥 TP Train — correction détaillée (Série 6 JavaScript)" : estTpEvenements ? "🎥 TP — Événements, liens et arrière-plans (HTML5 & CSS3)" : estTpFormulaire ? "🎥 TP — Formulaire, tableau et autres balises (HTML5 & CSS3)" : estTpDisplay ? "🎥 TP — display, float et position (HTML5 & CSS3)" : estTpTransitions ? "🎥 TP — transitions et animations (CSS3)" : estJsValidation ? "🎥 JavaScript — Validation du champ Nom & Prénom (pas à pas)" : estCssDisplay ? "🎥 CSS3 — Display : la démo animée" : estPhpSynthese ? "🎥 PHP — Synthèse : gestion des élèves" : estSqlInit ? VIDEO_SQL_INIT_INFO.title : (estExploreFloat ? VIDEO_EXPLORE_FLOAT_INFO.title : (estExploreFlex ? VIDEO_EXPLORE_FLEX_INFO.title : (estSqlSerie6 ? VIDEO_SQL_SERIE6_INFO.title : (estSqlSerie5 ? VIDEO_SQL_SERIE5_INFO.title : (estSqlSerie4 ? VIDEO_SQL_SERIE4_INFO.title : (estSqlSerie3 ? VIDEO_SQL_SERIE3_INFO.title : (estSqlSerie2 ? VIDEO_SQL_SERIE2_INFO.title : (estSqlSerie1 ? VIDEO_SQL_SERIE1_INFO.title : (estHtml5 ? VIDEO_HTML5_INFO.title : (estCss3 ? VIDEO_CSS3_INFO.title : (estJs ? VIDEO_JS_INFO.title : (estPhpC ? VIDEO_PHP_COURS_INFO.title : (estSql ? VIDEO_SQL_INFO.title : (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title))))))))))))))));
         if (estCapsuleSql7) titre = titreOpt || "🎥 Group by, Having,Sous requête,Group by vs Ss_req";
         if (estCoursSti) titre = titreOpt || "🎥 Cours — Systèmes, technologies et Internet (3ᵉ SI)";
+        if (estClubWeb) titre = titreOpt || "🎥 Club Web animé — correction du mini-projet (Synthèse HTML5 & CSS3)";
+        if (estBiblioListe) titre = titreOpt || "🎥 Bibliothèque du lycée — correction de liste.php (TP pratique)";
 
         var overlay = document.getElementById("sti-video-modal-overlay");
         if (!overlay) {
