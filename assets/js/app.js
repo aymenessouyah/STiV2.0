@@ -448,8 +448,8 @@
       couleur: "#38bdf8",
       titre: "Club Web animé — correction du mini-projet CSS (Synthèse)",
       dureeTexte: "6:02",
-      srcPrincipal: "assets/videos/capsule-correction-club-web-v699.mp4",
-      srcSecours: "assets/videos/capsule-correction-club-web-v699.mp4",
+      srcPrincipal: "assets/videos/capsule-correction-club-web-v701.mp4",
+      srcSecours: "assets/videos/capsule-correction-club-web-v701.mp4",
       urlCours: "cours/css3.html#videos",
       codeApercu: ".b1:hover { transform: translateX(40px) rotate(30deg); }"
     },
@@ -645,8 +645,8 @@
       titre: "Bibliothèque du lycée — correction de liste.php (TP pratique)",
       dureeTexte: "5:11",
       reserve4si: true,
-      srcPrincipal: "assets/videos/capsule-correction-liste-biblio-v700.mp4",
-      srcSecours: "assets/videos/capsule-correction-liste-biblio-v700.mp4",
+      srcPrincipal: "assets/videos/capsule-correction-liste-biblio-v701.mp4",
+      srcSecours: "assets/videos/capsule-correction-liste-biblio-v701.mp4",
       urlCours: "cours/php.html#videos",
       codeApercu: "$sql = $sql . \" and L.idCateg = \" . (int) $_GET[\"categ\"];"
     }
