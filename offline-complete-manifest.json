@@ -1,10 +1,10 @@
 {
   "version": "v582-sti-atelier-v386",
-  "versionPubliee": "v700",
-  "generatedAt": "2026-11-25T06:15:44Z",
+  "versionPubliee": "v701",
+  "generatedAt": "2026-11-25T07:41:00Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 830,
-  "totalBytes": 1492566104,
+  "totalBytes": 1494740757,
   "files": [
     {
       "path": "404.html",
@@ -759,7 +759,7 @@
     {
       "path": "assets/js/app.js",
       "bytes": 138209,
-      "gitSha": "efad18dd7d7f8468a6468751172fd19f33337dfe"
+      "gitSha": "7dd56ee410fc6195e523b44db00e5df2b47667b0"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -924,7 +924,7 @@
     {
       "path": "assets/js/protection.js",
       "bytes": 262224,
-      "gitSha": "9ef9ae9bc6af794e2a4a5417152414410a52c2a3"
+      "gitSha": "679b3f486fd799993e8090425b6b442bbf7ebb71"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -1267,14 +1267,14 @@
       "gitSha": "3373f8de757b761f371582797410d0e17a36bbde"
     },
     {
-      "path": "assets/videos/capsule-correction-club-web-v699.mp4",
-      "bytes": 26925214,
-      "gitSha": "077341c18ffcc47741c776c5a6da13d504d460f8"
+      "path": "assets/videos/capsule-correction-club-web-v701.mp4",
+      "bytes": 28252002,
+      "gitSha": "f08420a16fe98782b33c947284506b5fe9807756"
     },
     {
-      "path": "assets/videos/capsule-correction-liste-biblio-v700.mp4",
-      "bytes": 18067958,
-      "gitSha": "6d62bd365502368cb3a8203431c3e016ee6ebc5b"
+      "path": "assets/videos/capsule-correction-liste-biblio-v701.mp4",
+      "bytes": 18915852,
+      "gitSha": "514941a4c3023b494f1afa8850f919383bfc8732"
     },
     {
       "path": "assets/videos/css-animee.mp4",
@@ -1454,7 +1454,7 @@
     {
       "path": "cours/css3.html",
       "bytes": 216603,
-      "gitSha": "4ea326146f308b7576c3a22538a94c75eed39404"
+      "gitSha": "9f60b296184133649a259176aa057c1e06606c0a"
     },
     {
       "path": "cours/datalist.html",
@@ -1469,7 +1469,7 @@
     {
       "path": "cours/html5.html",
       "bytes": 211976,
-      "gitSha": "2e44aafc237837a3c7057ff4825a5a9c7493f610"
+      "gitSha": "eed999e9224ae7a9eec44084b92fd55d7c59034f"
     },
     {
       "path": "cours/javascript.html",
@@ -1484,7 +1484,7 @@
     {
       "path": "cours/php.html",
       "bytes": 211916,
-      "gitSha": "083aa6156de84ec8de34003b60e44b3af928880f"
+      "gitSha": "a09d94fb708e1f5997f02a6b32f00510a854963d"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -3284,7 +3284,7 @@
     {
       "path": "exercices/series-exercices.html",
       "bytes": 115693,
-      "gitSha": "60d8ff11118a609f93b9f2fdf0004cc1bb7212e4"
+      "gitSha": "c3d6638886ad93b07cd7497ebb1174c12c6c99cd"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3544,7 +3544,7 @@
     {
       "path": "index.html",
       "bytes": 74004,
-      "gitSha": "e9b7c25ec90f52710b06347d2bce2f6f8199fb03"
+      "gitSha": "f1a4c3cfb389955fb06b462a1184ef701566aece"
     },
     {
       "path": "livre-smart.html",
@@ -4153,8 +4153,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 119607,
-      "gitSha": "caf39e0f670b0af2a71dc554353751665397003b"
+      "bytes": 119578,
+      "gitSha": "4f27f25e4e57ee63cbd8dc130d5666577887ac9d"
     }
   ]
 }

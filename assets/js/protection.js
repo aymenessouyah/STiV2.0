@@ -2827,8 +2827,8 @@
         if (estMissionCinema) url = prefixeAssetsSTI() + "videos/sql-tp6-mission-cinema.mp4";
         if (estCapsuleSql7) url = prefixeAssetsSTI() + "videos/sql-serie7-groupby-having-sous-requetes-v9.mp4";
         if (estCoursSti) url = prefixeAssetsSTI() + "videos/CoursSystemesInternet-v578.mp4";
-        if (estClubWeb) url = prefixeAssetsSTI() + "videos/capsule-correction-club-web-v699.mp4";
-        if (estBiblioListe) url = prefixeAssetsSTI() + "videos/capsule-correction-liste-biblio-v700.mp4";
+        if (estClubWeb) url = prefixeAssetsSTI() + "videos/capsule-correction-club-web-v701.mp4";
+        if (estBiblioListe) url = prefixeAssetsSTI() + "videos/capsule-correction-liste-biblio-v701.mp4";
         var css3Qualite = "auto";
         if (estCss3) {
           var prefCss3 = "";
