@@ -200,7 +200,7 @@ test('v612 — le recomprage est branché dans la page et dans l’interface', (
 });
 
 test('v612 — publication : version, cache-busters et révisions', () => {
-  assert.match(sw, /var VERSION_PUBLIEE = "v6\d\d";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v7\d\d";/);
   assert.match(sw, /v612-compteurs-zero-20261101/);
   assert.match(adminHtml, /assets\/js\/admin\.js\?v=615-perf/);
   assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "capsule-sql7-v638", refreshIfCached: true }'));

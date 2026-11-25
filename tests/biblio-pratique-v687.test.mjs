@@ -49,7 +49,7 @@ test('le TP Bibliothèque porte la catégorie Similaire Bac Pratique, badge oran
 
 test('la capsule vidéo de correction de liste.php est publiée et livrée hors-ligne',()=>{
  const manifest=JSON.parse(read('offline-complete-manifest.json')),sw=read('sw.js');
- const video='assets/videos/capsule-correction-liste-biblio-v699.mp4';
+ const video='assets/videos/capsule-correction-liste-biblio-v700.mp4';
  const b=readFileSync(video);
  assert.equal(b.subarray(4,8).toString(),'ftyp');
  assert.ok(b.length>5_000_000);
@@ -59,5 +59,5 @@ test('la capsule vidéo de correction de liste.php est publiée et livrée hors-
  assert.match(read('index.html'),/Capsule : correction de liste\.php/);
  const bloc=read('exercices/series-exercices.html').split('id="php"')[1].split('</section>')[0];
  assert.ok(bloc.includes(video));
- assert.match(sw,/\{ url: "\.\/cours\/php\.html", revision: "capsules-badges-v699"/);
+ assert.match(sw,/\{ url: "\.\/cours\/php\.html", revision: "capsule-biblio-get-v700"/);
 });
