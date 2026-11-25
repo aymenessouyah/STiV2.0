@@ -636,17 +636,19 @@
          v700 : étape 2 entièrement refaite, lente et détaillée — les liens
          ?categ=N, l'anatomie de l'adresse, la méthode GET prononcée à
          l'anglaise, la réception en chaîne dans $_GET, le transtypage (int),
-         le contrôle isset et la requête filtrée, pas à pas. */
+         le contrôle isset et la requête filtrée, pas à pas.
+         v702 : ajout du cas de plusieurs paramètres dans l'adresse
+         (liste.php?categ=2&tri=date, liste.php?categ=1&tri=prix) — durée 6:23. */
       id: "capsule-biblio-liste",
       matiere: "php",
       nomMatiere: "PHP",
       badgeClasse: "badge-php",
       couleur: "#a78bfa",
       titre: "Bibliothèque du lycée — correction de liste.php (TP pratique)",
-      dureeTexte: "5:11",
+      dureeTexte: "6:23",
       reserve4si: true,
-      srcPrincipal: "assets/videos/capsule-correction-liste-biblio-v701.mp4",
-      srcSecours: "assets/videos/capsule-correction-liste-biblio-v701.mp4",
+      srcPrincipal: "assets/videos/capsule-correction-liste-biblio-v702.mp4",
+      srcSecours: "assets/videos/capsule-correction-liste-biblio-v702.mp4",
       urlCours: "cours/php.html#videos",
       codeApercu: "$sql = $sql . \" and L.idCateg = \" . (int) $_GET[\"categ\"];"
     }
