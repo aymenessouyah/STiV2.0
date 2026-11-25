@@ -82,6 +82,6 @@ test('v599 : l’accueil garde ses repères et le service worker suit la livrais
   assert.match(ACCUEIL, /<section class="welcome-return" id="welcomeReturn"/);
   assert.match(ACCUEIL, /id="welcomeCourses"/);
   assert.match(ACCUEIL, /id="resumeBanner"/);
-  assert.match(SW, /var VERSION_PUBLIEE = "v6\d\d";/, 'la version publiée suit la livraison courante');
+  assert.match(SW, /var VERSION_PUBLIEE = "v7\d\d";/, 'la version publiée suit la livraison courante');
   assert.match(SW, /flamme-regularite-v611/, 'le lot de mise à jour est déclaré');
 });

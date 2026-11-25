@@ -632,17 +632,21 @@
     {
       /* v696 : capsule de correction de la page liste.php du TP Bibliothèque
          du lycée (Similaire Bac Pratique, 4ᵉ SI) : requête, filtre GET,
-         transtypage, tableau et compteur, code tapé pas à pas. */
+         transtypage, tableau et compteur, code tapé pas à pas.
+         v700 : étape 2 entièrement refaite, lente et détaillée — les liens
+         ?categ=N, l'anatomie de l'adresse, la méthode GET prononcée à
+         l'anglaise, la réception en chaîne dans $_GET, le transtypage (int),
+         le contrôle isset et la requête filtrée, pas à pas. */
       id: "capsule-biblio-liste",
       matiere: "php",
       nomMatiere: "PHP",
       badgeClasse: "badge-php",
       couleur: "#a78bfa",
       titre: "Bibliothèque du lycée — correction de liste.php (TP pratique)",
-      dureeTexte: "3:12",
+      dureeTexte: "5:11",
       reserve4si: true,
-      srcPrincipal: "assets/videos/capsule-correction-liste-biblio-v699.mp4",
-      srcSecours: "assets/videos/capsule-correction-liste-biblio-v699.mp4",
+      srcPrincipal: "assets/videos/capsule-correction-liste-biblio-v700.mp4",
+      srcSecours: "assets/videos/capsule-correction-liste-biblio-v700.mp4",
       urlCours: "cours/php.html#videos",
       codeApercu: "$sql = $sql . \" and L.idCateg = \" . (int) $_GET[\"categ\"];"
     }

@@ -1,10 +1,10 @@
 {
   "version": "v582-sti-atelier-v386",
-  "versionPubliee": "v699",
-  "generatedAt": "2026-11-24T21:41:15Z",
+  "versionPubliee": "v700",
+  "generatedAt": "2026-11-25T06:15:44Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 830,
-  "totalBytes": 1486240891,
+  "totalBytes": 1492566104,
   "files": [
     {
       "path": "404.html",
@@ -758,8 +758,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 137908,
-      "gitSha": "054f18bef24cff3e8d4a881e13c9339800b4dce5"
+      "bytes": 138209,
+      "gitSha": "efad18dd7d7f8468a6468751172fd19f33337dfe"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -923,8 +923,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 260991,
-      "gitSha": "9e31c3e74ca7d2c8a4ca0ca32acaeb784e524f08"
+      "bytes": 262224,
+      "gitSha": "9ef9ae9bc6af794e2a4a5417152414410a52c2a3"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -1272,9 +1272,9 @@
       "gitSha": "077341c18ffcc47741c776c5a6da13d504d460f8"
     },
     {
-      "path": "assets/videos/capsule-correction-liste-biblio-v699.mp4",
-      "bytes": 11744294,
-      "gitSha": "ebc8efd681829f358e3ff7596a5ba73c69243ceb"
+      "path": "assets/videos/capsule-correction-liste-biblio-v700.mp4",
+      "bytes": 18067958,
+      "gitSha": "6d62bd365502368cb3a8203431c3e016ee6ebc5b"
     },
     {
       "path": "assets/videos/css-animee.mp4",
@@ -1484,7 +1484,7 @@
     {
       "path": "cours/php.html",
       "bytes": 211916,
-      "gitSha": "8927739220dbe9f8ab9d94921cc922243941479d"
+      "gitSha": "083aa6156de84ec8de34003b60e44b3af928880f"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -3284,7 +3284,7 @@
     {
       "path": "exercices/series-exercices.html",
       "bytes": 115693,
-      "gitSha": "fa606abeda0e31de527d6ef2fd272cd93fa175b1"
+      "gitSha": "60d8ff11118a609f93b9f2fdf0004cc1bb7212e4"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3544,7 +3544,7 @@
     {
       "path": "index.html",
       "bytes": 74004,
-      "gitSha": "c37808e264d401ee5ed03e12c2e7ba867f8d55f6"
+      "gitSha": "e9b7c25ec90f52710b06347d2bce2f6f8199fb03"
     },
     {
       "path": "livre-smart.html",
@@ -4153,8 +4153,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 119592,
-      "gitSha": "d500982d5d2068605e4b12cfa13e0adabedc0020"
+      "bytes": 119607,
+      "gitSha": "caf39e0f670b0af2a71dc554353751665397003b"
     }
   ]
 }
