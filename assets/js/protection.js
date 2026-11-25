@@ -1550,7 +1550,12 @@
       /* v700 : chapitres de la capsule Bibliothèque refaite (5:11) — l'étape 2
          (filtre GET) est découpée en 7 temps lents : liens, anatomie de
          l'adresse, réception $_GET, transtypage (int), isset, requête filtrée
-         et résultat, pour que l'élève suive chaque transformation. */
+         et résultat, pour que l'élève suive chaque transformation.
+         v702 : passage « pour aller plus loin » inséré à 03:49 (71,8 s) — le
+         cas de plusieurs paramètres dans l'adresse (liste.php?categ=2&tri=date,
+         liste.php?categ=1&tri=prix) : l'esperluette & sépare les paramètres,
+         $_GET reçoit une entrée par paramètre et chacun se traite séparément ;
+         les chapitres suivants sont décalés d'autant (durée totale 6:23). */
       STI_CHAPITRES_MEDIA["capsule-biblio-liste"] = [
         { t: 0, short: "Bienvenue", label: "00:00 · Bienvenue — connexion et liens de catégories déjà fournis" },
         { t: 27.7, short: "1 · La requête", label: "00:28 · Étape 1 · La requête : jointure Livre et Catégorie dans le WHERE" },
@@ -1561,10 +1566,12 @@
         { t: 154.2, short: "2 · Le contrôle isset", label: "02:34 · Étape 2 · Le contrôle isset : sans paramètre, aucun filtre, tous les livres s'affichent" },
         { t: 175.2, short: "2 · La requête filtrée", label: "02:55 · Étape 2 · La requête filtrée : on colle « and L.idCateg = 3 », puis order by titre" },
         { t: 204.0, short: "2 · Le résultat : 2 livres", label: "03:24 · Étape 2 · Le résultat : seuls les livres d'informatique restent affichés" },
-        { t: 230.2, short: "3 · Le tableau", label: "03:50 · Étape 3 · On exécute la requête et on ouvre le tableau" },
-        { t: 248.9, short: "4 · La boucle", label: "04:09 · Étape 4 · La boucle affiche chaque livre ; classe « emprunte »" },
-        { t: 272.9, short: "5 · Le compteur", label: "04:33 · Étape 5 · On ferme le tableau : le compteur mysqli_num_rows" },
-        { t: 286.3, short: "Vérification", label: "04:46 · Vérification : le filtre ?categ=3 ne garde que les livres d'informatique" }
+        { t: 229.4, short: "2 · Plusieurs paramètres", label: "03:49 · Étape 2 · Pour aller plus loin : plusieurs paramètres — liste.php?categ=2&tri=date, l'esperluette & sépare les paramètres" },
+        { t: 267.7, short: "2 · Traitement séparé", label: "04:28 · Étape 2 · Chaque paramètre se traite séparément : categ filtre la catégorie, tri=date trie par année d'édition" },
+        { t: 302.0, short: "3 · Le tableau", label: "05:02 · Étape 3 · On exécute la requête et on ouvre le tableau" },
+        { t: 320.7, short: "4 · La boucle", label: "05:21 · Étape 4 · La boucle affiche chaque livre ; classe « emprunte »" },
+        { t: 344.7, short: "5 · Le compteur", label: "05:45 · Étape 5 · On ferme le tableau : le compteur mysqli_num_rows" },
+        { t: 358.1, short: "Vérification", label: "05:58 · Vérification : le filtre ?categ=3 ne garde que les livres d'informatique" }
       ];
       STI_CHAPITRES_MEDIA["validation-nom-prenom-js"] = [
         { t: 0, short: "Générique", label: "00:00 · Générique — Projet secrétariat du lycée" },
@@ -2828,7 +2835,7 @@
         if (estCapsuleSql7) url = prefixeAssetsSTI() + "videos/sql-serie7-groupby-having-sous-requetes-v9.mp4";
         if (estCoursSti) url = prefixeAssetsSTI() + "videos/CoursSystemesInternet-v578.mp4";
         if (estClubWeb) url = prefixeAssetsSTI() + "videos/capsule-correction-club-web-v701.mp4";
-        if (estBiblioListe) url = prefixeAssetsSTI() + "videos/capsule-correction-liste-biblio-v701.mp4";
+        if (estBiblioListe) url = prefixeAssetsSTI() + "videos/capsule-correction-liste-biblio-v702.mp4";
         var css3Qualite = "auto";
         if (estCss3) {
           var prefCss3 = "";
