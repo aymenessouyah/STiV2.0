@@ -74,7 +74,7 @@ test('v607 — publication : cache-buster, révisions et version', () => {
   /* v610 : admin.js porte désormais sa propre révision ; acces.js garde la sienne. */
   assert.ok(sw.includes('{ url: "./assets/js/acces.js", revision: "journal-session-v703" }'),
     'révision attendue pour ./assets/js/acces.js');
-  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "retrait-mission-cinema-v633", refreshIfCached: true }'),
+  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "doublons-abonnes-v704", refreshIfCached: true }'),
     'révision attendue pour ./assets/js/admin.js');
   assert.match(sw, /\{ url: "\.\/admin\.html", revision: "retrait-mission-cinema-v633", refreshIfCached: true \}/);
 });

@@ -214,7 +214,7 @@ test('v613 — publication : version, cache-busters et révisions', () => {
   assert.match(sw, /v618-tp6-detail-20261104/);
   assert.match(adminHtml, /assets\/js\/admin\.js\?v=615-perf/);
   assert.match(adminHtml, /assets\/js\/admin-vues-videos\.js\?v=613-perf/);
-  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "capsule-sql7-v651", refreshIfCached: true }'));
+  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "doublons-abonnes-v704", refreshIfCached: true }'));
   assert.ok(sw.includes('{ url: "./assets/js/admin-vues-videos.js", revision: "capsule-sql7-v651", refreshIfCached: true }'));
   assert.ok(sw.includes('{ url: "./admin.html", revision: "tp6-exercices-v634", refreshIfCached: true }'));
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);

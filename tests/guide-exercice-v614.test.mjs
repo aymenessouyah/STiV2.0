@@ -284,7 +284,7 @@ test('v614 — publication : version, cache-busters, révisions et hors-ligne', 
   assert.match(adminHtml, /assets\/js\/admin\.js\?v=615-perf/);
   assert.ok(sw.includes('{ url: "./assets/js/guide-exercice.js", revision: "guide-exercice-tp6-v615" }'));
   assert.ok(sw.includes('{ url: "./admin.html", revision: "retrait-mission-cinema-v633", refreshIfCached: true }'));
-  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "retrait-mission-cinema-v633", refreshIfCached: true }'));
+  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "doublons-abonnes-v704", refreshIfCached: true }'));
   assert.ok(sw.includes('"./assets/js/guide-exercice.js"'), 'le module est livré hors ligne');
   assert.ok(sw.includes('"./assets/guide-exercice-catalogue.json"'), 'le catalogue aussi');
   assert.match(sw, /var CACHE = "sti-atelier-v386"/);
