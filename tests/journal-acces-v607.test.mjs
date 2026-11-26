@@ -72,7 +72,7 @@ test('v607 — publication : cache-buster, révisions et version', () => {
   assert.match(sw, /var PUBLIEE_LE = "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z";/);
   assert.match(sw, /v607-journal-acces-20261101/);
   /* v610 : admin.js porte désormais sa propre révision ; acces.js garde la sienne. */
-  assert.ok(sw.includes('{ url: "./assets/js/acces.js", revision: "journal-acces-v607" }'),
+  assert.ok(sw.includes('{ url: "./assets/js/acces.js", revision: "journal-session-v703" }'),
     'révision attendue pour ./assets/js/acces.js');
   assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "retrait-mission-cinema-v633", refreshIfCached: true }'),
     'révision attendue pour ./assets/js/admin.js');

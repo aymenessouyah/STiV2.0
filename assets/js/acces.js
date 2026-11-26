@@ -10421,6 +10421,109 @@
           suite((r && !r.error && r.data && r.data[0] && r.data[0].id) ? r.data[0].id : null);
         }).catch(function () { suite(null); });
     }
+    /* v703 — « suivreSessionId is not defined » (454 pannes remontées par les
+       appareils des élèves, 47 élèves touchés) : la fonction de suivi de la
+       durée était imbriquée dans insere() alors que ouvrirSessionJournal(),
+       sa sœur, l'appelait. L'insertion réussissait, puis le suivi plantait :
+       durée figée à 1 s, bascule à tort vers la file hors-ligne (doublons
+       « Hors-ligne ») et panne signalée à chaque page. La fonction vit
+       désormais au niveau du journal, à côté de ouvrirSessionJournal(). */
+    function suivreSessionId(id) {
+      var debut = Date.now();
+      /* v581 — temps actif cumulé, indépendant de l'heure de départ.
+         Avant, chaque tick réécrivait « maintenant − début » : un onglet
+         resté ouvert trois jours (ou un portable en veille) inscrivait
+         4 000 minutes pour une seule page. On n'ajoute maintenant que le
+         temps réellement observé entre deux ticks, et jamais plus que
+         l'intervalle prévu + une marge (le trou = veille ou onglet gelé). */
+      var INTERVALLE_TICK_MS = 30000;
+      var MARGE_TICK_MS = 45000;
+      var dernierTick = debut;
+      var cumulActifMs = 0;
+      function secondesActives(maintenant) {
+        var delta = maintenant - dernierTick;
+        if (delta < 0) delta = 0;
+        dernierTick = maintenant;
+        cumulActifMs += Math.min(delta, INTERVALLE_TICK_MS + MARGE_TICK_MS);
+        return Math.round(cumulActifMs / 1000);
+      }
+      function lireJetonAuthKeepalive() {
+        try {
+          for (var i = 0; i < localStorage.length; i++) {
+            var k = localStorage.key(i) || "";
+            if (/^sb-.*-auth-token$/.test(k)) {
+              var parsed = JSON.parse(localStorage.getItem(k) || "null");
+              var tk = (parsed && parsed.access_token) || (parsed && parsed.currentSession && parsed.currentSession.access_token) || "";
+              if (tk) return tk;
+            }
+          }
+        } catch (eTk) {}
+        return "";
+      }
+      var dernierFermeTs = 0;
+      function ferme(ev) {
+        var estPageHide = Boolean(ev && ev.type === "pagehide");
+        var estVisHidden = Boolean(ev && ev.type === "visibilitychange");
+        var maintenantFerme = Date.now();
+        /* v475 : dédupliquer visibilitychange(hidden) + pagehide rapprochés (< 1,5 s) et
+           ne jamais envoyer de trame WebSocket pendant pagehide (préserve 100 % le BFCache). */
+        if ((estPageHide || estVisHidden) && (maintenantFerme - dernierFermeTs < 1500)) {
+          if (estPageHide) suspendreRealtimePourBfcacheGlobalSTI();
+          return;
+        }
+        dernierFermeTs = maintenantFerme;
+        if (navigator.onLine) {
+          /* v581 : durée = temps actif mesuré (jamais moins de 1 s pour
+             qu'une visite reste visible), plafonnée à 3 h par page. */
+          var payloadFin = {
+            fin: new Date().toISOString(),
+            duree_sec: Math.min(PLAFOND_SESSION_SEC_STI, Math.max(1, secondesActives(maintenantFerme)))
+          };
+          var tkKa = (estPageHide || estVisHidden) ? lireJetonAuthKeepalive() : "";
+          if ((estPageHide || estVisHidden) && tkKa && typeof fetch === "function") {
+            fetch(cfg.URL + "/rest/v1/acces?id=eq." + encodeURIComponent(id), {
+              method: "PATCH",
+              keepalive: true,
+              headers: {
+                apikey: cfg.CLE,
+                Authorization: "Bearer " + tkKa,
+                "Content-Type": "application/json",
+                Prefer: "return=minimal"
+              },
+              body: JSON.stringify(payloadFin)
+            }).catch(function () {});
+          } else if (!estPageHide) {
+            sb.from("acces").update(payloadFin).eq("id", id).then(function () {});
+          }
+          if (!estPageHide && !estVisHidden) {
+            envoyerPresence();
+          }
+        }
+        if (estPageHide) {
+          suspendreRealtimePourBfcacheGlobalSTI();
+        }
+      }
+      envoyerPresence();
+      setInterval(ferme, 30000); /* mise à jour présence + durée toutes les 30 s */
+      window.addEventListener("pagehide", ferme);
+      window.addEventListener("pageshow", function (ev) {
+        reprendreRealtimeApresBfcacheGlobalSTI();
+        if (ev && ev.persisted) {
+          debut = Date.now();
+          /* v581 : la page revient du cache (bfcache) après un temps inconnu :
+             on repart de maintenant pour ne pas compter l'absence. */
+          dernierTick = Date.now();
+          setTimeout(envoyerPresence, 260);
+          try { rafraichirDureeEtScoresServeur(uid, true); } catch (eP) {}
+          if (typeof window.rafraichirBadgesProgressionSTI === "function") {
+            try { window.rafraichirBadgesProgressionSTI(); } catch (eB) {}
+          }
+        }
+      });
+      document.addEventListener("visibilitychange", function (evVis) {
+        if (document.visibilityState === "hidden") ferme(evVis || { type: "visibilitychange" });
+      });
+    }
     function ouvrirSessionJournal(tsInit) {
       var ligne = { user_id: uid, lieu: lieu, page: chemin, debut: tsInit, fin: tsInit, duree_sec: 1 };
       function echec(err) {
@@ -10455,102 +10558,6 @@
         return;
       }
       var tsInit = new Date().toISOString();
-      function suivreSessionId(id) {
-        var debut = Date.now();
-        /* v581 — temps actif cumulé, indépendant de l'heure de départ.
-           Avant, chaque tick réécrivait « maintenant − début » : un onglet
-           resté ouvert trois jours (ou un portable en veille) inscrivait
-           4 000 minutes pour une seule page. On n'ajoute maintenant que le
-           temps réellement observé entre deux ticks, et jamais plus que
-           l'intervalle prévu + une marge (le trou = veille ou onglet gelé). */
-        var INTERVALLE_TICK_MS = 30000;
-        var MARGE_TICK_MS = 45000;
-        var dernierTick = debut;
-        var cumulActifMs = 0;
-        function secondesActives(maintenant) {
-          var delta = maintenant - dernierTick;
-          if (delta < 0) delta = 0;
-          dernierTick = maintenant;
-          cumulActifMs += Math.min(delta, INTERVALLE_TICK_MS + MARGE_TICK_MS);
-          return Math.round(cumulActifMs / 1000);
-        }
-        function lireJetonAuthKeepalive() {
-          try {
-            for (var i = 0; i < localStorage.length; i++) {
-              var k = localStorage.key(i) || "";
-              if (/^sb-.*-auth-token$/.test(k)) {
-                var parsed = JSON.parse(localStorage.getItem(k) || "null");
-                var tk = (parsed && parsed.access_token) || (parsed && parsed.currentSession && parsed.currentSession.access_token) || "";
-                if (tk) return tk;
-              }
-            }
-          } catch (eTk) {}
-          return "";
-        }
-        var dernierFermeTs = 0;
-        function ferme(ev) {
-          var estPageHide = Boolean(ev && ev.type === "pagehide");
-          var estVisHidden = Boolean(ev && ev.type === "visibilitychange");
-          var maintenantFerme = Date.now();
-          /* v475 : dédupliquer visibilitychange(hidden) + pagehide rapprochés (< 1,5 s) et
-             ne jamais envoyer de trame WebSocket pendant pagehide (préserve 100 % le BFCache). */
-          if ((estPageHide || estVisHidden) && (maintenantFerme - dernierFermeTs < 1500)) {
-            if (estPageHide) suspendreRealtimePourBfcacheGlobalSTI();
-            return;
-          }
-          dernierFermeTs = maintenantFerme;
-          if (navigator.onLine) {
-            /* v581 : durée = temps actif mesuré (jamais moins de 1 s pour
-               qu'une visite reste visible), plafonnée à 3 h par page. */
-            var payloadFin = {
-              fin: new Date().toISOString(),
-              duree_sec: Math.min(PLAFOND_SESSION_SEC_STI, Math.max(1, secondesActives(maintenantFerme)))
-            };
-            var tkKa = (estPageHide || estVisHidden) ? lireJetonAuthKeepalive() : "";
-            if ((estPageHide || estVisHidden) && tkKa && typeof fetch === "function") {
-              fetch(cfg.URL + "/rest/v1/acces?id=eq." + encodeURIComponent(id), {
-                method: "PATCH",
-                keepalive: true,
-                headers: {
-                  apikey: cfg.CLE,
-                  Authorization: "Bearer " + tkKa,
-                  "Content-Type": "application/json",
-                  Prefer: "return=minimal"
-                },
-                body: JSON.stringify(payloadFin)
-              }).catch(function () {});
-            } else if (!estPageHide) {
-              sb.from("acces").update(payloadFin).eq("id", id).then(function () {});
-            }
-            if (!estPageHide && !estVisHidden) {
-              envoyerPresence();
-            }
-          }
-          if (estPageHide) {
-            suspendreRealtimePourBfcacheGlobalSTI();
-          }
-        }
-        envoyerPresence();
-        setInterval(ferme, 30000); /* mise à jour présence + durée toutes les 30 s */
-        window.addEventListener("pagehide", ferme);
-        window.addEventListener("pageshow", function (ev) {
-          reprendreRealtimeApresBfcacheGlobalSTI();
-          if (ev && ev.persisted) {
-            debut = Date.now();
-            /* v581 : la page revient du cache (bfcache) après un temps inconnu :
-               on repart de maintenant pour ne pas compter l'absence. */
-            dernierTick = Date.now();
-            setTimeout(envoyerPresence, 260);
-            try { rafraichirDureeEtScoresServeur(uid, true); } catch (eP) {}
-            if (typeof window.rafraichirBadgesProgressionSTI === "function") {
-              try { window.rafraichirBadgesProgressionSTI(); } catch (eB) {}
-            }
-          }
-        });
-        document.addEventListener("visibilitychange", function (evVis) {
-          if (document.visibilityState === "hidden") ferme(evVis || { type: "visibilitychange" });
-        });
-      }
       ouvrirSessionJournal(tsInit);
     }
     if (!navigator.onLine) {
