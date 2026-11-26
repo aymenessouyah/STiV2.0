@@ -6599,6 +6599,67 @@
     bFerm.focus();
   }
 
+  /* ══════════════════════════════════════════════════════════════════════════
+     v704 — « compteur à zéro, pourtant il s'est connecté » : le doublon.
+     Relevé en base (2026-11-26) : plusieurs élèves ont DEUX comptes actifs —
+     un compte « réel » avec des centaines de lignes de journal, et un second
+     compte (souvent un autre e-mail, prénom à une lettre près) resté à zéro.
+     Le professeur regarde le mauvais jumeau et conclut que l'élève n'a
+     jamais travaillé. Exemples réels : amara montassar (431 connexions,
+     gmail) / amara motassar (0, icloud) ; bouakroucha Malek (1 082, gmail) /
+     bouakroucha melek (0, second gmail) ; Dridi Ala (198, gmail) / Dridi
+     Ala (0, adresse tel.sti.tn). La détection ci-dessous signale ces paires
+     sur la carte de l'abonné et dans le diagnostic, sans jamais fusionner
+     ni supprimer quoi que ce soit toute seule.
+     ══════════════════════════════════════════════════════════════════════════ */
+  function normaliserIdentiteAdmin(txt) {
+    return String(txt || "")
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim().replace(/\s+/g, " ");
+  }
+  /* Distance d'édition bornée (au-delà de 3, on renonce : ce n'est plus une
+     faute de frappe, c'est un autre prénom — Themri Ayoub ≠ Themri Eya). */
+  function distanceIdentiteAdmin(a, b) {
+    a = String(a || ""); b = String(b || "");
+    if (a === b) return 0;
+    if (Math.abs(a.length - b.length) > 3) return 99;
+    var prec = [], i, j;
+    for (j = 0; j <= b.length; j++) prec[j] = j;
+    for (i = 1; i <= a.length; i++) {
+      var cour = [i];
+      for (j = 1; j <= b.length; j++) {
+        cour[j] = Math.min(prec[j] + 1, cour[j - 1] + 1, prec[j - 1] + (a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1));
+      }
+      prec = cour;
+    }
+    return prec[b.length];
+  }
+  /* Cherche, parmi les abonnés chargés, le compte « jumeau » probable de p :
+     même nom et prénom identique ou à deux lettres près (montassar /
+     motassar, Malek / melek), ou nom et prénom inversés (Malek Bakouri /
+     Bakouri Malek). En cas de plusieurs candidats, celui qui a le plus
+     d'activité connue gagne. Renvoie null si rien de probant. */
+  function trouverDoublonProbableAdmin(p) {
+    if (!p || !p.id) return null;
+    var nomP = normaliserIdentiteAdmin(p.nom), prenomP = normaliserIdentiteAdmin(p.prenom);
+    if (!nomP) return null;
+    var meilleur = null, meilleurScore = -1;
+    (profils || []).forEach(function (q) {
+      if (!q || q.id === p.id || q.statut === "exclu") return;
+      var nomQ = normaliserIdentiteAdmin(q.nom), prenomQ = normaliserIdentiteAdmin(q.prenom);
+      var memeEleve = false;
+      if (nomQ && nomQ === nomP && prenomQ && prenomP &&
+          (prenomQ === prenomP || distanceIdentiteAdmin(prenomP, prenomQ) <= 2)) memeEleve = true;
+      if (!memeEleve && nomQ && prenomQ && nomQ === prenomP && prenomQ === nomP) memeEleve = true;
+      if (!memeEleve) return;
+      var score = (counts[q.id] || 0) + ((dureesTotales[q.id] || 0) > 0 ? 1 : 0);
+      if (score > meilleurScore) { meilleurScore = score; meilleur = q; }
+    });
+    return meilleur;
+  }
+
   function diagCompteursAbonne(p) {
     if (!p || !p.id) return;
     var nom = nomPrenomTexte(p) || contact(p);
@@ -6684,6 +6745,15 @@
       lignes.push("");
       lignes.push("4. Conclusion");
       if (totalBase === 0) {
+        var jumeauDiag = trouverDoublonProbableAdmin(p);
+        if (jumeauDiag) {
+          lignes.push("   ⚠ Piste du doublon : un compte presque homonyme existe — " +
+            (nomPrenomTexte(jumeauDiag) || "sans nom") + " (" + (contact(jumeauDiag) || "e-mail inconnu") +
+            ", " + (jumeauDiag.classe || "—") + "), avec " + (counts[jumeauDiag.id] || 0) + " connexion(s) chargée(s).");
+          lignes.push("     Si c'est le même élève, il se connecte avec CET autre compte : gardez le compte");
+          lignes.push("     qui porte l'activité et excluez le doublon (bouton ⛔ de sa carte), sans le supprimer");
+          lignes.push("     tant que vous n'êtes pas sûr : l'exclusion est réversible, la suppression non.");
+        }
         lignes.push("   → L'élève n'a AUCUNE ligne dans le journal `acces` : son navigateur n'arrive pas à l'écrire.");
         var suivDiag = bilanSuiviCompletEleve(p);
         if (suivDiag.nbPages) {
@@ -7655,6 +7725,25 @@
             if (typeof acquitterMainLevee === "function") acquitterMainLevee(p.id);
           });
           meta.appendChild(bMainNd);
+        }
+
+        /* v704 : un « 00 » peut être le doublon inactif d'un élève qui
+           travaille sous un second compte (voir trouverDoublonProbableAdmin). */
+        if ((counts[p.id] || 0) === 0) {
+          var jumeauCarteNd = trouverDoublonProbableAdmin(p);
+          if (jumeauCarteNd && (counts[jumeauCarteNd.id] || 0) > 0) {
+            var bDupNd = document.createElement("span");
+            bDupNd.style.cssText = "background:#fff7da;color:#7c2d12;border:1.5px solid #d97706;border-radius:999px;padding:2px 8px;font-size:10.5px;font-weight:900;cursor:pointer;";
+            bDupNd.textContent = "⚠ Doublon probable : " + (counts[jumeauCarteNd.id] || 0) + " connex. sur l'autre compte";
+            bDupNd.title = "Un autre compte ressemble au même élève : " + (nomPrenomTexte(jumeauCarteNd) || "") +
+              " (" + (contact(jumeauCarteNd) || "") + ") — c'est probablement avec celui-là qu'il se connecte. " +
+              "Cliquez pour le diagnostic complet avant de décider lequel garder.";
+            bDupNd.addEventListener("click", function (e) {
+              e.stopPropagation();
+              diagCompteursAbonne(p);
+            });
+            meta.appendChild(bDupNd);
+          }
         }
 
         var barreAct = document.createElement("div");
