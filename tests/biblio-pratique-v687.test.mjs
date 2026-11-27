@@ -59,5 +59,5 @@ test('la capsule vidéo de correction de liste.php est publiée et livrée hors-
  assert.match(read('index.html'),/Capsule : correction de liste\.php/);
  const bloc=read('exercices/series-exercices.html').split('id="php"')[1].split('</section>')[0];
  assert.ok(bloc.includes(video));
- assert.match(sw,/\{ url: "\.\/cours\/php\.html", revision: "capsule-biblio-multi-v702"/);
+ assert.match(sw,/\{ url: "\.\/cours\/php\.html", revision: "recharge-ve-v705"/);
 });

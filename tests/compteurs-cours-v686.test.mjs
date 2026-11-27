@@ -6,7 +6,7 @@ test('tous les cours comptent leurs cartes d’exercices, chacune cochable',()=>
  /* PHP : 9 cartes (séries 1 à 6 + 3 sujets bac) */
  const php=read('cours/php.html'), panneauPhp=php.split('id="exercices"')[1].split('id="videos"')[0];
  const cartesPhp=[...panneauPhp.matchAll(/<article[^>]*>([\s\S]*?)<\/article>/g)].map(m=>m[1]);
- assert.equal(cartesPhp.length,10);
+ assert.equal(cartesPhp.length,11);
  for(const c of cartesPhp) assert.match(c,/data-exercise="/);
  for(const id of ['style-bac-2024','web-bd','suivi-livreur']) assert.ok(php.includes(`data-exercise="${id}"`),id);
  const matieres=read('assets/js/cours-matieres.js');
@@ -14,9 +14,9 @@ test('tous les cours comptent leurs cartes d’exercices, chacune cochable',()=>
  assert.doesNotMatch(matieres,/if \(matiere === 'sql'\) \{\s*\/\* Le total compte/);
  /* JavaScript : 27 exercices + 15 cartes de séries, synthèses, sujets, défis et projets */
  const js=read('cours/javascript.html');
- assert.equal((js.match(/data-exo-check="/g)||[]).length,43);
+ assert.equal((js.match(/data-exo-check="/g)||[]).length,44);
  for(const id of ['exo-js-serie1','exo-js-serie6','exo-js-synthese','exo-js-livraison','exo-js-style-bac','exo-js-web-bd','exo-js-suivi-livreur','exo-js-defis37','exo-js-projet1','exo-js-projet3']) assert.ok(js.includes(`data-exo-check="${id}"`),id);
- assert.match(js,/id="exoProgressText">0 \/ 43 exercices faits/);
+ assert.match(js,/id="exoProgressText">0 \/ 44 exercices faits/);
  assert.match(read('assets/js/cours-javascript.js'),/sti-4si-autorise/);
  /* HTML5 : 19 cartes cochables ; CSS3 : 14 */
  const html5=read('cours/html5.html');
