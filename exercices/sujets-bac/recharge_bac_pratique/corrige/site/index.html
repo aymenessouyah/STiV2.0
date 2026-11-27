@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>ChargeTN</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <img src="logo.png" alt="Logo ChargeTN" width="60" height="60">
+  <h1 id="titre">ChargeTN : recharge de véhicules électriques</h1>
+</header>
+
+<nav>
+  <a class="lien" href="index.html">Accueil</a>
+  <a class="lien" href="liste.php">Bornes</a>
+  <a class="lien" href="ajout.php">Nouvelle recharge</a>
+</nav>
+
+<h2>Tarifs de recharge</h2>
+<table>
+  <tr><th colspan="3">Tarifs de recharge (DT/kWh)</th></tr>
+  <tr><th>Formule</th><th>Type de borne</th><th>Tarif</th></tr>
+  <tr><td rowspan="2">Sans abonnement</td><td>Lente (AC)</td><td>0,35</td></tr>
+  <tr class="gris"><td>Rapide (DC)</td><td>0,55</td></tr>
+  <tr><td rowspan="2">Abonné</td><td>Lente (AC)</td><td>0,28</td></tr>
+  <tr class="gris"><td>Rapide (DC)</td><td>0,45</td></tr>
+</table>
+
+<h2>Rechercher une borne</h2>
+<form method="get" action="liste.php">
+  Ville : <input type="text" name="ville"><br><br>
+  Type :
+  <select name="type">
+    <option value="1">Lente (AC)</option>
+    <option value="2">Rapide (DC)</option>
+    <option value="3">Ultra-rapide (DC)</option>
+  </select><br><br>
+  État :
+  <input type="radio" name="etat" value="libre" checked> Libre
+  <input type="radio" name="etat" value="hors service"> Hors service<br><br>
+  Puissance minimale (kW) : <input type="number" name="pmin" min="0" value="7"><br><br>
+  Remarque :<br>
+  <textarea name="remarque" rows="3" cols="40"></textarea><br><br>
+  <input type="submit" value="Rechercher">
+</form>
+</body>
+</html>

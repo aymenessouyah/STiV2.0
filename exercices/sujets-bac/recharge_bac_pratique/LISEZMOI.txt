@@ -1,0 +1,13 @@
+EPREUVE PRATIQUE - BORNES DE RECHARGE POUR VEHICULES ELECTRIQUES (4eme SI, 3 h, /20)
+Enseignant : Aymen Essouyah - Lycee Rafeha
+
+enonce/      Enonce_Recharge_VE.docx / .pdf        sujet eleve (4 pages)
+ressources/  recharge.sql, style.css (vide), logo.png   a donner aux eleves
+corrige/     Corrige_Recharge_VE.docx / .pdf       corrige + bareme + points d'attention
+             partie2_corrige.sql                   corrige SQL (aussi script de secours avant la partie 3)
+             site/                                 site complet teste (index.html, style.css, logo.png,
+                                                   connexion.php, ajout.php, liste.php, detail.php)
+
+Mise en place du corrige : copier corrige/site dans le dossier du serveur local (dossier "recharge"),
+importer ressources/recharge.sql puis corrige/partie2_corrige.sql dans phpMyAdmin.
+Teste sur MariaDB 10.11 et PHP 8.3.
