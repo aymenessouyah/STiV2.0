@@ -1,0 +1,13 @@
+Similaire Bac Pratique — Recharge Véhicule électrique
+Kit de départ de l'élève (STI version 2.0 By AE)
+
+Contenu fourni :
+  · logo.svg   : le logo de la station (à utiliser dans l'en-tête du site) ;
+  · style.css  : la feuille de style commune à toutes les pages du site.
+
+À créer par l'élève, dans le dossier de travail (www ou htdocs) :
+  · la base de données « station » et sa table « recharges » (partie SQL) ;
+  · index.html, inscription.html, validation.js,
+    ajouter.php, liste.php, modifier.php, statistiques.php (partie site Web).
+
+Bon travail !

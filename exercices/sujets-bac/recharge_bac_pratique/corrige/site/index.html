@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+   <meta charset="utf-8">
+   <title>Recharge VE — Station électrique</title>
+   <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header id="entete">
+   <img src="logo.svg" alt="Logo de la station">
+   <h1>⚡ Recharge VE — Station électrique</h1>
+</header>
+
+<div class="milieu">
+   <nav id="menu">
+      <a href="inscription.html" target="cadre">⚡ Nouvelle recharge</a>
+      <a href="liste.php" target="cadre">📋 Historique</a>
+      <a href="modifier.php" target="cadre">✏️ Mise à jour</a>
+      <a href="statistiques.php" target="cadre">📊 Statistiques</a>
+   </nav>
+   <section>
+      <iframe name="cadre" src="inscription.html"></iframe>
+   </section>
+</div>
+
+<footer id="pied">Travail élaboré par … — Année scolaire …</footer>
+
+
+<script>
+   // La couleur de la page index varie aléatoirement entre 3 couleurs
+   let couleurs = ["#0f1c47", "#065f46", "#7c2d12"];
+   let numero = Math.floor(Math.random() * couleurs.length);
+   let couleurChoisie = couleurs[numero];
+   document.getElementById("entete").style.backgroundColor = couleurChoisie;
+   document.getElementById("menu").style.backgroundColor = couleurChoisie;
+   document.getElementById("pied").style.backgroundColor = couleurChoisie;
+</script>
+</body>
+</html>

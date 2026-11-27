@@ -1,10 +1,10 @@
 {
   "version": "v582-sti-atelier-v386",
-  "versionPubliee": "v704",
-  "generatedAt": "2026-11-26T06:38:10Z",
+  "versionPubliee": "v705",
+  "generatedAt": "2026-11-27T22:06:39Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 830,
-  "totalBytes": 1499006824,
+  "totalFiles": 833,
+  "totalBytes": 1499034591,
   "files": [
     {
       "path": "404.html",
@@ -1473,8 +1473,8 @@
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 147928,
-      "gitSha": "d5d2de5e866464eba103302fbdec679a84cc6b2e"
+      "bytes": 148751,
+      "gitSha": "5afb1377e9d86c6572290bdb806373d1fc175e43"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -1483,8 +1483,8 @@
     },
     {
       "path": "cours/php.html",
-      "bytes": 211916,
-      "gitSha": "32f34b87b419604af76963f85643f5db91ace1d9"
+      "bytes": 212722,
+      "gitSha": "ea290783c003d91667d1b297b3fd6ab261c69d9f"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -1503,8 +1503,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 154100,
-      "gitSha": "1b34d45a71358268ccc8d183aeab2397dad97117"
+      "bytes": 154906,
+      "gitSha": "2d78d20b0213dec6d5e557f5e08e8e236555e49c"
     },
     {
       "path": "cours/systemes-technologies-internet.html",
@@ -3283,8 +3283,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 115693,
-      "gitSha": "960b705ca8d7534ce67763f58341753b690541a1"
+      "bytes": 117805,
+      "gitSha": "8e377ec57d73366be6dd3ca215cfeb9633af4777"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3482,6 +3482,21 @@
       "gitSha": "992fa0259a7c40fd9a79f184215ae0754c2d1e8e"
     },
     {
+      "path": "exercices/sujets-bac/recharge_bac_pratique/Recharge_VE_Ressources.zip",
+      "bytes": 2551,
+      "gitSha": "9a5499d2ff1dd58893534f4f29dc4c876e7609ca"
+    },
+    {
+      "path": "exercices/sujets-bac/recharge_bac_pratique/corrige/Recharge_VE_Corrige.zip",
+      "bytes": 10948,
+      "gitSha": "3b8b4da93572e25aaf8d0b8ae5b2ccb20cdfcb26"
+    },
+    {
+      "path": "exercices/sujets-bac/recharge_bac_pratique/enonce/Enonce_Recharge_VE.pdf",
+      "bytes": 8600,
+      "gitSha": "9c6ac9ff747c1e195d7af75d73bee1c77c1eb903"
+    },
+    {
       "path": "exercices/sujets-bac/style-bac-2024-corrige.pdf",
       "bytes": 126162,
       "gitSha": "95b0a3f0e1d6889516e673cb8755cd9ac3a18450"
@@ -3543,8 +3558,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 74004,
-      "gitSha": "882dc8457d1191ae43997b93cd3a8e00258327fb"
+      "bytes": 74494,
+      "gitSha": "647694de8b49b2cfe23c0d65ab1707f10959629b"
     },
     {
       "path": "livre-smart.html",
@@ -4153,8 +4168,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 119609,
-      "gitSha": "e117524143707806494ed03ae98bb989504b7ae6"
+      "bytes": 120240,
+      "gitSha": "de31af6c3fbfcd62b295cf32dda3a3842bc82058"
     }
   ]
 }

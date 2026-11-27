@@ -1,0 +1,4 @@
+Exercice de synthèse n°2 — Recharge voiture électrique (STI version 2.0 By AE)
+1) Copiez ce dossier sous www (Wamp) ou htdocs (Xampp).
+2) Importez station.sql dans phpMyAdmin.
+3) Ouvrez http://localhost/recharge-ve/ dans le navigateur.

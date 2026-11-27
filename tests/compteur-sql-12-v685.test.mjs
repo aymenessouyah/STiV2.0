@@ -6,9 +6,9 @@ test('le cours SQL compte 12 exercices : chaque carte a sa case et le compteur s
  const html=read('cours/sql.html');
  const panneau=html.split('id="exercices"')[1].split('id="annexes"')[0];
  const cartes=[...panneau.matchAll(/<article[^>]*>([\s\S]*?)<\/article>/g)].map(m=>m[1]);
- assert.equal(cartes.length,13);
+ assert.equal(cartes.length,14);
  for(const carte of cartes) assert.match(carte,/data-exercise="/);
- for(const id of ['zoo','club-sportif','style-bac-2024','web-bd','suivi-livreur','tp-biblio']) assert.ok(html.includes(`data-exercise="${id}"`),id);
+ for(const id of ['zoo','club-sportif','style-bac-2024','web-bd','suivi-livreur','tp-biblio','tp-recharge-ve']) assert.ok(html.includes(`data-exercise="${id}"`),id);
  const js=read('assets/js/cours-matieres.js');
  assert.match(js,/matiere === 'sql'/);
  assert.match(js,/data-course-panel="exercices"\] article/);
