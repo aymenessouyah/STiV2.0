@@ -88,14 +88,17 @@ test('la capsule Recharge VE est annoncée sur les pages du sujet et hors-ligne'
   assert.ok(read('exercices/series-exercices.html').includes(`data-video-open="${SLUG}"`), 'catalogue des séries');
 
   const sw = read('sw.js');
-  assert.match(sw, /var VERSION_PUBLIEE = "v707";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v708";/);
   for (const chemin of [`./${MP4}`, `./${VTT}`])
     assert.ok(sw.includes(`"${chemin}"`), chemin);
-  assert.ok(sw.includes('{ url: "./exercices/series-exercices.html", revision: "capsule-recharge-v706"'),
-    'series-exercices garde la révision v706');
+  /* v708 : les pages qui distinguent les deux capsules Recharge repartent
+     avec la révision de clarification ; le lecteur historique reste en v707. */
   for (const page of ['./index.html', './cours/php.html',
-                      './assets/js/app.js', './assets/js/protection.js',
-                      './assets/js/lecteur-commun.js', './assets/js/admin.js',
+                      './assets/js/app.js', './assets/js/lecteur-commun.js'])
+    assert.ok(sw.includes(`{ url: "${page}", revision: "distinction-recharge-v708"`), page);
+  assert.ok(sw.includes('{ url: "./exercices/series-exercices.html", revision: "distinction-recharge-v708"'),
+    'series-exercices repart avec la révision v708');
+  for (const page of ['./assets/js/protection.js', './assets/js/admin.js',
                       './assets/js/admin-vues-videos.js'])
     assert.ok(sw.includes(`{ url: "${page}", revision: "capsule-recharge-voiture-v707"`), page);
 
