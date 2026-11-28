@@ -1585,6 +1585,19 @@
         { t: 524.080, short: "9 · detail.php — l'historique, l'ancienneté et le montant", label: "8:44 · 9 · detail.php — l'historique, l'ancienneté et le montant" },
         { t: 586.499, short: "10 · Bilan — la méthode à emporter au Bac pratique", label: "9:46 · 10 · Bilan — la méthode à emporter au Bac pratique" }
       ];
+      STI_CHAPITRES_MEDIA["capsule-recharge-voiture"] = [
+        { t: 1.200, short: "1 · Bienvenue — le contenu visé de la synthèse n°2", label: "0:01 · 1 · Bienvenue — le contenu visé de la synthèse n°2" },
+        { t: 53.008, short: "2 · Envoyer les données — formulaire POST et lien hypertexte", label: "0:53 · 2 · Envoyer les données — formulaire POST et lien hypertexte" },
+        { t: 119.514, short: "3 · ajouter.php — recevoir le formulaire dans $_POST", label: "2:00 · 3 · ajouter.php — recevoir le formulaire dans $_POST" },
+        { t: 177.545, short: "4 · Chaînes et transtypage — la première lettre donne le type", label: "2:58 · 4 · Chaînes et transtypage — la première lettre donne le type" },
+        { t: 243.543, short: "5 · ajouter.php — vérifier la disponibilité avant l'INSERT", label: "4:04 · 5 · ajouter.php — vérifier la disponibilité avant l'INSERT" },
+        { t: 316.684, short: "6 · liste.php — la boucle while transforme le SELECT en tableau", label: "5:17 · 6 · liste.php — la boucle while transforme le SELECT en tableau" },
+        { t: 381.626, short: "7 · modifier.php — UPDATE et mysqli_affected_rows", label: "6:22 · 7 · modifier.php — UPDATE et mysqli_affected_rows" },
+        { t: 448.437, short: "8 · statistiques.php — compter, moyenner, trouver le maximum", label: "7:28 · 8 · statistiques.php — compter, moyenner, trouver le maximum" },
+        { t: 510.448, short: "9 · statistiques.php — type, tarif et coût : chaînes et tableaux", label: "8:30 · 9 · statistiques.php — type, tarif et coût : chaînes et tableaux" },
+        { t: 576.407, short: "10 · statistiques.php — la date du jour et la grille des stations", label: "9:36 · 10 · statistiques.php — la date du jour et la grille des stations" },
+        { t: 641.209, short: "11 · Bilan — les gestes à savoir refaire", label: "10:41 · 11 · Bilan — les gestes à savoir refaire" }
+      ];
       STI_CHAPITRES_MEDIA["validation-nom-prenom-js"] = [
         { t: 0, short: "Générique", label: "00:00 · Générique — Projet secrétariat du lycée" },
         { t: 6.00, short: "1. Besoin réel", label: "00:06 · 1. Besoin réel — Valider Nom & Prénom (2 à 5 mots)" },
@@ -2387,6 +2400,8 @@
           contenu += '<track kind="subtitles" src="' + prefixeAssetsSTI() + 'subtitles/PhpVariables-fr-v549.vtt" srclang="fr" label="Français" default />';
         } else if (slugVideo === "capsule-recharge-php") {
           contenu += '<track kind="subtitles" src="' + prefixeAssetsSTI() + 'subtitles/RechargePhp-fr-v706.vtt" srclang="fr" label="Français" default />';
+        } else if (slugVideo === "capsule-recharge-voiture") {
+          contenu += '<track kind="subtitles" src="' + prefixeAssetsSTI() + 'subtitles/RechargeVoiture-fr-v707.vtt" srclang="fr" label="Français" default />';
         }
         return contenu;
       }
@@ -2773,6 +2788,8 @@
         var estBiblioListe = (sSlug === "capsule-biblio-liste" || sSlug.indexOf("capsule-correction-liste-biblio") !== -1);
         /* v706 : capsule « Recharge Véhicule électrique » — correction des quatre pages PHP, TP pratique (4ᵉ SI). */
         var estRechargePhp = (sSlug === "capsule-recharge-php" || sSlug.indexOf("capsule-correction-recharge-php") !== -1);
+        /* v707 : capsule « Recharge voiture électrique » — Synthèse PHP n°2 du cours (base station). */
+        var estRechargeVoiture = (sSlug === "capsule-recharge-voiture" || sSlug.indexOf("capsule-synthese-recharge-voiture") !== -1);
         var estCssDisplay = (!estJsValidation && !estTpTrain && (sSlug === "css3-display" || sSlug.indexOf("displayanim.mp4") !== -1));
         var estPhpSynthese = (!estJsValidation && !estTpTrain && (sSlug === "php-synthese" || sSlug.indexOf("php-synthese.mp4") !== -1));
         var estSqlInit = (!estTpTrain && sSlug === "sql-initiation" || sSlug.indexOf("sql-initiation") !== -1);
@@ -2793,7 +2810,7 @@
         var estCssDeco = (!estJsValidation && !estTpTrain && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && (sSlug === "css-animee" || sSlug.indexOf("css-animee") !== -1 || (!sSlug && estPageCssDeco)));
         var estCssPos = (!estJsValidation && !estTpTrain && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && (sSlug === "css-positionnement" || sSlug.indexOf("css-positionnement") !== -1 || (!sSlug && estPageCssPos)));
         var estGuichet = (!estJsValidation && !estTpTrain && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && (sSlug === "php-guichet" || sSlug.indexOf("php-guichet") !== -1 || sSlug === "guichet" || (!sSlug && estPageGuichet)));
-        if (!estTpEvenements && !estTpFormulaire && !estTpDisplay && !estTpTransitions && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && !estGuichet && !estCssDisplay && !estPhpSynthese && !estJsValidation && !estTpTrain && !estDefis37 && !estBouclePour && !estConsoleVariables && !estPhpVariables && !estFonctionsChaine && !estDateJs && !estPhpChaines && !estMissionCinema && !estCapsuleSql7 && !estClubWeb && !estBiblioListe && !estRechargePhp) {
+        if (!estTpEvenements && !estTpFormulaire && !estTpDisplay && !estTpTransitions && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && !estGuichet && !estCssDisplay && !estPhpSynthese && !estJsValidation && !estTpTrain && !estDefis37 && !estBouclePour && !estConsoleVariables && !estPhpVariables && !estFonctionsChaine && !estDateJs && !estPhpChaines && !estMissionCinema && !estCapsuleSql7 && !estClubWeb && !estBiblioListe && !estRechargePhp && !estRechargeVoiture) {
           /* v577 : la vidéo du cours STI n'est pas dans la liste des capsules. */
           if (!estCoursSti) {
             return;
@@ -2837,6 +2854,7 @@
         if (estClubWeb) slugCible = "capsule-club-web";
         if (estBiblioListe) slugCible = "capsule-biblio-liste";
         if (estRechargePhp) slugCible = "capsule-recharge-php";
+        if (estRechargeVoiture) slugCible = "capsule-recharge-voiture";
         try {
           if (
             window.top &&
@@ -2854,6 +2872,7 @@
         if (estClubWeb) url = prefixeAssetsSTI() + "videos/capsule-correction-club-web-v701.mp4";
         if (estBiblioListe) url = prefixeAssetsSTI() + "videos/capsule-correction-liste-biblio-v702.mp4";
         if (estRechargePhp) url = prefixeAssetsSTI() + "videos/capsule-correction-recharge-php-v706.mp4";
+        if (estRechargeVoiture) url = prefixeAssetsSTI() + "videos/capsule-synthese-recharge-voiture-v707.mp4";
         var css3Qualite = "auto";
         if (estCss3) {
           var prefCss3 = "";
@@ -2869,6 +2888,7 @@
         if (estClubWeb) titre = titreOpt || "🎥 Club Web animé — correction du mini-projet (Synthèse HTML5 & CSS3)";
         if (estBiblioListe) titre = titreOpt || "🎥 Bibliothèque du lycée — correction de liste.php (TP pratique)";
         if (estRechargePhp) titre = titreOpt || "🎥 Recharge Véhicule électrique — les quatre pages PHP du corrigé (TP pratique)";
+        if (estRechargeVoiture) titre = titreOpt || "🎥 Recharge voiture électrique — Synthèse PHP n°2 (cours)";
 
         var overlay = document.getElementById("sti-video-modal-overlay");
         if (!overlay) {

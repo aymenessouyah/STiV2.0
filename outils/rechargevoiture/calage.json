@@ -1,0 +1,30 @@
+{
+  "durees": {
+    "ouverture": 51.258,
+    "envois": 65.956,
+    "reception": 57.481,
+    "chaines": 65.448,
+    "disponibilite": 72.591,
+    "liste": 64.392,
+    "modifier": 66.261,
+    "stats_comptes": 61.461,
+    "stats_types": 65.409,
+    "dispos": 64.252,
+    "bilan": 77.657
+  },
+  "debuts": {
+    "ouverture": 1.2,
+    "envois": 53.008,
+    "reception": 119.514,
+    "chaines": 177.545,
+    "disponibilite": 243.543,
+    "liste": 316.684,
+    "modifier": 381.626,
+    "stats_comptes": 448.437,
+    "stats_types": 510.448,
+    "dispos": 576.407,
+    "bilan": 641.209
+  },
+  "total": 720.666,
+  "debit": 15.83
+}
