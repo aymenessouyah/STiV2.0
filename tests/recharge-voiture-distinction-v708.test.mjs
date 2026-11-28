@@ -35,9 +35,11 @@ test('v708 : la carte du TP pratique distingue les deux capsules et leurs durée
   const cours = read('cours/php.html');
   const carte = cours.split('<h3>Recharge Véhicule électrique</h3>')[1].split('</article>')[0];
   assert.match(carte, new RegExp(`data-video-open="${ANCIEN}"[^>]*>🎥 Capsule TP pratique : les 4 pages PHP \\(11:06\\)`));
-  assert.match(carte, new RegExp(`data-video-open="${NOUVEAU}"[^>]*>🎥 Capsule du cours : Synthèse PHP n°2 \\(12:01\\)`));
   assert.ok(carte.includes(MP4_ANCIEN), 'le lien du TP garde le MP4 v706');
-  assert.ok(carte.includes(MP4_NOUVEAU), 'le lien du cours pointe le MP4 v707');
+  /* v709 : la carte « Similaire Bac Pratique » ne propose que sa propre
+     capsule ; celle du cours reste au chapitre 10 et dans la vidéothèque. */
+  assert.ok(!carte.includes(`data-video-open="${NOUVEAU}"`), 'pas de raccourci 12:01 dans la carte du TP');
+  assert.ok(!carte.includes(MP4_NOUVEAU), 'pas de MP4 du cours dans la carte du TP');
 
   const zone = cours.split('id="s10c"')[1].split('</section>')[0];
   assert.match(zone, /Durée 12:01 · capsule du cours/);
@@ -49,12 +51,12 @@ test('v708 : la carte du TP pratique distingue les deux capsules et leurs durée
   assert.match(cours, /<h2>Recharge voiture électrique — Synthèse PHP n°2 \(cours\)<\/h2>/);
 });
 
-test('v708 : les autres accès au sujet Bac pratique affichent aussi le bon choix', () => {
+test('v708 : les autres accès au sujet Bac pratique ne proposent que la capsule du TP (v709)', () => {
   const accueil = read('index.html');
   const details = accueil.split('<summary>Recharge Véhicule électrique — TP pratique 3 h</summary>')[1].split('</details>')[0];
   assert.match(details, /Capsule TP pratique : les 4 pages PHP \(11:06\)/);
-  assert.match(details, /Capsule du cours : Synthèse PHP n°2 \(12:01\)/);
-  assert.ok(details.includes(`data-video-open="${NOUVEAU}"`));
+  assert.ok(!details.includes(`data-video-open="${NOUVEAU}"`), 'accueil : pas de raccourci 12:01 dans le bloc Bac pratique');
+  assert.ok(!details.includes(MP4_NOUVEAU), 'accueil : pas de MP4 du cours dans le bloc Bac pratique');
 
   const series = read('exercices/series-exercices.html');
   const cartes = series.split('<h3>Recharge Véhicule électrique</h3>')
@@ -62,8 +64,8 @@ test('v708 : les autres accès au sujet Bac pratique affichent aussi le bon choi
   const cartePhp = cartes.find(c => c.includes(`data-video-open="${ANCIEN}"`));
   assert.ok(cartePhp, 'carte PHP du catalogue des séries');
   assert.match(cartePhp, /Capsule TP pratique : les 4 pages PHP \(11:06\)/);
-  assert.match(cartePhp, /Capsule du cours : Synthèse PHP n°2 \(12:01\)/);
-  assert.ok(cartePhp.includes(`data-video-open="${NOUVEAU}"`));
+  assert.ok(!cartePhp.includes(`data-video-open="${NOUVEAU}"`), 'séries : pas de raccourci 12:01 dans la carte Bac pratique');
+  assert.ok(!cartePhp.includes(MP4_NOUVEAU), 'séries : pas de MP4 du cours dans la carte Bac pratique');
 });
 
 test('v708 : le catalogue et le lecteur ne peuvent plus confondre les deux slugs', () => {
@@ -100,9 +102,12 @@ test('v708 : le catalogue et le lecteur ne peuvent plus confondre les deux slugs
 
 test('v708 : les fichiers clarifiés repartent chez les appareils installés', () => {
   const sw = read('sw.js');
-  assert.match(sw, /var VERSION_PUBLIEE = "v708";/);
-  for (const page of ['./cours/php.html', './index.html', './exercices/series-exercices.html',
-                      './assets/js/app.js', './assets/js/lecteur-commun.js'])
+  assert.match(sw, /var VERSION_PUBLIEE = "v709";/);
+  /* v709 : les trois pages dont la carte Bac pratique change repartent avec
+     leur propre révision ; le catalogue et le lecteur commun restent en v708. */
+  for (const page of ['./cours/php.html', './index.html', './exercices/series-exercices.html'])
+    assert.ok(sw.includes(`{ url: "${page}", revision: "bac-pratique-recharge-seule-v709"`), page);
+  for (const page of ['./assets/js/app.js', './assets/js/lecteur-commun.js'])
     assert.ok(sw.includes(`{ url: "${page}", revision: "${REVISION}"`), page);
   /* Le lecteur historique et les MP4 ne changent pas dans ce lot. */
   assert.ok(sw.includes('{ url: "./assets/js/protection.js", revision: "capsule-recharge-voiture-v707"'));

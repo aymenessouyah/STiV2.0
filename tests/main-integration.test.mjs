@@ -27,7 +27,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v529 : reconnexion-profil.js fusionne les compteurs de vues par appareil. */
   assert.equal(revisions.get('./assets/js/reconnexion-profil.js'), 'vues-videos-v531');
   /* v625 : la page des séries référence le nouveau TP CSS3 3ème SI. */
-  assert.equal(revisions.get('./exercices/series-exercices.html'), 'distinction-recharge-v708');
+  assert.equal(revisions.get('./exercices/series-exercices.html'), 'bac-pratique-recharge-seule-v709');
   assert.equal(revisions.get('./assets/js/cours-html5.js'), 'tp-display-v510');
   assert.equal(revisions.get('./assets/js/cours-css3.js'), 'retrait-display-v628');
   for (const chemin of ['assets/js/cours-javascript.js', 'assets/js/cours-matieres.js']) {
@@ -59,7 +59,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./quiz/php.html'), 'plafond-a-v555');
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
   assert.equal(revisions.get('./assets/js/app.js'), 'distinction-recharge-v708');
-  assert.equal(revisions.get('./index.html'), 'distinction-recharge-v708');
+  assert.equal(revisions.get('./index.html'), 'bac-pratique-recharge-seule-v709');
   assert.equal(revisions.get('./offline-complete-manifest.json'), 'audit-video-v649');
   assert.equal(revisions.get('./README.md'), 'audit-video-v649');
   /* v585 : le tableau de bord annonce le Smart Book 3ᵉ SI à 81 pages ; le drapeau reste au lot v503. */
@@ -72,13 +72,13 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./admin.html'), 'tp6-exercices-v634');
   assert.equal(revisions.get('./assets/js/sante.js'), 'retrait-videos-sql-v645');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */
-  assert.equal(revisions.get('./index.html'), 'distinction-recharge-v708');
+  assert.equal(revisions.get('./index.html'), 'bac-pratique-recharge-seule-v709');
   assert.equal(revisions.get('./assets/js/admin.js'), 'capsule-recharge-voiture-v707');
   assert.equal(revisions.get('./assets/css/cours.css'), 'retrait-fond-cours-v508');
   /* v563 : le cours SQL accueille la convention d'écriture d'un schéma. */
   assert.equal(revisions.get('./cours/sql.html'), 'recharge-ve-v705');
   /* v549 : la page PHP reçoit la capsule des variables. */
-  assert.equal(revisions.get('./cours/php.html'), 'distinction-recharge-v708');
+  assert.equal(revisions.get('./cours/php.html'), 'bac-pratique-recharge-seule-v709');
   /* v523 : le cours JavaScript reçoit les liens du TP Train. */
   assert.equal(revisions.get('./cours/javascript.html'), 'recharge-ve-v705');
   assert.equal(revisions.get('./cours/html5.html'), 'retrait-explore-float-v629');

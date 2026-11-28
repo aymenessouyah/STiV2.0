@@ -88,16 +88,17 @@ test('la capsule Recharge VE est annoncée sur les pages du sujet et hors-ligne'
   assert.ok(read('exercices/series-exercices.html').includes(`data-video-open="${SLUG}"`), 'catalogue des séries');
 
   const sw = read('sw.js');
-  assert.match(sw, /var VERSION_PUBLIEE = "v708";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v709";/);
   for (const chemin of [`./${MP4}`, `./${VTT}`])
     assert.ok(sw.includes(`"${chemin}"`), chemin);
-  /* v708 : les pages qui distinguent les deux capsules Recharge repartent
-     avec la révision de clarification ; le lecteur historique reste en v707. */
-  for (const page of ['./index.html', './cours/php.html',
-                      './assets/js/app.js', './assets/js/lecteur-commun.js'])
+  /* v708 : les libellés distinguent les deux capsules ; v709 : les pages dont
+     la carte Bac Pratique est épurée repartent avec leur propre révision. */
+  for (const page of ['./index.html', './cours/php.html'])
+    assert.ok(sw.includes(`{ url: "${page}", revision: "bac-pratique-recharge-seule-v709"`), page);
+  for (const page of ['./assets/js/app.js', './assets/js/lecteur-commun.js'])
     assert.ok(sw.includes(`{ url: "${page}", revision: "distinction-recharge-v708"`), page);
-  assert.ok(sw.includes('{ url: "./exercices/series-exercices.html", revision: "distinction-recharge-v708"'),
-    'series-exercices repart avec la révision v708');
+  assert.ok(sw.includes('{ url: "./exercices/series-exercices.html", revision: "bac-pratique-recharge-seule-v709"'),
+    'series-exercices repart avec la révision v709');
   for (const page of ['./assets/js/protection.js', './assets/js/admin.js',
                       './assets/js/admin-vues-videos.js'])
     assert.ok(sw.includes(`{ url: "${page}", revision: "capsule-recharge-voiture-v707"`), page);
