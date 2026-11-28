@@ -91,7 +91,9 @@ test('le sujet Recharge VE porte la catégorie Similaire Bac Pratique sur toutes
   const sw = read('sw.js');
   for (const page of ['./cours/sql.html', './cours/javascript.html'])
     assert.ok(sw.includes(`{ url: "${page}", revision: "recharge-ve-v705"`), page);
-  for (const page of ['./index.html', './cours/php.html', './exercices/series-exercices.html'])
+  for (const page of ['./exercices/series-exercices.html'])
     assert.ok(sw.includes(`{ url: "${page}", revision: "capsule-recharge-v706"`), page);
-  assert.match(sw, /var VERSION_PUBLIEE = "v706";/);
+  for (const page of ['./index.html', './cours/php.html'])
+    assert.ok(sw.includes(`{ url: "${page}", revision: "capsule-recharge-voiture-v707"`), page);
+  assert.match(sw, /var VERSION_PUBLIEE = "v707";/);
 });

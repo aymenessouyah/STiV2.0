@@ -58,8 +58,8 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   }
   assert.equal(revisions.get('./quiz/php.html'), 'plafond-a-v555');
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
-  assert.equal(revisions.get('./assets/js/app.js'), 'capsule-recharge-v706');
-  assert.equal(revisions.get('./index.html'), 'capsule-recharge-v706');
+  assert.equal(revisions.get('./assets/js/app.js'), 'capsule-recharge-voiture-v707');
+  assert.equal(revisions.get('./index.html'), 'capsule-recharge-voiture-v707');
   assert.equal(revisions.get('./offline-complete-manifest.json'), 'audit-video-v649');
   assert.equal(revisions.get('./README.md'), 'audit-video-v649');
   /* v585 : le tableau de bord annonce le Smart Book 3ᵉ SI à 81 pages ; le drapeau reste au lot v503. */
@@ -72,22 +72,22 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./admin.html'), 'tp6-exercices-v634');
   assert.equal(revisions.get('./assets/js/sante.js'), 'retrait-videos-sql-v645');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */
-  assert.equal(revisions.get('./index.html'), 'capsule-recharge-v706');
-  assert.equal(revisions.get('./assets/js/admin.js'), 'capsule-recharge-v706');
+  assert.equal(revisions.get('./index.html'), 'capsule-recharge-voiture-v707');
+  assert.equal(revisions.get('./assets/js/admin.js'), 'capsule-recharge-voiture-v707');
   assert.equal(revisions.get('./assets/css/cours.css'), 'retrait-fond-cours-v508');
   /* v563 : le cours SQL accueille la convention d'écriture d'un schéma. */
   assert.equal(revisions.get('./cours/sql.html'), 'recharge-ve-v705');
   /* v549 : la page PHP reçoit la capsule des variables. */
-  assert.equal(revisions.get('./cours/php.html'), 'capsule-recharge-v706');
+  assert.equal(revisions.get('./cours/php.html'), 'capsule-recharge-voiture-v707');
   /* v523 : le cours JavaScript reçoit les liens du TP Train. */
   assert.equal(revisions.get('./cours/javascript.html'), 'recharge-ve-v705');
   assert.equal(revisions.get('./cours/html5.html'), 'retrait-explore-float-v629');
   assert.equal(revisions.get('./cours/css3.html'), 'retrait-explore-float-v629');
   assert.equal(revisions.get('./assets/js/cours-onglets-mobile.js'), 'onglets-mobile-v493');
   /* v526 : le lecteur commun suit la nouvelle capsule ; les sous-titres restent sur leur lot. */
-  assert.equal(revisions.get('./assets/js/lecteur-commun.js'), 'capsule-recharge-v706');
+  assert.equal(revisions.get('./assets/js/lecteur-commun.js'), 'capsule-recharge-voiture-v707');
   assert.equal(revisions.get('./assets/subtitles/validation-nom-prenom-js-fr.vtt'), 'video-js-validation-v485');
-  assert.equal(revisions.get('./assets/js/protection.js'), 'capsule-recharge-v706');
+  assert.equal(revisions.get('./assets/js/protection.js'), 'capsule-recharge-voiture-v707');
   for (const chemin of ['package.json', 'package-lock.json']) {
     assert.equal(revisions.get('./' + chemin), 'xp-operations-v487', chemin);
   }

@@ -32,7 +32,8 @@
     'php-guichet': ['php','Animation du guichet PHP'],
     'capsule-club-web': ['css3','Club Web animé — correction du mini-projet (Synthèse)'],
     'capsule-biblio-liste': ['php','Bibliothèque du lycée — correction de liste.php'],
-    'capsule-recharge-php': ['php','Recharge Véhicule électrique — les quatre pages PHP du corrigé']
+    'capsule-recharge-php': ['php','Recharge Véhicule électrique — les quatre pages PHP du corrigé'],
+    'capsule-recharge-voiture': ['php','Recharge voiture électrique — Synthèse PHP n°2']
   };
   function slugPour(valeur) {
     var s = String(valeur || '').toLowerCase();
@@ -44,7 +45,7 @@
     return s;
   }
   function autorise(slug) {
-    return !(/^php-/.test(slug) || /^sql-serie[45]$/.test(slug) || slug === 'sql-tp6-mission-cinema' || slug === 'sql-serie7-capsule' || slug === 'capsule-biblio-liste' || slug === 'capsule-recharge-php') ||
+    return !(/^php-/.test(slug) || /^sql-serie[45]$/.test(slug) || slug === 'sql-tp6-mission-cinema' || slug === 'sql-serie7-capsule' || slug === 'capsule-biblio-liste' || slug === 'capsule-recharge-php' || slug === 'capsule-recharge-voiture') ||
       document.documentElement.classList.contains('sti-4si-autorise');
   }
   function sauvegarder(terminee) {

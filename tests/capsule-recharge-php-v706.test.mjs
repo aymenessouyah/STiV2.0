@@ -88,14 +88,16 @@ test('la capsule Recharge VE est annoncée sur les pages du sujet et hors-ligne'
   assert.ok(read('exercices/series-exercices.html').includes(`data-video-open="${SLUG}"`), 'catalogue des séries');
 
   const sw = read('sw.js');
-  assert.match(sw, /var VERSION_PUBLIEE = "v706";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v707";/);
   for (const chemin of [`./${MP4}`, `./${VTT}`])
     assert.ok(sw.includes(`"${chemin}"`), chemin);
-  for (const page of ['./index.html', './cours/php.html', './exercices/series-exercices.html',
+  assert.ok(sw.includes('{ url: "./exercices/series-exercices.html", revision: "capsule-recharge-v706"'),
+    'series-exercices garde la révision v706');
+  for (const page of ['./index.html', './cours/php.html',
                       './assets/js/app.js', './assets/js/protection.js',
                       './assets/js/lecteur-commun.js', './assets/js/admin.js',
                       './assets/js/admin-vues-videos.js'])
-    assert.ok(sw.includes(`{ url: "${page}", revision: "capsule-recharge-v706"`), page);
+    assert.ok(sw.includes(`{ url: "${page}", revision: "capsule-recharge-voiture-v707"`), page);
 
   const manifest = JSON.parse(read('offline-complete-manifest.json'));
   for (const chemin of [MP4, VTT])

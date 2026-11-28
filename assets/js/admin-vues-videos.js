@@ -74,6 +74,7 @@
     { id: "php-guichet", titre: "PHP — Application Guichet", matiere: "php", icone: "🐘" },
     { id: "capsule-biblio-liste", titre: "Bibliothèque — correction liste.php", matiere: "php", icone: "🐘" },
     { id: "capsule-recharge-php", titre: "Recharge VE — les quatre pages PHP", matiere: "php", icone: "🐘" },
+    { id: "capsule-recharge-voiture", titre: "Recharge voiture — Synthèse PHP n°2", matiere: "php", icone: "🐘" },
     /* Médias vidéo présents dans les pages de cours (hors vitrine de l'accueil). */
     { id: "sql-serie1", titre: "SQL Série 1 — Création de tables", matiere: "sql", icone: "🗃️", horsCatalogue: true },
     { id: "sql-serie2", titre: "SQL Série 2 — SELECT & filtres", matiere: "sql", icone: "🗃️", horsCatalogue: true },

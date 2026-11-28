@@ -99,3 +99,7 @@ build/
 bin/
 obj/
 /outils/windows-labo3-tests/fixtures/
+/outils/rechargevoiture/__pycache__/
+/outils/rechargevoiture/capsule-recharge-voiture.mp4
+/outils/rechargevoiture/voix-off.wav
+/outils/rechargevoiture/voix/*.wav

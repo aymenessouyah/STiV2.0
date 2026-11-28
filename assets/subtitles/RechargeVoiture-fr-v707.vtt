@@ -1,0 +1,765 @@
+WEBVTT
+
+00:00:01.200 --> 00:00:03.181
+Bienvenue dans STI Version 2.0.
+
+00:00:03.181 --> 00:00:08.166
+Aujourd'hui, nous expliquons l'exercice de
+synthèse numéro deux du cours PHP :
+
+00:00:08.166 --> 00:00:09.956
+Recharge voiture électrique.
+
+00:00:09.956 --> 00:00:14.941
+Le site s'appelle Recharge VE, Station
+électrique ; sa base est station, et sa
+
+00:00:14.941 --> 00:00:16.028
+table, recharges.
+
+00:00:16.028 --> 00:00:21.013
+Chaque recharge a un identifiant qui
+commence par une lettre : L pour Lente, N
+
+00:00:21.013 --> 00:00:24.145
+pour Normale, R pour Rapide, U pour
+Ultra-rapide.
+
+00:00:24.145 --> 00:00:29.386
+Voici le contenu visé, celui du nœud du
+cours : l'envoi des données par formulaire
+
+00:00:29.386 --> 00:00:30.919
+et par lien hypertexte ;
+
+00:00:30.919 --> 00:00:34.499
+les chaînes de caractères ; le
+transtypage ; les dates ;
+
+00:00:34.499 --> 00:00:38.269
+le tableau indexé ; le tableau
+associatif ; et les boucles.
+
+00:00:38.269 --> 00:00:43.446
+Nous allons traverser les quatre pages PHP
+du corrigé — ajouter, liste, modifier,
+
+00:00:43.446 --> 00:00:44.341
+statistiques —
+
+00:00:44.341 --> 00:00:48.304
+en suivant ces sept savoir-faire un par
+un, dans le code réel.
+
+00:00:48.304 --> 00:00:52.458
+À gauche, la méthode ; à droite, le code,
+révélé ligne par ligne.
+
+00:00:53.008 --> 00:00:58.116
+Premier savoir-faire : faire voyager les
+données. Il y a deux routes.
+
+00:00:58.116 --> 00:01:04.112
+La route du formulaire : inscription.html
+contient une balise form, méthode post,
+
+00:01:04.112 --> 00:01:05.518
+action ajouter.php,
+
+00:01:05.518 --> 00:01:10.626
+et target cadre, pour que la réponse
+s'affiche dans l'iframe du site.
+
+00:01:10.626 --> 00:01:15.882
+Quand l'élève clique sur Enregistrer, le
+navigateur envoie les champs à
+
+00:01:15.882 --> 00:01:16.844
+ajouter.php :
+
+00:01:16.844 --> 00:01:21.656
+l'identifiant, le nom, la station,
+l'énergie, la date et l'heure.
+
+00:01:21.656 --> 00:01:27.059
+La route du lien hypertexte : dans
+index.html, la navigation contient des
+
+00:01:27.059 --> 00:01:28.096
+liens simples,
+
+00:01:28.096 --> 00:01:31.057
+par exemple liste.php avec target cadre.
+
+00:01:31.057 --> 00:01:37.053
+Un clic ne transmet aucun champ, mais il
+demande une page : c'est un envoi léger,
+
+00:01:37.053 --> 00:01:37.867
+en lecture.
+
+00:01:37.867 --> 00:01:42.901
+Retenez la différence : le formulaire
+envoie des données à traiter ;
+
+00:01:42.901 --> 00:01:45.862
+le lien hypertexte demande un affichage.
+
+00:01:45.862 --> 00:01:51.117
+La page modifier.php, elle, porte son
+propre formulaire, qui s'envoie à
+
+00:01:51.117 --> 00:01:52.450
+elle-même en POST.
+
+00:01:52.450 --> 00:01:58.446
+Dans tout l'exercice, POST sert donc à
+écrire, et les liens servent à naviguer et
+
+00:01:58.446 --> 00:01:58.964
+à lire.
+
+00:01:59.514 --> 00:02:03.955
+Ouvrons ajouter.php. Les deux premières
+lignes ouvrent la connexion :
+
+00:02:03.955 --> 00:02:08.268
+mysqli connect vers localhost, utilisateur
+root, mot de passe vide,
+
+00:02:08.268 --> 00:02:11.229
+puis mysqli select db choisit la base
+station.
+
+00:02:11.229 --> 00:02:16.250
+Ensuite vient le garde d'entrée : isset de
+dollar underscore POST, crochet ok.
+
+00:02:16.250 --> 00:02:21.657
+ok est le nom du bouton Enregistrer ; tant
+qu'il n'a pas été cliqué, il n'y a rien à
+
+00:02:21.657 --> 00:02:22.172
+traiter.
+
+00:02:22.172 --> 00:02:26.420
+Quand le formulaire arrive, chaque champ
+se récupère par son nom :
+
+00:02:26.420 --> 00:02:29.703
+dollar Id reçoit dollar underscore POST
+crochet Id,
+
+00:02:29.703 --> 00:02:34.595
+dollar Nom_prenom reçoit le champ
+Nom_prenom, dollar Borne reçoit la station
+
+00:02:34.595 --> 00:02:35.110
+choisie,
+
+00:02:35.110 --> 00:02:39.422
+et les champs DateRecharge et
+HeureRecharge arrivent tels quels, au
+
+00:02:39.422 --> 00:02:41.096
+format de la balise input.
+
+00:02:41.096 --> 00:02:46.181
+Le tableau dollar underscore POST est un
+tableau associatif : ses clés sont les
+
+00:02:46.181 --> 00:02:47.211
+noms des champs.
+
+00:02:47.211 --> 00:02:51.009
+C'est toujours lui qui reçoit un
+formulaire envoyé en POST.
+
+00:02:51.009 --> 00:02:56.223
+Reste le champ Kwh, que nous traitons dans
+la section suivante, car il demande un
+
+00:02:56.223 --> 00:02:56.995
+transtypage.
+
+00:02:57.545 --> 00:03:01.946
+Deuxième et troisième savoir-faire : les
+chaînes, puis le transtypage.
+
+00:03:01.946 --> 00:03:07.164
+L'énoncé exige que l'identifiant commence
+par une majuscule, car cette lettre donne
+
+00:03:07.164 --> 00:03:08.422
+le type de recharge.
+
+00:03:08.422 --> 00:03:13.577
+La ligne du corrigé découpe la chaîne :
+substr de dollar Id, départ zéro, longueur
+
+00:03:13.577 --> 00:03:15.463
+un, prend la première lettre ;
+
+00:03:15.463 --> 00:03:17.475
+strtoupper la met en majuscule ;
+
+00:03:17.475 --> 00:03:21.939
+puis on recolle, avec le point de
+concaténation, le reste de la chaîne,
+
+00:03:21.939 --> 00:03:23.322
+substr à partir de un.
+
+00:03:23.322 --> 00:03:28.603
+Résultat : si l'élève envoie r zéro trois
+en minuscule, PHP range R zéro trois, donc
+
+00:03:28.603 --> 00:03:29.860
+une recharge Rapide.
+
+00:03:29.860 --> 00:03:34.701
+La chaîne se manipule donc en trois
+gestes : découper, transformer, recoller.
+
+00:03:34.701 --> 00:03:39.794
+Le transtypage, maintenant : dollar Kwh
+reçoit, entre parenthèses, float, puis le
+
+00:03:39.794 --> 00:03:40.737
+champ Kwh reçu.
+
+00:03:40.737 --> 00:03:45.829
+Le formulaire envoie toujours du texte ;
+le transtypage float transforme ce texte
+
+00:03:45.829 --> 00:03:46.772
+en nombre réel,
+
+00:03:46.772 --> 00:03:50.105
+pour que la base reçoive un nombre et non
+une chaîne.
+
+00:03:50.105 --> 00:03:55.323
+C'est le même réflexe que le transtypage
+int des capsules précédentes, adapté à une
+
+00:03:55.323 --> 00:03:56.957
+énergie en kilowattheures.
+
+00:03:56.957 --> 00:04:01.924
+Retenez : substr et strtoupper travaillent
+sur le texte ; les parenthèses float
+
+00:04:01.924 --> 00:04:02.993
+changent le type.
+
+00:04:03.543 --> 00:04:08.530
+Avant d'insérer, ajouter.php pose une
+question à la base : cette station
+
+00:04:08.530 --> 00:04:10.054
+est-elle déjà occupée,
+
+00:04:10.054 --> 00:04:12.132
+ce jour-là, à cette heure-là ?
+
+00:04:12.132 --> 00:04:16.357
+La requête est un SELECT COUNT étoile, AS
+nb, FROM recharges,
+
+00:04:16.357 --> 00:04:22.176
+avec trois conditions reliées par AND : la
+même Borne, la même DateRecharge, la même
+
+00:04:22.176 --> 00:04:23.145
+HeureRecharge.
+
+00:04:23.145 --> 00:04:28.687
+COUNT compte sans ramener les lignes : le
+résultat contient une seule ligne, une
+
+00:04:28.687 --> 00:04:29.587
+seule valeur.
+
+00:04:29.587 --> 00:04:34.921
+mysqli fetch array la récupère, et on la
+lit par son nom : dollar ligneVerif,
+
+00:04:34.921 --> 00:04:35.683
+crochet nb.
+
+00:04:35.683 --> 00:04:41.224
+C'est un tableau associatif : nb est le
+nom que le AS de la requête a donné à la
+
+00:04:41.224 --> 00:04:41.778
+colonne.
+
+00:04:41.778 --> 00:04:46.003
+Si ce compteur est supérieur à zéro, la
+station est occupée :
+
+00:04:46.003 --> 00:04:51.614
+le message s'affiche — Station occupée,
+choisissez une autre station ou une autre
+
+00:04:51.614 --> 00:04:53.622
+heure — et rien n'est inséré.
+
+00:04:53.622 --> 00:04:58.471
+Sinon, seulement sinon, on construit la
+requête INSERT INTO recharges,
+
+00:04:58.471 --> 00:05:04.012
+avec les six colonnes, le texte entre
+apostrophes et le nombre sans apostrophes,
+
+00:05:04.012 --> 00:05:08.723
+puis mysqli query l'exécute et le message
+confirme l'enregistrement.
+
+00:05:08.723 --> 00:05:13.917
+La leçon : on n'écrit dans la base
+qu'après avoir vérifié ; l'INSERT est la
+
+00:05:13.917 --> 00:05:16.134
+dernière étape, pas la première.
+
+00:05:16.684 --> 00:05:21.712
+liste.php affiche l'historique. La requête
+sélectionne les six colonnes, triées par
+
+00:05:21.712 --> 00:05:22.378
+Nom_prenom.
+
+00:05:22.378 --> 00:05:27.042
+ORDER BY demande le tri à SQL : la page
+reçoit les recharges déjà rangées par
+
+00:05:27.042 --> 00:05:27.709
+conducteur.
+
+00:05:27.709 --> 00:05:30.859
+Puis vient la boucle centrale de tout le
+cours PHP :
+
+00:05:30.859 --> 00:05:34.372
+while, dollar ligne reçoit mysqli fetch
+array du résultat.
+
+00:05:34.372 --> 00:05:38.915
+À chaque tour, fetch array donne la ligne
+suivante, sous forme de tableau ;
+
+00:05:38.915 --> 00:05:43.822
+quand il n'y a plus de ligne, il renvoie
+null, et la boucle s'arrête toute seule.
+
+00:05:43.822 --> 00:05:48.486
+Dans la boucle, chaque case de la ligne
+devient une cellule du tableau HTML :
+
+00:05:48.486 --> 00:05:53.151
+dollar ligne, crochet Id ; crochet
+Nom_prenom ; crochet Borne ; crochet Kwh ;
+
+00:05:53.151 --> 00:05:54.604
+puis la date et l'heure.
+
+00:05:54.604 --> 00:05:59.450
+Les clés portent les noms des colonnes :
+c'est le tableau associatif, lisible et
+
+00:05:59.450 --> 00:05:59.693
+sûr.
+
+00:05:59.693 --> 00:06:04.721
+La même ligne existerait aussi en tableau
+indexé : crochet zéro pour Id, crochet un
+
+00:06:04.721 --> 00:06:06.598
+pour le nom, et ainsi de suite,
+
+00:06:06.598 --> 00:06:10.657
+dans l'ordre du SELECT. fetch array donne
+les deux accès à la fois.
+
+00:06:10.657 --> 00:06:15.564
+Après la boucle, mysqli num rows compte
+les lignes du résultat et la page affiche
+
+00:06:15.564 --> 00:06:16.109
+le total.
+
+00:06:16.109 --> 00:06:20.713
+Une requête, une boucle, un tableau :
+c'est le schéma de toutes les pages de
+
+00:06:20.713 --> 00:06:21.076
+liste.
+
+00:06:21.626 --> 00:06:26.252
+modifier.php met à jour une recharge
+existante. Sa structure reprend
+
+00:06:26.252 --> 00:06:27.136
+ajouter.php :
+
+00:06:27.136 --> 00:06:31.082
+le même garde isset de dollar underscore
+POST, crochet ok,
+
+00:06:31.082 --> 00:06:35.844
+la même première lettre forcée en
+majuscule avec strtoupper et substr,
+
+00:06:35.844 --> 00:06:38.770
+et le même transtypage float sur
+l'énergie.
+
+00:06:38.770 --> 00:06:44.348
+La requête change : UPDATE recharges, SET
+Borne, Kwh, DateRecharge, HeureRecharge,
+
+00:06:44.348 --> 00:06:46.729
+WHERE Id égale l'identifiant saisi.
+
+00:06:46.729 --> 00:06:52.171
+Le WHERE est vital : sans lui, la mise à
+jour toucherait toutes les lignes de la
+
+00:06:52.171 --> 00:06:52.580
+table.
+
+00:06:52.580 --> 00:06:57.954
+mysqli query exécute la mise à jour, mais
+elle ne dit pas combien de lignes ont
+
+00:06:57.954 --> 00:06:58.430
+changé.
+
+00:06:58.430 --> 00:07:04.213
+Le juge de paix est mysqli affected rows :
+s'il est supérieur à zéro, une ligne a été
+
+00:07:04.213 --> 00:07:04.825
+modifiée,
+
+00:07:04.825 --> 00:07:07.954
+et la page confirme « Recharge mise à
+jour » ;
+
+00:07:07.954 --> 00:07:11.696
+sinon, elle répond honnêtement : aucune
+ligne modifiée,
+
+00:07:11.696 --> 00:07:14.825
+identifiant introuvable ou valeurs
+identiques.
+
+00:07:14.825 --> 00:07:20.132
+Retenez le couple : num rows après un
+SELECT, affected rows après un UPDATE ou
+
+00:07:20.132 --> 00:07:20.812
+un INSERT.
+
+00:07:20.812 --> 00:07:26.458
+Et le formulaire de la page se poste sur
+elle-même : réception et traitement vivent
+
+00:07:26.458 --> 00:07:27.887
+dans le même fichier.
+
+00:07:28.437 --> 00:07:32.845
+statistiques.php commence comme
+ajouter.php, mais sa connexion nomme la
+
+00:07:32.845 --> 00:07:33.900
+base directement,
+
+00:07:33.900 --> 00:07:38.743
+et elle teste l'échec : si la connexion
+est fausse, die arrête la page avec le
+
+00:07:38.743 --> 00:07:39.798
+message d'erreur.
+
+00:07:39.798 --> 00:07:44.640
+Premier calcul : SELECT COUNT étoile AS nb
+donne le nombre total de recharges,
+
+00:07:44.640 --> 00:07:46.627
+lu avec fetch array, crochet nb.
+
+00:07:46.627 --> 00:07:51.159
+Si ce nombre vaut zéro, la page entière
+des statistiques serait absurde :
+
+00:07:51.159 --> 00:07:56.188
+tout le reste vit donc dans le if, dollar
+ligneTotal crochet nb supérieur à zéro.
+
+00:07:56.188 --> 00:08:00.471
+Deuxième calcul : AVG de Kwh donne
+l'énergie moyenne, arrondie à deux
+
+00:08:00.471 --> 00:08:01.775
+décimales avec round.
+
+00:08:01.775 --> 00:08:06.183
+Troisième : la plus grosse recharge, avec
+ORDER BY Kwh DESC, LIMIT un :
+
+00:08:06.183 --> 00:08:10.839
+SQL trie de la plus grande à la plus
+petite, et on ne garde que la première
+
+00:08:10.839 --> 00:08:11.211
+ligne.
+
+00:08:11.211 --> 00:08:15.868
+Deux compteurs terminent : les recharges
+complètes, Kwh supérieur ou égal à
+
+00:08:15.868 --> 00:08:16.426
+quarante,
+
+00:08:16.426 --> 00:08:19.034
+et les partielles, en dessous de quarante.
+
+00:08:19.034 --> 00:08:24.124
+Chaque résultat suit le même chemin : une
+requête, un fetch array, une lecture par
+
+00:08:24.124 --> 00:08:25.428
+le nom de la colonne.
+
+00:08:25.428 --> 00:08:29.898
+Cinq questions, cinq fois le même geste :
+c'est cela, savoir programmer.
+
+00:08:30.448 --> 00:08:34.510
+Le deuxième tableau de statistiques.php
+trie les recharges par type :
+
+00:08:34.510 --> 00:08:39.044
+ORDER BY LEFT de Id, virgule, un — la
+première lettre de l'identifiant — puis
+
+00:08:39.044 --> 00:08:39.515
+par nom.
+
+00:08:39.515 --> 00:08:44.225
+La boucle while parcourt ce résultat, et
+chaque ligne commence par un travail de
+
+00:08:44.225 --> 00:08:44.696
+chaîne :
+
+00:08:44.696 --> 00:08:48.522
+dollar Categorie reçoit substr de l'Id,
+départ zéro, longueur un.
+
+00:08:48.522 --> 00:08:52.643
+Une chaîne de tests attribue alors le
+tarif : L vaut zéro trois cents,
+
+00:08:52.643 --> 00:08:57.530
+N zéro quatre cent cinquante, R zéro sept
+cents, et sinon — donc U — zéro neuf cent
+
+00:08:57.530 --> 00:08:59.591
+cinquante dinars par kilowattheure.
+
+00:08:59.591 --> 00:09:03.888
+Le coût est l'énergie multipliée par le
+tarif, arrondie à deux décimales.
+
+00:09:03.888 --> 00:09:07.892
+Autre travail de chaîne : le nom complet
+se sépare en Nom et Prénom.
+
+00:09:07.892 --> 00:09:12.249
+explode coupe la chaîne à chaque espace,
+avec une limite de deux morceaux,
+
+00:09:12.249 --> 00:09:16.958
+et fabrique un tableau indexé : crochet
+zéro, le nom de famille ; crochet un, le
+
+00:09:16.958 --> 00:09:18.136
+prénom, s'il existe.
+
+00:09:18.136 --> 00:09:23.081
+isset vérifie ce deuxième morceau avant de
+l'afficher : un nom d'un seul mot ne doit
+
+00:09:23.081 --> 00:09:23.788
+rien casser.
+
+00:09:23.788 --> 00:09:28.145
+La ligne du tableau affiche alors la
+catégorie dans sa couleur, le nom, le
+
+00:09:28.145 --> 00:09:30.441
+prénom, l'énergie, le tarif et le coût.
+
+00:09:30.441 --> 00:09:35.386
+Chaîne découpée, tableau indexé, boucle :
+trois savoir-faire dans une seule ligne de
+
+00:09:35.386 --> 00:09:35.857
+tableau.
+
+00:09:36.407 --> 00:09:41.103
+Le dernier tableau répond à une question
+de date : quelles stations sont libres
+
+00:09:41.103 --> 00:09:41.875
+aujourd'hui ?
+
+00:09:41.875 --> 00:09:46.690
+date, format Y tiret m tiret j, donne la
+date du jour, exactement au format de la
+
+00:09:46.690 --> 00:09:46.987
+base.
+
+00:09:46.987 --> 00:09:51.504
+On interroge les recharges de ce jour-là,
+et chaque ligne remplit un tableau
+
+00:09:51.504 --> 00:09:53.228
+associatif, dollar occupees :
+
+00:09:53.228 --> 00:09:57.864
+la clé est fabriquée par concaténation —
+la borne, un tiret, les deux premiers
+
+00:09:57.864 --> 00:09:59.172
+caractères de l'heure,
+
+00:09:59.172 --> 00:10:01.787
+extraits par substr — et la valeur est
+vrai.
+
+00:10:01.787 --> 00:10:06.245
+Ce tableau est un registre : une clé
+présente signifie « occupée », une clé
+
+00:10:06.245 --> 00:10:07.849
+absente signifie « libre ».
+
+00:10:07.849 --> 00:10:12.664
+Vient ensuite le tableau indexé des heures
+ouvrables : zéro huit, zéro neuf, dix,
+
+00:10:12.664 --> 00:10:12.961
+onze,
+
+00:10:12.961 --> 00:10:16.171
+puis treize à dix-sept — jamais douze,
+c'est la pause.
+
+00:10:16.171 --> 00:10:19.380
+Deux boucles foreach imbriquées fabriquent
+la grille :
+
+00:10:19.380 --> 00:10:22.947
+la boucle extérieure parcourt les quatre
+stations, S1 à S4 ;
+
+00:10:22.947 --> 00:10:25.681
+la boucle intérieure parcourt les neuf
+heures.
+
+00:10:25.681 --> 00:10:28.950
+Pour chaque case, isset teste la clé dans
+le registre :
+
+00:10:28.950 --> 00:10:33.110
+présente, la case est rouge, Occupée ;
+absente, elle est verte, Libre.
+
+00:10:33.110 --> 00:10:37.271
+Date du jour, tableau associatif, tableau
+indexé, boucles imbriquées :
+
+00:10:37.271 --> 00:10:40.659
+tout le contenu visé se retrouve dans ce
+dernier tableau.
+
+00:10:41.209 --> 00:10:46.153
+Terminons par les gestes à savoir refaire,
+dans l'ordre du contenu visé.
+
+00:10:46.153 --> 00:10:50.890
+Un : envoyer. Le formulaire part en POST
+vers sa page de traitement ;
+
+00:10:50.890 --> 00:10:56.383
+le lien hypertexte demande une page, avec
+target cadre pour rester dans le site.
+
+00:10:56.383 --> 00:11:01.808
+Deux : recevoir. dollar underscore POST
+est un tableau associatif dont les clés
+
+00:11:01.808 --> 00:11:03.524
+sont les noms des champs,
+
+00:11:03.524 --> 00:11:07.781
+et isset du bouton dit si le formulaire a
+vraiment été soumis.
+
+00:11:07.781 --> 00:11:13.137
+Trois : les chaînes. substr découpe,
+strtoupper transforme, explode sépare, le
+
+00:11:13.137 --> 00:11:14.098
+point recolle.
+
+00:11:14.098 --> 00:11:19.523
+Quatre : le transtypage. Les parenthèses
+float changent le texte reçu en nombre
+
+00:11:19.523 --> 00:11:20.758
+avant de l'écrire.
+
+00:11:20.758 --> 00:11:26.183
+Cinq : les dates. date donne aujourd'hui
+au format de la base, et les heures se
+
+00:11:26.183 --> 00:11:28.723
+testent dans les horaires de travail.
+
+00:11:28.723 --> 00:11:33.667
+Six : les tableaux. fetch array donne la
+ligne par position et par nom ;
+
+00:11:33.667 --> 00:11:38.817
+un tableau indexé garde une liste
+ordonnée, un tableau associatif relie une
+
+00:11:38.817 --> 00:11:39.984
+clé à une valeur.
+
+00:11:39.984 --> 00:11:44.584
+Sept : les boucles. while avance ligne par
+ligne dans un résultat ;
+
+00:11:44.584 --> 00:11:49.047
+foreach parcourt un tableau, même imbriqué
+dans un autre foreach.
+
+00:11:49.047 --> 00:11:53.442
+Formulaire, chaîne, nombre, date,
+tableaux, boucles : vous savez
+
+00:11:53.442 --> 00:11:55.502
+reconstruire les quatre pages.
+
+00:11:55.502 --> 00:11:58.866
+Bon courage pour la synthèse, et à vous de
+jouer.

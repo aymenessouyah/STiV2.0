@@ -1,10 +1,10 @@
 {
   "version": "v582-sti-atelier-v386",
-  "versionPubliee": "v706",
-  "generatedAt": "2026-11-28T07:32:22Z",
+  "versionPubliee": "v707",
+  "generatedAt": "2026-11-28T08:35:31Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 835,
-  "totalBytes": 1539040339,
+  "totalFiles": 837,
+  "totalBytes": 1581343675,
   "files": [
     {
       "path": "404.html",
@@ -743,13 +743,13 @@
     },
     {
       "path": "assets/js/admin-vues-videos.js",
-      "bytes": 34051,
-      "gitSha": "05ef450cad389941d150414d0da8ea7051a17a8f"
+      "bytes": 34172,
+      "gitSha": "95817502f1e9a60846234377ce40082e98a98346"
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 829373,
-      "gitSha": "94ea61e150344366334f71fb3e09f03c0c244086"
+      "bytes": 829485,
+      "gitSha": "81700b5aee0d5b128253a10efdf637248c439109"
     },
     {
       "path": "assets/js/analytique.js",
@@ -758,8 +758,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 139323,
-      "gitSha": "97b83d95b027986623faf80b046e1c24815411cd"
+      "bytes": 140275,
+      "gitSha": "549697371ec78959f7dc4709a8b715ebf0d8b4f0"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -863,8 +863,8 @@
     },
     {
       "path": "assets/js/lecteur-commun.js",
-      "bytes": 15246,
-      "gitSha": "6818b2b7272900ad7323f186c9d53645db8fe210"
+      "bytes": 15380,
+      "gitSha": "83b6075023338bf772e8713f4b64c3ccff8f5aa5"
     },
     {
       "path": "assets/js/mobile-nav.js",
@@ -923,8 +923,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 265587,
-      "gitSha": "34f0a0173970a89046b000130e77a21a70dd9548"
+      "bytes": 268373,
+      "gitSha": "d3a8653d2a3ae69eae40a565f90b4a5b7d0b9474"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -1172,6 +1172,11 @@
       "gitSha": "5b597f24653ff09566fd3fab7f06f44f5bc28a76"
     },
     {
+      "path": "assets/subtitles/RechargeVoiture-fr-v707.vtt",
+      "bytes": 18161,
+      "gitSha": "f4f81b39dae585fb77a8b26b7f2fcc42800b478b"
+    },
+    {
       "path": "assets/subtitles/css3-cours-v9-sync-fr.vtt",
       "bytes": 16293,
       "gitSha": "f7e40b42612b1dabb22876cc2f5be2a1bfa61c21"
@@ -1285,6 +1290,11 @@
       "path": "assets/videos/capsule-correction-recharge-php-v706.mp4",
       "bytes": 39798576,
       "gitSha": "5391ca778c2a1e49dfb994f2df8836f12d4821f3"
+    },
+    {
+      "path": "assets/videos/capsule-synthese-recharge-voiture-v707.mp4",
+      "bytes": 42278700,
+      "gitSha": "12ee3f5e6ff0bfac9c32c21c511cbeb17474342e"
     },
     {
       "path": "assets/videos/css-animee.mp4",
@@ -1493,8 +1503,8 @@
     },
     {
       "path": "cours/php.html",
-      "bytes": 213996,
-      "gitSha": "8f8c04edda445128f0150ad3409dccf080060b31"
+      "bytes": 216194,
+      "gitSha": "aef5403a25f2bbe74a862daa54eb40b560d9dc4c"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -3569,7 +3579,7 @@
     {
       "path": "index.html",
       "bytes": 74651,
-      "gitSha": "f55c11c4cc03501f011685c05a14d0c874d6ee6c"
+      "gitSha": "753471cecf4aa0b7ab469496bf34da06f47e4392"
     },
     {
       "path": "livre-smart.html",
@@ -4178,8 +4188,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 120357,
-      "gitSha": "dcdc1c060e6d08097bf7a8646adcb2859ae1f780"
+      "bytes": 120529,
+      "gitSha": "0ddb861a2d586c446bbd5f8acc172d635c3cd08d"
     }
   ]
 }

@@ -670,6 +670,25 @@
       srcSecours: "assets/videos/capsule-correction-recharge-php-v706.mp4",
       urlCours: "cours/php.html#videos",
       codeApercu: "$req = $req . \" AND b.idtype=\" . $_GET['type'];"
+    },
+    {
+      /* v707 : capsule de l'exercice de synthèse n°2 du cours PHP
+         « Recharge voiture électrique » (base station) — le contenu visé
+         du nœud : envoi par formulaire et par lien hypertexte, chaînes,
+         transtypage, dates, tableau indexé, tableau associatif, boucles,
+         dans les quatre pages du corrigé recharge-ve. Durée 12:01. */
+      id: "capsule-recharge-voiture",
+      matiere: "php",
+      nomMatiere: "PHP",
+      badgeClasse: "badge-php",
+      couleur: "#a78bfa",
+      titre: "Recharge voiture électrique — Synthèse PHP n°2",
+      dureeTexte: "12:01",
+      reserve4si: true,
+      srcPrincipal: "assets/videos/capsule-synthese-recharge-voiture-v707.mp4",
+      srcSecours: "assets/videos/capsule-synthese-recharge-voiture-v707.mp4",
+      urlCours: "cours/php.html#s10c",
+      codeApercu: "$Id = strtoupper(substr($Id, 0, 1)) . substr($Id, 1);"
     }
   ];
 
@@ -1176,7 +1195,7 @@
   /* v550 : les capsules pédagogiques portent un liseré propre et chaque carte
      reçoit un effet de survol différent. L'indice est tiré de l'identifiant :
      stable d'un chargement à l'autre. */
-  var CAPSULES_VIDEO = { "boucle-pour": true, "console-variables": true, "php-variables": true, "fonctions-chaine": true, "date-js": true, "php-chaines": true, "sql-tp6-mission-cinema": true, "sql-serie7-capsule": true, "capsule-club-web": true, "capsule-biblio-liste": true, "capsule-recharge-php": true };
+  var CAPSULES_VIDEO = { "boucle-pour": true, "console-variables": true, "php-variables": true, "fonctions-chaine": true, "date-js": true, "php-chaines": true, "sql-tp6-mission-cinema": true, "sql-serie7-capsule": true, "capsule-club-web": true, "capsule-biblio-liste": true, "capsule-recharge-php": true, "capsule-recharge-voiture": true };
   function estCapsuleVideo(v) {
     var cle = String((v && v.id) || "");
     if (CAPSULES_VIDEO[cle]) return true;
