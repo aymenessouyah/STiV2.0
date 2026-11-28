@@ -86,9 +86,12 @@ test('le sujet Recharge VE porte la catégorie Similaire Bac Pratique sur toutes
   assert.match(read('cours/sql.html'), /data-exercise="tp-recharge-ve"/);
   assert.match(read('cours/php.html'), /data-exercise="tp-recharge-ve"/);
   assert.match(read('cours/javascript.html'), /data-exo-check="exo-js-tp-recharge-ve"/);
-  /* Les cinq pages modifiées repartent avec la révision de la publication. */
+  /* Les pages non touchées depuis gardent la révision v705 ; celles que la
+     capsule v706 modifie repartent avec sa révision. */
   const sw = read('sw.js');
-  for (const page of ['./index.html', './cours/sql.html', './cours/php.html', './cours/javascript.html', './exercices/series-exercices.html'])
+  for (const page of ['./cours/sql.html', './cours/javascript.html'])
     assert.ok(sw.includes(`{ url: "${page}", revision: "recharge-ve-v705"`), page);
-  assert.match(sw, /var VERSION_PUBLIEE = "v705";/);
+  for (const page of ['./index.html', './cours/php.html', './exercices/series-exercices.html'])
+    assert.ok(sw.includes(`{ url: "${page}", revision: "capsule-recharge-v706"`), page);
+  assert.match(sw, /var VERSION_PUBLIEE = "v706";/);
 });

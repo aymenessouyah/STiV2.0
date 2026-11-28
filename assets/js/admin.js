@@ -6270,6 +6270,7 @@
     { key: "video:php-synthese", label: "Synthèse PHP", niveau: "4si" },
     { key: "video:php-guichet", label: "Guichet PHP/MySQLi", niveau: "4si" },
     { key: "video:capsule-biblio-liste", label: "Bibliothèque — correction liste.php", niveau: "4si" },
+    { key: "video:capsule-recharge-php", label: "Recharge VE — les quatre pages PHP", niveau: "4si" },
     { key: "video:sql-serie4", label: "SQL Série 4 (jointures)", niveau: "4si" },
     { key: "video:sql-serie7-capsule", label: "Group by, Having,Sous requête,Group by vs Ss_req", niveau: "4si" },
     { key: "video:sql-serie5", label: "SQL Série 5 (dates)", niveau: "4si" },

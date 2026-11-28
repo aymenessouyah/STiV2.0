@@ -651,6 +651,25 @@
       srcSecours: "assets/videos/capsule-correction-liste-biblio-v702.mp4",
       urlCours: "cours/php.html#videos",
       codeApercu: "$sql = $sql . \" and L.idCateg = \" . (int) $_GET[\"categ\"];"
+    },
+    {
+      /* v706 : capsule de correction des quatre pages PHP du sujet Recharge
+         Véhicule électrique (Similaire Bac Pratique, 4ᵉ SI) — connexion.php,
+         ajout.php (POST, contrôles, INSERT), liste.php (filtre GET, tableau,
+         statistiques) et detail.php (fiche, ancienneté, montant), code
+         révélé ligne par ligne avec voix off. Durée 11:06. */
+      id: "capsule-recharge-php",
+      matiere: "php",
+      nomMatiere: "PHP",
+      badgeClasse: "badge-php",
+      couleur: "#a78bfa",
+      titre: "Recharge Véhicule électrique — les quatre pages PHP du corrigé",
+      dureeTexte: "11:06",
+      reserve4si: true,
+      srcPrincipal: "assets/videos/capsule-correction-recharge-php-v706.mp4",
+      srcSecours: "assets/videos/capsule-correction-recharge-php-v706.mp4",
+      urlCours: "cours/php.html#videos",
+      codeApercu: "$req = $req . \" AND b.idtype=\" . $_GET['type'];"
     }
   ];
 
@@ -1157,7 +1176,7 @@
   /* v550 : les capsules pédagogiques portent un liseré propre et chaque carte
      reçoit un effet de survol différent. L'indice est tiré de l'identifiant :
      stable d'un chargement à l'autre. */
-  var CAPSULES_VIDEO = { "boucle-pour": true, "console-variables": true, "php-variables": true, "fonctions-chaine": true, "date-js": true, "php-chaines": true, "sql-tp6-mission-cinema": true, "sql-serie7-capsule": true, "capsule-club-web": true, "capsule-biblio-liste": true };
+  var CAPSULES_VIDEO = { "boucle-pour": true, "console-variables": true, "php-variables": true, "fonctions-chaine": true, "date-js": true, "php-chaines": true, "sql-tp6-mission-cinema": true, "sql-serie7-capsule": true, "capsule-club-web": true, "capsule-biblio-liste": true, "capsule-recharge-php": true };
   function estCapsuleVideo(v) {
     var cle = String((v && v.id) || "");
     if (CAPSULES_VIDEO[cle]) return true;

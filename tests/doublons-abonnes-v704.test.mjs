@@ -79,6 +79,6 @@ test('v704 — le badge n’apparaît que sur un compteur à zéro avec jumeau a
 });
 
 test('v704 — publication : admin.js repart avec sa propre révision', () => {
-  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "doublons-abonnes-v704", refreshIfCached: true }'),
+  assert.ok(sw.includes('{ url: "./assets/js/admin.js", revision: "capsule-recharge-v706", refreshIfCached: true }'),
     'révision attendue pour ./assets/js/admin.js');
 });

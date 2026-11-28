@@ -1573,6 +1573,18 @@
         { t: 344.7, short: "5 · Le compteur", label: "05:45 · Étape 5 · On ferme le tableau : le compteur mysqli_num_rows" },
         { t: 358.1, short: "Vérification", label: "05:58 · Vérification : le filtre ?categ=3 ne garde que les livres d'informatique" }
       ];
+      STI_CHAPITRES_MEDIA["capsule-recharge-php"] = [
+        { t: 1.200, short: "1 · Bienvenue — le trajet complet des données", label: "0:01 · 1 · Bienvenue — le trajet complet des données" },
+        { t: 57.241, short: "2 · connexion.php — le ticket d'entrée commun", label: "0:57 · 2 · connexion.php — le ticket d'entrée commun" },
+        { t: 125.220, short: "3 · ajout.php — recevoir le formulaire et contrôler la date", label: "2:05 · 3 · ajout.php — recevoir le formulaire et contrôler la date" },
+        { t: 195.064, short: "4 · ajout.php — insérer, confirmer et remplir le formulaire", label: "3:15 · 4 · ajout.php — insérer, confirmer et remplir le formulaire" },
+        { t: 257.191, short: "5 · liste.php — les liens de filtre et le paramètre type", label: "4:17 · 5 · liste.php — les liens de filtre et le paramètre type" },
+        { t: 327.383, short: "6 · liste.php — transformer le résultat en tableau", label: "5:27 · 6 · liste.php — transformer le résultat en tableau" },
+        { t: 391.384, short: "7 · liste.php — puissances, statistiques et date en lettres", label: "6:31 · 7 · liste.php — puissances, statistiques et date en lettres" },
+        { t: 453.075, short: "8 · detail.php — recevoir un identifiant et afficher la fiche", label: "7:33 · 8 · detail.php — recevoir un identifiant et afficher la fiche" },
+        { t: 524.080, short: "9 · detail.php — l'historique, l'ancienneté et le montant", label: "8:44 · 9 · detail.php — l'historique, l'ancienneté et le montant" },
+        { t: 586.499, short: "10 · Bilan — la méthode à emporter au Bac pratique", label: "9:46 · 10 · Bilan — la méthode à emporter au Bac pratique" }
+      ];
       STI_CHAPITRES_MEDIA["validation-nom-prenom-js"] = [
         { t: 0, short: "Générique", label: "00:00 · Générique — Projet secrétariat du lycée" },
         { t: 6.00, short: "1. Besoin réel", label: "00:06 · 1. Besoin réel — Valider Nom & Prénom (2 à 5 mots)" },
@@ -2373,6 +2385,8 @@
           contenu += '<track kind="subtitles" src="' + prefixeAssetsSTI() + 'subtitles/ConsoleVariables-fr-v548.vtt" srclang="fr" label="Français" default />';
         } else if (slugVideo === "php-variables") {
           contenu += '<track kind="subtitles" src="' + prefixeAssetsSTI() + 'subtitles/PhpVariables-fr-v549.vtt" srclang="fr" label="Français" default />';
+        } else if (slugVideo === "capsule-recharge-php") {
+          contenu += '<track kind="subtitles" src="' + prefixeAssetsSTI() + 'subtitles/RechargePhp-fr-v706.vtt" srclang="fr" label="Français" default />';
         }
         return contenu;
       }
@@ -2757,6 +2771,8 @@
         var estClubWeb = (sSlug === "capsule-club-web" || sSlug.indexOf("capsule-correction-club-web") !== -1);
         /* v698 : capsule « Bibliothèque du lycée » — correction de liste.php, TP pratique (4ᵉ SI). */
         var estBiblioListe = (sSlug === "capsule-biblio-liste" || sSlug.indexOf("capsule-correction-liste-biblio") !== -1);
+        /* v706 : capsule « Recharge Véhicule électrique » — correction des quatre pages PHP, TP pratique (4ᵉ SI). */
+        var estRechargePhp = (sSlug === "capsule-recharge-php" || sSlug.indexOf("capsule-correction-recharge-php") !== -1);
         var estCssDisplay = (!estJsValidation && !estTpTrain && (sSlug === "css3-display" || sSlug.indexOf("displayanim.mp4") !== -1));
         var estPhpSynthese = (!estJsValidation && !estTpTrain && (sSlug === "php-synthese" || sSlug.indexOf("php-synthese.mp4") !== -1));
         var estSqlInit = (!estTpTrain && sSlug === "sql-initiation" || sSlug.indexOf("sql-initiation") !== -1);
@@ -2777,7 +2793,7 @@
         var estCssDeco = (!estJsValidation && !estTpTrain && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && (sSlug === "css-animee" || sSlug.indexOf("css-animee") !== -1 || (!sSlug && estPageCssDeco)));
         var estCssPos = (!estJsValidation && !estTpTrain && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && (sSlug === "css-positionnement" || sSlug.indexOf("css-positionnement") !== -1 || (!sSlug && estPageCssPos)));
         var estGuichet = (!estJsValidation && !estTpTrain && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && (sSlug === "php-guichet" || sSlug.indexOf("php-guichet") !== -1 || sSlug === "guichet" || (!sSlug && estPageGuichet)));
-        if (!estTpEvenements && !estTpFormulaire && !estTpDisplay && !estTpTransitions && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && !estGuichet && !estCssDisplay && !estPhpSynthese && !estJsValidation && !estTpTrain && !estDefis37 && !estBouclePour && !estConsoleVariables && !estPhpVariables && !estFonctionsChaine && !estDateJs && !estPhpChaines && !estMissionCinema && !estCapsuleSql7 && !estClubWeb && !estBiblioListe) {
+        if (!estTpEvenements && !estTpFormulaire && !estTpDisplay && !estTpTransitions && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && !estGuichet && !estCssDisplay && !estPhpSynthese && !estJsValidation && !estTpTrain && !estDefis37 && !estBouclePour && !estConsoleVariables && !estPhpVariables && !estFonctionsChaine && !estDateJs && !estPhpChaines && !estMissionCinema && !estCapsuleSql7 && !estClubWeb && !estBiblioListe && !estRechargePhp) {
           /* v577 : la vidéo du cours STI n'est pas dans la liste des capsules. */
           if (!estCoursSti) {
             return;
@@ -2820,6 +2836,7 @@
         /* v698 : les deux capsules de correction ont leur propre slug de chapitres. */
         if (estClubWeb) slugCible = "capsule-club-web";
         if (estBiblioListe) slugCible = "capsule-biblio-liste";
+        if (estRechargePhp) slugCible = "capsule-recharge-php";
         try {
           if (
             window.top &&
@@ -2836,6 +2853,7 @@
         if (estCoursSti) url = prefixeAssetsSTI() + "videos/CoursSystemesInternet-v578.mp4";
         if (estClubWeb) url = prefixeAssetsSTI() + "videos/capsule-correction-club-web-v701.mp4";
         if (estBiblioListe) url = prefixeAssetsSTI() + "videos/capsule-correction-liste-biblio-v702.mp4";
+        if (estRechargePhp) url = prefixeAssetsSTI() + "videos/capsule-correction-recharge-php-v706.mp4";
         var css3Qualite = "auto";
         if (estCss3) {
           var prefCss3 = "";
@@ -2850,6 +2868,7 @@
         if (estCoursSti) titre = titreOpt || "🎥 Cours — Systèmes, technologies et Internet (3ᵉ SI)";
         if (estClubWeb) titre = titreOpt || "🎥 Club Web animé — correction du mini-projet (Synthèse HTML5 & CSS3)";
         if (estBiblioListe) titre = titreOpt || "🎥 Bibliothèque du lycée — correction de liste.php (TP pratique)";
+        if (estRechargePhp) titre = titreOpt || "🎥 Recharge Véhicule électrique — les quatre pages PHP du corrigé (TP pratique)";
 
         var overlay = document.getElementById("sti-video-modal-overlay");
         if (!overlay) {
