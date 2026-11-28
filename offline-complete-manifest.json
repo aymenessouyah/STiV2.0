@@ -1,10 +1,10 @@
 {
   "version": "v582-sti-atelier-v386",
-  "versionPubliee": "v707",
-  "generatedAt": "2026-11-28T08:35:31Z",
+  "versionPubliee": "v708",
+  "generatedAt": "2026-11-28T09:33:34Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 837,
-  "totalBytes": 1581343675,
+  "totalBytes": 1581344687,
   "files": [
     {
       "path": "404.html",
@@ -758,8 +758,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 140275,
-      "gitSha": "549697371ec78959f7dc4709a8b715ebf0d8b4f0"
+      "bytes": 140297,
+      "gitSha": "f38cf33f8a83a1d4dd003e6c74544492778f71a6"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -863,8 +863,8 @@
     },
     {
       "path": "assets/js/lecteur-commun.js",
-      "bytes": 15380,
-      "gitSha": "83b6075023338bf772e8713f4b64c3ccff8f5aa5"
+      "bytes": 15402,
+      "gitSha": "9ed56892fa53122d3fb1b975077eeb68af8028db"
     },
     {
       "path": "assets/js/mobile-nav.js",
@@ -1503,8 +1503,8 @@
     },
     {
       "path": "cours/php.html",
-      "bytes": 216194,
-      "gitSha": "aef5403a25f2bbe74a862daa54eb40b560d9dc4c"
+      "bytes": 216769,
+      "gitSha": "1aaa99be82d98c62b113b535cb4ce0a41640962b"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -3303,8 +3303,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 117961,
-      "gitSha": "b120d36e9605036543bd8b147aabc2f563568dfa"
+      "bytes": 118163,
+      "gitSha": "04dcfdba064530a5d8f04be24c48eb50c8f582cc"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3578,8 +3578,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 74651,
-      "gitSha": "753471cecf4aa0b7ab469496bf34da06f47e4392"
+      "bytes": 74854,
+      "gitSha": "254cb4abad01af795c1e5bd0247a6a3512f44001"
     },
     {
       "path": "livre-smart.html",
@@ -4188,8 +4188,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 120529,
-      "gitSha": "0ddb861a2d586c446bbd5f8acc172d635c3cd08d"
+      "bytes": 120517,
+      "gitSha": "188d7a13aec5fbfdd017ddee1cc278767c7ba5d6"
     }
   ]
 }

@@ -32,8 +32,8 @@
     'php-guichet': ['php','Animation du guichet PHP'],
     'capsule-club-web': ['css3','Club Web animé — correction du mini-projet (Synthèse)'],
     'capsule-biblio-liste': ['php','Bibliothèque du lycée — correction de liste.php'],
-    'capsule-recharge-php': ['php','Recharge Véhicule électrique — les quatre pages PHP du corrigé'],
-    'capsule-recharge-voiture': ['php','Recharge voiture électrique — Synthèse PHP n°2']
+    'capsule-recharge-php': ['php','Recharge Véhicule électrique — les quatre pages PHP du corrigé (TP pratique)'],
+    'capsule-recharge-voiture': ['php','Recharge voiture électrique — Synthèse PHP n°2 (cours)']
   };
   function slugPour(valeur) {
     var s = String(valeur || '').toLowerCase();
