@@ -91,13 +91,14 @@ test('la capsule Recharge voiture remplace le « vidéo à venir » du chapitre 
   assert.ok(cours.includes(`../${MP4}`));
 
   const sw = read('sw.js');
-  assert.match(sw, /var VERSION_PUBLIEE = "v708";/);
+  assert.match(sw, /var VERSION_PUBLIEE = "v709";/);
   for (const chemin of [`./${MP4}`, `./${VTT}`])
     assert.ok(sw.includes(`"${chemin}"`), chemin);
-  /* v708 : les libellés qui distinguent les deux capsules Recharge sont
-     rafraîchis ; le lecteur historique et l’administration restent en v707. */
-  for (const page of ['./index.html', './cours/php.html', './assets/js/app.js',
-                      './assets/js/lecteur-commun.js'])
+  /* v708 : les libellés distinguent les deux capsules ; v709 : les pages dont
+     la carte Bac Pratique est épurée repartent avec leur propre révision. */
+  for (const page of ['./index.html', './cours/php.html'])
+    assert.ok(sw.includes(`{ url: "${page}", revision: "bac-pratique-recharge-seule-v709"`), page);
+  for (const page of ['./assets/js/app.js', './assets/js/lecteur-commun.js'])
     assert.ok(sw.includes(`{ url: "${page}", revision: "distinction-recharge-v708"`), page);
   for (const page of ['./assets/js/protection.js', './assets/js/admin.js',
                       './assets/js/admin-vues-videos.js'])
