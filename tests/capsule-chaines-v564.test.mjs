@@ -291,7 +291,7 @@ test('les totaux de l’accueil suivent le catalogue', () => {
   const index = lire('index.html');
   const js = liste.filter((v) => (v.matieres || [v.matiere]).includes('javascript')).length;
   /* v579 : le cours STI ouvre la vitrine — 27 cartes. */
-  assert.equal(liste.length, 30);
+  assert.equal(liste.length, 31);
   assert.equal(js, 8);
   assert.ok(index.includes(`data-video-filter="all">Toutes (${liste.length})</button>`));
   assert.ok(index.includes(`<span id="videosTotalNombre">${liste.length}</span>`));

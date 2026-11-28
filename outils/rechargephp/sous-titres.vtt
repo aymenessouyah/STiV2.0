@@ -1,0 +1,683 @@
+WEBVTT
+
+00:00:01.200 --> 00:00:03.068
+Bienvenue dans STI Version 2.0.
+
+00:00:03.068 --> 00:00:07.647
+Aujourd'hui, nous corrigeons toutes les
+pages PHP du sujet Recharge Véhicule
+
+00:00:07.647 --> 00:00:09.394
+électrique, le site ChargeTN.
+
+00:00:09.394 --> 00:00:13.853
+Dans la capsule Bibliothèque, nous avions
+suivi une seule page, liste.php.
+
+00:00:13.853 --> 00:00:18.552
+Ici, nous suivons tout le trajet des
+données : connexion.php ouvre la porte de
+
+00:00:18.552 --> 00:00:19.637
+la base recharge ;
+
+00:00:19.637 --> 00:00:22.951
+ajout.php reçoit le formulaire et insère
+une recharge ;
+
+00:00:22.951 --> 00:00:27.228
+liste.php lit les bornes, filtre par type
+et calcule des statistiques ;
+
+00:00:27.228 --> 00:00:31.868
+detail.php reçoit un identifiant dans
+l'adresse et affiche une borne avec son
+
+00:00:31.868 --> 00:00:32.530
+historique.
+
+00:00:32.530 --> 00:00:37.290
+À gauche, la méthode et les pièges ; à
+droite, le code du corrigé, révélé ligne
+
+00:00:37.290 --> 00:00:37.893
+par ligne.
+
+00:00:37.893 --> 00:00:41.869
+Gardez une règle sous les yeux : une page
+PHP mélange trois temps.
+
+00:00:41.869 --> 00:00:46.328
+D'abord le traitement serveur, ensuite la
+construction de la réponse HTML,
+
+00:00:46.328 --> 00:00:50.726
+et souvent une boucle qui transforme
+chaque ligne SQL en morceau de page.
+
+00:00:50.726 --> 00:00:55.787
+Si vous savez repérer ces trois temps, le
+code devient beaucoup plus facile à écrire
+
+00:00:55.787 --> 00:00:56.691
+le jour du Bac.
+
+00:00:57.241 --> 00:01:02.559
+Commençons par le plus petit fichier,
+connexion.php, parce qu'il sert à toutes
+
+00:01:02.559 --> 00:01:03.241
+les pages.
+
+00:01:03.241 --> 00:01:08.559
+Première ligne, date default timezone set
+avec Africa slash Tunis : on fixe le
+
+00:01:08.559 --> 00:01:10.195
+fuseau horaire de Tunis.
+
+00:01:10.195 --> 00:01:14.695
+Sans cela, les dates et les heures
+pourraient dépendre du serveur,
+
+00:01:14.695 --> 00:01:18.717
+et les calculs d'ancienneté de detail.php
+seraient décalés.
+
+00:01:18.717 --> 00:01:24.240
+Deuxième instruction : dollar cnx reçoit
+mysqli connect, avec localhost, root, un
+
+00:01:24.240 --> 00:01:27.785
+mot de passe vide, puis le nom de la base,
+recharge.
+
+00:01:27.785 --> 00:01:31.808
+Retenez l'ordre : serveur, utilisateur,
+mot de passe, base.
+
+00:01:31.808 --> 00:01:37.126
+La variable dollar cnx est le ticket
+d'entrée ; chaque mysqli query recevra ce
+
+00:01:37.126 --> 00:01:38.967
+ticket en premier argument.
+
+00:01:38.967 --> 00:01:43.944
+Troisième instruction : SET NAMES utf8mb4
+impose l'encodage des échanges.
+
+00:01:43.944 --> 00:01:49.057
+Les accents de ville, libellé ou
+immatriculation ne seront pas abîmés entre
+
+00:01:49.057 --> 00:01:50.080
+PHP et MariaDB.
+
+00:01:50.080 --> 00:01:54.989
+Ce fichier ne produit aucun affichage : il
+prépare seulement le travail.
+
+00:01:54.989 --> 00:02:00.238
+C'est pour cela que les autres pages
+commencent par include de connexion.php.
+
+00:02:00.238 --> 00:02:04.670
+Au Bac, écrivez-le une fois, proprement,
+puis incluez-le partout.
+
+00:02:05.220 --> 00:02:09.822
+Passons à ajout.php. Avant même le HTML,
+le PHP traite le formulaire.
+
+00:02:09.822 --> 00:02:14.690
+La page s'inclut elle-même : le formulaire
+envoie en POST vers ajout.php.
+
+00:02:14.690 --> 00:02:19.092
+Le garde d'entrée est isset de dollar
+underscore POST, crochet ok.
+
+00:02:19.092 --> 00:02:24.428
+Tant que le bouton Enregistrer n'a pas été
+soumis, on prépare seulement la page.
+
+00:02:24.428 --> 00:02:28.029
+Dès qu'il est cliqué, on récupère jour,
+mois et année.
+
+00:02:28.029 --> 00:02:32.898
+Le transtypage entre parenthèses int
+transforme le texte reçu en entier :
+
+00:02:32.898 --> 00:02:36.566
+c'est le même réflexe que dans la capsule
+Bibliothèque.
+
+00:02:36.566 --> 00:02:40.767
+Puis checkdate reçoit mois, jour, année,
+dans cet ordre précis.
+
+00:02:40.767 --> 00:02:45.769
+Il répond si la date existe vraiment : le
+trente et un février sera refusé.
+
+00:02:45.769 --> 00:02:49.838
+Si la date est invalide, dollar message
+reçoit Date invalide.
+
+00:02:49.838 --> 00:02:55.173
+Sinon, on recolle année, mois et jour avec
+des tirets pour fabriquer une date au
+
+00:02:55.173 --> 00:02:56.707
+format année-mois-jour.
+
+00:02:56.707 --> 00:03:01.642
+strtotime transforme ce texte en
+timestamp ; si ce timestamp est supérieur
+
+00:03:01.642 --> 00:03:04.977
+à time, la date est dans le futur et on la
+refuse.
+
+00:03:04.977 --> 00:03:08.178
+Dernier contrôle : l'énergie doit être
+positive.
+
+00:03:08.178 --> 00:03:12.980
+L'ordre compte : existence, futur,
+quantité. Aucun INSERT ne doit partir
+
+00:03:12.980 --> 00:03:14.514
+avant ces trois portes.
+
+00:03:15.064 --> 00:03:20.139
+Quand les contrôles passent, on normalise
+la date avec date, format Y tiret m tiret
+
+00:03:20.139 --> 00:03:21.668
+j, à partir de strtotime.
+
+00:03:21.668 --> 00:03:24.787
+Puis on construit la requête INSERT INTO
+recharge :
+
+00:03:24.787 --> 00:03:29.556
+idborne vient du select, immat est entre
+apostrophes parce que c'est du texte,
+
+00:03:29.556 --> 00:03:33.164
+daterec reçoit la date normalisée, et kwh
+reçoit le nombre.
+
+00:03:33.164 --> 00:03:37.689
+À l'écran, je présente cette longue
+instruction sur plusieurs lignes, mais
+
+00:03:37.689 --> 00:03:39.707
+c'est exactement la même requête.
+
+00:03:39.707 --> 00:03:41.603
+On l'exécute avec mysqli query.
+
+00:03:41.603 --> 00:03:46.495
+Le juge de paix est mysqli affected rows :
+s'il vaut un, une ligne a été insérée
+
+00:03:46.495 --> 00:03:51.264
+et le message confirme l'enregistrement
+avec la date au format jour slash mois
+
+00:03:51.264 --> 00:03:51.998
+slash année.
+
+00:03:51.998 --> 00:03:53.588
+Sinon, on annonce l'échec.
+
+00:03:53.588 --> 00:03:58.296
+Plus bas, le formulaire affiche dollar
+message seulement s'il n'est pas vide.
+
+00:03:58.296 --> 00:04:03.311
+Le select des bornes n'est pas écrit à la
+main : une requête lit idborne, nomborne
+
+00:04:03.311 --> 00:04:03.861
+et ville,
+
+00:04:03.861 --> 00:04:08.569
+puis la boucle fabrique une balise option
+par borne, avec l'identifiant comme
+
+00:04:08.569 --> 00:04:08.997
+valeur.
+
+00:04:08.997 --> 00:04:12.850
+Enfin, jour, mois et année sont préremplis
+par la date du jour.
+
+00:04:12.850 --> 00:04:16.641
+Le corrigé attend donc l'élève avec un
+formulaire déjà vivant.
+
+00:04:17.191 --> 00:04:19.860
+Ouvrons liste.php, la page la plus riche.
+
+00:04:19.860 --> 00:04:24.481
+Elle commence par include de
+connexion.php, puis elle ferme le PHP pour
+
+00:04:24.481 --> 00:04:26.108
+écrire le squelette HTML.
+
+00:04:26.108 --> 00:04:30.273
+Dans le corps, on rouvre PHP pour
+fabriquer les liens de filtre.
+
+00:04:30.273 --> 00:04:32.812
+D'abord le lien Toutes, sans paramètre.
+
+00:04:32.812 --> 00:04:36.587
+Ensuite, une requête lit idtype et libelle
+dans typeborne.
+
+00:04:36.587 --> 00:04:40.297
+La boucle mysqli fetch row prend les
+lignes une par une :
+
+00:04:40.297 --> 00:04:45.243
+dollar t crochet zéro est l'identifiant,
+dollar t crochet un est le libellé.
+
+00:04:45.243 --> 00:04:49.799
+Chaque tour fabrique un lien liste.php
+point d'interrogation type égal
+
+00:04:49.799 --> 00:04:50.580
+identifiant.
+
+00:04:50.580 --> 00:04:54.160
+Nous retrouvons l'anatomie de la capsule
+Bibliothèque :
+
+00:04:54.160 --> 00:04:59.367
+après le point d'interrogation, type est
+le nom du paramètre et le nombre est sa
+
+00:04:59.367 --> 00:04:59.822
+valeur.
+
+00:04:59.822 --> 00:05:04.769
+La requête principale joint borne et
+typeborne grâce à b point idtype égal t
+
+00:05:04.769 --> 00:05:05.615
+point idtype.
+
+00:05:05.615 --> 00:05:11.082
+Si isset de dollar underscore GET crochet
+type est vrai, on colle à la requête AND b
+
+00:05:11.082 --> 00:05:13.295
+point idtype égal la valeur reçue.
+
+00:05:13.295 --> 00:05:16.680
+Sinon, on ne colle rien : toutes les
+bornes restent.
+
+00:05:16.680 --> 00:05:21.366
+Puis mysqli query exécute la requête
+finale, et mysqli num rows donne le
+
+00:05:21.366 --> 00:05:22.472
+compteur affiché.
+
+00:05:22.472 --> 00:05:26.833
+Une adresse, un paramètre, une condition
+en plus : voilà le filtre.
+
+00:05:27.383 --> 00:05:31.432
+La même page transforme maintenant le
+résultat SQL en tableau HTML.
+
+00:05:31.432 --> 00:05:36.266
+On ouvre la balise table et la ligne des
+titres : Borne, Ville, Puissance, Type,
+
+00:05:36.266 --> 00:05:37.233
+État et Détails.
+
+00:05:37.233 --> 00:05:42.370
+Deux variables préparent la suite : dollar
+puis, un tableau indexé vide, et dollar n,
+
+00:05:42.370 --> 00:05:43.639
+le compteur de cases.
+
+00:05:43.639 --> 00:05:47.023
+Dans la boucle while, chaque ligne SQL
+devient dollar l.
+
+00:05:47.023 --> 00:05:51.676
+On range immédiatement la puissance,
+dollar l crochet trois, dans dollar puis
+
+00:05:51.676 --> 00:05:53.609
+crochet n, puis on incrémente n.
+
+00:05:53.609 --> 00:05:58.565
+C'est le geste central : pendant que la
+page s'affiche, on remplit en parallèle le
+
+00:05:58.565 --> 00:06:00.801
+tableau qui servira aux statistiques.
+
+00:06:00.801 --> 00:06:05.756
+Les colonnes affichées suivent l'ordre du
+SELECT : le nom, la ville, la puissance,
+
+00:06:05.756 --> 00:06:07.025
+le libellé et l'état.
+
+00:06:07.025 --> 00:06:11.859
+Le dernier lien mène à detail.php point
+d'interrogation id égal dollar l crochet
+
+00:06:11.859 --> 00:06:12.161
+zéro.
+
+00:06:12.161 --> 00:06:15.908
+Encore un paramètre GET : l'identifiant
+voyage dans l'adresse.
+
+00:06:15.908 --> 00:06:18.144
+Après la boucle, on ferme le tableau.
+
+00:06:18.144 --> 00:06:21.044
+Retenez la différence entre les deux
+compteurs :
+
+00:06:21.044 --> 00:06:25.879
+mysqli num rows compte les lignes de la
+requête ; dollar n compte les puissances
+
+00:06:25.879 --> 00:06:26.362
+rangées.
+
+00:06:26.362 --> 00:06:30.834
+Ici, ils arrivent au même nombre, mais ils
+ne racontent pas la même chose.
+
+00:06:31.384 --> 00:06:35.213
+Après l'affichage, liste.php exploite le
+tableau des puissances.
+
+00:06:35.213 --> 00:06:39.879
+Si count de dollar puis est supérieur à
+zéro, on initialise max et min avec la
+
+00:06:39.879 --> 00:06:41.554
+première case, somme à zéro,
+
+00:06:41.554 --> 00:06:44.306
+puis une boucle for parcourt toutes les
+cases.
+
+00:06:44.306 --> 00:06:48.913
+Chaque puissance peut remplacer le
+maximum, remplacer le minimum, et s'ajoute
+
+00:06:48.913 --> 00:06:49.571
+à la somme.
+
+00:06:49.571 --> 00:06:54.237
+La moyenne est somme divisée par count,
+arrondie à un chiffre après la virgule
+
+00:06:54.237 --> 00:06:54.895
+avec round.
+
+00:06:54.895 --> 00:06:59.621
+Deuxième statistique : une requête GROUP
+BY libelle compte les bornes par type.
+
+00:06:59.621 --> 00:07:04.527
+On remplit deux tableaux ensemble : dollar
+noms, indexé, garde l'ordre des types ;
+
+00:07:04.527 --> 00:07:08.057
+dollar stat, associatif, relie chaque
+libellé à son nombre.
+
+00:07:08.057 --> 00:07:11.885
+Pour trouver le type le plus représenté,
+on part du premier nom,
+
+00:07:11.885 --> 00:07:16.253
+puis on compare dollar stat du candidat à
+dollar stat du champion actuel.
+
+00:07:16.253 --> 00:07:18.347
+Dernier geste : la date en lettres.
+
+00:07:18.347 --> 00:07:22.056
+date w donne le jour de semaine, de zéro
+pour dimanche à six ;
+
+00:07:22.056 --> 00:07:26.004
+date j donne le jour du mois ; date n
+donne le mois de un à douze,
+
+00:07:26.004 --> 00:07:29.534
+parfait pour indexer le tableau des mois
+qui commence à un.
+
+00:07:29.534 --> 00:07:32.525
+La page finit donc comme un petit tableau
+de bord.
+
+00:07:33.075 --> 00:07:37.908
+detail.php commence encore plus
+directement : include de connexion.php,
+
+00:07:37.908 --> 00:07:41.652
+puis dollar id reçoit dollar underscore
+GET crochet id.
+
+00:07:41.652 --> 00:07:46.826
+Pas de formulaire ici : l'information
+arrive par l'adresse, fabriquée par le
+
+00:07:46.826 --> 00:07:48.596
+lien Détails de liste.php.
+
+00:07:48.596 --> 00:07:53.565
+La requête cherche nomborne, ville,
+puissance, libellé, tarifkwh et etat,
+
+00:07:53.565 --> 00:07:58.194
+en joignant borne à typeborne et en
+imposant idborne égal dollar id.
+
+00:07:58.194 --> 00:08:03.367
+Premier test : si mysqli num rows vaut
+zéro, aucune borne ne correspond ; on
+
+00:08:03.367 --> 00:08:05.137
+affiche Borne introuvable.
+
+00:08:05.137 --> 00:08:08.541
+Sinon, mysqli fetch array récupère
+l'unique ligne.
+
+00:08:08.541 --> 00:08:11.536
+Cette fois, on lit les champs par leur
+nom :
+
+00:08:11.536 --> 00:08:16.778
+dollar b crochet nomborne, dollar b
+crochet ville, dollar b crochet tarifkwh.
+
+00:08:16.778 --> 00:08:21.679
+C'est plus lisible qu'un tableau indexé
+quand la page affiche une fiche.
+
+00:08:21.679 --> 00:08:26.512
+On écrit le titre, la ville, la puissance,
+le type, le tarif et l'état.
+
+00:08:26.512 --> 00:08:31.549
+L'idée Bac est simple : un seul
+enregistrement attendu, donc un seul fetch
+
+00:08:31.549 --> 00:08:32.026
+suffit.
+
+00:08:32.026 --> 00:08:37.267
+Pas de boucle pour la borne elle-même ; la
+boucle viendra pour ses recharges.
+
+00:08:37.267 --> 00:08:42.577
+Et si l'identifiant n'existe pas, le
+programme doit le dire au lieu d'afficher
+
+00:08:42.577 --> 00:08:43.530
+une page vide.
+
+00:08:44.080 --> 00:08:47.363
+Dans la même page, on demande ensuite
+l'historique :
+
+00:08:47.363 --> 00:08:51.782
+SELECT immat, daterec, kwh FROM recharge
+WHERE idborne égal dollar id,
+
+00:08:51.782 --> 00:08:56.707
+trié par daterec DESC, donc de la recharge
+la plus récente à la plus ancienne.
+
+00:08:56.707 --> 00:09:00.431
+Si le nombre de lignes vaut zéro, on écrit
+Aucune recharge.
+
+00:09:00.431 --> 00:09:05.103
+Sinon, on ouvre un tableau : véhicule,
+date, ancienneté, énergie, montant.
+
+00:09:05.103 --> 00:09:08.449
+Pour chaque ligne, l'ancienneté se calcule
+en jours :
+
+00:09:08.449 --> 00:09:11.732
+time moins strtotime de la date donne des
+secondes ;
+
+00:09:11.732 --> 00:09:16.593
+on divise par quatre-vingt-six mille
+quatre cents, le nombre de secondes d'un
+
+00:09:16.593 --> 00:09:16.909
+jour,
+
+00:09:16.909 --> 00:09:19.497
+puis floor arrondit à l'entier inférieur.
+
+00:09:19.497 --> 00:09:23.349
+La date affichée passe au format jour
+slash mois slash année.
+
+00:09:23.349 --> 00:09:28.525
+Si kwh est vide, la recharge est encore en
+cours : on affiche en cours et un tiret
+
+00:09:28.525 --> 00:09:29.536
+pour le montant.
+
+00:09:29.536 --> 00:09:34.270
+Sinon, le montant est kwh multiplié par
+tarifkwh, arrondi à deux décimales.
+
+00:09:34.270 --> 00:09:39.637
+Cette page relie donc trois savoir-faire :
+recevoir un paramètre, afficher une fiche,
+
+00:09:39.637 --> 00:09:41.404
+puis calculer sur une liste.
+
+00:09:41.404 --> 00:09:45.950
+C'est exactement le genre d'enchaînement
+que le Bac pratique récompense.
+
+00:09:46.499 --> 00:09:49.222
+Terminons par la méthode à emporter.
+
+00:09:49.222 --> 00:09:55.274
+Un : chaque page commence par inclure
+connexion.php ; on ne répète jamais mysqli
+
+00:09:55.274 --> 00:09:55.879
+connect.
+
+00:09:55.879 --> 00:10:01.629
+Deux : GET sert à demander une lecture ou
+un filtre ; POST sert à envoyer un
+
+00:10:01.629 --> 00:10:03.974
+formulaire qui modifie la base.
+
+00:10:03.974 --> 00:10:08.664
+Trois : avant d'utiliser une valeur,
+demandez d'où elle vient.
+
+00:10:08.664 --> 00:10:12.144
+Un paramètre d'adresse arrive comme du
+texte ;
+
+00:10:12.144 --> 00:10:17.742
+le corrigé de liste.php le colle
+directement, mais votre réflexe sûr reste
+
+00:10:17.742 --> 00:10:21.751
+le transtypage en entier quand un nombre
+est attendu.
+
+00:10:21.751 --> 00:10:25.761
+detail.php ferait la même chose avec son
+identifiant.
+
+00:10:25.761 --> 00:10:31.283
+Quatre : le résultat d'un SELECT se
+traverse avec fetch row quand on suit
+
+00:10:31.283 --> 00:10:32.872
+l'ordre des colonnes,
+
+00:10:32.872 --> 00:10:35.746
+ou fetch array quand on veut les noms.
+
+00:10:35.746 --> 00:10:40.664
+Cinq : les compteurs et les tableaux ne
+sont pas des décorations.
+
+00:10:40.664 --> 00:10:45.429
+num rows vérifie l'existence, affected
+rows vérifie l'écriture,
+
+00:10:45.429 --> 00:10:50.195
+les tableaux gardent les valeurs pour
+calculer après la boucle.
+
+00:10:50.195 --> 00:10:56.096
+Si vous retenez le voyage des données —
+adresse, formulaire, requête, tableau,
+
+00:10:56.096 --> 00:10:56.550
+page —
+
+00:10:56.550 --> 00:11:02.072
+vous pouvez reconstruire ces quatre
+fichiers sans les apprendre par cœur.
+
+00:11:02.072 --> 00:11:04.493
+Bon courage, et à vous de jouer.

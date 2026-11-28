@@ -1,0 +1,28 @@
+{
+  "durees": {
+    "ouverture": 55.491,
+    "connexion": 67.429,
+    "ajout_controles": 69.294,
+    "ajout_insertion": 61.577,
+    "liste_filtres": 69.642,
+    "liste_tableau": 63.451,
+    "liste_statistiques": 61.141,
+    "detail_borne": 70.455,
+    "detail_recharges": 61.87,
+    "bilan": 77.994
+  },
+  "debuts": {
+    "ouverture": 1.2,
+    "connexion": 57.241,
+    "ajout_controles": 125.22,
+    "ajout_insertion": 195.064,
+    "liste_filtres": 257.191,
+    "liste_tableau": 327.383,
+    "liste_statistiques": 391.384,
+    "detail_borne": 453.075,
+    "detail_recharges": 524.08,
+    "bilan": 586.499
+  },
+  "total": 666.293,
+  "debit": 15.72
+}

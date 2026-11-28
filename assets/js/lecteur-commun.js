@@ -31,7 +31,8 @@
     'php-synthese': ['php','Synthèse PHP : gestion des élèves'],
     'php-guichet': ['php','Animation du guichet PHP'],
     'capsule-club-web': ['css3','Club Web animé — correction du mini-projet (Synthèse)'],
-    'capsule-biblio-liste': ['php','Bibliothèque du lycée — correction de liste.php']
+    'capsule-biblio-liste': ['php','Bibliothèque du lycée — correction de liste.php'],
+    'capsule-recharge-php': ['php','Recharge Véhicule électrique — les quatre pages PHP du corrigé']
   };
   function slugPour(valeur) {
     var s = String(valeur || '').toLowerCase();
@@ -43,7 +44,7 @@
     return s;
   }
   function autorise(slug) {
-    return !(/^php-/.test(slug) || /^sql-serie[45]$/.test(slug) || slug === 'sql-tp6-mission-cinema' || slug === 'sql-serie7-capsule' || slug === 'capsule-biblio-liste') ||
+    return !(/^php-/.test(slug) || /^sql-serie[45]$/.test(slug) || slug === 'sql-tp6-mission-cinema' || slug === 'sql-serie7-capsule' || slug === 'capsule-biblio-liste' || slug === 'capsule-recharge-php') ||
       document.documentElement.classList.contains('sti-4si-autorise');
   }
   function sauvegarder(terminee) {

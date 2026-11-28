@@ -43,6 +43,13 @@ build/
 /outils/phpvariables/sortie_*.mp4
 /outils/phpvariables/voix-off.wav
 /outils/phpvariables/voix/*.wav
+
+# Recharge VE, les pages PHP : rendus intermédiaires, piste audio de montage et cache Python
+# (les MP3 de la voix off, eux, sont livrés avec les outils)
+/outils/rechargephp/__pycache__/
+/outils/rechargephp/capsule-recharge-php.mp4
+/outils/rechargephp/voix-off.wav
+/outils/rechargephp/voix/*.wav
 /tests/__pycache__/
 
 # Capsule « Les chaînes de caractères » (outils/fonctionschaine) :

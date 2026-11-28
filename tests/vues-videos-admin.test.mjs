@@ -71,16 +71,16 @@ test('le module compile et s’exporte même hors du tableau de bord', () => {
   for (const nom of ['catalogue', 'analyser', 'pourcentageMedia', 'vuesDeLEntree', 'charger', 'rendre']) {
     assert.equal(typeof api[nom], 'function', nom);
   }
-  assert.equal(api.catalogue().length, 37, 'catalogue complet : 30 capsules et 7 médias de cours');
+  assert.equal(api.catalogue().length, 38, 'catalogue complet : 31 capsules et 7 médias de cours');
 });
 
 /* ───────────────────────── 2. le catalogue suit la vitrine de l’accueil ───────────────────────── */
 
-test('le catalogue du coin reprend les 30 capsules publiques de app.js, sans doublon', () => {
+test('le catalogue du coin reprend les 31 capsules publiques de app.js, sans doublon', () => {
   const app = lire('assets/js/app.js');
   const bloc = app.slice(app.indexOf('var CATALOGUE_VIDEOS = ['), app.indexOf('\n  ];', app.indexOf('var CATALOGUE_VIDEOS = [')));
   const idsVitrine = [...bloc.matchAll(/id:\s*"([^"]+)"/g)].map((m) => m[1]);
-  assert.equal(idsVitrine.length, 30, 'trente capsules sur l’accueil');
+  assert.equal(idsVitrine.length, 31, 'trente et une capsules sur l’accueil');
   const fenetre = chargerModule(lire(MODULE));
   const catalogue = fenetre.STI_VUES_VIDEOS.catalogue();
   const ids = catalogue.map((v) => v.id);
@@ -462,7 +462,7 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
      v557 : admin.html repart à son tour (cache-buster admin.js en ?v=557-perf) :
      deux fichiers restent au lot v531. */
   assert.equal((sw.match(new RegExp('revision: "' + REV + '"', 'g')) || []).length, 2, 'deux fichiers restent au lot v531');
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "capsule-biblio-multi-v702"/, 'le lecteur repart au lot v545');
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "capsule-recharge-v706"/, 'le lecteur repart au lot v545');
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   for (const chemin of ['assets/js/reconnexion-profil.js',
     'assets/js/reprendre.js']) {
